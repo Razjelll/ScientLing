@@ -1,0 +1,82 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.wingedrabbits.edu.scientling.fragment.KnowExerciseFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <include
+        layout="@layout/word_sector"
+        android:id="@+id/knowWord"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal = "true" />
+    <TextView
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/knowTranslation"
+        android:textSize="30sp"
+        android:paddingTop="20dp"
+        android:textStyle="bold"
+        android:layout_below="@+id/knowWord"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/knowSpeechButton"
+        android:background="@drawable/round_button"
+        android:layout_marginTop="39dp"
+        android:layout_below="@+id/knowTranslation"
+        android:layout_centerHorizontal="true"
+        />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/showAnswerButton"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
+        android:background="@drawable/button_style"
+        android:text="@string/show_answers"
+
+        />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp">
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/dontKnowButton"
+            android:text="@string/dontKnow"
+            android:textColor="@color/incorrectColor"
+            android:layout_weight="0.3"
+            android:background="@drawable/button_style"
+            android:layout_marginRight="5dp"
+            />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/almostKnowButton"
+            android:text="@string/almostKnow"
+            android:textColor="@color/middleCorrectColor"
+            android:layout_weight="0.3"
+            android:background="@drawable/button_style"/>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/knowButton"
+            android:text="@string/know"
+            android:textColor="@color/correctColor"
+            android:layout_weight="0.3"
+            android:background="@drawable/button_style"
+            android:layout_marginLeft="5dp"/>
+    </LinearLayout>
+
+</RelativeLayout>

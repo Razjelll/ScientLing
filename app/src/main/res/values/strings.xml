@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">ScientLing</string>
+    <string name="login_hint">Login</string>
+    <string name="password_hint">Hasło</string>
+    <string name="log_in">Zaloguj</string>
+    <string name="sign_in">Zarejestruj</string>
+    <string name="not_now">Nie teraz</string>
+    <string name="show_answers">Pokaż odpowiedzi</string>
+    <string name="progress">Postęp</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="know">Wiem</string>
+    <string name="dontKnow">Nie wiem</string>
+    <string name="almostKnow">Prawie wiem</string>
+    <string name="title_activity_exercise">ExerciseActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="put_translation">Wpisz tłumaczenie </string>
+    <string name="check_answer">Sprawdź odpowiedź</string>
 </resources>

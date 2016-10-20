@@ -1,0 +1,24 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.wingedrabbits.edu.scientling.fragment.ChooseExerciseFragment">
+
+    <include
+        layout="@layout/word_with_speechbutton_sector"
+        android:id="@+id/chooseWord"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_margin = "1dp"
+        />
+
+
+
+    <include layout="@layout/choose_sector"
+        android:layout_margin="1dp"/>
+
+
+
+
+</LinearLayout>
