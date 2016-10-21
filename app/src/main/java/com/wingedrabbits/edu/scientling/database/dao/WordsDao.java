@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
-import com.wingedrabbits.edu.scientling.database.table.WordsTable;
 import com.wingedrabbits.edu.scientling.model.Word;
 
 import java.util.ArrayList;
@@ -36,12 +35,11 @@ public class WordsDao implements Dao<Word> {
     @Override
     public long save(Word entity) {
         insertStatement.clearBindings();
-        insertStatement.bindString(1,entity.getWord());
+        insertStatement.bindString(1,entity.getContent());
         insertStatement.bindString(2, entity.getPronunciation());
-        insertStatement.bindString(3, entity.getType());
-        insertStatement.bindString(4, entity.getCategory());
+        insertStatement.bindString(3, entity.getType().getName());
+        insertStatement.bindString(4, entity.getCategory().getName());
         insertStatement.bindLong(5, entity.getMasterLevel());
-        insertStatement.bindLong(6, entity.getRepetitions());
 
         return insertStatement.executeInsert();
     }
@@ -49,12 +47,11 @@ public class WordsDao implements Dao<Word> {
     @Override
     public void update(Word entity) {
         final ContentValues values = new ContentValues();
-        values.put(WordsColumns.WORD, entity.getWord());
+        values.put(WordsColumns.WORD, entity.getContent());
         values.put(WordsColumns.PRONUNCIATION, entity.getPronunciation());
-        values.put(WordsColumns.TYPE, entity.getType());
-        values.put(WordsColumns.CATEGORY, entity.getCategory());
+        values.put(WordsColumns.TYPE, entity.getType().getName());
+        values.put(WordsColumns.CATEGORY, entity.getCategory().getName());
         values.put(WordsColumns.MASTER_LEVEL, entity.getMasterLevel());
-        values.put(WordsColumns.REPETITIONS, entity.getRepetitions());
 
         db.update(TABLE_NAME, values,
                 WordsColumns.ID + " = ?",
@@ -136,12 +133,9 @@ public class WordsDao implements Dao<Word> {
         if(cursor != null) {
             word = new Word();
             word.setId(cursor.getLong(WordsColPositon.ID));
-            word.setWord(cursor.getString(WordsColPositon.WORD));
+            word.setContent(cursor.getString(WordsColPositon.WORD));
             word.setPronunciation(cursor.getString(WordsColPositon.PRONUNCIATION));
-            word.setTypeId(cursor.getLong(WordsColPositon.TYPE));
-            word.setCategoryId(cursor.getLong(WordsColPositon.CATEGORY));
             word.setMasterLevel(cursor.getInt(WordsColPositon.MASTER_LEVEL));
-            word.setRepetitions(cursor.getInt(WordsColPositon.REPETITIONS));
 
         }
         return word;

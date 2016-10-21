@@ -48,8 +48,16 @@
             android:gravity="center"/>
     </LinearLayout>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/exerciseFragment"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="10dp"></FrameLayout>
 
-    <fragment android:name="com.wingedrabbits.edu.scientling.fragment.WriteExerciseFragment"
+    <!--<fragment android:name="com.wingedrabbits.edu.scientling.fragment.WriteExerciseFragment"
         android:id="@+id/exerciseFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -57,5 +65,5 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="10dp"/>
+        android:layout_marginBottom="10dp"/>-->
 </LinearLayout>

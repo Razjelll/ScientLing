@@ -8,7 +8,7 @@
     <!-- TODO: Update blank fragment layout -->
     <include
         layout="@layout/word_sector"
-        android:id="@+id/knowWord"
+        android:id="@+id/wordSector"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_centerHorizontal = "true" />
@@ -20,7 +20,7 @@
         android:textSize="30sp"
         android:paddingTop="20dp"
         android:textStyle="bold"
-        android:layout_below="@+id/knowWord"
+        android:layout_below="@+id/wordSector"
         android:layout_centerHorizontal="true" />
 
     <Button
