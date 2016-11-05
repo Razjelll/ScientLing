@@ -4,7 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
     <TextView
-        android:text="TextView"
+        android:text="Dog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/knowWord"
@@ -15,11 +15,12 @@
          />
 
     <TextView
-        android:text="TextView"
+        android:text="[dɔg] "
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/knowPronunciation"
         android:layout_below="@+id/knowWord"
         android:layout_centerHorizontal = "true"
-        android:layout_marginTop="14dp" />
+        android:layout_marginTop="14dp"
+        />
 </RelativeLayout>

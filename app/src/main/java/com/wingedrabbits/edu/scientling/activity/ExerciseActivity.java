@@ -72,6 +72,7 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
 
         fragmentManager = getFragmentManager();
         replaceFragment(new ChooseExerciseFragment());
+
     }
 
     /**

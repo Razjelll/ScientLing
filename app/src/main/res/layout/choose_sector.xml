@@ -9,6 +9,9 @@
         app:layout_columnWeight="1"
         app:layout_rowWeight="1"
         android:layout_margin="5dp"
+        android:text="kaczka"
+        android:textColor="@color/white"
+
         />
 
     <Button android:id="@+id/answer2"
@@ -16,30 +19,40 @@
         app:layout_columnWeight="1"
         app:layout_rowWeight="1"
         android:layout_margin="5dp"
+        android:text="świnia"
+        android:textColor="@color/white"
         />
     <Button android:id="@+id/answer3"
         android:background="@drawable/button_style"
         app:layout_columnWeight="1"
         app:layout_rowWeight="1"
         android:layout_margin="5dp"
+        android:text="owca"
+        android:textColor="@color/white"
         />
     <Button android:id="@+id/answer4"
-        android:background="@drawable/button_style"
+        android:background="@drawable/button_style2"
         app:layout_columnWeight="1"
         app:layout_rowWeight="1"
         android:layout_margin="5dp"
+        android:text="pies"
+        android:textColor="@color/white"
         />
     <Button android:id="@+id/answer5"
         android:background="@drawable/button_style"
         app:layout_columnWeight="1"
         app:layout_rowWeight="1"
         android:layout_margin="5dp"
+        android:text="kot"
+        android:textColor="@color/white"
         />
     <Button android:id="@+id/answer6"
         android:background="@drawable/button_style"
         app:layout_columnWeight="1"
         app:layout_rowWeight="1"
         android:layout_margin="5dp"
+        android:text="małpa"
+        android:textColor="@color/white"
         />
 
 </android.support.v7.widget.GridLayout>

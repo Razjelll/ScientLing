@@ -19,5 +19,6 @@
         android:layout_below="@+id/wordEditText"
         android:text="@string/check_answer"
         android:background="@drawable/button_selector"
-        android:layout_margin="5dp"/>
+        android:layout_margin="5dp"
+        android:textColor="@color/white"/>
 </LinearLayout>
