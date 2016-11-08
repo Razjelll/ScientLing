@@ -14,4 +14,4 @@ CREATE TABLE Categories(
 CREATE TABLE Translations (
        id INTEGER PRIMARY KEY AUTOINCREMENT,
        translation TEXT NOT NULL UNIQUE
-);
+)b;

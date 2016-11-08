@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -73,6 +74,7 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         fragmentManager = getFragmentManager();
         replaceFragment(new ChooseExerciseFragment());
 
+        Log.d("ExerciseActivity", "onCreate"); //DEBUG //TODO podorabiać pozostałe
     }
 
     /**

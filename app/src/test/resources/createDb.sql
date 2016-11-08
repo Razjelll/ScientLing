@@ -15,3 +15,8 @@ CREATE TABLE Translations (
        id INTEGER PRIMARY KEY AUTOINCREMENT,
        translation TEXT NOT NULL UNIQUE
 );
+CREATE TABLE Sentences(
+       id INTEGER PRIMARY KEY AUTOINCREMENT,
+       sentence TEXT NOT NULL UNIQUE,
+       translation TEXT
+);
