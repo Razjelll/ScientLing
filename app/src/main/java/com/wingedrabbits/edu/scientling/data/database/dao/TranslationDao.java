@@ -33,15 +33,9 @@ public class TranslationDao extends BaseDao<Translation> {
     private final String WHERE_ID = TranslationsColumns.ID + " = ?";
 
 
-    private SQLiteDatabase mDb;
-    private SQLiteStatement mInsertStatement;
-    private String[] mTableColumns;
-
-
     public TranslationDao(SQLiteDatabase db)
     {
-        super();
-        mDb = db;
+        super(db);
         mInsertStatement = mDb.compileStatement(INSERT_STATEMENT);
 
         mTableColumns = new String[2];

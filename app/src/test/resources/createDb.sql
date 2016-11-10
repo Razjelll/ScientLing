@@ -20,3 +20,49 @@ CREATE TABLE Sentences(
        sentence TEXT NOT NULL UNIQUE,
        translation TEXT
 );
+CREATE TABLE Tips(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        content TEXT NOT NULL UNIQUE
+);
+CREATE TABLE Exercises (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE
+);
+CREATE TABLE Sets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        language_fk INTEGER,
+        FOREIGN KEY (language_fk) REFERENCES Languages(id)
+);
+CREATE TABLE Lessons (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        number INTEGER NOT NULL CHECK(number > 0) DEFAULT 1,
+        set_FK INTEGER NOT NULL,
+        FOREIGN KEY (set_FK) REFERENCES Sets(id)
+);
+CREATE TABLE PartsOfSpeech (
+        id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL UNIQUE
+);
+CREATE TABLE Definitions (
+        id INTEGER PRIMARY KEY,
+        definition TEXT NOT NULL,
+        translation NULL
+);
+CREATE TABLE Words (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        word TEXT NOT NULL,
+        transcription TEXT NULL,
+        definition_fk INTEGER NULL,
+        lesson_fk INTEGER NOT NULL,
+        part_of_speech_fk INTEGER NULL,
+        category_fk INTEGER NULL,
+        difficult INTEGER NOT NULL CHECK(difficult >=0 AND difficult <=5) DEFAULT 0,
+        master_level INTEGER NOT NULL CHECK(master_level <= 100) DEFAULT -1,
+        selected INTEGER NOT NULL CHECK(selected = 0 OR selected = 1) DEFAULT 0,
+        FOREIGN KEY (definition_fk) REFERENCES Definitions(id),
+        FOREIGN KEY (lesson_fk) REFERENCES Lessons(id),
+        FOREIGN KEY (part_of_speech_fk) REFERENCES PartsOfSpeech(id),
+        FOREIGN KEY (category_fk) REFERENCES Categories(id)
+);

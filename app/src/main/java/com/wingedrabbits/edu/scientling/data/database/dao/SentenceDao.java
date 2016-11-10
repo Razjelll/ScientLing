@@ -32,13 +32,9 @@ public class SentenceDao extends BaseDao<Sentence> {
             +SentenceColumns.SENTENCE + ", " + SentenceColumns.TRANSLATION
             +") VALUES (?,?)";
 
-    private SQLiteDatabase mDb;
-    private SQLiteStatement mInsertStatement;
-    private String[] mTableColumns;
-
     public SentenceDao(SQLiteDatabase db)
     {
-        mDb = db;
+        super(db);
         mInsertStatement = mDb.compileStatement(INSERT_STATEMENT);
         mTableColumns = new String[3];
         mTableColumns[SentenceColumns.ID_POSITION] = SentenceColumns.ID;

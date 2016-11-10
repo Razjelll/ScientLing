@@ -1,5 +1,8 @@
 package com.wingedrabbits.edu.scientling.data.database.dao;
 
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
+
 import java.util.List;
 
 /**
@@ -8,11 +11,17 @@ import java.util.List;
 
 public abstract class BaseDao<T> {
 
+    protected String mSelection;
+    protected String[] mSelectionArgs;
     protected boolean mDistinct;
     protected String mGroupBy;
     protected String mHaving;
     protected String mOrderBy;
     protected String mLimit;
+
+    protected SQLiteDatabase mDb;
+    protected SQLiteStatement mInsertStatement;
+    protected String[] mTableColumns;
 
     public abstract long save(T entity);
     public abstract void update(T entity);
@@ -20,8 +29,11 @@ public abstract class BaseDao<T> {
     public abstract T get(long id);
     public abstract List<T> getAll();
 
-    public BaseDao()
+    public BaseDao(SQLiteDatabase db)
     {
+        mDb = db;
+        mSelection = null;
+        mSelectionArgs = null;
         mDistinct = false;
         mGroupBy = null;
         mHaving = null;
@@ -67,5 +79,21 @@ public abstract class BaseDao<T> {
 
     public void setLimit(String mLimit) {
         this.mLimit = mLimit;
+    }
+
+    public String getmSelection() {
+        return mSelection;
+    }
+
+    public void setmSelection(String mSelection) {
+        this.mSelection = mSelection;
+    }
+
+    public String[] getmSelectionArgs() {
+        return mSelectionArgs;
+    }
+
+    public void setmSelectionArgs(String[] mSelectionArgs) {
+        this.mSelectionArgs = mSelectionArgs;
     }
 }

@@ -32,15 +32,12 @@ public class CategoryDao extends BaseDao<Category> {
             +CategoriesColumns.NAME + ", " + CategoriesColumns.LANGUAGE_FK
             +") VALUES (?,?)";
 
-    private SQLiteDatabase mDB;
-    private SQLiteStatement mInsertStatement;
-    private String[] mTableColumns;
+
 
     public CategoryDao(SQLiteDatabase db)
     {
-        super();
-        mDB = db;
-        mInsertStatement = mDB.compileStatement(INSERT_STATEMENT);
+        super(db);
+        mInsertStatement = mDb.compileStatement(INSERT_STATEMENT);
 
         setTableColumns();
     }
@@ -69,7 +66,7 @@ public class CategoryDao extends BaseDao<Category> {
         //TODO może język też dodać, przenieśc where do stałej
         String where = CategoriesColumns.ID + " =?";
         String[] whereAttributes = new String[]{String.valueOf(entity.getId())};
-        mDB.update(TABLE_NAME, values, where, whereAttributes);
+        mDb.update(TABLE_NAME, values, where, whereAttributes);
     }
 
     @Override
@@ -79,7 +76,7 @@ public class CategoryDao extends BaseDao<Category> {
         {
             String where = CategoriesColumns.ID + " =?";
             String[] whereArguments = new String[]{String.valueOf(id)};
-            mDB.delete(TABLE_NAME, where, whereArguments);
+            mDb.delete(TABLE_NAME, where, whereArguments);
         }
     }
 
@@ -89,7 +86,7 @@ public class CategoryDao extends BaseDao<Category> {
         Category category = null;
         String where = CategoriesColumns.ID + " =?";
         String[] whereAttributes = new String[] {String.valueOf(id)};
-        Cursor cursor = mDB.query(TABLE_NAME, mTableColumns, where, whereAttributes,
+        Cursor cursor = mDb.query(TABLE_NAME, mTableColumns, where, whereAttributes,
                 mGroupBy,mHaving,mOrderBy,mLimit);
         if(cursor.moveToFirst())
         {
@@ -118,7 +115,7 @@ public class CategoryDao extends BaseDao<Category> {
     public List<Category> getAll() {
 
         List<Category> categoriesList = new ArrayList<>();
-        Cursor cursor = mDB.query(TABLE_NAME, mTableColumns, null,null,
+        Cursor cursor = mDb.query(TABLE_NAME, mTableColumns, null,null,
                 mGroupBy,mHaving, mGroupBy, mLimit);// TODO zobaczyć co oznacza nazwa
         if(cursor.moveToFirst())
         {
