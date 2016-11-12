@@ -66,3 +66,16 @@ CREATE TABLE Words (
         FOREIGN KEY (part_of_speech_fk) REFERENCES PartsOfSpeech(id),
         FOREIGN KEY (category_fk) REFERENCES Categories(id)
 );
+CREATE TABLE WordsTranslations (
+       word_fk INTEGER NOT NULL,
+       translation_FK INTEGER NOT NULL,
+       PRIMARY KEY(word_fk, translation_fk),
+       FOREIGN KEY(word_FK) REFERENCES Words(id),
+       FOREIGN KEY (translation_fk) REFERENCES Translations(id)
+);
+CREATE TABLE ExampleSentences (
+        word_fk INTEGER NOT NULL,
+        sentence_fk INTEGER NOT NULL,
+        FOREIGN KEY (word_fk) REFERENCES Words(id),
+        FOREIGN KEY (sentence_fk) REFERENCES Sentences(id)
+);

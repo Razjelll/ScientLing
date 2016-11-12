@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.wingedrabbits.edu.scientling">
+    package="com.dyszlewskiR.edu.scientling">
 
     <application
         android:allowBackup="true"
@@ -10,8 +10,8 @@
 
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         >
-        <activity android:name=".activity.LoginActivity" />
-        <activity android:name=".activity.ExerciseActivity">
+        <activity android:name="com.dyszlewskiR.edu.scientling.activity.LoginActivity" />
+        <activity android:name="com.dyszlewskiR.edu.scientling.activity.ExerciseActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
