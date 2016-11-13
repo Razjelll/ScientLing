@@ -122,7 +122,7 @@ public class LanguageDao extends BaseDao<Language> {
         String where = LanguagesColumns.ID +" =?";
         String[] whereAttributes = new String[] {String.valueOf(id)};
         Cursor cursor = mDb.query(TABLE_NAME, mTableColumns,where, whereAttributes,
-                mGroupBy,mHaving,mOrderBy,mLimit);
+                null,null,null,null);
         if(cursor.moveToFirst())
         {
             language = this.buildLanguageFromCursor(cursor);
@@ -156,11 +156,12 @@ public class LanguageDao extends BaseDao<Language> {
     }
 
     @Override
-    public List<Language> getAll() {
+    public List<Language> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+                                 String groupBy, String having, String orderBy, String limit) {
         List<Language> languagesList = new ArrayList<Language>();
 
-        Cursor cursor = mDb.query(TABLE_NAME, mTableColumns, null,null,
-                mGroupBy,mHaving, mGroupBy, mLimit);
+        Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection,selectionArgs,
+                groupBy,having, orderBy, limit);
         if(cursor.moveToFirst())
         {
             do{

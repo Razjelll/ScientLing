@@ -102,10 +102,11 @@ public class LessonDao extends BaseDao<Lesson> {
     }
 
     @Override
-    public List<Lesson> getAll() {
+    public List<Lesson> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+                               String groupBy, String having, String orderBy, String limit) {
         List<Lesson> lessonsList = new ArrayList<>();
-        Cursor cursor = mDb.query(mDistinct, LessonsTable.TABLE_NAME, mTableColumns, mSelection,mSelectionArgs,
-                mGroupBy,mHaving,mOrderBy,mLimit);
+        Cursor cursor = mDb.query(distinct, LessonsTable.TABLE_NAME, columns, selection,selectionArgs,
+                groupBy,having,orderBy,limit);
         if(cursor.moveToFirst())
         {
             Lesson lesson = null;

@@ -75,7 +75,8 @@ public class SentenceDao extends BaseDao<Sentence> {
         Sentence sentence = null;
         String where = SentencesColumns.ID + "= ?";
         String[] whereArguments = new String[]{String.valueOf(id)};
-        Cursor cursor = mDb.query(TABLE_NAME, mTableColumns,where,whereArguments,mGroupBy,mHaving, mOrderBy,mLimit);
+        Cursor cursor = mDb.query(TABLE_NAME, mTableColumns,where,whereArguments,
+                null,null, null,null);
         if(cursor.moveToFirst())
         {
             SentenceCreator sentenceCreator = new SentenceCreator();
@@ -86,10 +87,11 @@ public class SentenceDao extends BaseDao<Sentence> {
     }
 
     @Override
-    public List<Sentence> getAll(){
+    public List<Sentence> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+                                 String groupBy, String having, String orderBy, String limit){
         List<Sentence> sentencesList = new ArrayList<>();
-        Cursor cursor = mDb.query(mDistinct, TABLE_NAME, mTableColumns, null,null,
-                mGroupBy,mHaving,mOrderBy,mLimit);
+        Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection,selectionArgs,
+                groupBy,having,orderBy,limit);
         if(cursor.moveToFirst())
         {
             Sentence sentence = null;

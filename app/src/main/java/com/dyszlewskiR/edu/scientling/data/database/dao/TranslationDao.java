@@ -73,7 +73,7 @@ public class TranslationDao extends BaseDao<Translation> {
         Translation translation = null;
         String[] whereAttributes = new String[]{String.valueOf(id)};
         Cursor cursor = mDb.query(TranslationsTable.TABLE_NAME, mTableColumns, WHERE_ID, whereAttributes,
-                mGroupBy,mHaving,mOrderBy,mLimit);
+                null,null,null,null);
         if(cursor.moveToFirst())
         {
             translation = this.buildTranslationFromCursor(cursor);
@@ -98,10 +98,11 @@ public class TranslationDao extends BaseDao<Translation> {
     }
 
     @Override
-    public List<Translation> getAll() {
+    public List<Translation> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+                                    String groupBy, String having, String orderBy, String limit) {
         List<Translation> translationsList = new ArrayList<>();
-        Cursor cursor = mDb.query(TranslationsTable.TABLE_NAME, mTableColumns, null, null,
-                mGroupBy,mHaving,mOrderBy,mLimit);
+        Cursor cursor = mDb.query(distinct, TranslationsTable.TABLE_NAME, columns, selection, selectionArgs,
+                groupBy,having,orderBy,limit);
         if(cursor.moveToFirst())
         {
             Translation translation = null;
@@ -126,7 +127,7 @@ public class TranslationDao extends BaseDao<Translation> {
         String where  = TranslationsColumns.TRANSLATION + " =?";
         String[] whereArguments = new String[]{content};
         Cursor cursor = mDb.query(TranslationsTable.TABLE_NAME, mTableColumns, where, whereArguments,
-                mGroupBy,mHaving,mOrderBy,mLimit);
+                null,null,null,null);
         if(cursor.moveToFirst()) {
             translation = buildTranslationFromCursor(cursor);
         }

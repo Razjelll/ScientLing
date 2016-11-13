@@ -12,13 +12,6 @@ import java.util.List;
 
 public abstract class BaseDao<T> {
 
-    protected String mSelection;
-    protected String[] mSelectionArgs;
-    protected boolean mDistinct;
-    protected String mGroupBy;
-    protected String mHaving;
-    protected String mOrderBy;
-    protected String mLimit;
 
     protected SQLiteDatabase mDb;
     protected SQLiteStatement mInsertStatement;
@@ -28,7 +21,18 @@ public abstract class BaseDao<T> {
     public abstract void update(T entity);
     public abstract void delete(T entity);
     public abstract T get(long id);
-    public abstract List<T> getAll();
+    public abstract List<T> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+                                   String groupBy, String having, String orderBy, String limit);
+    public List<T> getAll()
+    {
+        return getAll(false,mTableColumns,null,null,null,null,null,null);
+    }
+
+    public List<T> getAll(boolean distinct, String selection, String[] selectionArgs,
+                          String groupBy, String having, String orderBy, String limit)
+    {
+        return getAll(distinct, mTableColumns, selection,selectionArgs, groupBy,having, orderBy,limit);
+    }
 
     protected void closeCursor(Cursor cursor)
     {
@@ -44,68 +48,8 @@ public abstract class BaseDao<T> {
     public BaseDao(SQLiteDatabase db)
     {
         mDb = db;
-        mSelection = null;
-        mSelectionArgs = null;
-        mDistinct = false;
-        mGroupBy = null;
-        mHaving = null;
-        mOrderBy = null;
-        mLimit = null;
+
     }
 
-    public boolean isDistinct() {
-        return mDistinct;
-    }
 
-    public void setDistinct(boolean mDistinct) {
-        this.mDistinct = mDistinct;
-    }
-
-    public String getGroupBy() {
-        return mGroupBy;
-    }
-
-    public void setGroupBy(String mGroupBy) {
-        this.mGroupBy = mGroupBy;
-    }
-
-    public String getHaving() {
-        return mHaving;
-    }
-
-    public void setHaving(String mHaving) {
-        this.mHaving = mHaving;
-    }
-
-    public String getOrderBy() {
-        return mOrderBy;
-    }
-
-    public void setOrderBy(String mOrderBy) {
-        this.mOrderBy = mOrderBy;
-    }
-
-    public String getLimit() {
-        return mLimit;
-    }
-
-    public void setLimit(String mLimit) {
-        this.mLimit = mLimit;
-    }
-
-    public String getmSelection() {
-        return mSelection;
-    }
-
-    public void setmSelection(String mSelection) {
-        this.mSelection = mSelection;
-    }
-
-    public String[] getmSelectionArgs() {
-        return mSelectionArgs;
-    }
-
-    public void setmSelectionArgs(String[] mSelectionArgs) {
-        this.mSelectionArgs = mSelectionArgs;
-    }
 }

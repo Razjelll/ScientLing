@@ -91,10 +91,11 @@ public class PartOfSpeechDao extends BaseDao<PartOfSpeech> {
     }
 
     @Override
-    public List<PartOfSpeech> getAll() {
+    public List<PartOfSpeech> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+                                     String groupBy, String having, String orderBy, String limit) {
         List<PartOfSpeech> partsOfSpeechList = new ArrayList<>();
-        Cursor cursor = mDb.query(mDistinct, PartsOfSpeechTable.TABLE_NAME, mTableColumns, mSelection,mSelectionArgs,
-                mGroupBy,mHaving,mOrderBy,mLimit);
+        Cursor cursor = mDb.query(distinct, PartsOfSpeechTable.TABLE_NAME, columns, selection,selectionArgs,
+                groupBy,having,orderBy,limit);
         if(cursor.moveToFirst())
         {
             PartOfSpeech partOfSpeech = null;

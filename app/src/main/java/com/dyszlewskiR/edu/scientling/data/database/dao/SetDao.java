@@ -105,10 +105,11 @@ public class SetDao extends BaseDao<VocabularySet>{
     }
 
     @Override
-    public List<VocabularySet> getAll() {
+    public List<VocabularySet> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+                                      String groupBy, String having, String orderBy, String limit) {
         List<VocabularySet> setsList = new ArrayList<>();
-        Cursor cursor = mDb.query(mDistinct,TABLE_NAME,mTableColumns,mSelection,mSelectionArgs,
-                mGroupBy,mHaving,mOrderBy,mLimit);
+        Cursor cursor = mDb.query(distinct,TABLE_NAME,columns,selection,selectionArgs,
+                groupBy,having,orderBy,limit);
         if(cursor.moveToFirst())
         {
             VocabularySet set = null;

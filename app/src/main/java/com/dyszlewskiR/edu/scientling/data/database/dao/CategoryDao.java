@@ -21,11 +21,10 @@ public class CategoryDao extends BaseDao<Category> {
 
     private final String INSERT_STATEMENT =
             "INSERT INTO " + CategoriesTable.TABLE_NAME + "("
-            + CategoriesColumns.NAME + ", " + CategoriesColumns.LANGUAGE_FK
-            +") VALUES (?,?)";
+                    + CategoriesColumns.NAME + ", " + CategoriesColumns.LANGUAGE_FK
+                    + ") VALUES (?,?)";
 
-    public CategoryDao(SQLiteDatabase db)
-    {
+    public CategoryDao(SQLiteDatabase db) {
         super(db);
         mInsertStatement = mDb.compileStatement(INSERT_STATEMENT);
         mTableColumns = CategoriesTable.getColumn();
@@ -53,8 +52,7 @@ public class CategoryDao extends BaseDao<Category> {
     @Override
     public void delete(Category entity) {
         long id = entity.getId();
-        if(id>0)
-        {
+        if (id > 0) {
             String where = CategoriesColumns.ID + " =?";
             String[] whereArguments = new String[]{String.valueOf(id)};
             mDb.delete(CategoriesTable.TABLE_NAME, where, whereArguments);
@@ -62,47 +60,41 @@ public class CategoryDao extends BaseDao<Category> {
     }
 
     @Override
-    public Category get(long id)
-    {
+    public Category get(long id) {
         Category category = null;
         String where = CategoriesColumns.ID + " =?";
-        String[] whereAttributes = new String[] {String.valueOf(id)};
+        String[] whereAttributes = new String[]{String.valueOf(id)};
         Cursor cursor = mDb.query(TABLE_NAME, mTableColumns, where, whereAttributes,
-                mGroupBy,mHaving,mOrderBy,mLimit);
-        if(cursor.moveToFirst())
-        {
+                null, null, null, null);
+        if (cursor.moveToFirst()) {
             CategoryCreator categoryCreator = new CategoryCreator();
             category = categoryCreator.createFromCursor(cursor);
         }
-        if(!cursor.isClosed())
-        {
+        if (!cursor.isClosed()) {
             cursor.close();
         }
         return category;
     }
 
     @Override
-    public List<Category> getAll() {
+    public List<Category> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+                                 String groupBy, String having, String orderBy, String limit) {
 
         List<Category> categoriesList = new ArrayList<>();
-        Cursor cursor = mDb.query(TABLE_NAME, mTableColumns, null,null,
-                mGroupBy,mHaving, mGroupBy, mLimit);// TODO zobaczyć co oznacza nazwa
-        if(cursor.moveToFirst())
-        {
+        Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection, selectionArgs,
+                groupBy, having, orderBy, limit);// TODO zobaczyć co oznacza nazwa
+        if (cursor.moveToFirst()) {
             CategoryCreator categoryCreator = new CategoryCreator();
-            do{
+            do {
                 Category category = categoryCreator.createFromCursor(cursor);
-                if(category != null)
-                {
+                if (category != null) {
                     categoriesList.add(category);
                 }
-            } while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
-        if(!cursor.isClosed())
-        {
+        if (!cursor.isClosed()) {
             cursor.close();
         }
         return categoriesList;
-
     }
 }

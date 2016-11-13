@@ -90,10 +90,11 @@ public class ExerciseDao extends BaseDao<Exercise> {
     }
 
     @Override
-    public List<Exercise> getAll() {
+    public List<Exercise> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+                                 String groupBy, String having, String orderBy, String limit) {
         List<Exercise> exercisesList = new ArrayList<>();
-        Cursor cursor = mDb.query(mDistinct, ExercisesTable.TABLE_NAME, mTableColumns, mSelection, mSelectionArgs,
-                mGroupBy,mHaving,mOrderBy,mLimit);
+        Cursor cursor = mDb.query(distinct, ExercisesTable.TABLE_NAME, columns, selection, selectionArgs,
+                groupBy,having,orderBy,limit);
         if(cursor.moveToFirst())
         {
             Exercise exercise = null;

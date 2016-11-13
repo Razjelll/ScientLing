@@ -54,16 +54,55 @@ public class QueryReader {
         StringBuilder statementBuilder = new StringBuilder();
         Scanner scanner = new Scanner(stream);
         String word = null;
-        while(scanner.hasNext())
+        while(scanner.hasNext()) //TODO refaktoryzacja
         {
             word = scanner.next();
-            statementBuilder.append(word);
-            statementBuilder.append(" ");
-            if(word.contains(STATEMENTS_SEP))
+            if(word.contains(COMMENT))
             {
-                statementsList.add(statementBuilder.toString());
-                statementBuilder.setLength(0);
+                int commentBeginIndex = word.indexOf(COMMENT);
+                word = word.substring(0,commentBeginIndex);
+                scanner.nextLine();
+            }else
+            {
+                if(word.contains(START_COMMENT))
+                {
+                    int commentBeginIndex = word.indexOf(START_COMMENT);
+                    if(word.contains(END_COMMENT))
+                    {
+                        int commentEndIndex = word.indexOf(END_COMMENT);
+                        word = word.substring(0, commentBeginIndex) + " " +
+                                word.substring(commentEndIndex+2,word.length());
+                    }
+                    else
+                    {
+                        word = word.substring(0, commentBeginIndex);
+                    }
+                }
+                if(word.contains(END_COMMENT))
+                {
+                    int commentEndIndex = word.indexOf(END_COMMENT);
+                    word = word.substring(commentEndIndex +2, word.length());
+                }
+
             }
+
+            if(!word.equals(""))
+            {
+                statementBuilder.append(word);
+                if(word.contains(STATEMENTS_SEP))
+                {
+
+                    statementsList.add(statementBuilder.toString());
+                    statementBuilder.setLength(0);
+                }
+                else
+                {
+                    statementBuilder.append(" ");
+                }
+            }
+
+
+
         }
 
         return statementsList;

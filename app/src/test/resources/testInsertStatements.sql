@@ -18,17 +18,21 @@ INSERT INTO Categories(name, language_fk)
 VALUES  ('War',1);
 
 INSERT INTO Translations(translation)
-VALUES ('Pies');
+VALUES ('Pies'); --1
 INSERT INTO Translations(translation)
-VALUES ('Piesek');
+VALUES ('Piesek'); --2
 INSERT INTO Translations(translation)
-VALUES ('Diabeł');
+VALUES ('Diabeł'); --3
 INSERT INTO Translations(translation)
-VALUES ('Czort');
+VALUES ('Czort'); --4
 INSERT INTO Translations(translation)
-VALUES ('Demon');
+VALUES ('Demon'); --5
 INSERT INTO Translations(translation)
-VALUES ('Kaczka');
+VALUES ('Kaczka'); --6
+INSERT INTO Translations(translation)
+VALUES ('Laptop'); --7
+INSERT INTO Translations(translation)
+VALUES ('Lampa'); --8
 
 INSERT INTO Sentences(sentence, translation)
 VALUES ('This is very polite dog', 'To jest bardzo grzeczny piesek');
@@ -64,9 +68,13 @@ INSERT INTO Definitions(definition, translation)
 VALUES ('domestic mammal closely related with gray wold','udomowiony ssak blisko powiązany z szarym wilkiem');
 
 INSERT INTO Words(word, transcription, definition_fk, lesson_fk, part_of_speech_fk, category_fk, difficult, master_level, selected)
-VALUES ('dog', 'dog', 2,1,1,1,5,-1,0);
+VALUES ('dog', 'dog', 2,1,1,1,5,-1,0); --1
 INSERT INTO Words(word, transcription, definition_fk, lesson_fk, part_of_speech_fk, category_fk, difficult, master_level, selected)
-VALUES ('devil', 'dada', 1,1,2,2,1,50,1);
+VALUES ('devil', 'dada', 1,1,2,2,1,50,1); --2
+INSERT INTO Words(word, transcription,  lesson_fk, part_of_speech_fk, category_fk, difficult, master_level, selected)
+VALUES ('laptop', 'laptop',1,2,2,3,-1,1); --3
+INSERT INTO Words(word, transcription, definition_fk, lesson_fk, part_of_speech_fk, category_fk, difficult, master_level, selected)
+VALUES ('lamp', 'lamp', 1,1,1,1,3,-1,1); --4
 
 INSERT INTO WordsTranslations (word_fk, translation_fk)
 VALUES (1,1);
@@ -78,6 +86,10 @@ INSERT INTO WordsTranslations (word_fk, translation_fk)
 VALUES (2,4);
 INSERT INTO WordsTranslations (word_fk, translation_fk)
 VALUES (1,3);
+INSERT INTO WordsTranslations (word_fk, translation_fk)
+VALUES (3,7);
+INSERT INTO WordsTranslations (word_fk, translation_fk)
+VALUES (4,8);
 
 
 

@@ -11,11 +11,14 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Razjelll on 07.11.2016.
@@ -28,12 +31,7 @@ public class QueryReaderTest {
     private Context mContext;
     private QueryReader mReader;
 
-    private final String correctString1 = "CREATE TABLE Languages (" +
-            " id INTEGER PRIMARY KEY AUTOINCREMENT," +
-            " name TEXT NOT NULL," +
-            " abbreviation TEXT CHECK (length(abbreviation)<=4) NOT NULL," +
-            " code TEXT CHECK(length(code) = 5)NOT NULL UNIQUE" +
-            ");";
+
 
     @Before
     public void setUp()
@@ -44,10 +42,32 @@ public class QueryReaderTest {
 
     @Test
     public void testReadQuery() throws IOException {
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("createDb.sql");
+        String query  = "SELECT jeden \n FROM tablica; SELECT dwa FROM talica;" +
+                " INSERT INTO Ziemniaki(Bulwa) \n VALUES (Kartofel);";
+        String correctResult = "SELECT jeden FROM tablica;";
+        InputStream inputStream = new ByteArrayInputStream(query.getBytes());
         ArrayList<String> sqlQueries = mReader.readFromStream(inputStream);
         assertEquals(3, sqlQueries.size());
-        assertEquals(correctString1, sqlQueries.get(0));
+        assertEquals(correctResult, sqlQueries.get(0));
+    }
+
+    @Test
+    public void testReadQueryWithComments() throws IOException {
+        String query = "SELECT * --To jest komentarz \n"
+                + " FROM Tablica;";
+        String query2 = "SELECT *--To jest komentarz \n"
+                + " FROM Tablica;";
+        String query3 = "SELECT/*KOMENTARZ*/* FROM Tablica;";
+        String correctResult = "SELECT * FROM Tablica;";
+        InputStream inputStream = new ByteArrayInputStream(query.getBytes());
+        ArrayList<String> sqlQueries = mReader.readFromStream(inputStream);
+        assertEquals(correctResult, sqlQueries.get(0));
+        inputStream = new ByteArrayInputStream(query2.getBytes());
+        sqlQueries = mReader.readFromStream(inputStream);
+        assertEquals(correctResult, sqlQueries.get(0));
+        inputStream = new ByteArrayInputStream(query3.getBytes());
+        sqlQueries = mReader.readFromStream(inputStream);
+        assertEquals(correctResult, sqlQueries.get(0));
     }
 
 }

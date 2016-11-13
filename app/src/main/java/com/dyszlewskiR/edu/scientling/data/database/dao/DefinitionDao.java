@@ -83,10 +83,11 @@ public class DefinitionDao extends BaseDao<Definition> {
     }
 
     @Override
-    public List<Definition> getAll() {
+    public List<Definition> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+                                   String groupBy, String having, String orderBy, String limit) {
         List<Definition> definitionsList = new ArrayList<>();
-        Cursor cursor = mDb.query(mDistinct, DefinitionsTable.TABLE_NAME, mTableColumns, mSelection, mSelectionArgs,
-                mGroupBy, mHaving, mOrderBy, mLimit);
+        Cursor cursor = mDb.query(distinct, DefinitionsTable.TABLE_NAME, columns, selection, selectionArgs,
+                groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
             Definition definition = null;
             DefinitionCreator definitionCreator = new DefinitionCreator();

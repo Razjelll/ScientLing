@@ -119,4 +119,14 @@ public class DataManagerTest {
         assertEquals("To jest przykładowe zdanie", word.getSentences().get(0).getTranslation());
     }
 
+    @Test
+    public void testGetQuestions()
+    {
+        ArrayList<Word> questions = mDataManager.getQuestions(-1, 1, 1, 3, 5);
+        assertTrue(questions.size() != 0);
+        assertEquals("lamp", questions.get(0).getWord());
+        assertNotNull(questions.get(0).getTranslations());
+        assertEquals("Lampa", questions.get(0).getTranslations().get(0).getTranslation() );
+    }
+
 }

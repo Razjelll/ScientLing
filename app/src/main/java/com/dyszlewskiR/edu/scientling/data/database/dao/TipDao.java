@@ -91,10 +91,11 @@ public class TipDao extends BaseDao<Tip> {
     }
 
     @Override
-    public List<Tip> getAll() {
+    public List<Tip> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+                            String groupBy, String having, String orderBy, String limit) {
         List<Tip> tipsList = new ArrayList<>();
-        Cursor cursor = mDb.query(mDistinct, TABLE_NAME, mTableColumns, mSelection, mSelectionArgs,
-                mGroupBy, mHaving, mOrderBy, mLimit);
+        Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection, selectionArgs,
+                groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
             Tip tip = null;
             do {
