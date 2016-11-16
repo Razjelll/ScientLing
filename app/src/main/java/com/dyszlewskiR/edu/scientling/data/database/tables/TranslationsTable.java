@@ -6,12 +6,14 @@ package com.dyszlewskiR.edu.scientling.data.database.tables;
 
 public class TranslationsTable {
     public static final String TABLE_NAME = "Translations";
+    public static final String ALIAS = "T";
+    public static final String ALIAS_DOT = ALIAS + ".";
     public static class TranslationsColumns{
         public static final String ID = "id";
-        public static final String TRANSLATION = "translation";
+        public static final String CONTENT = "content";
 
         public static final int ID_POSITION = 0;
-        public static final int TRANSLATION_POSITION = 1;
+        public static final int CONTENT_POSITION = 1;
 
         public static final int COLUMNS_COUNT = 2;
     }
@@ -20,7 +22,7 @@ public class TranslationsTable {
     {
         String[] columns = new String[2];
         columns[TranslationsColumns.ID_POSITION] = TranslationsColumns.ID;
-        columns[TranslationsColumns.TRANSLATION_POSITION] = TranslationsColumns.TRANSLATION;
+        columns[TranslationsColumns.CONTENT_POSITION] = TranslationsColumns.CONTENT;
 
         return columns;
     }

@@ -6,7 +6,7 @@ package com.dyszlewskiR.edu.scientling.data.models;
 
 public class Definition {
     private long id;
-    private String definition;
+    private String content;
     private String translation;
 
     public Definition(){}
@@ -24,12 +24,12 @@ public class Definition {
         this.id = id;
     }
 
-    public String getDefinition() {
-        return definition;
+    public String getContent() {
+        return content;
     }
 
-    public void setDefinition(String definition) {
-        this.definition = definition;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getTranslation() {
@@ -48,7 +48,7 @@ public class Definition {
         Definition that = (Definition) o;
 
         if (id != that.id) return false;
-        if (definition != null ? !definition.equals(that.definition) : that.definition != null)
+        if (content != null ? !content.equals(that.content) : that.content != null)
             return false;
         return translation != null ? translation.equals(that.translation) : that.translation == null;
 
@@ -57,7 +57,7 @@ public class Definition {
     @Override
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (definition != null ? definition.hashCode() : 0);
+        result = 31 * result + (content != null ? content.hashCode() : 0);
         result = 31 * result + (translation != null ? translation.hashCode() : 0);
         return result;
     }

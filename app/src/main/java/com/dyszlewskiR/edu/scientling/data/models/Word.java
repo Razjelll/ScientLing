@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Word {
 
     private long id;
-    private String word;
+    private String content;
     private String transcription;
     private Definition definition;
     private PartOfSpeech partsOfSpeech;
@@ -46,12 +46,12 @@ public class Word {
         this.id = id;
     }
 
-    public String getWord() {
-        return word;
+    public String getContent() {
+        return content;
     }
 
-    public void setWord(String word) {
-        this.word = word;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getTranscription() {

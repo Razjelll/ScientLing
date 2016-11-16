@@ -37,12 +37,12 @@ public class SentenceDaoTest {
     {
         mSentence1 = new Sentence();
         mSentence1.setId(1);
-        mSentence1.setSentence("This is pen");
+        mSentence1.setContent("This is pen");
         mSentence1.setTranslation("To jest długopis");
 
         mSentence2 = new Sentence();
         mSentence2.setId(2);
-        mSentence2.setSentence("I have very old dog");
+        mSentence2.setContent("I have very old dog");
         mSentence2.setTranslation("Mam bardzo starego psa");
 
         mDbHelper.setFileOpener(new ResourcesFileOpener());
@@ -72,7 +72,7 @@ public class SentenceDaoTest {
         mDao.save(mSentence1);
         Sentence sentence = mDao.get(1);
         assertEquals(1, sentence.getId());
-        assertEquals("This is pen", sentence.getSentence());
+        assertEquals("This is pen", sentence.getContent());
         assertEquals("To jest długopis", sentence.getTranslation());
     }
 
@@ -115,7 +115,7 @@ public class SentenceDaoTest {
         long id2 = mDao.save(mSentence2);
         Sentence sentence = mDao.getByContent("This is pen");
         assertEquals(1, sentence.getId());
-        assertEquals("This is pen",sentence.getSentence());
+        assertEquals("This is pen",sentence.getContent());
         assertEquals("To jest długopis", sentence.getTranslation());
     }
 

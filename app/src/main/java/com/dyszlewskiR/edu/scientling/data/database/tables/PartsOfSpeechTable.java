@@ -6,6 +6,8 @@ package com.dyszlewskiR.edu.scientling.data.database.tables;
 
 public class PartsOfSpeechTable {
     public static final String TABLE_NAME = "PartsOfSpeech";
+    public static final String ALIAS = "POS";
+    public static final String ALIAS_DOT = ALIAS + ".";
     public static class PartsOfSpeechColumns {
         public static final String ID = "id";
         public static final String NAME = "name";

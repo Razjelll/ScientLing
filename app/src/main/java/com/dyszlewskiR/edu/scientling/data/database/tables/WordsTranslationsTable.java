@@ -6,6 +6,8 @@ package com.dyszlewskiR.edu.scientling.data.database.tables;
 
 public class WordsTranslationsTable {
     public static final String TABLE_NAME = "WordsTranslations";
+    public static final String ALIAS = "WT";
+    public static final String ALIAS_DOT = ALIAS + ".";
 
     public static class WordsTranslationsColumns {
         public static final String WORD_FK = "word_fk";

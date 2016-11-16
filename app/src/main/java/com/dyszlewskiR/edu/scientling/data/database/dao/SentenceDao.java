@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.ExampleSentences;
 import com.dyszlewskiR.edu.scientling.data.database.tables.SentencesTable;
-import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTranslationsTable;
 import com.dyszlewskiR.edu.scientling.data.models.Sentence;
 import com.dyszlewskiR.edu.scientling.data.models.creators.SentenceCreator;
 
@@ -24,7 +23,7 @@ public class SentenceDao extends BaseDao<Sentence> {
 
     private final String INSERT_STATEMENT =
             "INSERT INTO " + TABLE_NAME + "("
-            +SentencesColumns.SENTENCE + ", " + SentencesColumns.TRANSLATION
+            +SentencesColumns.CONTENT + ", " + SentencesColumns.TRANSLATION
             +") VALUES (?,?)";
 
     private final String SELECT_LINK_STATEMENT =
@@ -43,7 +42,7 @@ public class SentenceDao extends BaseDao<Sentence> {
     @Override
     public long save(Sentence entity) {
         mInsertStatement.clearBindings();
-        mInsertStatement.bindString(1, entity.getSentence());
+        mInsertStatement.bindString(1, entity.getContent());
         mInsertStatement.bindString(2, entity.getTranslation());
         return mInsertStatement.executeInsert();
     }
@@ -51,7 +50,7 @@ public class SentenceDao extends BaseDao<Sentence> {
     @Override
     public void update(Sentence entity) {
         final ContentValues values = new ContentValues();
-        values.put(SentencesColumns.SENTENCE, entity.getSentence());
+        values.put(SentencesColumns.CONTENT, entity.getContent());
         values.put(SentencesColumns.TRANSLATION, entity.getTranslation());
 
         String where = SentencesColumns.ID + "= ?";
@@ -144,7 +143,7 @@ public class SentenceDao extends BaseDao<Sentence> {
     public Sentence getByContent(String content)
     {
         Sentence sentence = null;
-        String where = SentencesColumns.SENTENCE + " = ?";
+        String where = SentencesColumns.CONTENT + " = ?";
         String[] whereArguments = new String[]{content};
         Cursor cursor = mDb.query(SentencesTable.TABLE_NAME, mTableColumns, where, whereArguments,
                 null,null,null,null);

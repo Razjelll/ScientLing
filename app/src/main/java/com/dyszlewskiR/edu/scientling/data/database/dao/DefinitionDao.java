@@ -21,7 +21,7 @@ public class DefinitionDao extends BaseDao<Definition> {
 
     private final String INSERT_STATEMENT =
             "INSERT INTO " + DefinitionsTable.TABLE_NAME + "("
-                    + DefinitionsColumns.DEFINITION + ", " + DefinitionsColumns.TRANSLATION
+                    + DefinitionsColumns.CONTENT + ", " + DefinitionsColumns.TRANSLATION
                     + ") VALUES (?, ?)";
     private final String WHERE_ID = DefinitionsColumns.ID + "= ?";
 
@@ -36,7 +36,7 @@ public class DefinitionDao extends BaseDao<Definition> {
     @Override
     public long save(Definition entity) {
         mInsertStatement.clearBindings();
-        mInsertStatement.bindString(DefinitionsColumns.DEFINITION_POSITION, entity.getDefinition());
+        mInsertStatement.bindString(DefinitionsColumns.CONTENT_POSITION, entity.getContent());
         if (entity.getTranslation() != null) {
             mInsertStatement.bindString(DefinitionsColumns.TRANSLATION_POSITION, entity.getTranslation());
 
@@ -49,7 +49,7 @@ public class DefinitionDao extends BaseDao<Definition> {
     @Override
     public void update(Definition entity) {
         final ContentValues values = new ContentValues();
-        values.put(DefinitionsColumns.DEFINITION, entity.getDefinition());
+        values.put(DefinitionsColumns.CONTENT, entity.getContent());
         values.put(DefinitionsColumns.TRANSLATION, entity.getTranslation());
 
         String[] whereArguments = new String[]{String.valueOf(entity.getId())};

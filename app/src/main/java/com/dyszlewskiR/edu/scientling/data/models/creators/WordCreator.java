@@ -25,7 +25,7 @@ public class WordCreator implements IModelCreator<Word> {
         if (cursor != null) {
             word = new Word();
             word.setId(cursor.getLong(WordsTable.WordsColumns.ID_POSITION));
-            word.setWord(cursor.getString(WordsTable.WordsColumns.WORD_POSITION));
+            word.setContent(cursor.getString(WordsTable.WordsColumns.CONTENT_POSITION));
             if(cursor.getColumnCount() > 2)
             {
                 word.setTranscription(cursor.getString(WordsTable.WordsColumns.TRANSCRIPTION_POSITION));
@@ -33,7 +33,7 @@ public class WordCreator implements IModelCreator<Word> {
                 if (definitionId > 0) {
                     Definition definition = new Definition();
                     definition.setId(definitionId);
-                    definition.setDefinition(cursor.getString(DEFINITION_DEFINITION_POSITION));
+                    definition.setContent(cursor.getString(DEFINITION_DEFINITION_POSITION));
                     definition.setTranslation(cursor.getString(DEFINITION_TRANSLATION_POSITION));
                     word.setDefinition(definition);
                 }

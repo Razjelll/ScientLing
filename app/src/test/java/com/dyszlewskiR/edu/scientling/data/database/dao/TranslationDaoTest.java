@@ -6,7 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import com.dyszlewskiR.edu.scientling.BuildConfig;
 import com.dyszlewskiR.edu.scientling.data.database.DatabaseHelper;
 import com.dyszlewskiR.edu.scientling.data.models.Translation;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
 import com.dyszlewskiR.edu.scientling.utils.ResourcesFileOpener;
 
 import org.junit.Test;
@@ -40,11 +39,11 @@ public class TranslationDaoTest {
     {
         mTranslation1 = new Translation();
         mTranslation1.setId(1);
-        mTranslation1.setTranslation("Pies");
+        mTranslation1.setContent("Pies");
 
         mTranslation2 = new Translation();
         mTranslation2.setId(2);
-        mTranslation2.setTranslation("Kaczka");
+        mTranslation2.setContent("Kaczka");
 
         mDbHelper.setFileOpener(new ResourcesFileOpener());
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -68,7 +67,7 @@ public class TranslationDaoTest {
         mDao.save(mTranslation1);
         Translation translation = mDao.get(1);
         assertEquals(mTranslation1.getId(), translation.getId());
-        assertEquals(mTranslation1.getTranslation(), translation.getTranslation());
+        assertEquals(mTranslation1.getContent(), translation.getContent());
     }
 
     @Test
@@ -95,10 +94,10 @@ public class TranslationDaoTest {
     {
         long id = mDao.save(mTranslation1);
         Translation translation = mDao.get(id);
-        translation.setTranslation("Ptak");
+        translation.setContent("Ptak");
         mDao.update(translation);
         translation = mDao.get(id);
-        assertEquals("Ptak", translation.getTranslation());
+        assertEquals("Ptak", translation.getContent());
     }
 
     @Test
@@ -106,7 +105,7 @@ public class TranslationDaoTest {
     {
         mDao.save(mTranslation1);
         Translation translation = mDao.getByContent("Pies");
-        assertEquals("Pies", translation.getTranslation());
+        assertEquals("Pies", translation.getContent());
         assertEquals(1, translation.getId());
     }
 

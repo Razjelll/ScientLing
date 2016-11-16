@@ -8,7 +8,7 @@ public class Sentence{
 
 
     private long id;
-    private String sentence;
+    private String content;
     private String translation;
 
     public Sentence(){}
@@ -25,12 +25,12 @@ public class Sentence{
         this.id = id;
     }
 
-    public String getSentence() {
-        return sentence;
+    public String getContent() {
+        return content;
     }
 
-    public void setSentence(String sentence) {
-        this.sentence = sentence;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getTranslation() {
@@ -49,7 +49,7 @@ public class Sentence{
         Sentence sentence1 = (Sentence) o;
 
         if (id != sentence1.id) return false;
-        if (sentence != null ? !sentence.equals(sentence1.sentence) : sentence1.sentence != null)
+        if (content != null ? !content.equals(sentence1.content) : sentence1.content != null)
             return false;
         return translation != null ? translation.equals(sentence1.translation) : sentence1.translation == null;
 
@@ -58,7 +58,7 @@ public class Sentence{
     @Override
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (sentence != null ? sentence.hashCode() : 0);
+        result = 31 * result + (content != null ? content.hashCode() : 0);
         result = 31 * result + (translation != null ? translation.hashCode() : 0);
         return result;
     }

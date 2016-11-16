@@ -13,11 +13,11 @@ CREATE TABLE Categories(
 );
 CREATE TABLE Translations (
        id INTEGER PRIMARY KEY AUTOINCREMENT,
-       translation TEXT NOT NULL UNIQUE
+       content TEXT NOT NULL UNIQUE
 );
 CREATE TABLE Sentences(
        id INTEGER PRIMARY KEY AUTOINCREMENT,
-       sentence TEXT NOT NULL UNIQUE,
+       content TEXT NOT NULL UNIQUE,
        translation TEXT
 );
 CREATE TABLE Tips(
@@ -47,12 +47,12 @@ CREATE TABLE PartsOfSpeech (
 );
 CREATE TABLE Definitions (
         id INTEGER PRIMARY KEY,
-        definition TEXT NOT NULL,
+        content TEXT NOT NULL,
         translation NULL
 );
 CREATE TABLE Words (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        word TEXT NOT NULL,
+        content TEXT NOT NULL,
         transcription TEXT NULL,
         definition_fk INTEGER NULL,
         lesson_fk INTEGER NOT NULL,

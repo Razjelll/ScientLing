@@ -3,7 +3,6 @@ package com.dyszlewskiR.edu.scientling.data.database.dao;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.TranslationsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTranslationsTable;
@@ -25,7 +24,7 @@ public class TranslationDao extends BaseDao<Translation> {
 
     private final String INSERT_STATEMENT =
             "INSERT INTO " + TranslationsTable.TABLE_NAME + "("
-            +TranslationsColumns.TRANSLATION + ") VALUES (?)";
+            +TranslationsColumns.CONTENT + ") VALUES (?)";
     private final String SELECT_LINK_STATEMENT =
             "SELECT T.* FROM " + WordsTranslationsTable.TABLE_NAME
             + " WT JOIN "+ TranslationsTable.TABLE_NAME + " T ON WT."
@@ -43,14 +42,14 @@ public class TranslationDao extends BaseDao<Translation> {
     @Override
     public long save(Translation entity) {
         mInsertStatement.clearBindings();
-        mInsertStatement.bindString(1, entity.getTranslation());
+        mInsertStatement.bindString(1, entity.getContent());
         return mInsertStatement.executeInsert();
     }
 
     @Override
     public void update(Translation entity) {
         final ContentValues values = new ContentValues();
-        values.put(TranslationsColumns.TRANSLATION, entity.getTranslation());
+        values.put(TranslationsColumns.CONTENT, entity.getContent());
         String[] whereArguments = new String[]{String.valueOf(entity.getId())};
         mDb.update(TranslationsTable.TABLE_NAME,values, WHERE_ID, whereArguments);
     }
@@ -92,7 +91,7 @@ public class TranslationDao extends BaseDao<Translation> {
         {
             translation = new Translation();
             translation.setId(cursor.getLong(TranslationsColumns.ID_POSITION));
-            translation.setTranslation(cursor.getString(TranslationsColumns.TRANSLATION_POSITION));
+            translation.setContent(cursor.getString(TranslationsColumns.CONTENT_POSITION));
         }
         return translation;
     }
@@ -124,7 +123,7 @@ public class TranslationDao extends BaseDao<Translation> {
     public Translation getByContent(String content) //TODO też zastanowić się nad nazwą i zmianą nazwy kolumny
     {
         Translation translation = null;
-        String where  = TranslationsColumns.TRANSLATION + " =?";
+        String where  = TranslationsColumns.CONTENT + " =?";
         String[] whereArguments = new String[]{content};
         Cursor cursor = mDb.query(TranslationsTable.TABLE_NAME, mTableColumns, where, whereArguments,
                 null,null,null,null);
@@ -209,7 +208,5 @@ public class TranslationDao extends BaseDao<Translation> {
                 + WordsTranslationsTable.TABLE_NAME;
         mDb.execSQL(statement);
     }
-
-
 
 }

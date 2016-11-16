@@ -7,10 +7,12 @@ package com.dyszlewskiR.edu.scientling.data.database.tables;
 public class WordsTable {
 
     public static final String TABLE_NAME = "Words";
+    public static final String ALIAS= "W";
+    public static final String ALIAS_DOT = ALIAS + ".";
 
     public static class WordsColumns {
         public static final String ID = "id";
-        public static final String WORD = "word";
+        public static final String CONTENT = "content";
         public static final String TRANSCRIPTION = "transcription";
         public static final String DEFINITION_FK = "definition_fk";
         public static final String LESSON_FK = "lesson_fk";
@@ -22,7 +24,7 @@ public class WordsTable {
         //TODO zobaczyć, czy nie dodać notatki
 
         public static final int ID_POSITION = 0;
-        public static final int WORD_POSITION = 1;
+        public static final int CONTENT_POSITION = 1;
         public static final int TRANSCRIPTION_POSITION = 2;
         public static final int DEFINITION_FK_POSITION = 3;
         public static final int LESSON_FK_POSITION = 4;
@@ -39,7 +41,7 @@ public class WordsTable {
     {
         String[] columns = new String[10];
         columns[WordsColumns.ID_POSITION] = WordsColumns.ID;
-        columns[WordsColumns.WORD_POSITION] = WordsColumns.WORD;
+        columns[WordsColumns.CONTENT_POSITION] = WordsColumns.CONTENT;
         columns[WordsColumns.TRANSCRIPTION_POSITION] = WordsColumns.TRANSCRIPTION;
         columns[WordsColumns.DEFINITION_FK_POSITION] = WordsColumns.DEFINITION_FK;
         columns[WordsColumns.LESSON_FK_POSITION] = WordsColumns.LESSON_FK;

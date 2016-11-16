@@ -7,7 +7,7 @@ package com.dyszlewskiR.edu.scientling.data.models;
 public class Translation {
 
     private long id;
-    private String translation;
+    private String content;
 
     public Translation() {}
     public Translation(long id){
@@ -22,11 +22,11 @@ public class Translation {
         this.id = id;
     }
 
-    public String getTranslation() {
-        return translation;
+    public String getContent() {
+        return content;
     }
 
-    public void setTranslation(String translation) {
-        this.translation = translation;
+    public void setContent(String content) {
+        this.content = content;
     }
 }

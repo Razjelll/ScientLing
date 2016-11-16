@@ -6,6 +6,8 @@ package com.dyszlewskiR.edu.scientling.data.database.tables;
 
 public class LanguagesTable {
     public static final String TABLE_NAME = "Languages";
+    public static final String ALIAS = "L";
+    public static final String ALIAS_DOT = ALIAS + ".";
     public static class LanguagesColumns {
         public static final String ID = "id";
         public static final String NAME = "name";

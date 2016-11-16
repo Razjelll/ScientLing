@@ -17,7 +17,7 @@ public class SentenceCreator implements IModelCreator<Sentence> {
         {
             sentence = new Sentence();
             sentence.setId(cursor.getLong(SentencesTable.SentencesColumns.ID_POSITION));
-            sentence.setSentence(cursor.getString(SentencesTable.SentencesColumns.SENTENCE_POSITION));
+            sentence.setContent(cursor.getString(SentencesTable.SentencesColumns.CONTENT_POSITION));
             sentence.setTranslation(cursor.getString(SentencesTable.SentencesColumns.TRANSLATION_POSITION));
         }
         return sentence;

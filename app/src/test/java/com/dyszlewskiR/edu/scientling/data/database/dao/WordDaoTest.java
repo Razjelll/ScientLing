@@ -51,7 +51,7 @@ public class WordDaoTest {
     {
         mWord1 = new Word();
         mWord1.setId(1);
-        mWord1.setWord("dog");
+        mWord1.setContent("dog");
         mWord1.setTranscription("[ dɔːɡ ]");
         mWord1.setLessonId(1); //TODO może bedzie trzeba zmienić na setLesson
 
@@ -61,7 +61,7 @@ public class WordDaoTest {
 
         mWord2 = new Word();
         mWord2.setId(2);
-        mWord2.setWord("Rabbit");
+        mWord2.setContent("Rabbit");
         mWord2.setLessonId(1);
         mWord2.setDifficult((byte)1);
         mWord2.setMasterLevel((byte)-1);
@@ -91,7 +91,7 @@ public class WordDaoTest {
         long id = mDao.save(mWord1);
         Word word = mDao.get(id);
         assertEquals(id, word.getId());
-        assertEquals("dog", word.getWord());
+        assertEquals("dog", word.getContent());
     }
 
     @Test
@@ -142,7 +142,7 @@ public class WordDaoTest {
 
         //Dodawanie definicji
         Definition definition = new Definition();
-        definition.setDefinition("Definicja angielska");
+        definition.setContent("Definicja angielska");
         definition.setTranslation("Definicja polska");
         definition.setId(mDefinitionDao.save(definition));
 
@@ -160,7 +160,7 @@ public class WordDaoTest {
         assertTrue(word.isSelected());
         assertEquals("Zwierzęta", word.getCategory().getName());
         assertEquals("Rzeczownik", word.getPartsOfSpeech().getName());
-        assertEquals("Definicja angielska", word.getDefinition().getDefinition());
+        assertEquals("Definicja angielska", word.getDefinition().getContent());
         assertEquals("Definicja polska", word.getDefinition().getTranslation());
 
         mWord1.setDefinition(null);
@@ -168,6 +168,20 @@ public class WordDaoTest {
         word = mDao.get(id);
         assertEquals(2, id);
         assertNull(word.getDefinition());
+    }
+
+    @Test
+    public void testGetSimpleWords()
+    {
+        mDao.save(mWord1);
+        mDao.save(mWord2);
+        ArrayList<Word> words = mDao.getSimpleWords(null,new String[]{},null,null);
+        assertTrue(!words.isEmpty());
+        assertEquals(2, words.size());
+        assertEquals("dog", words.get(0).getContent());
+        assertEquals(1, words.get(0).getId());
+        assertNull(words.get(0).getTranslations());
+        assertNull(words.get(0).getCategory());
     }
 
 

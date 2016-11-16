@@ -1,11 +1,15 @@
 package com.dyszlewskiR.edu.scientling.data.database.tables;
 
+import android.support.v4.view.AsyncLayoutInflater;
+
 /**
  * Created by Razjelll on 11.11.2016.
  */
 
 public class ExercisesTable {
     public static final String TABLE_NAME = "Exercises";
+    public static final String ALIAS = "E";
+    public static final String ALIAS_DOT = ALIAS + ".";
     public static class ExercisesColumns{
         public static final String ID = "id";
         public static final String NAME = "name";

@@ -38,13 +38,13 @@ public class DefinitionDaoTest {
     {
         mDefinition1 = new Definition();
         mDefinition1.setId(1);
-        mDefinition1.setDefinition("a highly variable domestic mammal (Canis familiaris) " +
+        mDefinition1.setContent("a highly variable domestic mammal (Canis familiaris) " +
                 "closely related to the gray wolf");
         mDefinition1.setTranslation("domowy ssak blisko powiązany z szarym wilkiem");
 
         mDefinition2 = new Definition();
         mDefinition2.setId(2);
-        mDefinition2.setDefinition("mzwierzę roślinożerne podobne do zająca, o miękkim, białym, " +
+        mDefinition2.setContent("mzwierzę roślinożerne podobne do zająca, o miękkim, białym, " +
                 "czarnym lub brunatnoszarym futrze, długich uszach i małym ogonku");
 
 
@@ -69,7 +69,7 @@ public class DefinitionDaoTest {
         Definition definition = mDao.get(id);
         assertEquals(id, definition.getId());
         assertEquals("a highly variable domestic mammal (Canis familiaris) closely related to the " +
-                "gray wolf", definition.getDefinition());
+                "gray wolf", definition.getContent());
 
         id = mDao.save(mDefinition2);
         definition = mDao.get(id);

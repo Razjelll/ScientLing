@@ -6,6 +6,8 @@ package com.dyszlewskiR.edu.scientling.data.database.tables;
 
 public class SetsTable {
     public static final  String TABLE_NAME = "Sets";
+    public static final String ALIAS = "SE";
+    public static final String ALIAS_DOT = ALIAS + ".";
     public static class SetsColumns {
         public static final String ID = "id";
         public static final String NAME = "name";

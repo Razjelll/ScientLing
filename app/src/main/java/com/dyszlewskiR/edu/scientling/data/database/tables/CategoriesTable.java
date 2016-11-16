@@ -6,6 +6,8 @@ package com.dyszlewskiR.edu.scientling.data.database.tables;
 
 public class CategoriesTable {
     public static final String TABLE_NAME = "Categories";
+    public static final String ALIAS = "C";
+    public static final String ALIAS_DOT = ALIAS+".";
     public static class CategoriesColumns {
         public static final String ID = "id";
         public static final String NAME = "name";

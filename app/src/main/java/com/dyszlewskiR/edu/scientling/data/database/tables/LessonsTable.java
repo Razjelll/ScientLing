@@ -6,6 +6,8 @@ package com.dyszlewskiR.edu.scientling.data.database.tables;
 
 public class LessonsTable {
     public static final String TABLE_NAME = "Lessons";
+    public static final String ALIAS = "LE";
+    public static final String ALIAS_DOT= ALIAS + ".";
 
     public static class LessonsColumns {
         public static final String ID = "id";
