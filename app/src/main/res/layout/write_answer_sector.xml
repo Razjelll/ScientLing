@@ -10,6 +10,7 @@
         android:layout_below="@id/chooseSpeechButton"
         android:hint="@string/put_translation"
         android:maxLines="1"
+        android:imeOptions="actionDone"
         ><requestFocus/></EditText>
 
     <Button

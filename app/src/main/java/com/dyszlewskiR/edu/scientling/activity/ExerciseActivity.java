@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import android.support.v7.app.ActionBar;
@@ -18,13 +19,20 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
+import com.dyszlewskiR.edu.scientling.data.models.Exercise;
 import com.dyszlewskiR.edu.scientling.fragment.ChooseExerciseFragment;
 import com.dyszlewskiR.edu.scientling.fragment.KnowExerciseFragment;
 import com.dyszlewskiR.edu.scientling.fragment.ListenAndChooseExerciseFragment;
 import com.dyszlewskiR.edu.scientling.fragment.ListenAndWriteExerciseFragment;
 import com.dyszlewskiR.edu.scientling.fragment.WriteExerciseFragment;
+import com.dyszlewskiR.edu.scientling.services.exercises.CreateExerciseTask;
+import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
+import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseParameters;
+import com.dyszlewskiR.edu.scientling.services.exercises.L1toL2;
+import com.dyszlewskiR.edu.scientling.services.exercises.L2toL1;
 
 
 public class ExerciseActivity extends AppCompatActivity implements WriteExerciseFragment.OnFragmentInteractionListener,
@@ -33,6 +41,11 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         ListenAndChooseExerciseFragment.OnFragmentInteractionListener,
         ListenAndWriteExerciseFragment.OnFragmentInteractionListener{
 
+    public enum ExerciseLanguage{
+        L1, L2
+    }
+
+    //TODO refaktoryzacja
 
     private final int KNOW_EXERCISE = 0;
     private final int KNOW_EXERCISE_INV = 1;
@@ -48,12 +61,16 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
     private Spinner mExerciseSpinner;
     /**Kontrolka zaznaczajaca postęp danego ćwiczenia*/
     private ProgressBar mExerciseProgress;
-    private Fragment mFragment;
+    private ProgressBar mCircleProgressBar;
+    private TextView mCircleProgressBarText;
 
     /**Zmienna, która określa jakie ćwiczenie jest w tej chwili aktywne*/
-    private int mCurrentFragment;
+    private int mCurrentFragmentNumber;
     /**Manager, który służy do zarządzanai fragmentami*/
     private FragmentManager fragmentManager;
+
+    private ExerciseManager mExerciseManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,13 +83,23 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         ab.setDisplayHomeAsUpEnabled(true);
 
         mExerciseProgress = (ProgressBar)findViewById(R.id.exerciseProgressBar);
-        mExerciseProgress.setMax(100);
-        mExerciseProgress.setProgress(50);
+
+
+        mCircleProgressBar = (ProgressBar)findViewById(R.id.circleWaitingBar);
+        mCircleProgressBarText = (TextView)findViewById(R.id.circleWaitingBarText);
 
         prepareExerciseSpinner();
 
+
+        //mExerciseManager = new ExerciseManager(new ExerciseParameters(1,-1,-1,-1,5),this.getApplicationContext());
+
         fragmentManager = getFragmentManager();
-        replaceFragment(new ChooseExerciseFragment());
+
+        mCurrentFragmentNumber = 2; //TODO pobierać startowy numer z preferencji
+        CreateExerciseTask createExerciseTask = new CreateExerciseTask(this);
+        createExerciseTask.execute(new ExerciseParameters(1,-1,-1,-1,5));
+
+        //mExerciseProgress.setMax(mExerciseManager.getNumQuestions()); //zrobimy ro w asynctask
 
         Log.d("ExerciseActivity", "onCreate"); //DEBUG //TODO podorabiać pozostałe
     }
@@ -90,43 +117,11 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         mExerciseSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if(position != mCurrentFragment)
+                if(position != mCurrentFragmentNumber)
                 {
-                    switch(position)
-                    {
-                        case KNOW_EXERCISE:
-                            replaceFragment(new KnowExerciseFragment());
-                            //TODO ustawienie odpowiedznich zmiennych we fragmentach
-                            break;
-                        case KNOW_EXERCISE_INV:
-                            replaceFragment(new KnowExerciseFragment());
-                            break;
-                        case CHOOSE_EXERCISE:
-                            replaceFragment(new ChooseExerciseFragment());
-                            break;
-                        case CHOOSE_EXERCISE_INV:
-                            replaceFragment(new ChooseExerciseFragment());
-                            break;
-                        case LISTEN_AND_CHOOSE_EXERCISE:
-                            replaceFragment(new ListenAndChooseExerciseFragment());
-                            break;
-                        case LISTEN_AND_CHOOSE_EXERCISE_INV:
-                            replaceFragment(new ListenAndChooseExerciseFragment());
-                            break;
-                        case LISTEN_AND_WRITE_EXERCISE:
-                            replaceFragment(new ListenAndWriteExerciseFragment());
-                            break;
-                        case LISTEN_AND_WRITE_EXERCISE_INV:
-                            replaceFragment(new ListenAndWriteExerciseFragment());
-                            break;
-                        case WRITE_EXERCISE:
-                            replaceFragment(new WriteExerciseFragment());
-                            break;
-                    }
-                    mCurrentFragment = position;
+                    changeFragment(position);
                 }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -134,6 +129,48 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         });
     }
 
+    public void prepareExerciseProgress(int value) //nazwa do wymiany
+    {
+
+        mExerciseProgress.setMax(value);
+        mExerciseProgress.setProgress(0);
+    }
+
+    public void changeFragment(int fragmentNumber) //TODO mozna to zmienić na enuma
+    {
+        switch(fragmentNumber) {
+            case KNOW_EXERCISE:
+                replaceFragment(KnowExerciseFragment.newInstance(mExerciseManager,new L2toL1()));
+                //TODO ustawienie odpowiedznich zmiennych we fragmentach
+                break;
+            case KNOW_EXERCISE_INV:
+                replaceFragment(KnowExerciseFragment.newInstance(mExerciseManager, new L1toL2()));
+                break;
+            case CHOOSE_EXERCISE:
+                replaceFragment(ChooseExerciseFragment.newInstance(mExerciseManager, new L2toL1()));
+                break;
+            case CHOOSE_EXERCISE_INV:
+                replaceFragment(ChooseExerciseFragment.newInstance(mExerciseManager, new L1toL2()));
+                break;
+            case LISTEN_AND_CHOOSE_EXERCISE:
+                replaceFragment(ListenAndChooseExerciseFragment.newInstance(mExerciseManager,new L2toL1()));
+                break;
+            case LISTEN_AND_CHOOSE_EXERCISE_INV:
+                replaceFragment(ListenAndChooseExerciseFragment.newInstance(mExerciseManager, new L1toL2()));
+                break;
+            case LISTEN_AND_WRITE_EXERCISE:
+                replaceFragment(ListenAndWriteExerciseFragment.newInstance(mExerciseManager, new L2toL1()));
+                break;
+            case LISTEN_AND_WRITE_EXERCISE_INV:
+                replaceFragment(ListenAndWriteExerciseFragment.newInstance(mExerciseManager, new L1toL2()));
+                break;
+            case WRITE_EXERCISE:
+                replaceFragment(WriteExerciseFragment.newInstance(mExerciseManager,new L1toL2()));
+                break;
+        }
+        mCurrentFragmentNumber = fragmentNumber;
+
+    }
     /**
      * Metoda zamieniająca fragmenty z ćwiczeniami na aktywności
      * @param fragment fragment, na jaki chcemy zmienić obecny
@@ -165,5 +202,29 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         //TODO uzupełnić
         return true;
     }
+
+    public void hideCircleProgressBar()
+    {
+        mCircleProgressBar.setVisibility(View.GONE);
+        mCircleProgressBarText.setVisibility(View.GONE);
+    }
+
+    public void showCurrentFragment()
+    {
+        changeFragment(mCurrentFragmentNumber);
+        mExerciseSpinner.setSelection(mCurrentFragmentNumber);
+    }
+
+    public void setExerciseManager(ExerciseManager exerciseManager)
+    {
+        mExerciseManager = exerciseManager;
+    }
+
+    public void refresh()
+    {
+        int currentQuestion = mExerciseManager.getCurrentQuestionNum();
+        mExerciseProgress.setProgress(currentQuestion);
+    }
+
 
 }

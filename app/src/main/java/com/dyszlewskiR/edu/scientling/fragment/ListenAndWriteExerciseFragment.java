@@ -12,6 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.dyszlewskiR.edu.scientling.R;
+import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
+import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseLanguage;
+import com.dyszlewskiR.edu.scientling.services.exercises.WriteExercise;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,6 +32,8 @@ public class ListenAndWriteExerciseFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private static ExerciseManager mExerciseManager;
+
     public ListenAndWriteExerciseFragment() {
         // Required empty public constructor
     }
@@ -37,14 +42,15 @@ public class ListenAndWriteExerciseFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+
      * @return A new instance of fragment ListenAndWriteExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ListenAndWriteExerciseFragment newInstance(String param1, String param2) {
+    public static ListenAndWriteExerciseFragment newInstance(ExerciseManager exerciseManager, IExerciseLanguage language) {
         ListenAndWriteExerciseFragment fragment = new ListenAndWriteExerciseFragment();
-
+        mExerciseManager = exerciseManager;
+        mExerciseManager.setExerciseType(new WriteExercise());
+        mExerciseManager.setExerciseLanguage(language);
         return fragment;
     }
 

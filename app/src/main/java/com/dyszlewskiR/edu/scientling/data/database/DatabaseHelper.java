@@ -104,6 +104,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             query = statements.get(i);
             db.execSQL(query);
         }
+        //TODO tutaj jest wprowadzanie danych, później będzie trzeba to usunąć
+        statements = getSQLStatements("testInsertStatements.sql");
+        for(int i=0; i<statements.size(); i++)
+        {
+            query = statements.get(i);
+            db.execSQL(query);
+        }
         db.setTransactionSuccessful();
         db.endTransaction();
     }

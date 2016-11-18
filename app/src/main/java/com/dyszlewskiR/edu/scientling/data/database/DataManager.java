@@ -49,10 +49,10 @@ public class DataManager {
         mContext = context;
         DatabaseHelper dbHelper = new DatabaseHelper(mContext);
 
-        if (BuildConfig.DEBUG) //TODO sppawdzić dokładnie jak działa BuildConfig.DEBUG
+        /*if (BuildConfig.DEBUG) //TODO sppawdzić dokładnie jak działa BuildConfig.DEBUG
         {
             dbHelper.setFileOpener(new ResourcesFileOpener());
-        }
+        }*/
 
         mDb = dbHelper.getWritableDatabase();
 
@@ -175,13 +175,13 @@ public class DataManager {
             stringBuilder.append(" = ").append("?");
             queryArguments.add(String.valueOf(lesson));
         } else {
-            stringBuilder.append("IN (");
+            stringBuilder.append(" IN (");
             stringBuilder.append(" SELECT ").append("L.").append(LessonsColumns.ID);
             stringBuilder.append(" FROM ").append(LessonsTable.TABLE_NAME).append(" L");
-            stringBuilder.append(" JOIN").append(SetsTable.TABLE_NAME).append(" S");
+            stringBuilder.append(" JOIN ").append(SetsTable.TABLE_NAME).append(" S");
             stringBuilder.append(" ON ").append("L.").append(LessonsColumns.SET_FK);
             stringBuilder.append(" = ").append("S.").append(SetsColumns.ID);
-            stringBuilder.append(" WHERE ").append(SetsColumns.ID).append(" = ").append("?");
+            stringBuilder.append(" WHERE ").append("S.").append(SetsColumns.ID).append(" = ").append("?");
             stringBuilder.append(")");
             queryArguments.add(String.valueOf(set));
         }
@@ -269,7 +269,6 @@ public class DataManager {
         String orderBy = "RANDOM()";
         ArrayList<Word> wordsList = mWordDao.getSimpleWords(queryBuilder.toString(),
                 queryArguments.toArray(new String[0]), orderBy, String.valueOf(howMuch));
-
 
         return wordsList;
     }

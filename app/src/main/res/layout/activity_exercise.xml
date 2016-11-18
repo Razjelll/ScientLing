@@ -48,6 +48,23 @@
             android:gravity="center"/>
     </LinearLayout>
 
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/circleWaitingBar"
+        android:indeterminateDrawable="@drawable/circle_waiting_bar"
+        android:indeterminate="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="10dp"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/circleWaitingBarText"
+        android:text="Trwa wczytywanie danych"/>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -55,7 +72,11 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="10dp"></FrameLayout>
+        android:layout_marginBottom="10dp"
+        ></FrameLayout>
+
+
+
 
     <!--<fragment android:name="dyszlewskiRdu.scientling.fragment.WriteExerciseFragment"
         android:id="@+id/exerciseFragment"

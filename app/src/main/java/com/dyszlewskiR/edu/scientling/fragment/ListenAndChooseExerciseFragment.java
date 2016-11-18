@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.dyszlewskiR.edu.scientling.R;
+import com.dyszlewskiR.edu.scientling.services.exercises.ChooseExercise;
+import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
+import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseLanguage;
 
 
 /**
@@ -33,6 +36,7 @@ public class ListenAndChooseExerciseFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private static ExerciseManager mExerciseManager;
     public ListenAndChooseExerciseFragment() {
         // Required empty public constructor
     }
@@ -41,14 +45,15 @@ public class ListenAndChooseExerciseFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+
      * @return A new instance of fragment ListenAndChooseExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ListenAndChooseExerciseFragment newInstance(String param1, String param2) {
+    public static ListenAndChooseExerciseFragment newInstance(ExerciseManager exerciseManager, IExerciseLanguage language) {
         ListenAndChooseExerciseFragment fragment = new ListenAndChooseExerciseFragment();
-
+        mExerciseManager = exerciseManager;
+        mExerciseManager.setExerciseType(new ChooseExercise());
+        mExerciseManager.setExerciseLanguage(language);
         return fragment;
     }
 

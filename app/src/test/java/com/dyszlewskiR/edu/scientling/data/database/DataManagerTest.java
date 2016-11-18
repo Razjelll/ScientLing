@@ -114,7 +114,7 @@ public class DataManagerTest {
         assertTrue(questions.size() != 0);
         assertEquals("lamp", questions.get(0).getContent());
         assertNotNull(questions.get(0).getTranslations());
-        assertEquals("Lampa", questions.get(0).getTranslations().get(0).getContent() );
+        assertEquals("Lampa", questions.get(0).getTranslations().get(0).getContent());
 
         questions = mDataManager.getQuestions(-1, 1, -1, -1, 5);
         assertTrue(questions.size() != 0);

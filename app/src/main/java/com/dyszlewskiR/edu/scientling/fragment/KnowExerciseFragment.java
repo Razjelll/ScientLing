@@ -12,6 +12,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
+import com.dyszlewskiR.edu.scientling.activity.ExerciseActivity;
+import com.dyszlewskiR.edu.scientling.data.models.Exercise;
+import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
+import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseLanguage;
 
 
 /**
@@ -25,14 +29,19 @@ import com.dyszlewskiR.edu.scientling.R;
 public class KnowExerciseFragment extends Fragment {
 
 
-    private TextView wordTextView;
-    private TextView pronunciationTextView;
-    private TextView translationTextView;
-    private Button speechButton;
-    private Button showAnswersButton;
-
+    private TextView mWordTextView;
+    private TextView mTranscriptionTextView;
+    private TextView mTranslationTextView;
+    private Button mSpeechButton;
+    private Button mShowAnswerButton;
+    private Button mKnowButton;
+    private Button mDontKnowButton;
+    private Button mAlmostKnowButton;
+    
 
     private OnFragmentInteractionListener mListener;
+
+    private static ExerciseManager mExerciseManager; //TODO zastanowić się czy te statiki mogą być
 
     public KnowExerciseFragment() {
         // Required empty public constructor
@@ -42,13 +51,15 @@ public class KnowExerciseFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     *
      * @return A new instance of fragment KnowExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static KnowExerciseFragment newInstance(String param1, String param2) {
+    public static KnowExerciseFragment newInstance(ExerciseManager exerciseManager, IExerciseLanguage language) {
         KnowExerciseFragment fragment = new KnowExerciseFragment();
+        mExerciseManager = exerciseManager;
+        //mExerciseManager.setExerciseType(new KnowExercise());
+        //mExerciseManager.setExerciseLanguage(language);
         /*Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -68,22 +79,63 @@ public class KnowExerciseFragment extends Fragment {
 
     }
 
-    private void prepareComponents()
+    private void toAnswer(String answer) //TODO może będzie trzeba zmienić na inta, aby było zgodne z interfejsem
     {
-
+        mExerciseManager.checkAnswer(answer);
     }
+
+    private void showAnswer()
+    {
+        mShowAnswerButton.setVisibility(View.GONE);
+
+        mKnowButton.setVisibility(View.VISIBLE);
+        mDontKnowButton.setVisibility(View.VISIBLE);
+        mAlmostKnowButton.setVisibility(View.VISIBLE);
+        mTranslationTextView.setVisibility(View.VISIBLE);
+    }
+
+    private void showQuestion() //TODO może być konieczna zmiana nazwy
+    {
+        mShowAnswerButton.setVisibility(View.VISIBLE);
+
+        mKnowButton.setVisibility(View.GONE);
+        mDontKnowButton.setVisibility(View.GONE);
+        mAlmostKnowButton.setVisibility(View.GONE);
+        mTranslationTextView.setVisibility(View.INVISIBLE);
+
+        mWordTextView.setText(mExerciseManager.getQuestion());
+        mTranscriptionTextView.setText(mExerciseManager.getTranscription());
+        mTranslationTextView.setText(mExerciseManager.getCorrectAnswer());
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_know_exercise, container, false);
         //return inflater.inflate(R.layout.fragment_know_exercise, container, false);
-        wordTextView = (TextView) view.findViewById(R.id.knowWord);
-        pronunciationTextView = (TextView)view.findViewById(R.id.knowPronunciation);
-        translationTextView = (TextView)view.findViewById(R.id.knowTranslation);
-        showAnswersButton = (Button) view.findViewById(R.id.showAnswerButton);
-        speechButton = (Button) view.findViewById(R.id.knowSpeechButton);
+        mWordTextView = (TextView) view.findViewById(R.id.wordTextView);
+        mTranscriptionTextView = (TextView)view.findViewById(R.id.transcriptionTextView);
+        mTranslationTextView = (TextView)view.findViewById(R.id.knowTranslation);
+        mShowAnswerButton = (Button) view.findViewById(R.id.showAnswerButton);
+        mSpeechButton = (Button) view.findViewById(R.id.knowSpeechButton);
+        mKnowButton = (Button) view.findViewById(R.id.knowButton);
+        mDontKnowButton = (Button) view.findViewById(R.id.dontKnowButton);
+        mAlmostKnowButton = (Button) view.findViewById(R.id.almostKnowButton);
+
+        mShowAnswerButton.setOnClickListener(new ShowAnswerOnClickListener());
+
+        mKnowButton.setOnClickListener(new KnowButtonOnClickListener("Know")); //TODO zmienić na stałe, albo coś takiego
+        mDontKnowButton.setOnClickListener(new KnowButtonOnClickListener("DontKnow"));
+        mAlmostKnowButton.setOnClickListener(new KnowButtonOnClickListener("AlmostKnow"));
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        showQuestion();
     }
 
     @Override
@@ -130,5 +182,32 @@ public class KnowExerciseFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    protected class KnowButtonOnClickListener implements View.OnClickListener
+    {
+        private String mValue;
+
+        public KnowButtonOnClickListener(String value)
+        {
+            mValue = value;
+        }
+
+        @Override
+        public void onClick(View v) {
+            toAnswer(mValue);
+            mExerciseManager.nextQuestion();
+            ((ExerciseActivity)getActivity()).refresh();
+            showQuestion();
+        }
+    }
+
+    protected class ShowAnswerOnClickListener implements View.OnClickListener
+    {
+
+        @Override
+        public void onClick(View v) {
+            showAnswer();
+        }
     }
 }

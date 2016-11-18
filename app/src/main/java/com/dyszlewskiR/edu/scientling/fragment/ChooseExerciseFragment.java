@@ -11,6 +11,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
+import com.dyszlewskiR.edu.scientling.activity.ExerciseActivity;
+import com.dyszlewskiR.edu.scientling.services.exercises.ChooseExercise;
+import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
+import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseLanguage;
 
 
 /**
@@ -23,18 +27,26 @@ import com.dyszlewskiR.edu.scientling.R;
  */
 public class ChooseExerciseFragment extends Fragment {
 
-    private TextView wordTextView;
-    private TextView pronunciationTextView;
-    private Button speechButton;
+    private TextView mWordTextView;
+    private TextView mTranscriptionTextView;
+    private Button mSpeechButton;
 
-    private Button answerButton1;
-    private Button answerButton2;
-    private Button answerButton3;
-    private Button answerButton4;
-    private Button answerButton5;
-    private Button answerButton6;
+    private Button mAnswerButton1;
+    private Button mAnswerButton2;
+    private Button mAnswerButton3;
+    private Button mAnswerButton4;
+    private Button mAnswerButton5;
+    private Button mAnswerButton6;
+    private Button mNextButton;
+
+    private int mNumAnswersButtons = 6; //TODO wartość ustalona z góry, zmienić, pobierać z preferencji
+    private Button[] mAnswersButtons;
+
+    private boolean mCanAnswer;
 
     private OnFragmentInteractionListener mListener;
+
+    private static ExerciseManager mExerciseManager;
 
     public ChooseExerciseFragment() {
 
@@ -42,22 +54,111 @@ public class ChooseExerciseFragment extends Fragment {
 
 
     // TODO: Rename and change types and number of parameters
-    public static ChooseExerciseFragment newInstance(String param1, String param2) {
+    public static ChooseExerciseFragment newInstance(ExerciseManager exerciseManager, IExerciseLanguage language) {
         ChooseExerciseFragment fragment = new ChooseExerciseFragment();
+        mExerciseManager = exerciseManager;
+        mExerciseManager.setExerciseType(new ChooseExercise());
+        mExerciseManager.setExerciseLanguage(language);
         /*Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);*/
+
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mCanAnswer = true;
         /*if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }*/
+
+
+    }
+
+    private void createAnswersButtonArray()
+    {
+        mAnswersButtons = new Button[mNumAnswersButtons];
+        mAnswersButtons[0] = mAnswerButton1;
+        mAnswersButtons[1] = mAnswerButton2;
+        if(mNumAnswersButtons > 2)
+            mAnswersButtons[2] = mAnswerButton3;
+        if(mNumAnswersButtons > 3)
+            mAnswersButtons[3] = mAnswerButton4;
+        if(mNumAnswersButtons >4)
+            mAnswersButtons[4] = mAnswerButton5;
+        if(mNumAnswersButtons > 5)
+            mAnswersButtons[5] = mAnswerButton6;
+    }
+
+    /**
+     * Umyślnie niewstawiono breaków
+     */
+    private void hideNonUseAnswersButtons()
+    {
+        switch(mNumAnswersButtons)
+        {
+            case 2:
+                mAnswerButton3.setVisibility(View.GONE);
+            case 3:
+                mAnswerButton4.setVisibility(View.GONE);
+            case 4:
+                mAnswerButton5.setVisibility(View.GONE);
+            case 5:
+                mAnswerButton6.setVisibility(View.GONE);
+        }
+    }
+
+    private void addAnswersButtonsListeners()
+    {
+        for(int i=0; i<mNumAnswersButtons; i++)
+        {
+            mAnswersButtons[i].setOnClickListener(new AnswerOnClickListener(i));
+        }
+    }
+
+
+    private void showQuestion()
+    {
+        String question = mExerciseManager.getQuestion();
+        mWordTextView.setText(question);
+        String transcription = mExerciseManager.getTranscription();
+        mTranscriptionTextView.setText(transcription);
+    }
+
+    private void toAnswer(int button)
+    {
+        mCanAnswer = false;
+        String answer = (String) mAnswersButtons[button].getText();
+        boolean isCorrect = mExerciseManager.checkAnswer(answer);
+        if(isCorrect)
+        {
+            mAnswersButtons[button].setBackgroundColor(getResources().getColor(R.color.correctColor));
+        }
+        else
+        {
+            mAnswersButtons[button].setBackgroundColor(getResources().getColor(R.color.incorrectColor));
+            String correctAnswer = mExerciseManager.getCorrectAnswer();
+            Button correctButton = findButton(correctAnswer);
+            correctButton.setBackgroundColor(getResources().getColor(R.color.correctColor));
+        }
+        mNextButton.setVisibility(View.VISIBLE);
+    }
+
+    private Button findButton(String text)
+    {
+        for(int i= 0 ; i<mNumAnswersButtons; i++)
+        {
+            if(mAnswersButtons[i].getText().equals(text))
+            {
+                return mAnswersButtons[i];
+            }
+        }
+        return null;
     }
 
     @Override
@@ -66,18 +167,65 @@ public class ChooseExerciseFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_choose_exercise, container, false);
 
-        wordTextView = (TextView)view.findViewById(R.id.knowWord);
-        pronunciationTextView = (TextView)view.findViewById(R.id.knowPronunciation);
-        speechButton = (Button) view.findViewById(R.id.chooseSpeechButton);
+        mWordTextView = (TextView)view.findViewById(R.id.wordTextView);
+        mTranscriptionTextView = (TextView)view.findViewById(R.id.transcriptionTextView);
+        mSpeechButton = (Button) view.findViewById(R.id.chooseSpeechButton);
 
-        answerButton1 = (Button)view.findViewById(R.id.answer1);
-        answerButton2 = (Button)view.findViewById(R.id.answer2);
-        answerButton3 = (Button)view.findViewById(R.id.answer3);
-        answerButton4 = (Button)view.findViewById(R.id.answer4);
-        answerButton5 = (Button)view.findViewById(R.id.answer5);
-        answerButton6 = (Button)view.findViewById(R.id.answer6);
-
+        mAnswerButton1 = (Button)view.findViewById(R.id.answer1);
+        mAnswerButton2 = (Button)view.findViewById(R.id.answer2);
+        mAnswerButton3 = (Button)view.findViewById(R.id.answer3);
+        mAnswerButton4 = (Button)view.findViewById(R.id.answer4);
+        mAnswerButton5 = (Button)view.findViewById(R.id.answer5);
+        mAnswerButton6 = (Button)view.findViewById(R.id.answer6);
+        mNextButton = (Button)view.findViewById(R.id.nextButton);
+        mNextButton.setOnClickListener(new NextButtonOnClickListener());
         return view;
+    }
+
+    /**
+     * W metodzie onViewCreated ustawiamy pytanie, oraz jeśli są wymagane dostępne podpowiedzi.
+     * Nie można tego zrobić w metodzie onCreate, ponieważ musimy mieć dostęp do obiektu klasy
+     * View, który nie jest dostępny podczas wykonywania metody onCreate. Obiekt ten zostaje
+     * tworzony w metodzie onCreateView klasy Fragment. W tej metodzie tworzone są takze wszystki
+     * komponenty jakie mają znaleźć się we fragmencie. Następną metodą po metodzie onCreateView
+     * jest metoda onViewCreated, która jest wywoływana po utworzeniu obiektu View. Dopiero teraz
+     * można przypisać tekst komponentowi TextView dostępnym we fragmencie.
+     * @param view
+     * @param savedInstanceState
+     */
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+
+        createAnswersButtonArray();
+        hideNonUseAnswersButtons();
+        addAnswersButtonsListeners();
+        showExercise();
+
+    }
+
+    private void showAnswers() //TODO można zmienić nazwę
+    {
+        String[] answers = mExerciseManager.getAnswers(mNumAnswersButtons);
+        for(int i=0; i< mNumAnswersButtons; i++)
+        {
+            mAnswersButtons[i].setText(answers[i]);
+        }
+    }
+
+    private void resetButtons()
+    {
+        for(int i=0; i< mNumAnswersButtons; i++)
+        {
+            mAnswersButtons[i].setBackgroundColor(getResources().getColor(R.color.mainColor));
+        }
+    }
+
+    private void showExercise() //TODO kolejna nazwa do zmienienia :(
+    {
+        showQuestion();
+        showAnswers();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -117,5 +265,37 @@ public class ChooseExerciseFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    protected class AnswerOnClickListener implements View.OnClickListener
+    {
+        int mIndex;
+
+        public AnswerOnClickListener(int index)
+        {
+            mIndex = index;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(mCanAnswer)
+            {
+                toAnswer(mIndex);
+            }
+        }
+    }
+
+    protected class NextButtonOnClickListener implements View.OnClickListener
+    {
+
+        @Override
+        public void onClick(View v) {
+            mExerciseManager.nextQuestion();
+            resetButtons();
+            mNextButton.setVisibility(View.GONE);
+            mCanAnswer = true;
+            showExercise();
+            ((ExerciseActivity)getActivity()).refresh();
+        }
     }
 }
