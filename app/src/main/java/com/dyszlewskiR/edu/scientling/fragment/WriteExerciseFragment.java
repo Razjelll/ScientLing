@@ -23,6 +23,9 @@ import com.dyszlewskiR.edu.scientling.activity.ExerciseActivity;
 import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
 import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseLanguage;
 import com.dyszlewskiR.edu.scientling.services.exercises.WriteExercise;
+import com.dyszlewskiR.edu.scientling.services.speech.ISpeechRecognitionResult;
+import com.dyszlewskiR.edu.scientling.services.speech.SpeechToText;
+import com.dyszlewskiR.edu.scientling.utils.StringSimilarityCalculator;
 
 
 /**
@@ -33,18 +36,16 @@ import com.dyszlewskiR.edu.scientling.services.exercises.WriteExercise;
  * Use the {@link WriteExerciseFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class WriteExerciseFragment extends Fragment {
+public class WriteExerciseFragment extends Fragment implements ISpeechRecognitionResult {
 
 
+    private static ExerciseManager mExerciseManager; //TODO dlaczego to jest stałe
     private TextView mWordTextView;
     private TextView mTranscriptionTextView;
     private Button mSpeechButton;
     private EditText mAnswerEditText;
     private Button mCheckAnswerButton;
-
     private OnFragmentInteractionListener mListener;
-
-    private static ExerciseManager mExerciseManager;
 
     public WriteExerciseFragment() {
         // Required empty public constructor
@@ -54,7 +55,6 @@ public class WriteExerciseFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-
      * @return A new instance of fragment WriteExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -72,8 +72,7 @@ public class WriteExerciseFragment extends Fragment {
 
     }
 
-    private void showQuestion()
-    {
+    private void showQuestion() {
         mAnswerEditText.setText("");
 
         mWordTextView.setText(mExerciseManager.getQuestion());
@@ -81,36 +80,39 @@ public class WriteExerciseFragment extends Fragment {
 
     }
 
-    private void toAnswer(String answer)
-    {
+    private void toAnswer(String answer) {
         boolean correct = mExerciseManager.checkAnswer(answer);
-        if(correct)
-        {
+        if (correct) {
             final Dialog dialog = new Dialog(getActivity());
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setContentView(R.layout.correct_dialog);
 
+
             TextView text = (TextView) dialog.findViewById(R.id.correctDialogText);
-            Button nextButton = (Button)dialog.findViewById(R.id.correctDialogNextButton);
+            Button nextButton = (Button) dialog.findViewById(R.id.correctDialogNextButton);
             nextButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     nextQuestion();
+                    ((ExerciseActivity)getActivity()).updateQuestion();
                     dialog.dismiss();
                 }
             });
             dialog.show();
 
+
             setDialogWidth(dialog);
 
-        }
-        else
-        {
+        } else {
             final Dialog dialog = new Dialog(getActivity());
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
             dialog.setContentView(R.layout.incorrect_dialog);
 
-            TextView yourAnswer = (TextView)dialog.findViewById(R.id.yourAnswerTextView);
+
+            TextView yourAnswer = (TextView) dialog.findViewById(R.id.yourAnswerTextView);
             yourAnswer.setText(answer);
-            TextView correctsAnswers = (TextView)dialog.findViewById(R.id.correctAnswerTextView);
+            TextView correctsAnswers = (TextView) dialog.findViewById(R.id.correctAnswerTextView);
             correctsAnswers.setText(mExerciseManager.getCorrectAnswer());
             Button nextButton = (Button) dialog.findViewById(R.id.nextButton);
             nextButton.setOnClickListener(new View.OnClickListener() {
@@ -126,8 +128,7 @@ public class WriteExerciseFragment extends Fragment {
         }
     }
 
-    private void setDialogWidth(Dialog dialog)
-    {
+    private void setDialogWidth(Dialog dialog) {
         //ustawianie szerokości powiadomienia. Nie można tego zrobić w xml, ponieważ
         // miejscu okno dialogowe nie zna szerokości rodzica
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
@@ -138,8 +139,7 @@ public class WriteExerciseFragment extends Fragment {
         window.setAttributes(lp);
     }
 
-    private void nextQuestion()
-    {
+    private void nextQuestion() {
         mExerciseManager.nextQuestion();
         showQuestion();
     }
@@ -148,17 +148,22 @@ public class WriteExerciseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_write_exercise,container, false );
-        mWordTextView = (TextView)view.findViewById(R.id.wordTextView);
+        View view = inflater.inflate(R.layout.fragment_write_exercise, container, false);
+        mWordTextView = (TextView) view.findViewById(R.id.wordTextView);
         mTranscriptionTextView = (TextView) view.findViewById(R.id.transcriptionTextView);
-        mSpeechButton = (Button)view.findViewById(R.id.knowSpeechButton);
-        mAnswerEditText = (EditText)view.findViewById(R.id.wordEditText);
-        mAnswerEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+        mSpeechButton = (Button) view.findViewById(R.id.speechButton);
+        mSpeechButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SpeechToText speechToText = new SpeechToText(getActivity().getBaseContext(), "en-US", WriteExerciseFragment.this);
+                speechToText.startListening();
+            }
+        });
+        mAnswerEditText = (EditText) view.findViewById(R.id.wordEditText);
+        mAnswerEditText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
         mAnswerEditText.setOnEditorActionListener(new OnEditorEnterListener());
-        mCheckAnswerButton = (Button)view.findViewById(R.id.checkAnswer);
+        mCheckAnswerButton = (Button) view.findViewById(R.id.checkAnswer);
         mCheckAnswerButton.setOnClickListener(new AcceptAnswerOnClickListener());
-
-
 
         mAnswerEditText.requestFocus();
 
@@ -174,8 +179,8 @@ public class WriteExerciseFragment extends Fragment {
         //ustawienie klawiatury zawsze widocznej, klawiatura wyświetlana jest po każdym pytaniu
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         //ustawienie klawiatury widocznej przy starcie fragmentu
-        InputMethodManager inputMethodManager = (InputMethodManager)getActivity().getSystemService(
-                Context.INPUT_METHOD_SERVICE );
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(
+                Context.INPUT_METHOD_SERVICE);
         inputMethodManager.showSoftInput(mAnswerEditText, 0);
     }
 
@@ -203,9 +208,17 @@ public class WriteExerciseFragment extends Fragment {
 
         super.onDetach();
         mListener = null;
-
-
     }
+
+    @Override
+    public void receiveRecognitionResult(String[] result) {
+        if (result != null) {
+            String answer = mExerciseManager.getCorrectAnswer();
+            String mostSimilar = StringSimilarityCalculator.getMostSimilarLevenshtein(answer, result);
+            mAnswerEditText.setText(mostSimilar);
+        }
+    }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -222,8 +235,7 @@ public class WriteExerciseFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    protected class AcceptAnswerOnClickListener implements View.OnClickListener
-    {
+    protected class AcceptAnswerOnClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
@@ -231,6 +243,7 @@ public class WriteExerciseFragment extends Fragment {
             toAnswer(answer);
         }
     }
+
 
     /**
      * Listener, który nasłuchuje specjalnych akcji pola edycyjnego. W tym rpzypadku
@@ -242,13 +255,10 @@ public class WriteExerciseFragment extends Fragment {
      * imeOptions można uzyskać przejścia do kolejnych pól tekstowych, przejściu do podanej
      * lokalizacji, wysłać coś.
      */
-    protected class OnEditorEnterListener implements TextView.OnEditorActionListener
-    {
-
+    protected class OnEditorEnterListener implements TextView.OnEditorActionListener {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-            if(actionId == EditorInfo.IME_ACTION_DONE)
-            {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
                 toAnswer(String.valueOf(mAnswerEditText.getText()));
                 return true;
             }

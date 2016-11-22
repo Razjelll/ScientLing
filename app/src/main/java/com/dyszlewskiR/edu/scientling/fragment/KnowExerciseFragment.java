@@ -13,9 +13,9 @@ import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.ExerciseActivity;
-import com.dyszlewskiR.edu.scientling.data.models.Exercise;
 import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
 import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseLanguage;
+import com.dyszlewskiR.edu.scientling.services.exercises.KnowExercise;
 
 
 /**
@@ -58,8 +58,8 @@ public class KnowExerciseFragment extends Fragment {
     public static KnowExerciseFragment newInstance(ExerciseManager exerciseManager, IExerciseLanguage language) {
         KnowExerciseFragment fragment = new KnowExerciseFragment();
         mExerciseManager = exerciseManager;
-        //mExerciseManager.setExerciseType(new KnowExercise());
-        //mExerciseManager.setExerciseLanguage(language);
+        mExerciseManager.setExerciseType(new KnowExercise());
+        mExerciseManager.setExerciseLanguage(language);
         /*Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -197,7 +197,7 @@ public class KnowExerciseFragment extends Fragment {
         public void onClick(View v) {
             toAnswer(mValue);
             mExerciseManager.nextQuestion();
-            ((ExerciseActivity)getActivity()).refresh();
+            ((ExerciseActivity)getActivity()).updateQuestion();
             showQuestion();
         }
     }

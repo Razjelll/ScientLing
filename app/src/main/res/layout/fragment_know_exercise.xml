@@ -58,9 +58,9 @@
             android:layout_height="match_parent"
             android:id="@+id/dontKnowButton"
             android:text="@string/dontKnow"
-            android:textColor="@color/incorrectColor"
+            android:textColor="@color/white"
             android:layout_weight="0.3"
-            android:background="@drawable/button_style"
+            android:background="@drawable/button_style_red"
             android:layout_marginRight="5dp"
 
             />
@@ -69,18 +69,18 @@
             android:layout_height="match_parent"
             android:id="@+id/almostKnowButton"
             android:text="@string/almostKnow"
-            android:textColor="@color/middleCorrectColor"
+            android:textColor="@color/white"
             android:layout_weight="0.3"
-            android:background="@drawable/button_style"
+            android:background="@drawable/button_style_orange"
             />
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/knowButton"
             android:text="@string/know"
-            android:textColor="@color/correctColor"
+            android:textColor="@color/white"
             android:layout_weight="0.3"
-            android:background="@drawable/button_style"
+            android:background="@drawable/button_style_green"
             android:layout_marginLeft="5dp"
             />
     </LinearLayout>

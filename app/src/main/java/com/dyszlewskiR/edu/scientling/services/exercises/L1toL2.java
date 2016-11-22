@@ -44,7 +44,7 @@ public class L1toL2 implements IExerciseLanguage {
         long difficult = parameters.getDifficult();
         long category = parameters.getCategory();
         int howMuch = parameters.getNumQuestions();
-        ArrayList<Word> words = dataManager.getAnswersL2(set,difficult, category, howMuch,differentFrom);
+        ArrayList<Word> words = (ArrayList<Word>)dataManager.getAnswersL2(set,difficult, category, howMuch,differentFrom);
 
         Answer[] answers = new Answer[words.size()]; //TODO sprawdzić czy to jest potrzebne
         Answer answer = null;

@@ -175,7 +175,7 @@ public class WordDaoTest {
     {
         mDao.save(mWord1);
         mDao.save(mWord2);
-        ArrayList<Word> words = mDao.getSimpleWords(null,new String[]{},null,null);
+        List<Word> words = mDao.getSimpleWords(null,new String[]{},null,null);
         assertTrue(!words.isEmpty());
         assertEquals(2, words.size());
         assertEquals("dog", words.get(0).getContent());

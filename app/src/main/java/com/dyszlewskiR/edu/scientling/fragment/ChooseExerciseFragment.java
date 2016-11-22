@@ -1,12 +1,16 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -15,6 +19,7 @@ import com.dyszlewskiR.edu.scientling.activity.ExerciseActivity;
 import com.dyszlewskiR.edu.scientling.services.exercises.ChooseExercise;
 import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
 import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseLanguage;
+import com.dyszlewskiR.edu.scientling.services.speech.TextToSpeech;
 
 
 /**
@@ -48,6 +53,9 @@ public class ChooseExerciseFragment extends Fragment {
 
     private static ExerciseManager mExerciseManager;
 
+    private View mFragmentView;
+    FragmentTransaction fragmentTransaction;
+
     public ChooseExerciseFragment() {
 
     }
@@ -71,6 +79,8 @@ public class ChooseExerciseFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        FragmentManager fragmentManager = getFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
         mCanAnswer = true;
         /*if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
@@ -121,13 +131,16 @@ public class ChooseExerciseFragment extends Fragment {
         }
     }
 
-
     private void showQuestion()
     {
         String question = mExerciseManager.getQuestion();
         mWordTextView.setText(question);
         String transcription = mExerciseManager.getTranscription();
         mTranscriptionTextView.setText(transcription);
+
+        Animation animation = AnimationUtils.makeInAnimation(getActivity(), false);
+        //mFragmentView.startAnimation(animation);
+        getActivity().overridePendingTransition(R.anim.move_from_right_side, R.anim.move_to_left_side);
     }
 
     private void toAnswer(int button)
@@ -137,14 +150,14 @@ public class ChooseExerciseFragment extends Fragment {
         boolean isCorrect = mExerciseManager.checkAnswer(answer);
         if(isCorrect)
         {
-            mAnswersButtons[button].setBackgroundColor(getResources().getColor(R.color.correctColor));
+            mAnswersButtons[button].setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style_green));
         }
         else
         {
-            mAnswersButtons[button].setBackgroundColor(getResources().getColor(R.color.incorrectColor));
+            mAnswersButtons[button].setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style_red));
             String correctAnswer = mExerciseManager.getCorrectAnswer();
             Button correctButton = findButton(correctAnswer);
-            correctButton.setBackgroundColor(getResources().getColor(R.color.correctColor));
+            correctButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style_green));
         }
         mNextButton.setVisibility(View.VISIBLE);
     }
@@ -166,10 +179,18 @@ public class ChooseExerciseFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_choose_exercise, container, false);
-
+        mFragmentView = view;
         mWordTextView = (TextView)view.findViewById(R.id.wordTextView);
         mTranscriptionTextView = (TextView)view.findViewById(R.id.transcriptionTextView);
-        mSpeechButton = (Button) view.findViewById(R.id.chooseSpeechButton);
+        mSpeechButton = (Button) view.findViewById(R.id.speechButton);
+
+        mSpeechButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextToSpeech textToSpeech = new TextToSpeech(getActivity().getApplicationContext(), "en-US");
+                textToSpeech.notifyNewMessage("please");
+            }
+        });
 
         mAnswerButton1 = (Button)view.findViewById(R.id.answer1);
         mAnswerButton2 = (Button)view.findViewById(R.id.answer2);
@@ -218,7 +239,7 @@ public class ChooseExerciseFragment extends Fragment {
     {
         for(int i=0; i< mNumAnswersButtons; i++)
         {
-            mAnswersButtons[i].setBackgroundColor(getResources().getColor(R.color.mainColor));
+            mAnswersButtons[i].setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style));
         }
     }
 
@@ -291,11 +312,15 @@ public class ChooseExerciseFragment extends Fragment {
         @Override
         public void onClick(View v) {
             mExerciseManager.nextQuestion();
+            //uruchomienie animacji przejścia do lewej na całym fragmencie
+            Animation animation = AnimationUtils.makeOutAnimation(getActivity(), false);
+
+            //mFragmentView.startAnimation(animation);
             resetButtons();
             mNextButton.setVisibility(View.GONE);
             mCanAnswer = true;
             showExercise();
-            ((ExerciseActivity)getActivity()).refresh();
+            ((ExerciseActivity)getActivity()).updateQuestion();
         }
     }
 }

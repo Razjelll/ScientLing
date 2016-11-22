@@ -14,6 +14,7 @@ import com.dyszlewskiR.edu.scientling.data.models.Word;
 import com.dyszlewskiR.edu.scientling.data.models.creators.WordCreator;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable.*;
@@ -245,7 +246,7 @@ public class WordDao extends BaseDao<Word> {
         return wordsList;
     }
 
-    public ArrayList<Word> getSimpleWords(String selection, String[] selectionArgs, String orderBy,
+    public List<Word> getSimpleWords(String selection, String[] selectionArgs, String orderBy,
                                           String limit){
         StringBuilder queryBuilder = new StringBuilder(SIMPLE_SELECT_STATEMENT);
         if(selection != null)

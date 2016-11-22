@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:id="@+id/my_toolbar"
-        android:background="@color/mainColor"
+        android:background="@color/colorMain"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
@@ -33,11 +33,14 @@
         >
         <ProgressBar
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="20dp"
+            android:layout_gravity="center_vertical"
             android:id="@+id/exerciseProgressBar"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:indeterminateOnly="false"
+            android:progressDrawable="@drawable/exercise_progress_bar"
             android:layout_weight="0.3"
             android:layout_marginLeft="10dp"
+
             />
         <TextView
             android:layout_width="match_parent"

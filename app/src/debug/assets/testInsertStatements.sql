@@ -56,94 +56,94 @@ VALUES ('domestic mammal closely related with gray wold','udomowiony ssak blisko
 INSERT INTO Words(content, transcription, definition_fk, lesson_fk, part_of_speech_fk, category_fk, difficult, master_level, selected)
 VALUES ('dog', 'dog', 2,1,1,1,5,-1,0); --1
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('great', 'grejt',1,1,5,-1,0); --1
+VALUES ('great', 'grejt',1,1,5,-1,0); --2
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('cause', 'kous',1,1,5,-1,0); --1
+VALUES ('cause', 'kous',1,1,5,-1,0); --3
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('old', 'old',1,1,5,-1,0); --1
+VALUES ('old', 'old',1,1,5,-1,0); --4
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('time', 'tajm',1,1,5,-1,0); --1
+VALUES ('time', 'tajm',1,1,5,-1,0); --5
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('time', 'men',1,1,5,-1,0); --1
+VALUES ('men', 'men',1,1,5,-1,0); --6
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('need', 'nid',1,1,5,-1,0); --1
+VALUES ('need', 'nid',1,1,5,-1,0); --7
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('father', 'fater',1,1,5,-1,0); --1
+VALUES ('father', 'fater',1,1,5,-1,0); --8
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('head', 'hed',1,1,5,-1,0); --1
+VALUES ('head', 'hed',1,1,5,-1,0); --9
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('point', 'pojnt',1,1,5,-1,0); --1
+VALUES ('point', 'pojnt',1,1,5,-1,0); --10
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('world', 'łerld',1,1,5,-1,0); --1
+VALUES ('world', 'łerld',1,1,5,-1,0); --10
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('run', 'ran',1,1,5,-1,0); --1
+VALUES ('run', 'ran',1,1,5,-1,0); --12
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('left', 'left',1,1,5,-1,0); --1
+VALUES ('left', 'left',1,1,5,-1,0); --13
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('car', 'kar',1,1,5,-1,0); --1
+VALUES ('car', 'kar',1,1,5,-1,0); --14
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('book', 'buk',1,1,5,-1,0); --1
+VALUES ('book', 'buk',1,1,5,-1,0); --15
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('room', 'rum',1,1,5,-1,0); --1
+VALUES ('room', 'rum',1,1,5,-1,0); --16
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('dark', 'dark',1,1,5,-1,0); --1
+VALUES ('dark', 'dark',1,1,5,-1,0); --17
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('short', 'szort',1,1,5,-1,0); --1
+VALUES ('short', 'szort',1,1,5,-1,0); --18
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('blue', 'blu',1,1,5,-1,0); --1
+VALUES ('blue', 'blu',1,1,5,-1,0); --19
 
 INSERT INTO Translations(content)
 VALUES ('pies'); --1
 INSERT INTO Translations(content)
-VALUES ('świetnie'); --1
+VALUES ('świetnie'); --2
 INSERT INTO Translations(content)
-VALUES ('przyczyna'); --1
+VALUES ('przyczyna'); --3
 INSERT INTO Translations(content)
-VALUES ('powód'); --1
+VALUES ('powód'); --4
 INSERT INTO Translations(content)
-VALUES ('stary'); --1
+VALUES ('stary'); --5
 INSERT INTO Translations(content)
-VALUES ('czas'); --1
+VALUES ('czas'); --6
 INSERT INTO Translations(content)
-VALUES ('mężczyzna'); --1
+VALUES ('mężczyzna'); --7
 INSERT INTO Translations(content)
-VALUES ('człowiek'); --1
+VALUES ('człowiek'); --8
 INSERT INTO Translations(content)
-VALUES ('potrzebować'); --1
+VALUES ('potrzebować'); --9
 INSERT INTO Translations(content)
-VALUES ('potrzeba'); --1
+VALUES ('potrzeba'); --10
 INSERT INTO Translations(content)
-VALUES ('ojciec'); --1
+VALUES ('ojciec'); --11
 INSERT INTO Translations(content)
-VALUES ('głowa'); --1
+VALUES ('głowa'); --12
 INSERT INTO Translations(content)
-VALUES ('główny'); --1
+VALUES ('główny'); --13
 INSERT INTO Translations(content)
-VALUES ('wskazywać'); --1
+VALUES ('wskazywać'); --14
 INSERT INTO Translations(content)
-VALUES ('punkt'); --1
+VALUES ('punkt'); --15
 INSERT INTO Translations(content)
-VALUES ('świat'); --1
+VALUES ('świat'); --16
 INSERT INTO Translations(content)
-VALUES ('biegać'); --1
+VALUES ('biegać'); --17
 INSERT INTO Translations(content)
-VALUES ('lewy'); --1
+VALUES ('lewy'); --18
 INSERT INTO Translations(content)
-VALUES ('pozostawiony'); --1
+VALUES ('pozostawiony'); --19
 INSERT INTO Translations(content)
-VALUES ('samochód'); --1
+VALUES ('samochód'); --20
 INSERT INTO Translations(content)
-VALUES ('książka'); --1
+VALUES ('książka'); --21
 INSERT INTO Translations(content)
-VALUES ('pokój'); --1
+VALUES ('pokój'); --22
 INSERT INTO Translations(content)
-VALUES ('ciemny'); --1
+VALUES ('ciemny'); --23
 INSERT INTO Translations(content)
-VALUES ('mroczny'); --1
+VALUES ('mroczny'); --24
 INSERT INTO Translations(content)
-VALUES ('krótki'); --1
+VALUES ('krótki'); --25
 INSERT INTO Translations(content)
-VALUES ('niebieski'); --1
+VALUES ('niebieski'); --26
 
 
 
@@ -195,11 +195,11 @@ VALUES (16,22);
 INSERT INTO WordsTranslations (word_fk, translation_fk)
 VALUES (17,23);
 INSERT INTO WordsTranslations (word_fk, translation_fk)
-VALUES (18,24);
+VALUES (17,24);
 INSERT INTO WordsTranslations (word_fk, translation_fk)
-VALUES (19,25);
+VALUES (18,25);
 INSERT INTO WordsTranslations (word_fk, translation_fk)
-VALUES (20,26);
+VALUES (19,26);
 
 
 

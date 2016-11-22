@@ -24,6 +24,7 @@ import com.dyszlewskiR.edu.scientling.data.models.Word;
 import com.dyszlewskiR.edu.scientling.utils.ResourcesFileOpener;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable.*;
@@ -165,10 +166,10 @@ public class DataManager {
         }
     }
 
-    public ArrayList<Word> getQuestions(long set, long lesson, long category, long difficult, int howMuch) {
+    public List<Word> getQuestions(long set, long lesson, long category, long difficult, int howMuch) {
         assert lesson != -1 || set != -1;
         StringBuilder stringBuilder = new StringBuilder();
-        ArrayList<String> queryArguments = new ArrayList<>();
+        List<String> queryArguments = new ArrayList<>();
         stringBuilder.append(WordsTable.WordsColumns.LESSON_FK);
         if (lesson != -1) //jeśli ograniczamy się do jednej lekcji
         {
@@ -201,12 +202,12 @@ public class DataManager {
         String limit = String.valueOf(howMuch);
 
         List<Word> words = mWordDao.getAll(false, WordsTable.getColumns(), where, whereArguments,
-                null, null, null, limit); //TODO chyba dorobić random
+                "RANDOM()", null, null, limit); //TODO chyba dorobić random
         for (Word word : words) {
             completeWord(word);
         }
 
-        return (ArrayList<Word>) words;
+        return (List<Word>) words;
     }
 
     /**
@@ -232,7 +233,7 @@ public class DataManager {
      * @param differentFrom słówka jakie mają nie być wyszukiwane
      * @return
      */
-    public ArrayList<Word> getAnswersL2(long set, long category, long difficult, int howMuch, String[] differentFrom) {
+    public List<Word> getAnswersL2(long set, long category, long difficult, int howMuch, String[] differentFrom) {
         assert (difficult >= -1 && difficult <= 5) && difficult != 0;
 
         StringBuilder queryBuilder = new StringBuilder();
@@ -267,13 +268,13 @@ public class DataManager {
         }
 
         String orderBy = "RANDOM()";
-        ArrayList<Word> wordsList = mWordDao.getSimpleWords(queryBuilder.toString(),
+        List<Word> wordsList = mWordDao.getSimpleWords(queryBuilder.toString(),
                 queryArguments.toArray(new String[0]), orderBy, String.valueOf(howMuch));
 
         return wordsList;
     }
 
-    public ArrayList<Translation> getAnswersL1(long set, long category, long difficult, int howMuch, String[] differentFrom) {
+    public List<Translation> getAnswersL1(long set, long category, long difficult, int howMuch, String[] differentFrom) {
         //TODO Refaktoryzacja
         /*
             id IN (
@@ -319,7 +320,7 @@ public class DataManager {
             }
         }
         queryBuilder.append(")");// zamknięcie zapytania wewnętrzenego
-        ArrayList<Translation> translationsList = (ArrayList<Translation>) mTranslationDao.getAll(false, TranslationsTable.getColumns(),
+        List<Translation> translationsList = mTranslationDao.getAll(false, TranslationsTable.getColumns(),
                 queryBuilder.toString(), queryArguments.toArray(new String[0]), null, null, null, String.valueOf(howMuch));
         return translationsList;
     }

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -110,7 +111,7 @@ public class DataManagerTest {
     @Test
     public void testGetQuestions()
     {
-        ArrayList<Word> questions = mDataManager.getQuestions(-1, 1, 1, 3, 5);
+        List<Word> questions = mDataManager.getQuestions(-1, 1, 1, 3, 5);
         assertTrue(questions.size() != 0);
         assertEquals("lamp", questions.get(0).getContent());
         assertNotNull(questions.get(0).getTranslations());
@@ -123,8 +124,8 @@ public class DataManagerTest {
     @Test
     public void testGetAnswers()
     {
-        ArrayList<Word> answers = mDataManager.getAnswersL2(1,-1,-1,5, new String[]{"Dog"});
-        ArrayList<Translation> answerL1 = mDataManager.getAnswersL1(2,1,1,5,null);
+        List<Word> answers = mDataManager.getAnswersL2(1,-1,-1,5, new String[]{"Dog"});
+        List<Translation> answerL1 = mDataManager.getAnswersL1(2,1,1,5,null);
 }
 
 }

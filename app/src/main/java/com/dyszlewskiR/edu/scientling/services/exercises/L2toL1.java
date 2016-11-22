@@ -5,6 +5,7 @@ import com.dyszlewskiR.edu.scientling.data.models.Translation;
 import com.dyszlewskiR.edu.scientling.data.models.Word;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Razjelll on 17.11.2016.
@@ -36,7 +37,7 @@ public class L2toL1 implements IExerciseLanguage {
         long difficult = parameters.getDifficult();
         long category = parameters.getCategory();
         int howMuch = parameters.getNumQuestions();
-        ArrayList<Translation> translations = dataManager.getAnswersL1(set,difficult, category, howMuch,differentFrom);
+        List<Translation> translations = dataManager.getAnswersL1(set,difficult, category, howMuch,differentFrom);
 
         Answer[] answers = new Answer[translations.size()]; //TODO sprawdzić czy to jest potrzebne
         Answer answer = null;
