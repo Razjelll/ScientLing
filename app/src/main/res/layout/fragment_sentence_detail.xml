@@ -1,0 +1,21 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.dyszlewskiR.edu.scientling.fragment.SentenceDetail">
+
+    <EditText
+        style="@style/EditTextStyle"
+        android:lines="3"
+        android:id="@+id/sentenceText"/>
+    <EditText
+        style="@style/EditTextStyle"
+        android:lines="3"
+        android:id="@+id/translationText"
+        android:layout_below="@id/sentenceText"/>
+    <Button
+        style="@style/ButtonStyle"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

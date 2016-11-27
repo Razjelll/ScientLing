@@ -8,7 +8,7 @@
     <include
         layout="@layout/word_with_speechbutton_sector"
         android:layout_height="wrap_content"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:id="@+id/wordSector"
         />
 
@@ -18,6 +18,4 @@
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
         />
-
-
 </RelativeLayout>

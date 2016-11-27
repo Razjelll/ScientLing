@@ -27,28 +27,23 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
 
         android:orientation="horizontal"
         >
         <ProgressBar
             android:layout_width="match_parent"
-            android:layout_height="20dp"
+            android:layout_height="10dp"
             android:layout_gravity="center_vertical"
             android:id="@+id/exerciseProgressBar"
             android:indeterminateOnly="false"
             android:progressDrawable="@drawable/exercise_progress_bar"
             android:layout_weight="0.3"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
 
             />
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/progressState"
-            android:layout_weight="0.7"
-            android:text = "5/10"
-            android:gravity="center"/>
+
     </LinearLayout>
 
     <ProgressBar
@@ -76,6 +71,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="10dp"
+        android:background="@drawable/shadow_border"
+        android:layout_margin="3dp"
+        android:padding="3dp"
         ></FrameLayout>
 
 

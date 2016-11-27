@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/shadow_border">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/sentencesContentText"
+            android:lines="3"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"
+            android:text="To jest jakieś tam zdanie które będzie sobie tam wyświetlione i chyba to będzie tyrpche fajne i cnie wiem jak to będzie lae bedzie i chujkk"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/sentencesTranslationText"
+            android:lines="3"
+            android:text="Tp jest z koleio tłumaczeni i nie wiem jak t ojest i hcyba tyo będzie fajne i nie wiem jak, lae nadal sobie myśle, że to nie ma sensu i chyba będzie fajnei "/>
+    </LinearLayout>
+
+    <Button
+        style="@style/ButtonStyle"
+        android:layout_width="wrap_content"
+        android:id="@+id/sentencesDeleteButton"
+        android:layout_gravity="center_vertical"/>
+</LinearLayout>

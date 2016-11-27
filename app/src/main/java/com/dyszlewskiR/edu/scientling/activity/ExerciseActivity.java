@@ -94,7 +94,7 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
-        mNumQuestions = 6;
+        mNumQuestions = 2;
 
         mExerciseProgress = (ProgressBar) findViewById(R.id.exerciseProgressBar);
 
@@ -245,6 +245,8 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         mExerciseProgress.setProgress(0);
         changeFragment(fragment); //TODO ustawione domyślenie
     }
+
+
 
 
 }

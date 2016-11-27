@@ -21,4 +21,41 @@
     <string name="menage_repetitions">Zarządzaj powórkami</string>
     <string name="finish">Zakończ</string>
     <string name="title_activity_repetition_list">RepetitionListActivity</string>
+    <string name="title_activity_word_edit">WordEditActivity</string>
+
+    <string name="word">Słówko</string>
+    <string name="translation">Tłumaczenie</string>
+    <string name="part_of_speech">Częśc mowy</string>
+    <string name="category">Kategoria</string>
+    <string name="definition">Definicja</string>
+    <string name="definition_translation">Tłumaczenie definicji</string>
+    <string name="sentences_example">Przykładowe zdania</string>
+    <string name="sentence">Zdanie</string>
+    <string name="sentence_translation">Tłumaczenie zdania</string>
+
+    <string name="save">Zapisz</string>
+    <string name="add">Dodaj</string>
+    <string name="next">Dalej</string>
+
+    <string name="noun">Rzeczownik</string>
+    <string name="verb">Czasownik</string>
+    <string name="adjective">Przymiotnik</string>
+    <string name="pronoun">Zaimek</string>
+    <string name="adverb">Przysłówek</string>
+    <string name="numeral">Liczebnik</string>
+    <string name="article">Przedimek</string>
+    <string name="linking_word">Spójniki</string>
+
+    <string-array name="parts_of_speech">
+        <item>@string/noun</item>
+        <item>@string/verb</item>
+        <item>@string/adjective</item>
+        <item>@string/pronoun</item>
+        <item>@string/adverb</item>
+        <item>@string/numeral</item>
+        <item>@string/article</item>
+        <item>@string/linking_word</item>
+    </string-array>
+    <string name="title_activity_sentences_list">SentencesListActivity</string>
+
 </resources>

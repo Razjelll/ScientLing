@@ -4,11 +4,15 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -32,6 +36,7 @@ import com.dyszlewskiR.edu.scientling.services.speech.TextToSpeech;
  */
 public class ChooseExerciseFragment extends Fragment {
 
+    private final static String TAG = "ChooseExerciseFragment";
     private TextView mWordTextView;
     private TextView mTranscriptionTextView;
     private Button mSpeechButton;
@@ -43,7 +48,7 @@ public class ChooseExerciseFragment extends Fragment {
     private Button mAnswerButton5;
     private Button mAnswerButton6;
     private Button mNextButton;
-
+    private Button moreButton;
     private int mNumAnswersButtons = 6; //TODO wartość ustalona z góry, zmienić, pobierać z preferencji
     private Button[] mAnswersButtons;
 
@@ -77,6 +82,7 @@ public class ChooseExerciseFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate");
         super.onCreate(savedInstanceState);
 
         FragmentManager fragmentManager = getFragmentManager();
@@ -86,8 +92,6 @@ public class ChooseExerciseFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }*/
-
-
     }
 
     private void createAnswersButtonArray()
@@ -133,14 +137,18 @@ public class ChooseExerciseFragment extends Fragment {
 
     private void showQuestion()
     {
-        String question = mExerciseManager.getQuestion();
-        mWordTextView.setText(question);
-        String transcription = mExerciseManager.getTranscription();
-        mTranscriptionTextView.setText(transcription);
 
-        Animation animation = AnimationUtils.makeInAnimation(getActivity(), false);
-        //mFragmentView.startAnimation(animation);
-        getActivity().overridePendingTransition(R.anim.move_from_right_side, R.anim.move_to_left_side);
+        String question = mExerciseManager.getQuestion();
+        if(question != null)
+        {
+            mWordTextView.setText(question);
+            String transcription = mExerciseManager.getTranscription();
+            mTranscriptionTextView.setText(transcription);
+
+            Animation animation = AnimationUtils.makeInAnimation(getActivity(), false);
+            mFragmentView.startAnimation(animation);
+            //getActivity().overridePendingTransition(R.anim.move_from_right_side, R.anim.move_to_left_side);
+        }
     }
 
     private void toAnswer(int button)
@@ -150,16 +158,27 @@ public class ChooseExerciseFragment extends Fragment {
         boolean isCorrect = mExerciseManager.checkAnswer(answer);
         if(isCorrect)
         {
-            mAnswersButtons[button].setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style_green));
+           // mAnswersButtons[button].setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style_green));
+            GradientDrawable buttonShape = (GradientDrawable)mAnswersButtons[button].getBackground().getCurrent();
+            buttonShape.setColor(getResources().getColor(R.color.correctColor));
         }
         else
         {
-            mAnswersButtons[button].setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style_red));
+            GradientDrawable buttonShape = (GradientDrawable)mAnswersButtons[button].getBackground().getCurrent();
+            buttonShape.setColor(getResources().getColor(R.color.incorrectColor));
+           // mAnswersButtons[button].setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style_red));
             String correctAnswer = mExerciseManager.getCorrectAnswer();
             Button correctButton = findButton(correctAnswer);
-            correctButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style_green));
+            //correctButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style_green));
+            GradientDrawable correctButtonShape = (GradientDrawable)correctButton.getBackground().getCurrent();
+            correctButtonShape.setColor(getResources().getColor(R.color.correctColor));
+            //correctButton.setBackgroundColor(getResources().getColor(R.color.correctColor));
         }
+
+        Animation animation = AnimationUtils.makeInAnimation(getActivity(), false);
         mNextButton.setVisibility(View.VISIBLE);
+        mNextButton.startAnimation(animation);
+
     }
 
     private Button findButton(String text)
@@ -177,7 +196,7 @@ public class ChooseExerciseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        Log.d(TAG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_choose_exercise, container, false);
         mFragmentView = view;
         mWordTextView = (TextView)view.findViewById(R.id.wordTextView);
@@ -188,7 +207,7 @@ public class ChooseExerciseFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 TextToSpeech textToSpeech = new TextToSpeech(getActivity().getApplicationContext(), "en-US");
-                textToSpeech.notifyNewMessage("please");
+                textToSpeech.notifyNewMessage(mExerciseManager.getQuestion());
             }
         });
 
@@ -200,6 +219,7 @@ public class ChooseExerciseFragment extends Fragment {
         mAnswerButton6 = (Button)view.findViewById(R.id.answer6);
         mNextButton = (Button)view.findViewById(R.id.nextButton);
         mNextButton.setOnClickListener(new NextButtonOnClickListener());
+
         return view;
     }
 
@@ -216,6 +236,7 @@ public class ChooseExerciseFragment extends Fragment {
      */
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        Log.d(TAG, "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
 
 
@@ -237,11 +258,17 @@ public class ChooseExerciseFragment extends Fragment {
 
     private void resetButtons()
     {
+        GradientDrawable buttonShape;
         for(int i=0; i< mNumAnswersButtons; i++)
         {
-            mAnswersButtons[i].setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style));
+            //mAnswersButtons[i].setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style));
+            buttonShape = (GradientDrawable)mAnswersButtons[i].getBackground().getCurrent();
+            buttonShape.setColor(getResources().getColor(R.color.colorMain));
+
         }
     }
+
+
 
     private void showExercise() //TODO kolejna nazwa do zmienienia :(
     {
@@ -258,7 +285,9 @@ public class ChooseExerciseFragment extends Fragment {
 
     @Override
     public void onAttach(Context context) {
+        Log.d(TAG, "onAttach");
         super.onAttach(context);
+
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -269,6 +298,8 @@ public class ChooseExerciseFragment extends Fragment {
 
     @Override
     public void onDetach() {
+        Log.d(TAG, "onDetach");
+        resetButtons();
         super.onDetach();
         mListener = null;
     }
@@ -311,16 +342,24 @@ public class ChooseExerciseFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            mExerciseManager.nextQuestion();
-            //uruchomienie animacji przejścia do lewej na całym fragmencie
-            Animation animation = AnimationUtils.makeOutAnimation(getActivity(), false);
+            //TODO to może będzie można usunąć ponieważ nie widać rezultatu
+            Animation animation =new AlphaAnimation(1,0);
+            animation.setDuration(100);
 
-            //mFragmentView.startAnimation(animation);
-            resetButtons();
-            mNextButton.setVisibility(View.GONE);
-            mCanAnswer = true;
-            showExercise();
+            mFragmentView.startAnimation(animation);
+            if(mExerciseManager.getRemainingQuestion() != 0)
+            {
+
+
+                mExerciseManager.nextQuestion();
+
+                resetButtons();
+                mNextButton.setVisibility(View.INVISIBLE);
+                mCanAnswer = true;
+                showExercise();
+            }
             ((ExerciseActivity)getActivity()).updateQuestion();
+
         }
     }
 }

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.data.database.DataManager;
+import com.dyszlewskiR.edu.scientling.data.models.Repetition;
+import com.dyszlewskiR.edu.scientling.data.models.RepetitionItem;
 import com.dyszlewskiR.edu.scientling.data.models.Translation;
 import com.dyszlewskiR.edu.scientling.data.models.Word;
 
@@ -51,11 +53,11 @@ public class ExerciseManager {
      * kolejki. Jeśli odpowie dobrze pozycja zostanie usunięta z kolejki*/
     private Queue<Integer> mQuestionsQueue;
 
-    /**List przechowująca numery identyfikacyjne słówek, na które użytkownik aplikacji odpowiedział.
+    /**List przechowująca numery identyfikacyjne do słówek w tabeli mQuestions, na które użytkownik aplikacji odpowiedział.
      * Na podstawie tej listy będą wyznaczane powtóreki, aby zapisywać tylko te słówka, które
      * rzeczywiście zostaly przećwiczone. W innych programach tego typu do powtórek zostają zapisane
      * wszystkie słówka, które wchodziły w skład ćwiczenia.*/
-    private List<Long> mToRepeat;
+    private List<Integer> mToRepeat;
 
     private List<Word> mAnswersL2;
     private List<Translation> mAnswersL1;
@@ -119,11 +121,16 @@ public class ExerciseManager {
     }
 
     public String getQuestion() {
-        return mExerciseLanguage.getQuestion(mQuestions.get(mCurrentQuestion));
+         return mExerciseLanguage.getQuestion(mQuestions.get(mCurrentQuestion));
     }
 
     public String getTranscription() {
         return mExerciseLanguage.getTranscription(mQuestions.get(mCurrentQuestion));
+    }
+
+    public int getRemainingQuestion()
+    {
+        return mQuestionsQueue.size();
     }
 
     public String[] getAnswers(int howMuch) {
@@ -177,6 +184,10 @@ public class ExerciseManager {
 
         serveAnswer(correct);
 
+        if(mToRepeat.size() < mNumQuestions)
+        {
+            mToRepeat.add(mCurrentQuestion);
+        }
         return correct;
     }
 
@@ -227,5 +238,26 @@ public class ExerciseManager {
             mQuestionsQueue.add(i);
         }
         mCurrentQuestion = mQuestionsQueue.poll();
+    }
+
+    public List<RepetitionItem> prepareRepetitionsItems()
+    {
+        StringBuilder translationsBuilder = new StringBuilder();
+        List<RepetitionItem> repetitions = new ArrayList<>();
+        for(int i : mToRepeat) //dla każdego identyfikatora znajdującego się w mToRepeat
+        {
+            translationsBuilder.setLength(0);
+            for(int translation = 0; translation < mQuestions.get(i).getTranslations().size(); translation++)
+            {
+                translationsBuilder.append(mQuestions.get(i).getTranslations().get(translation).getContent());
+                if(translation != mQuestions.get(i).getTranslations().size()-1)
+                {
+                    translationsBuilder.append(", ");
+                }
+            }
+            repetitions.add(new RepetitionItem(mQuestions.get(i).getId(), mQuestions.get(i).getContent(),
+                    translationsBuilder.toString()));
+        }
+        return repetitions;
     }
 }
