@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_word_edit"
     android:layout_width="match_parent"
@@ -9,85 +8,59 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.dyszlewskiR.edu.scientling.activity.WordEditActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context="com.dyszlewskiR.edu.scientling.fragment.WordEditFragment"
+    tools:showIn="@layout/activity_word_edit">
 
-
-    <Button
-        style="@style/ButtonStyle"
-        android:id="@+id/saveButton"
-
-        android:layout_alignParentBottom="true"
-        />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-
-        android:layout_above="@id/saveButton">
-
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="slowka"
+            android:id="@+id/slowka"/>
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/word"
-                />
-            <EditText
-                style="@style/EditTextStyle"
-                android:id="@+id/wordEditText"
-                />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="@string/put_translation"/>
-            <EditText
-                style="@style/EditTextStyle"
-                android:id="@+id/translationsEditText"
-                />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/part_of_speech"/>
-            <Spinner
-
-                style="@style/SpinnerStyle"
-                android:entries="@array/parts_of_speech"
-                />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/category"/>
-            <Spinner
-                style="@style/SpinnerStyle"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/definition"/>
-            <EditText
-                style="@style/EditTextStyle"
-                android:id="@+id/definitionEditText"
-                android:lines="3"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/definition_translation"/>
-            <EditText
-                style="@style/EditTextStyle"
-                android:id="@+id/definitionTranslationEditText"
-                android:lines="3"/>
-            <Button
-                style="@style/ButtonStyle"
-                android:text="@string/sentences_example"/>
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+                <Button
+                    style="@style/ButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="32dp"
+                    android:id="@+id/lesson_change_button"
+                    android:text="@string/change"
+                    android:layout_marginTop="10dp"
+                   />
+                <TextView
+                    style="@style/LabelStyle"
+                    android:id="@+id/set_text_view"
+                    android:gravity="center_horizontal"
+                    android:text="Angielski w pigułce"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="0.6"/>
+                <TextView
+                    style="@style/TextViewStyle"
+                    android:id="@+id/lesson_text_view"
+                    android:gravity="center_horizontal"
+                    android:text="Zwierzaczki"
+                    android:layout_weight="0.4"/>
 
         </LinearLayout>
 
+        <TextView
+            style="@style/LabelStyle"
+            android:text="@string/word"
+            />
+        <EditText
+            style="@style/EditTextStyle"
+            android:id="@+id/word_edit_text"
+            />
+        <TextView
+            style="@style/LabelStyle"
+            android:text="@string/put_translation"/>
+        <EditText
+            style="@style/EditTextStyle"
+            android:id="@+id/translation_edit_text"
+            android:hint="@string/translation_separator"
+            />
 
-    </ScrollView>
-</RelativeLayout>
+</LinearLayout>

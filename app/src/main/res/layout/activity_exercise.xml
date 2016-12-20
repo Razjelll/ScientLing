@@ -20,7 +20,8 @@
         <android.support.v7.widget.AppCompatSpinner
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/actionBarSpinner">
+            android:id="@+id/actionBarSpinner"
+            >
 
         </android.support.v7.widget.AppCompatSpinner>
     </android.support.v7.widget.Toolbar>

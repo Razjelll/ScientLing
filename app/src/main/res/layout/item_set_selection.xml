@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+    
+    <TextView
+        style="@style/TextViewStyle" 
+        android:id="@+id/set_list_name"
+        android:text="to jest pustka"
+        android:textStyle="bold" />
+
+    <!--uzyłbym tutaj stylu, ale Android twierdzi przy inflate że tak nie można -->
+    <TextView
+        style="@style/LabelStyle"
+        android:id="@+id/set_list_language"
+        android:text="Angielski"/>
+</LinearLayout>

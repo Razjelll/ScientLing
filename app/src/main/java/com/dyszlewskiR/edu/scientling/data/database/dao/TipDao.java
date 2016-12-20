@@ -16,19 +16,9 @@ import java.util.List;
 public class TipDao extends BaseDao<Tip> {
 
     private static final String TABLE_NAME = "Tips";
-
-    public static class TipsColumns {
-        public static final String ID = "id";
-        public static final String CONTENT = "content";
-
-        public static final int ID_POSITION = 0;
-        public static final int CONTENT_POSITION = 1;
-    }
-
     private final String INSERT_STATEMENT =
             "INSERT INTO " + TABLE_NAME + "("
                     + TipsColumns.CONTENT + ") VALUES (?)";
-
     private final String WHERE_ID = TipsColumns.ID + " = ?";
 
     public TipDao(SQLiteDatabase db) {
@@ -91,7 +81,7 @@ public class TipDao extends BaseDao<Tip> {
     }
 
     @Override
-    public List<Tip> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+    public List<Tip> getAll(boolean distinct, String[] columns, String selection, String[] selectionArgs,
                             String groupBy, String having, String orderBy, String limit) {
         List<Tip> tipsList = new ArrayList<>();
         Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection, selectionArgs,
@@ -110,5 +100,13 @@ public class TipDao extends BaseDao<Tip> {
         }
         return tipsList;
 
+    }
+
+    public static class TipsColumns {
+        public static final String ID = "id";
+        public static final String CONTENT = "content";
+
+        public static final int ID_POSITION = 0;
+        public static final int CONTENT_POSITION = 1;
     }
 }

@@ -4,9 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
-
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,7 +20,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.Exercise;
 import com.dyszlewskiR.edu.scientling.fragment.ChooseExerciseFragment;
 import com.dyszlewskiR.edu.scientling.fragment.KnowExerciseFragment;
 import com.dyszlewskiR.edu.scientling.fragment.ListenAndChooseExerciseFragment;
@@ -42,13 +39,9 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         ListenAndChooseExerciseFragment.OnFragmentInteractionListener,
         ListenAndWriteExerciseFragment.OnFragmentInteractionListener {
 
-    public enum ExerciseLanguage {
-        L1, L2
-    }
+    private final int KNOW_EXERCISE = 0;
 
     //TODO refaktoryzacja
-
-    private final int KNOW_EXERCISE = 0;
     private final int KNOW_EXERCISE_INV = 1;
     private final int CHOOSE_EXERCISE = 2;
     private final int CHOOSE_EXERCISE_INV = 3;
@@ -58,7 +51,6 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
     private final int LISTEN_AND_WRITE_EXERCISE_INV = 7;
     private final int WRITE_EXERCISE = 8;
     private final int SUMMARY_EXERCISE = 9;
-
     /**
      * Kontrolka wyboru rodzaju ćwiczenia znajdująca się na górnym pasku narzędzi
      */
@@ -69,7 +61,6 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
     private ProgressBar mExerciseProgress;
     private ProgressBar mCircleProgressBar;
     private TextView mCircleProgressBarText;
-
     /**
      * Zmienna, która określa jakie ćwiczenie jest w tej chwili aktywne
      */
@@ -78,10 +69,7 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
      * Manager, który służy do zarządzanai fragmentami
      */
     private FragmentManager fragmentManager;
-
     private ExerciseManager mExerciseManager;
-
-
     private int mNumQuestions;
 
     @Override
@@ -90,7 +78,7 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         setContentView(R.layout.activity_exercise);
         Toolbar toolbar = (Toolbar) findViewById(R.id.my_toolbar);
         toolbar.setTitle(""); //usunięcie tytułu aplikacji z górnego paska
-        setSupportActionBar(toolbar);
+        //setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
 
@@ -207,7 +195,6 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.actionbar_menu, menu);
 
-
         return true;
     }
 
@@ -233,20 +220,20 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
 
     public void updateQuestion() {
         int correctAnswers = mExerciseManager.getNumCorrectAnswers();
-        if(correctAnswers == mNumQuestions)
-        {
+        if (correctAnswers == mNumQuestions) {
             changeFragment(SUMMARY_EXERCISE);
         }
         mExerciseProgress.setProgress(correctAnswers);
     }
 
-    public void restart(int fragment)
-    {
+    public void restart(int fragment) {
         mExerciseProgress.setProgress(0);
         changeFragment(fragment); //TODO ustawione domyślenie
     }
 
-
+    public enum ExerciseLanguage {
+        L1, L2
+    }
 
 
 }

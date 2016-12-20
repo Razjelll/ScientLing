@@ -1,9 +1,11 @@
 INSERT INTO Languages (name, abbreviation, code)
-VALUES ('Angielski', 'ENG','en_EN');
+VALUES ('englishUS', 'ENG','en_US');
 INSERT INTO Languages (name, abbreviation, code)
-VALUES ('Hiszpański', 'ESP', 'sp_SP');
+VALUES ('spanish', 'ESP', 'es_ES');
 INSERT INTO Languages (name, abbreviation, code)
-VALUES ('Polski','POL','pl_PL');
+VALUES ('polish','POL','pl_PL');
+INSERT INTO Languages(name, abbreviation,code)
+VALUES ('japanese', 'JAP', 'ja_JP');
 
 
 INSERT INTO Categories(name, language_fk)
@@ -24,21 +26,23 @@ VALUES ('This is very polite dog', 'To jest bardzo grzeczny piesek');
 INSERT INTO Sentences(content, translation)
 VALUES ('This is devil Tomek', 'To jest diabeł Tomek');
 
-INSERT INTO Sets(name, language_fk)
-VALUES ('Angielski 1', 1);
-INSERT INTO Sets(name, language_fk)
-VALUES ('English for cgildren', 1);
-INSERT INTO Sets(name, language_fk)
-VALUES ('Espanol', 2);
-INSERT INTO Sets(name, language_fk)
-VALUES ('Polski dla obcych', 3);
+INSERT INTO Sets(name, language_l2_fk, language_l1_fk)
+VALUES ('Angielski 1', 1, 3);
+INSERT INTO Sets(name, language_l2_fk, language_l1_fk)
+VALUES ('English for cgildren', 1,3);
+INSERT INTO Sets(name, language_l2_fk, language_l1_fk)
+VALUES ('Espanol', 2,3);
+INSERT INTO Sets(name, language_l2_fk, language_l1_fk)
+VALUES ('Polski dla obcych', 3,1);
 
 INSERT INTO Lessons(name, number, set_fk)
-VALUES ('1', 1, 1);
+VALUES ('Lekcja 1', 1, 1);
 INSERT INTO Lessons(name, number, set_fk)
-VALUES ('2', 2, 1);
+VALUES ('Lekcja 2', 2, 1);
 INSERT INTO Lessons(name, number, set_fk)
-VALUES ('3', 3, 1);
+VALUES ('Lekcja 3', 3, 1);
+INSERT INTO Lessons(name, number, set_fk)
+VALUES ('Lekcja o niczym', 1, 2);
 
 INSERT INTO PartsOfSpeech(name)
 VALUES ('noun');
@@ -54,11 +58,11 @@ VALUES ('domestic mammal closely related with gray wold','udomowiony ssak blisko
 
 
 INSERT INTO Words(content, transcription, definition_fk, lesson_fk, part_of_speech_fk, category_fk, difficult, master_level, selected)
-VALUES ('dog', 'dog', 2,1,1,1,5,-1,0); --1
+VALUES ('dog', 'dog', 2,1,1,1,5,50,0); --1
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
 VALUES ('great', 'grejt',1,1,5,-1,0); --2
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('cause', 'kous',1,1,5,-1,0); --3
+VALUES ('cause', 'kous',1,1,5,100,0); --3
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
 VALUES ('old', 'old',1,1,5,-1,0); --4
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
@@ -66,23 +70,23 @@ VALUES ('time', 'tajm',1,1,5,-1,0); --5
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
 VALUES ('men', 'men',1,1,5,-1,0); --6
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('need', 'nid',1,1,5,-1,0); --7
+VALUES ('need', 'nid',1,1,5,20,0); --7
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
 VALUES ('father', 'fater',1,1,5,-1,0); --8
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
 VALUES ('head', 'hed',1,1,5,-1,0); --9
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('point', 'pojnt',1,1,5,-1,0); --10
+VALUES ('point', 'pojnt',1,1,5,40,0); --10
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
 VALUES ('world', 'łerld',1,1,5,-1,0); --10
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
 VALUES ('run', 'ran',1,1,5,-1,0); --12
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('left', 'left',1,1,5,-1,0); --13
+VALUES ('left', 'left',1,1,5,100,0); --13
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
 VALUES ('car', 'kar',1,1,5,-1,0); --14
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('book', 'buk',1,1,5,-1,0); --15
+VALUES ('book', 'buk',1,1,5,0,0); --15
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
 VALUES ('room', 'rum',1,1,5,-1,0); --16
 INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)

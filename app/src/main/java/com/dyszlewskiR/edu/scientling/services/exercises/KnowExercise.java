@@ -9,12 +9,10 @@ public class KnowExercise implements IExercise {
     @Override
     public boolean checkAnswer(String answer, String question) {
 
-        if(answer.equals("Know")) //TODO przerobić boolean na int, ponieważ nie można uwzględnić pośrednich wyników
+        if (answer.equals("Know")) //TODO przerobić boolean na int, ponieważ nie można uwzględnić pośrednich wyników
         {
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }

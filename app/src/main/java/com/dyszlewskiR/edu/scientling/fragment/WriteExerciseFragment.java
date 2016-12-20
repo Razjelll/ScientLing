@@ -94,7 +94,7 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
                 @Override
                 public void onClick(View v) {
                     nextQuestion();
-                    ((ExerciseActivity)getActivity()).updateQuestion();
+                    ((ExerciseActivity) getActivity()).updateQuestion();
                     dialog.dismiss();
                 }
             });

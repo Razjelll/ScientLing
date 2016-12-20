@@ -7,7 +7,6 @@ import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,10 +36,11 @@ import com.dyszlewskiR.edu.scientling.services.speech.TextToSpeech;
 public class ChooseExerciseFragment extends Fragment {
 
     private final static String TAG = "ChooseExerciseFragment";
+    private static ExerciseManager mExerciseManager;
+    FragmentTransaction fragmentTransaction;
     private TextView mWordTextView;
     private TextView mTranscriptionTextView;
     private Button mSpeechButton;
-
     private Button mAnswerButton1;
     private Button mAnswerButton2;
     private Button mAnswerButton3;
@@ -51,15 +51,9 @@ public class ChooseExerciseFragment extends Fragment {
     private Button moreButton;
     private int mNumAnswersButtons = 6; //TODO wartość ustalona z góry, zmienić, pobierać z preferencji
     private Button[] mAnswersButtons;
-
     private boolean mCanAnswer;
-
     private OnFragmentInteractionListener mListener;
-
-    private static ExerciseManager mExerciseManager;
-
     private View mFragmentView;
-    FragmentTransaction fragmentTransaction;
 
     public ChooseExerciseFragment() {
 
@@ -94,28 +88,25 @@ public class ChooseExerciseFragment extends Fragment {
         }*/
     }
 
-    private void createAnswersButtonArray()
-    {
+    private void createAnswersButtonArray() {
         mAnswersButtons = new Button[mNumAnswersButtons];
         mAnswersButtons[0] = mAnswerButton1;
         mAnswersButtons[1] = mAnswerButton2;
-        if(mNumAnswersButtons > 2)
+        if (mNumAnswersButtons > 2)
             mAnswersButtons[2] = mAnswerButton3;
-        if(mNumAnswersButtons > 3)
+        if (mNumAnswersButtons > 3)
             mAnswersButtons[3] = mAnswerButton4;
-        if(mNumAnswersButtons >4)
+        if (mNumAnswersButtons > 4)
             mAnswersButtons[4] = mAnswerButton5;
-        if(mNumAnswersButtons > 5)
+        if (mNumAnswersButtons > 5)
             mAnswersButtons[5] = mAnswerButton6;
     }
 
     /**
      * Umyślnie niewstawiono breaków
      */
-    private void hideNonUseAnswersButtons()
-    {
-        switch(mNumAnswersButtons)
-        {
+    private void hideNonUseAnswersButtons() {
+        switch (mNumAnswersButtons) {
             case 2:
                 mAnswerButton3.setVisibility(View.GONE);
             case 3:
@@ -127,20 +118,16 @@ public class ChooseExerciseFragment extends Fragment {
         }
     }
 
-    private void addAnswersButtonsListeners()
-    {
-        for(int i=0; i<mNumAnswersButtons; i++)
-        {
+    private void addAnswersButtonsListeners() {
+        for (int i = 0; i < mNumAnswersButtons; i++) {
             mAnswersButtons[i].setOnClickListener(new AnswerOnClickListener(i));
         }
     }
 
-    private void showQuestion()
-    {
+    private void showQuestion() {
 
         String question = mExerciseManager.getQuestion();
-        if(question != null)
-        {
+        if (question != null) {
             mWordTextView.setText(question);
             String transcription = mExerciseManager.getTranscription();
             mTranscriptionTextView.setText(transcription);
@@ -151,26 +138,22 @@ public class ChooseExerciseFragment extends Fragment {
         }
     }
 
-    private void toAnswer(int button)
-    {
+    private void toAnswer(int button) {
         mCanAnswer = false;
         String answer = (String) mAnswersButtons[button].getText();
         boolean isCorrect = mExerciseManager.checkAnswer(answer);
-        if(isCorrect)
-        {
-           // mAnswersButtons[button].setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style_green));
-            GradientDrawable buttonShape = (GradientDrawable)mAnswersButtons[button].getBackground().getCurrent();
+        if (isCorrect) {
+            // mAnswersButtons[button].setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style_green));
+            GradientDrawable buttonShape = (GradientDrawable) mAnswersButtons[button].getBackground().getCurrent();
             buttonShape.setColor(getResources().getColor(R.color.correctColor));
-        }
-        else
-        {
-            GradientDrawable buttonShape = (GradientDrawable)mAnswersButtons[button].getBackground().getCurrent();
+        } else {
+            GradientDrawable buttonShape = (GradientDrawable) mAnswersButtons[button].getBackground().getCurrent();
             buttonShape.setColor(getResources().getColor(R.color.incorrectColor));
-           // mAnswersButtons[button].setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style_red));
+            // mAnswersButtons[button].setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style_red));
             String correctAnswer = mExerciseManager.getCorrectAnswer();
             Button correctButton = findButton(correctAnswer);
             //correctButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style_green));
-            GradientDrawable correctButtonShape = (GradientDrawable)correctButton.getBackground().getCurrent();
+            GradientDrawable correctButtonShape = (GradientDrawable) correctButton.getBackground().getCurrent();
             correctButtonShape.setColor(getResources().getColor(R.color.correctColor));
             //correctButton.setBackgroundColor(getResources().getColor(R.color.correctColor));
         }
@@ -181,12 +164,9 @@ public class ChooseExerciseFragment extends Fragment {
 
     }
 
-    private Button findButton(String text)
-    {
-        for(int i= 0 ; i<mNumAnswersButtons; i++)
-        {
-            if(mAnswersButtons[i].getText().equals(text))
-            {
+    private Button findButton(String text) {
+        for (int i = 0; i < mNumAnswersButtons; i++) {
+            if (mAnswersButtons[i].getText().equals(text)) {
                 return mAnswersButtons[i];
             }
         }
@@ -199,8 +179,8 @@ public class ChooseExerciseFragment extends Fragment {
         Log.d(TAG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_choose_exercise, container, false);
         mFragmentView = view;
-        mWordTextView = (TextView)view.findViewById(R.id.wordTextView);
-        mTranscriptionTextView = (TextView)view.findViewById(R.id.transcriptionTextView);
+        mWordTextView = (TextView) view.findViewById(R.id.wordTextView);
+        mTranscriptionTextView = (TextView) view.findViewById(R.id.transcriptionTextView);
         mSpeechButton = (Button) view.findViewById(R.id.speechButton);
 
         mSpeechButton.setOnClickListener(new View.OnClickListener() {
@@ -211,13 +191,13 @@ public class ChooseExerciseFragment extends Fragment {
             }
         });
 
-        mAnswerButton1 = (Button)view.findViewById(R.id.answer1);
-        mAnswerButton2 = (Button)view.findViewById(R.id.answer2);
-        mAnswerButton3 = (Button)view.findViewById(R.id.answer3);
-        mAnswerButton4 = (Button)view.findViewById(R.id.answer4);
-        mAnswerButton5 = (Button)view.findViewById(R.id.answer5);
-        mAnswerButton6 = (Button)view.findViewById(R.id.answer6);
-        mNextButton = (Button)view.findViewById(R.id.nextButton);
+        mAnswerButton1 = (Button) view.findViewById(R.id.answer1);
+        mAnswerButton2 = (Button) view.findViewById(R.id.answer2);
+        mAnswerButton3 = (Button) view.findViewById(R.id.answer3);
+        mAnswerButton4 = (Button) view.findViewById(R.id.answer4);
+        mAnswerButton5 = (Button) view.findViewById(R.id.answer5);
+        mAnswerButton6 = (Button) view.findViewById(R.id.answer6);
+        mNextButton = (Button) view.findViewById(R.id.nextButton);
         mNextButton.setOnClickListener(new NextButtonOnClickListener());
 
         return view;
@@ -231,6 +211,7 @@ public class ChooseExerciseFragment extends Fragment {
      * komponenty jakie mają znaleźć się we fragmencie. Następną metodą po metodzie onCreateView
      * jest metoda onViewCreated, która jest wywoływana po utworzeniu obiektu View. Dopiero teraz
      * można przypisać tekst komponentowi TextView dostępnym we fragmencie.
+     *
      * @param view
      * @param savedInstanceState
      */
@@ -250,24 +231,20 @@ public class ChooseExerciseFragment extends Fragment {
     private void showAnswers() //TODO można zmienić nazwę
     {
         String[] answers = mExerciseManager.getAnswers(mNumAnswersButtons);
-        for(int i=0; i< mNumAnswersButtons; i++)
-        {
+        for (int i = 0; i < mNumAnswersButtons; i++) {
             mAnswersButtons[i].setText(answers[i]);
         }
     }
 
-    private void resetButtons()
-    {
+    private void resetButtons() {
         GradientDrawable buttonShape;
-        for(int i=0; i< mNumAnswersButtons; i++)
-        {
+        for (int i = 0; i < mNumAnswersButtons; i++) {
             //mAnswersButtons[i].setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style));
-            buttonShape = (GradientDrawable)mAnswersButtons[i].getBackground().getCurrent();
+            buttonShape = (GradientDrawable) mAnswersButtons[i].getBackground().getCurrent();
             buttonShape.setColor(getResources().getColor(R.color.colorMain));
 
         }
     }
-
 
 
     private void showExercise() //TODO kolejna nazwa do zmienienia :(
@@ -319,36 +296,31 @@ public class ChooseExerciseFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    protected class AnswerOnClickListener implements View.OnClickListener
-    {
+    protected class AnswerOnClickListener implements View.OnClickListener {
         int mIndex;
 
-        public AnswerOnClickListener(int index)
-        {
+        public AnswerOnClickListener(int index) {
             mIndex = index;
         }
 
         @Override
         public void onClick(View v) {
-            if(mCanAnswer)
-            {
+            if (mCanAnswer) {
                 toAnswer(mIndex);
             }
         }
     }
 
-    protected class NextButtonOnClickListener implements View.OnClickListener
-    {
+    protected class NextButtonOnClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
             //TODO to może będzie można usunąć ponieważ nie widać rezultatu
-            Animation animation =new AlphaAnimation(1,0);
+            Animation animation = new AlphaAnimation(1, 0);
             animation.setDuration(100);
 
             mFragmentView.startAnimation(animation);
-            if(mExerciseManager.getRemainingQuestion() != 0)
-            {
+            if (mExerciseManager.getRemainingQuestion() != 0) {
 
 
                 mExerciseManager.nextQuestion();
@@ -358,7 +330,7 @@ public class ChooseExerciseFragment extends Fragment {
                 mCanAnswer = true;
                 showExercise();
             }
-            ((ExerciseActivity)getActivity()).updateQuestion();
+            ((ExerciseActivity) getActivity()).updateQuestion();
 
         }
     }

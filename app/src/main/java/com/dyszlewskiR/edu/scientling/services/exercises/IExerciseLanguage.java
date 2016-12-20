@@ -1,6 +1,6 @@
 package com.dyszlewskiR.edu.scientling.services.exercises;
 
-import com.dyszlewskiR.edu.scientling.data.database.DataManager;
+import com.dyszlewskiR.edu.scientling.services.DataManager;
 import com.dyszlewskiR.edu.scientling.data.models.Word;
 
 /**
@@ -10,7 +10,10 @@ import com.dyszlewskiR.edu.scientling.data.models.Word;
 public interface IExerciseLanguage {
 
     String getQuestion(Word word);
+
     String getAnswer(Word word);
+
     String getTranscription(Word word); //TODO prawdopodobnie będzie to można obsłużyć we fragmencie
+
     Answer[] getAnswers(ExerciseParameters parameters, String[] differentFrom, DataManager dataManager);
 }

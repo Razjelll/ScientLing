@@ -2,24 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/shadow_border">
+    android:focusable="false"
+    android:descendantFocusability="blocksDescendants"
+    >
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:padding="5dp">
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/TextViewStyle"
             android:id="@+id/sentencesContentText"
             android:lines="3"
-            android:textStyle="bold"
+
             android:layout_marginBottom="4dp"
             android:text="To jest jakieś tam zdanie które będzie sobie tam wyświetlione i chyba to będzie tyrpche fajne i cnie wiem jak to będzie lae bedzie i chujkk"/>
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/LabelStyle"
             android:id="@+id/sentencesTranslationText"
             android:lines="3"
             android:text="Tp jest z koleio tłumaczeni i nie wiem jak t ojest i hcyba tyo będzie fajne i nie wiem jak, lae nadal sobie myśle, że to nie ma sensu i chyba będzie fajnei "/>
@@ -27,7 +28,10 @@
 
     <Button
         style="@style/ButtonStyle"
-        android:layout_width="wrap_content"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_margin="10dp"
         android:id="@+id/sentencesDeleteButton"
+
         android:layout_gravity="center_vertical"/>
 </LinearLayout>

@@ -23,7 +23,7 @@ import java.util.ArrayList;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "scientling.sqlite";
-    public static final int VERSION =1;
+    public static final int VERSION = 1;
 
     private static final String CREATE_FILE_NAME = "createDb";
     private static final String UPDATE_FILE_NAME = "updateDb_";
@@ -31,30 +31,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private Context mContext;
     private AndroidFileOpener mFileOpener;
+
     /**
      * Kontruktor klasy DatabaseHelper
+     *
      * @param context kontekst aplikacji
      */
-    public DatabaseHelper(Context context)
-    {
+    public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
         mContext = context;
         mFileOpener = new AssetsFileOpener(mContext);
     }
 
     /**
-     *
      * Metoda ustawijąca z sposób otwierania zasonów. //TODO uzupełnić
+     *
      * @param fileOpener
      */
-    public void setFileOpener(AndroidFileOpener fileOpener)
-    {
+    public void setFileOpener(AndroidFileOpener fileOpener) {
         mFileOpener = fileOpener;
     }
 
     /**
      * Metoda służy do tworzenia, a także do zapełnienia bazy danych.
      * Metoda wywoywana jest w momencie, gdy odwoujemy się do bazy danych, ktora jeszcze nie istnieje.
+     *
      * @param db baza sqlite
      */
     @Override
@@ -88,7 +89,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * może być ciężko zarządzać. Edycja treści zapytań w kodzie aplikacje jest trudniejsza niż educja zapytania umieszczonego w pliku.
      * Najczęstczym błędem podczas wpisywania zapytania w kodzie jest brak odstępu, powstający w wyniku nieuważnej konkatenacji nazwy tabeli lub
      * kolumny z resztą zapytania.
-     *
+     * <p>
      * Wszystkie wykonywania zapytań są objęte transakcją, więc nie zaistnieje sytuacja, w której zostałą stworzona tylko część bazy danych.
      * Metoda najpierw pobiera poszcególne zapytania z pliku, a następnie każde po kolei wykonuje.
      *
@@ -96,18 +97,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @throws IOException
      */
     private void createDbStructure(SQLiteDatabase db) throws IOException { //TODO wyrzucenie własnego wyjątku
-        ArrayList<String> statements = getSQLStatements(CREATE_FILE_NAME+SQL_FILE_EXTENSION);
+        ArrayList<String> statements = getSQLStatements(CREATE_FILE_NAME + SQL_FILE_EXTENSION);
         db.beginTransaction();
         String query = null;
-        for(int i=0; i<statements.size(); ++i)
-        {
+        for (int i = 0; i < statements.size(); ++i) {
             query = statements.get(i);
             db.execSQL(query);
         }
         //TODO tutaj jest wprowadzanie danych, później będzie trzeba to usunąć
         statements = getSQLStatements("testInsertStatements.sql");
-        for(int i=0; i<statements.size(); i++)
-        {
+        for (int i = 0; i < statements.size(); i++) {
             query = statements.get(i);
             db.execSQL(query);
         }
@@ -141,7 +140,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * z jdenej wersji do drugiej. Takie rozwiązanie znacznie zwiększa ilośc kodu, ponieważ wymaga wpisywania treści poszczególnych
      * metod, a także warunków if, które określałyby które metody powinny być wykonane. Jako alternatywę dla ifów można wykorzystać
      * switch bez poleceń break, dzięki czemu jeśli już pierwszą metodę którą powinna zostać wykonana, wykonają sie wszystkie następne.
-     *
+     * <p>
      * Metoda odczytuje wszystkie pliki, gdzie numer wesji jest większy niż dotychczasowa wersja bazy.
      *
      * @param db
@@ -151,11 +150,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     private void updateDbStructure(SQLiteDatabase db, int oldVersion, int newVersion) throws IOException {
         db.beginTransaction();
-        for(int version = (oldVersion + 1); version<(newVersion+1); ++version)//TODO przetestować czy jest dobry warunek zakończenia
+        for (int version = (oldVersion + 1); version < (newVersion + 1); ++version)//TODO przetestować czy jest dobry warunek zakończenia
         {
-            ArrayList<String> statements = getSQLStatements(UPDATE_FILE_NAME+ version + SQL_FILE_EXTENSION);
-            for(int i=0; i<statements.size(); ++i)
-            {
+            ArrayList<String> statements = getSQLStatements(UPDATE_FILE_NAME + version + SQL_FILE_EXTENSION);
+            for (int i = 0; i < statements.size(); ++i) {
                 String query = statements.get(i);
                 db.execSQL(query);
             }
@@ -163,10 +161,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.setTransactionSuccessful();
         db.endTransaction();
     }
-
-
-
-
 
 
 }

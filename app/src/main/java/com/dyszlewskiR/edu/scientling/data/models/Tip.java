@@ -9,14 +9,19 @@ public class Tip {
     private long id;
     private String content;
 
-    public Tip(){}
-    public Tip(long id)
-    {
+    public Tip() {
+    }
+
+    public Tip(long id) {
         this.id = id;
     }
 
     public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Override
@@ -36,10 +41,6 @@ public class Tip {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (content != null ? content.hashCode() : 0);
         return result;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getContent() {

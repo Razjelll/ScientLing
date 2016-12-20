@@ -11,6 +11,7 @@ import com.dyszlewskiR.edu.scientling.data.models.PartOfSpeech;
 import com.dyszlewskiR.edu.scientling.data.models.Sentence;
 import com.dyszlewskiR.edu.scientling.data.models.Translation;
 import com.dyszlewskiR.edu.scientling.data.models.Word;
+import com.dyszlewskiR.edu.scientling.services.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.ResourcesFileOpener;
 
 import org.junit.Test;

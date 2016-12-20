@@ -9,7 +9,9 @@ public class Exercise {
     private long id;
     private String name;
 
-    public Exercise() {}
+    public Exercise() {
+    }
+
     public Exercise(long id) {
         this.id = id;
     }

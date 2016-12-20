@@ -1,109 +1,158 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
-import android.content.Context;
-import android.net.Uri;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
+import com.dyszlewskiR.edu.scientling.activity.LessonSelectionActivity;
+import com.dyszlewskiR.edu.scientling.activity.WordEditActivity;
+import com.dyszlewskiR.edu.scientling.activity.WordManagerActivity;
+import com.dyszlewskiR.edu.scientling.data.models.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.Translation;
+import com.dyszlewskiR.edu.scientling.data.models.Word;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link WordEditFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link WordEditFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * A placeholder fragment containing a simple view.
  */
 public class WordEditFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private final int SET_REQUEST = 222;
+    private final int LESSON_REQUEST = 333;
 
-    private OnFragmentInteractionListener mListener;
+    private Button mSetButton;
+    private Button mLessonButton;
+    private TextView mSetText;
+    private TextView mLessonText;
+    private EditText mWordEditText;
+    private EditText mTranslationText;
+
+    private Button slowka;
+
+    private Word mWord;
+    private Lesson mLesson;
 
     public WordEditFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment WordEditFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static WordEditFragment newInstance(String param1, String param2) {
-        WordEditFragment fragment = new WordEditFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+        mWord = new Word();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        mLesson = new Lesson(); //TODO ustalone na sztywno, zmienić
+        mLesson.setId(1);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_word_edit, container, false);
+        View view = inflater.inflate(R.layout.fragment_word_edit, container, false);
+
+        mWordEditText = (EditText) view.findViewById(R.id.word_edit_text);
+        mTranslationText = (EditText) view.findViewById(R.id.translation_edit_text);
+
+        mSetText = (TextView) view.findViewById(R.id.set_text_view);
+        mLessonText = (TextView) view.findViewById(R.id.lesson_text_view);
+
+        mLessonButton = (Button) view.findViewById(R.id.lesson_change_button);
+
+        mLessonButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startLessonSelectionActivity();
+            }
+        });
+
+
+        slowka = (Button) view.findViewById(R.id.slowka);
+        slowka.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), WordManagerActivity.class);
+                getActivity().startActivity(intent);
+            }
+        });
+
+        return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    private void startLessonSelectionActivity() {
+        Intent intent = new Intent(getActivity(), LessonSelectionActivity.class);
+        getActivity().startActivityForResult(intent, LESSON_REQUEST);
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == LESSON_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                Lesson lesson = data.getParcelableExtra("result");
+                mLessonText.setText(lesson.getName());
+                mSetText.setText(lesson.getSet().getName());
+                mLesson = lesson;
+                ((WordEditActivity) getActivity()).setSet(mLesson.getSet());
+            }
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public Word getWord() {
+        Word word = new Word();
+        word.setContent(String.valueOf(mWordEditText.getText()));
+        String[] translations = mTranslationText.getText().toString().split(";");
+        ArrayList<Translation> translationArrayList = new ArrayList<>();
+        for (String s : translations) {
+            Translation translation = new Translation();
+            translation.setContent(s);
+            translationArrayList.add(translation);
+        }
+        word.setTranslations(translationArrayList);
+        word.setLessonId(mLesson.getId());
+
+        return word;
     }
 
     /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
+     * Metoda czyszcząca szystkie pola we fragmenci, wykonywana po dodaniu słówka do bazy, aby
+     * można było od razu wprowadzić kolejne słówko
      */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    public void clear()
+    {
+        mWordEditText.setText("");
+        mTranslationText.setText("");
     }
+
+    /**
+     * Metoda sprawdzająca czy wszystkie dane zostały wprowadzone poprawnie. Jeśli któreś pole zostałó
+     * uzupełnione niepoprawnie.
+     * Do sprawdzenia:
+     * @return poprawność wypełnionych pól
+     */
+    public boolean validate()
+    {
+        boolean correct = true;
+        if(mWordEditText.getText().toString().equals(""))
+        {
+            mWordEditText.setError("To pole nie może być puste");
+            correct = false;
+        }
+        if(mTranslationText.getText().toString().equals(""))
+        {
+            mTranslationText.setError("To pole nie może być puste");
+            correct = false;
+        }
+        return correct;
+
+    }
+
+
 }

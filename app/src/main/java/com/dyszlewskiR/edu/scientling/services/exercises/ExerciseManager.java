@@ -3,22 +3,17 @@ package com.dyszlewskiR.edu.scientling.services.exercises;
 import android.content.Context;
 import android.util.Log;
 
-import com.dyszlewskiR.edu.scientling.data.database.DataManager;
-import com.dyszlewskiR.edu.scientling.data.models.Repetition;
+import com.dyszlewskiR.edu.scientling.services.DataManager;
 import com.dyszlewskiR.edu.scientling.data.models.RepetitionItem;
 import com.dyszlewskiR.edu.scientling.data.models.Translation;
 import com.dyszlewskiR.edu.scientling.data.models.Word;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 import java.util.TreeSet;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by Razjelll on 16.11.2016.
@@ -30,33 +25,47 @@ public class ExerciseManager {
 
     private final int QUESTION_ANSWERS_RATIO = 3;
 
-    /**Liczba wszystkich pytań w danym zestawie ćwiczeń*/
+    /**
+     * Liczba wszystkich pytań w danym zestawie ćwiczeń
+     */
     private int mNumQuestions;
 
-    /**Numer obecnego pytania. Początkowo numer idzie od pierwszego do ostattniego,
-     * później przechodzi po slówkach, na które użytkownik odpowiedział źle*/
+    /**
+     * Numer obecnego pytania. Początkowo numer idzie od pierwszego do ostattniego,
+     * później przechodzi po slówkach, na które użytkownik odpowiedział źle
+     */
     private int mCurrentQuestion;
 
-    /**Liczba poprawnych odpowiedzi. Ta zmeinna służy do wypełnienia paska postępu ćwiczenia w ExerciseActivity
-     * Cwiczenie kończy się, kiedy liczba poprawnych odpowiedzi będzie równa liczbie pytań*/
+    /**
+     * Liczba poprawnych odpowiedzi. Ta zmeinna służy do wypełnienia paska postępu ćwiczenia w ExerciseActivity
+     * Cwiczenie kończy się, kiedy liczba poprawnych odpowiedzi będzie równa liczbie pytań
+     */
     private int mNumCorrectAnswers;
 
-    /**Liczba niepoprawnych odpowiedzi użytkownika. Moze posłużyć do pokazania użytkownikowi statystyk
-     * ćwiczenia*/
+    /**
+     * Liczba niepoprawnych odpowiedzi użytkownika. Moze posłużyć do pokazania użytkownikowi statystyk
+     * ćwiczenia
+     */
     private int mNumIncorrectAnswers;
 
-    /**Lista słówek w ćwiczeniu na które użytkownik bedzie odpowiadał. Słówka losowane z bazy danych.*/
+    /**
+     * Lista słówek w ćwiczeniu na które użytkownik bedzie odpowiadał. Słówka losowane z bazy danych.
+     */
     private List<Word> mQuestions;
 
-    /**Kolejka, w której znajdują się numery indeksu słówek do listy mQestions. Kolejka wyznacza kolejność
+    /**
+     * Kolejka, w której znajdują się numery indeksu słówek do listy mQestions. Kolejka wyznacza kolejność
      * pokazywania ćwiczeń. Jeśli użytkownik odpowie źle pozycja słówka w liście mQuestions zostajnie dodany do
-     * kolejki. Jeśli odpowie dobrze pozycja zostanie usunięta z kolejki*/
+     * kolejki. Jeśli odpowie dobrze pozycja zostanie usunięta z kolejki
+     */
     private Queue<Integer> mQuestionsQueue;
 
-    /**List przechowująca numery identyfikacyjne do słówek w tabeli mQuestions, na które użytkownik aplikacji odpowiedział.
+    /**
+     * List przechowująca numery identyfikacyjne do słówek w tabeli mQuestions, na które użytkownik aplikacji odpowiedział.
      * Na podstawie tej listy będą wyznaczane powtóreki, aby zapisywać tylko te słówka, które
      * rzeczywiście zostaly przećwiczone. W innych programach tego typu do powtórek zostają zapisane
-     * wszystkie słówka, które wchodziły w skład ćwiczenia.*/
+     * wszystkie słówka, które wchodziły w skład ćwiczenia.
+     */
     private List<Integer> mToRepeat;
 
     private List<Word> mAnswersL2;
@@ -86,8 +95,7 @@ public class ExerciseManager {
         mQuestions = mDataManager.getQuestions(mSet, mLesson, mCategory, mDifficult, mNumQuestions);
         mQuestionsQueue = new LinkedList<>();
         //wypełnianie kolejki numerami identyfikacyjnymi słówek
-        for(int i = 0; i < mNumQuestions; i++)
-        {
+        for (int i = 0; i < mNumQuestions; i++) {
             Log.d("ExerciseManager", mQuestions.get(i).getContent());
             mQuestionsQueue.add(i);
         }
@@ -98,11 +106,13 @@ public class ExerciseManager {
         mToRepeat = new ArrayList<>();
 
         long stop = System.currentTimeMillis(); //TODO później usunąć
-        Log.d("ExerciseManager",String.valueOf(stop-start));
+        Log.d("ExerciseManager", String.valueOf(stop - start));
         mIncorrectAnswers = new ArrayList<>();
     }
 
-    public int getNumCorrectAnswers() {return mNumCorrectAnswers;}
+    public int getNumCorrectAnswers() {
+        return mNumCorrectAnswers;
+    }
 
     public int getNumQuestions() {
         return mNumQuestions;
@@ -121,15 +131,14 @@ public class ExerciseManager {
     }
 
     public String getQuestion() {
-         return mExerciseLanguage.getQuestion(mQuestions.get(mCurrentQuestion));
+        return mExerciseLanguage.getQuestion(mQuestions.get(mCurrentQuestion));
     }
 
     public String getTranscription() {
         return mExerciseLanguage.getTranscription(mQuestions.get(mCurrentQuestion));
     }
 
-    public int getRemainingQuestion()
-    {
+    public int getRemainingQuestion() {
         return mQuestionsQueue.size();
     }
 
@@ -175,6 +184,7 @@ public class ExerciseManager {
      * Tam nastepuje sprawdzenie, czy odpowiedź jest uznawana za słuszną. Odpowiedź moze być różnie
      * postrzegana jako poprawna. Podczas wpisywania będą uwzględniane literówki, a podczas
      * ćwiczenia wiem nie wiem będą uwzględniane tylko wartości know, not know, almoust know.
+     *
      * @param answer
      * @return
      */
@@ -184,21 +194,16 @@ public class ExerciseManager {
 
         serveAnswer(correct);
 
-        if(mToRepeat.size() < mNumQuestions)
-        {
+        if (mToRepeat.size() < mNumQuestions) {
             mToRepeat.add(mCurrentQuestion);
         }
         return correct;
     }
 
-    private void serveAnswer(boolean correct)
-    {
-        if(correct)
-        {
+    private void serveAnswer(boolean correct) {
+        if (correct) {
             mNumCorrectAnswers++;
-        }
-        else
-        {
+        } else {
             mNumIncorrectAnswers++;
             mIncorrectAnswers.add(mQuestions.get(mCurrentQuestion));
             mQuestionsQueue.add(mCurrentQuestion);
@@ -217,8 +222,7 @@ public class ExerciseManager {
      */
     public void nextQuestion() {
         Log.d(TAG, "nextQuestion questionQueue.peek() : " + mQuestionsQueue.peek());
-        if(!mQuestionsQueue.isEmpty())
-        {
+        if (!mQuestionsQueue.isEmpty()) {
             mCurrentQuestion = mQuestionsQueue.poll();
         }
     }
@@ -228,30 +232,25 @@ public class ExerciseManager {
      * odpowiedzieniu poprawnie na wszystkie pytania użtykownik zarzyczy sobie kolejne przećwiczenie
      * materiału.
      */
-    public void restart()
-    {
+    public void restart() {
         mNumCorrectAnswers = 0;
         mNumIncorrectAnswers = 0;
 
-        for(int i=0 ; i< mNumQuestions; i++)
-        {
+        for (int i = 0; i < mNumQuestions; i++) {
             mQuestionsQueue.add(i);
         }
         mCurrentQuestion = mQuestionsQueue.poll();
     }
 
-    public List<RepetitionItem> prepareRepetitionsItems()
-    {
+    public List<RepetitionItem> prepareRepetitionsItems() {
         StringBuilder translationsBuilder = new StringBuilder();
         List<RepetitionItem> repetitions = new ArrayList<>();
-        for(int i : mToRepeat) //dla każdego identyfikatora znajdującego się w mToRepeat
+        for (int i : mToRepeat) //dla każdego identyfikatora znajdującego się w mToRepeat
         {
             translationsBuilder.setLength(0);
-            for(int translation = 0; translation < mQuestions.get(i).getTranslations().size(); translation++)
-            {
+            for (int translation = 0; translation < mQuestions.get(i).getTranslations().size(); translation++) {
                 translationsBuilder.append(mQuestions.get(i).getTranslations().get(translation).getContent());
-                if(translation != mQuestions.get(i).getTranslations().size()-1)
-                {
+                if (translation != mQuestions.get(i).getTranslations().size() - 1) {
                     translationsBuilder.append(", ");
                 }
             }

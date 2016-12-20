@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,13 +25,11 @@ import com.dyszlewskiR.edu.scientling.services.exercises.WriteExercise;
  */
 public class ListenAndWriteExerciseFragment extends Fragment {
 
+    private static ExerciseManager mExerciseManager;
     private Button speechButton;
     private EditText answerEditText;
     private Button checkAnswerButton;
-
     private OnFragmentInteractionListener mListener;
-
-    private static ExerciseManager mExerciseManager;
 
     public ListenAndWriteExerciseFragment() {
         // Required empty public constructor
@@ -42,7 +39,6 @@ public class ListenAndWriteExerciseFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-
      * @return A new instance of fragment ListenAndWriteExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -65,9 +61,9 @@ public class ListenAndWriteExerciseFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_listen_and_write_exercise, container, false);
-        speechButton = (Button)view.findViewById(R.id.speechButton);
-        answerEditText = (EditText)view.findViewById(R.id.wordEditText);
-        checkAnswerButton = (Button)view.findViewById(R.id.checkAnswer);
+        speechButton = (Button) view.findViewById(R.id.speechButton);
+        answerEditText = (EditText) view.findViewById(R.id.wordEditText);
+        checkAnswerButton = (Button) view.findViewById(R.id.checkAnswer);
 
         return view;
     }

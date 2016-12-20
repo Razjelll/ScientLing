@@ -1,20 +1,42 @@
 package com.dyszlewskiR.edu.scientling.data.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Razjelll on 03.11.2016.
  */
 
-public class Language {
+public class Language implements Parcelable {
 
+    public static final Creator<Language> CREATOR = new Creator<Language>() {
+        @Override
+        public Language createFromParcel(Parcel in) {
+            return new Language(in);
+        }
+
+        @Override
+        public Language[] newArray(int size) {
+            return new Language[size];
+        }
+    };
     private long id;
     private String name;
     private String abbreviation;
     private String code;
 
-    public Language(){}
-    public Language(long id)
-    {
+    public Language() {
+    }
+
+    public Language(long id) {
         this.id = id;
+    }
+
+    protected Language(Parcel in) {
+        id = in.readLong();
+        name = in.readString();
+        abbreviation = in.readString();
+        code = in.readString();
     }
 
     public long getId() {
@@ -49,6 +71,7 @@ public class Language {
         this.code = code;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -71,4 +94,18 @@ public class Language {
         result = 31 * result + code.hashCode();
         return result;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(name);
+        dest.writeString(abbreviation);
+        dest.writeString(code);
+    }
+
 }

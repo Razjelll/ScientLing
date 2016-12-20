@@ -10,7 +10,9 @@ import com.dyszlewskiR.edu.scientling.data.models.Language;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dyszlewskiR.edu.scientling.data.database.tables.LanguagesTable.*;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.LanguagesTable.LanguagesColumns;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.LanguagesTable.TABLE_NAME;
+
 /**
  * Created by Razjelll on 05.11.2016.
  */
@@ -18,16 +20,13 @@ import static com.dyszlewskiR.edu.scientling.data.database.tables.LanguagesTable
 public class LanguageDao extends BaseDao<Language> {
 
 
-
     private final String INSERT_STATEMENT =
             "INSERT INTO " + TABLE_NAME + "("
-            + LanguagesColumns.NAME +", " + LanguagesColumns.ABBREVIATION + ", "
-            + LanguagesColumns.CODE +") VALUES (?, ?, ?)";
-
+                    + LanguagesColumns.NAME + ", " + LanguagesColumns.ABBREVIATION + ", "
+                    + LanguagesColumns.CODE + ") VALUES (?, ?, ?)";
 
 
     /**
-     *
      * @param db obiekt klasy SQLiteDatabase, służący do nawiązywania połączenia z bazą i wykonywaniem na niej operacji.
      */
     public LanguageDao(SQLiteDatabase db) {
@@ -54,6 +53,7 @@ public class LanguageDao extends BaseDao<Language> {
      * zastępczy z instrukcji INSERT odpowiadającą mu wartością obiektu modelu. Po zakończeniu
      * wiązania wywoływana jest metoda executeInsert i zwracana wartośc identyfikatora określającego
      * w którym miejscu w tabeli Languages został zapisany nowo utworzony wiersz
+     *
      * @param entity obiekt modelu Lanuage
      * @return identyfikator określający w którym miejscu w tabeli został zapisany nowy wiersz
      */
@@ -63,7 +63,7 @@ public class LanguageDao extends BaseDao<Language> {
         mInsertStatement.bindString(1, entity.getName());
         mInsertStatement.bindString(2, entity.getAbbreviation());
         mInsertStatement.bindString(3, entity.getCode());
-       // long id = insertStatement.executeInsert(); //TODO sprawdzić czy powinno robić się to w tym miejscu
+        // long id = insertStatement.executeInsert(); //TODO sprawdzić czy powinno robić się to w tym miejscu
         return mInsertStatement.executeInsert();
     }
 
@@ -95,16 +95,16 @@ public class LanguageDao extends BaseDao<Language> {
      * zapisany w bazie danych. Usuwanie odbywa się za pomocą metody delete klasy SQLiteDatabase.
      * Do metody trzeba podać nazwę tabeli z której chcemy usunąć wiersz, klauzulę where oraz jej
      * parametry
+     *
      * @param entity obiekt modelu Language
      */
     @Override
     public void delete(Language entity) {
         long id = entity.getId();
-        if(id > 0)
-        {
+        if (id > 0) {
             String where = LanguagesColumns.ID + " =?";
             String[] whereArguments = new String[]{String.valueOf(id)};
-            mDb.delete(TABLE_NAME, where, whereArguments );
+            mDb.delete(TABLE_NAME, where, whereArguments);
         }
     }
 
@@ -113,40 +113,37 @@ public class LanguageDao extends BaseDao<Language> {
      * identyfikującego. Metody do pobierania danych używają do tego celu klasu Cursor. Bardzo
      * ważne w tej metodzie jest zamknięcie kursora, p[onieważ w przypadku pozostawinia kursora
      * otwartego może nastąpić wyciekanie związanych z nim zasobów.
+     *
      * @param id numer idenyfikujący który wiersz ma zostać pobrany z bazy danych
      * @return
      */
     @Override
     public Language get(long id) {
         Language language = null;
-        String where = LanguagesColumns.ID +" =?";
-        String[] whereAttributes = new String[] {String.valueOf(id)};
-        Cursor cursor = mDb.query(TABLE_NAME, mTableColumns,where, whereAttributes,
-                null,null,null,null);
-        if(cursor.moveToFirst())
-        {
+        String where = LanguagesColumns.ID + " =?";
+        String[] whereAttributes = new String[]{String.valueOf(id)};
+        Cursor cursor = mDb.query(TABLE_NAME, mTableColumns, where, whereAttributes,
+                null, null, null, null);
+        if (cursor.moveToFirst()) {
             language = this.buildLanguageFromCursor(cursor);
         }
-        if(!cursor.isClosed())
-        {
+        if (!cursor.isClosed()) {
             cursor.close();
         }
         return language;
     }
 
 
-
     /**
      * Metoda tworząca obiekt modelu na podstawie obiektu klasy Cursor.
+     *
      * @param cursor kursor, na postawie którego zostanie utworzony obiekt modelu
      * @return utworzony obiekt modelu
      */
-    private Language buildLanguageFromCursor(Cursor cursor)
-    {
+    private Language buildLanguageFromCursor(Cursor cursor) {
         Language language = null;
-        if(cursor != null)
-        {
-            language  = new Language();
+        if (cursor != null) {
+            language = new Language();
             language.setId(cursor.getLong(LanguagesColumns.ID_POSITION));
             language.setName(cursor.getString(LanguagesColumns.NAME_POSITION));
             language.setAbbreviation(cursor.getString(LanguagesColumns.ABBREVIATION_POSITION));
@@ -156,24 +153,21 @@ public class LanguageDao extends BaseDao<Language> {
     }
 
     @Override
-    public List<Language> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+    public List<Language> getAll(boolean distinct, String[] columns, String selection, String[] selectionArgs,
                                  String groupBy, String having, String orderBy, String limit) {
         List<Language> languagesList = new ArrayList<Language>();
 
-        Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection,selectionArgs,
-                groupBy,having, orderBy, limit);
-        if(cursor.moveToFirst())
-        {
-            do{
+        Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection, selectionArgs,
+                groupBy, having, orderBy, limit);
+        if (cursor.moveToFirst()) {
+            do {
                 Language language = buildLanguageFromCursor(cursor);
-                if(language != null)
-                {
+                if (language != null) {
                     languagesList.add(language);
                 }
-            } while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
-        if(!cursor.isClosed())
-        {
+        if (!cursor.isClosed()) {
             cursor.close();
         }
         return languagesList;

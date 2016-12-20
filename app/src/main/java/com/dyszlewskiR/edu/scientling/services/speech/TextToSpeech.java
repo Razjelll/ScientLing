@@ -2,8 +2,6 @@ package com.dyszlewskiR.edu.scientling.services.speech;
 
 import android.content.Context;
 import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -90,15 +88,12 @@ public class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListe
     private void speak(String message) {
 
         HashMap<String, String> params = new HashMap<>();
-       // params.put(android.speech.tts.TextToSpeech.Engine.KEY_PARAM_STREAM, "STREAM_NOTIFICATION");
+        // params.put(android.speech.tts.TextToSpeech.Engine.KEY_PARAM_STREAM, "STREAM_NOTIFICATION");
         params.put(android.speech.tts.TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-        {
-            String utteranceId = this.hashCode()+"";
-            mTextToSpeech.speak(message, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null,utteranceId);
-        }
-        else
-        {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            String utteranceId = this.hashCode() + "";
+            mTextToSpeech.speak(message, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, utteranceId);
+        } else {
             mTextToSpeech.speak(message, android.speech.tts.TextToSpeech.QUEUE_FLUSH, params);
         }
         //mTextToSpeech.speak(message, android.speech.tts.TextToSpeech.QUEUE_ADD, params);

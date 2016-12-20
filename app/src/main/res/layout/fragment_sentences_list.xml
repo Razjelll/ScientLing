@@ -1,11 +1,28 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_sentences_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dyszlewskiR.edu.scientling.fragment.SentencesListFragment">
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.dyszlewskiR.edu.scientling.fragment.SentencesListFragment"
+    tools:showIn="@layout/activity_sentences_list"
+    android:background="@drawable/shadow_border"
+    >
 
-    <android.support.v7.widget.ListViewCompat
+    <ListView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></android.support.v7.widget.ListViewCompat>
+        android:layout_height="match_parent"
+        android:id="@+id/sentenceList"
+        android:focusable="false">
 
-</FrameLayout>
+    </ListView>
+    <Button
+        style="@style/ButtonStyle"
+        android:id="@+id/saveButton"
+        android:layout_alignParentBottom="true"
+        android:text="@string/save"/>
+</RelativeLayout>

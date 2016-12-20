@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/TextViewStyle"
+        android:id="@+id/lesson_text_view"
+        android:textStyle="bold"
+        android:text="Lekcja 1"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/LabelStyle"
+            android:layout_width="wrap_content"
+            android:textSize="@dimen/small_item_text_size"
+            android:text="@string/set"
+            android:layout_gravity="center_vertical"
+            />
+        <TextView
+           style="@style/TextViewStyle"
+            android:layout_width="wrap_content"
+            android:id="@+id/set_text_view"
+            android:textSize="@dimen/small_item_text_size"
+            android:text="Angielski dla wytrwyałych"
+            android:layout_weight="0.5"/>
+
+        <TextView
+            style="@style/LabelStyle"
+            android:layout_width="wrap_content"
+            android:textSize="@dimen/small_item_text_size"
+            android:text="@string/lesson_number"
+            android:layout_gravity="center_vertical"
+            />
+
+        <TextView
+          style="@style/TextViewStyle"
+            android:layout_width="wrap_content"
+            android:id="@+id/lesson_number_text_view"
+            android:textSize="@dimen/small_item_text_size"
+            android:text="4"/>
+
+    </LinearLayout>
+</LinearLayout>

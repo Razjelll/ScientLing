@@ -9,8 +9,7 @@ public class Answer {
     private long mId;
     private String mAnswer;
 
-    public Answer(long id, String answer)
-    {
+    public Answer(long id, String answer) {
         setId(id);
         setAnswer(answer);
     }

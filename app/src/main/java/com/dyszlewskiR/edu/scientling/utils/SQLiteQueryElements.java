@@ -7,7 +7,7 @@ package com.dyszlewskiR.edu.scientling.utils;
  * zapytania mają spacje na początku i na końcu, aby nie było trzeba wstawiać tychdstępów ręcznie, ponieważ w javie jest to dość niewygodne.
  */
 
-public  class SQLiteQueryElements {
+public class SQLiteQueryElements {
 
     // Typy danych występujące w SQLite
     public static final String TEXT = " TEXT ";
@@ -19,7 +19,7 @@ public  class SQLiteQueryElements {
     public static final String CREATE_TABLE = "CREATE TABLE ";
     public static final String DROP_TABLE = "DROP TABLE ";
     public static final String IF_EXISTS = " IF EXISTS ";
-    public static final String DROP_TABLE_IF_EXISTS = DROP_TABLE+IF_EXISTS;
+    public static final String DROP_TABLE_IF_EXISTS = DROP_TABLE + IF_EXISTS;
     public static final String PRIMARY_KEY = " PRIMARY KEY ";
     public static final String FOREIGN_KEY = " FOREIGN KEY ";
     public static final String REFERENCE = " REFERENCE ";

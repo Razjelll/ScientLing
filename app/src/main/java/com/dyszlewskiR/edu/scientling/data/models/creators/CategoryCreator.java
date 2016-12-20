@@ -13,8 +13,7 @@ public class CategoryCreator implements IModelCreator<Category> {
     @Override
     public Category createFromCursor(Cursor cursor) {
         Category category = null;
-        if(cursor != null)
-        {
+        if (cursor != null) {
             category = new Category();
             category.setId(cursor.getLong(CategoriesTable.CategoriesColumns.ID_POSITION));
             category.setName(cursor.getString(CategoriesTable.CategoriesColumns.NAME_POSITION));

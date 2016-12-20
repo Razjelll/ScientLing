@@ -12,8 +12,8 @@ import java.io.InputStream;
 public class AssetsFileOpener extends AndroidFileOpener {
 
     private Context mContext;
-    public AssetsFileOpener(Context context)
-    {
+
+    public AssetsFileOpener(Context context) {
         mContext = context;
     }
 

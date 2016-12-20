@@ -11,7 +11,9 @@ import com.dyszlewskiR.edu.scientling.data.models.creators.DefinitionCreator;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable.*;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable.DefinitionsColumns;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable.TABLE_NAME;
+
 /**
  * Created by Razjelll on 09.11.2016.
  */
@@ -83,7 +85,7 @@ public class DefinitionDao extends BaseDao<Definition> {
     }
 
     @Override
-    public List<Definition> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+    public List<Definition> getAll(boolean distinct, String[] columns, String selection, String[] selectionArgs,
                                    String groupBy, String having, String orderBy, String limit) {
         List<Definition> definitionsList = new ArrayList<>();
         Cursor cursor = mDb.query(distinct, DefinitionsTable.TABLE_NAME, columns, selection, selectionArgs,

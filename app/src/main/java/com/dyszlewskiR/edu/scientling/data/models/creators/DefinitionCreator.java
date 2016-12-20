@@ -4,12 +4,13 @@ import android.database.Cursor;
 
 import com.dyszlewskiR.edu.scientling.data.models.Definition;
 
-import static com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable.*;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable.DefinitionsColumns;
+
 /**
  * Created by Razjelll on 12.11.2016.
  */
 
-public class DefinitionCreator implements IModelCreator<Definition>{
+public class DefinitionCreator implements IModelCreator<Definition> {
 
     @Override
     public Definition createFromCursor(Cursor cursor) {

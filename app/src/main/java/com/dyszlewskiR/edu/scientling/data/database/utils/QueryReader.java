@@ -20,9 +20,7 @@ public class QueryReader {
     private final String END_COMMENT = "*/";
 
 
-
-    public QueryReader()
-    {
+    public QueryReader() {
         //mStream = inputStream;
 
     }
@@ -47,68 +45,53 @@ public class QueryReader {
      */
     public ArrayList<String> readFromStream(InputStream stream) throws IOException {  //TODO refaktoryzacja
         ArrayList<String> statementsList = new ArrayList<>();
-        if(stream == null)
-        {
+        if (stream == null) {
             return statementsList;
         }
         StringBuilder statementBuilder = new StringBuilder();
         Scanner scanner = new Scanner(stream);
         String word = null;
-        while(scanner.hasNext()) //TODO refaktoryzacja
+        while (scanner.hasNext()) //TODO refaktoryzacja
         {
             word = scanner.next();
-            if(word.contains(COMMENT))
-            {
+            if (word.contains(COMMENT)) {
                 int commentBeginIndex = word.indexOf(COMMENT);
-                word = word.substring(0,commentBeginIndex);
+                word = word.substring(0, commentBeginIndex);
                 scanner.nextLine();
-            }else
-            {
-                if(word.contains(START_COMMENT))
-                {
+            } else {
+                if (word.contains(START_COMMENT)) {
                     int commentBeginIndex = word.indexOf(START_COMMENT);
-                    if(word.contains(END_COMMENT))
-                    {
+                    if (word.contains(END_COMMENT)) {
                         int commentEndIndex = word.indexOf(END_COMMENT);
                         word = word.substring(0, commentBeginIndex) + " " +
-                                word.substring(commentEndIndex+2,word.length());
-                    }
-                    else
-                    {
+                                word.substring(commentEndIndex + 2, word.length());
+                    } else {
                         word = word.substring(0, commentBeginIndex);
                     }
                 }
-                if(word.contains(END_COMMENT))
-                {
+                if (word.contains(END_COMMENT)) {
                     int commentEndIndex = word.indexOf(END_COMMENT);
-                    word = word.substring(commentEndIndex +2, word.length());
+                    word = word.substring(commentEndIndex + 2, word.length());
                 }
 
             }
 
-            if(!word.equals(""))
-            {
+            if (!word.equals("")) {
                 statementBuilder.append(word);
-                if(word.contains(STATEMENTS_SEP))
-                {
+                if (word.contains(STATEMENTS_SEP)) {
 
                     statementsList.add(statementBuilder.toString());
                     statementBuilder.setLength(0);
-                }
-                else
-                {
+                } else {
                     statementBuilder.append(" ");
                 }
             }
-
 
 
         }
 
         return statementsList;
     }
-
-
 
 
 }

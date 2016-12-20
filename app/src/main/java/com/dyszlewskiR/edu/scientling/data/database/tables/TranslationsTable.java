@@ -8,7 +8,16 @@ public class TranslationsTable {
     public static final String TABLE_NAME = "Translations";
     public static final String ALIAS = "T";
     public static final String ALIAS_DOT = ALIAS + ".";
-    public static class TranslationsColumns{
+
+    public static String[] getColumns() {
+        String[] columns = new String[2];
+        columns[TranslationsColumns.ID_POSITION] = TranslationsColumns.ID;
+        columns[TranslationsColumns.CONTENT_POSITION] = TranslationsColumns.CONTENT;
+
+        return columns;
+    }
+
+    public static class TranslationsColumns {
         public static final String ID = "id";
         public static final String CONTENT = "content";
 
@@ -16,14 +25,5 @@ public class TranslationsTable {
         public static final int CONTENT_POSITION = 1;
 
         public static final int COLUMNS_COUNT = 2;
-    }
-
-    public static String[] getColumns()
-    {
-        String[] columns = new String[2];
-        columns[TranslationsColumns.ID_POSITION] = TranslationsColumns.ID;
-        columns[TranslationsColumns.CONTENT_POSITION] = TranslationsColumns.CONTENT;
-
-        return columns;
     }
 }

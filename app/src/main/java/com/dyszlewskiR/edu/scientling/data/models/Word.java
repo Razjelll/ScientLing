@@ -32,9 +32,10 @@ public class Word {
 
     //TODO dodać ograniczenia do setterów
 
-    public Word(){}
-    public Word(long id)
-    {
+    public Word() {
+    }
+
+    public Word(long id) {
         this.id = id;
     }
 

@@ -42,7 +42,7 @@ public class SetDaoTest {
         mSet1 = new VocabularySet();
         mSet1.setId(1);
         mSet1.setName("Angielski: 1000 najpolujarniejszych słów");
-        mSet1.setLanguage(language);
+        mSet1.setLanguageL2(language);
 
         mDbHelper.setFileOpener(new ResourcesFileOpener());
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -64,7 +64,7 @@ public class SetDaoTest {
         VocabularySet set = mDao.get(1);
         assertEquals(1, set.getId());
         assertEquals("Angielski: 1000 najpolujarniejszych słów", set.getName());
-        assertEquals(1, set.getLanguage().getId());
+        assertEquals(1, set.getLanguageL2().getId());
     }
 
     @Test

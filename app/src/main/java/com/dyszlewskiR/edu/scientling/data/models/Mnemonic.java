@@ -9,9 +9,10 @@ public class Mnemonic {
     private long id;
     private String content;
 
-    public Mnemonic() {}
-    public Mnemonic(long id)
-    {
+    public Mnemonic() {
+    }
+
+    public Mnemonic(long id) {
         this.id = id;
     }
 

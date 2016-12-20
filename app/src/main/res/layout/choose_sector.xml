@@ -10,6 +10,7 @@
         app:layout_columnWeight="1"
         app:layout_rowWeight="1"
         android:layout_margin="4dp"
+        android:text="pies"
         />
 
     <Button android:id="@+id/answer2"
@@ -18,6 +19,7 @@
         app:layout_columnWeight="1"
         app:layout_rowWeight="1"
         android:layout_margin="4dp"
+        android:text="kot"
         />
     <Button android:id="@+id/answer3"
         style="@style/ButtonStyle"
@@ -25,6 +27,7 @@
         app:layout_columnWeight="1"
         app:layout_rowWeight="1"
         android:layout_margin="4dp"
+        android:text="mysz"
         />
     <Button android:id="@+id/answer4"
         style="@style/ButtonStyle"
@@ -32,6 +35,7 @@
         app:layout_columnWeight="1"
         app:layout_rowWeight="1"
         android:layout_margin="4dp"
+        android:text="diabeł"
         />
     <Button android:id="@+id/answer5"
         style="@style/ButtonStyle"
@@ -39,6 +43,7 @@
         app:layout_columnWeight="1"
         app:layout_rowWeight="1"
         android:layout_margin="4dp"
+        android:text="kangur"
         />
     <Button android:id="@+id/answer6"
         style="@style/ButtonStyle"
@@ -46,6 +51,7 @@
         app:layout_columnWeight="1"
         app:layout_rowWeight="1"
         android:layout_margin="4dp"
+        android:text="kaczka"
         />
 
 </android.support.v7.widget.GridLayout>

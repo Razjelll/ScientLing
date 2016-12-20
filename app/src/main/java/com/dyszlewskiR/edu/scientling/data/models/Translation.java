@@ -9,8 +9,10 @@ public class Translation {
     private long id;
     private String content;
 
-    public Translation() {}
-    public Translation(long id){
+    public Translation() {
+    }
+
+    public Translation(long id) {
         this.id = id;
     }
 

@@ -7,7 +7,16 @@ package com.dyszlewskiR.edu.scientling.data.database.tables;
 public class CategoriesTable {
     public static final String TABLE_NAME = "Categories";
     public static final String ALIAS = "C";
-    public static final String ALIAS_DOT = ALIAS+".";
+    public static final String ALIAS_DOT = ALIAS + ".";
+
+    public static String[] getColumn() {
+        String[] columns = new String[CategoriesColumns.COLUMNS_COUNT];
+        columns[CategoriesColumns.ID_POSITION] = CategoriesColumns.ID;
+        columns[CategoriesColumns.NAME_POSITION] = CategoriesColumns.NAME;
+        columns[CategoriesColumns.LANGUAGE_FK_POSITION] = CategoriesColumns.LANGUAGE_FK;
+        return columns;
+    }
+
     public static class CategoriesColumns {
         public static final String ID = "id";
         public static final String NAME = "name";
@@ -18,14 +27,5 @@ public class CategoriesTable {
         public static final int LANGUAGE_FK_POSITION = 2;
 
         public static int COLUMNS_COUNT = 3;
-    }
-
-    public static String[] getColumn()
-    {
-        String[] columns = new String[CategoriesColumns.COLUMNS_COUNT];
-        columns[CategoriesColumns.ID_POSITION] = CategoriesColumns.ID;
-        columns[CategoriesColumns.NAME_POSITION] = CategoriesColumns.NAME;
-        columns[CategoriesColumns.LANGUAGE_FK_POSITION] = CategoriesColumns.LANGUAGE_FK;
-        return columns;
     }
 }

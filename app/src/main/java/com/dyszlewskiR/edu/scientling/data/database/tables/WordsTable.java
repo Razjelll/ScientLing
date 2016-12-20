@@ -7,8 +7,24 @@ package com.dyszlewskiR.edu.scientling.data.database.tables;
 public class WordsTable {
 
     public static final String TABLE_NAME = "Words";
-    public static final String ALIAS= "W";
+    public static final String ALIAS = "W";
     public static final String ALIAS_DOT = ALIAS + ".";
+
+    public static final String[] getColumns() {
+        String[] columns = new String[10];
+        columns[WordsColumns.ID_POSITION] = WordsColumns.ID;
+        columns[WordsColumns.CONTENT_POSITION] = WordsColumns.CONTENT;
+        columns[WordsColumns.TRANSCRIPTION_POSITION] = WordsColumns.TRANSCRIPTION;
+        columns[WordsColumns.DEFINITION_FK_POSITION] = WordsColumns.DEFINITION_FK;
+        columns[WordsColumns.LESSON_FK_POSITION] = WordsColumns.LESSON_FK;
+        columns[WordsColumns.PART_OF_SPEECH_FK_POSITION] = WordsColumns.PART_OF_SPEECH_FK;
+        columns[WordsColumns.CATEGORY_FK_POSITION] = WordsColumns.CATEGORY_FK;
+        columns[WordsColumns.DIFFICULT_POSITION] = WordsColumns.DIFFICULT;
+        columns[WordsColumns.MASTER_LEVEL_POSITION] = WordsColumns.MASTER_LEVEL;
+        columns[WordsColumns.SELECTED_POSITION] = WordsColumns.SELECTED;
+
+        return columns;
+    }
 
     public static class WordsColumns {
         public static final String ID = "id";
@@ -35,23 +51,6 @@ public class WordsTable {
         public static final int SELECTED_POSITION = 9;
 
         public static final int COLUMNS_COUNT = 10;
-    }
-
-    public static final String[] getColumns()
-    {
-        String[] columns = new String[10];
-        columns[WordsColumns.ID_POSITION] = WordsColumns.ID;
-        columns[WordsColumns.CONTENT_POSITION] = WordsColumns.CONTENT;
-        columns[WordsColumns.TRANSCRIPTION_POSITION] = WordsColumns.TRANSCRIPTION;
-        columns[WordsColumns.DEFINITION_FK_POSITION] = WordsColumns.DEFINITION_FK;
-        columns[WordsColumns.LESSON_FK_POSITION] = WordsColumns.LESSON_FK;
-        columns[WordsColumns.PART_OF_SPEECH_FK_POSITION] = WordsColumns.PART_OF_SPEECH_FK;
-        columns[WordsColumns.CATEGORY_FK_POSITION] = WordsColumns.CATEGORY_FK;
-        columns[WordsColumns.DIFFICULT_POSITION] = WordsColumns.DIFFICULT;
-        columns[WordsColumns.MASTER_LEVEL_POSITION] = WordsColumns.MASTER_LEVEL;
-        columns[WordsColumns.SELECTED_POSITION] = WordsColumns.SELECTED;
-
-        return columns;
     }
 
 }

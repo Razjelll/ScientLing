@@ -1,20 +1,41 @@
 package com.dyszlewskiR.edu.scientling.data.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Razjelll on 03.11.2016.
  */
 
-public class Sentence{
+public class Sentence implements Parcelable {
 
 
+    public static final Creator<Sentence> CREATOR = new Creator<Sentence>() {
+        @Override
+        public Sentence createFromParcel(Parcel in) {
+            return new Sentence(in);
+        }
+
+        @Override
+        public Sentence[] newArray(int size) {
+            return new Sentence[size];
+        }
+    };
     private long id;
     private String content;
     private String translation;
 
-    public Sentence(){}
-    public Sentence(long id)
-    {
+    public Sentence() {
+    }
+
+    public Sentence(long id) {
         this.id = id;
+    }
+
+    protected Sentence(Parcel in) {
+        id = in.readLong();
+        content = in.readString();
+        translation = in.readString();
     }
 
     public long getId() {
@@ -61,5 +82,17 @@ public class Sentence{
         result = 31 * result + (content != null ? content.hashCode() : 0);
         result = 31 * result + (translation != null ? translation.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(content);
+        dest.writeString(translation);
     }
 }

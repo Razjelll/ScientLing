@@ -10,9 +10,10 @@ import com.dyszlewskiR.edu.scientling.data.models.Translation;
 
 import java.util.ArrayList;
 import java.util.List;
-import static com.dyszlewskiR.edu.scientling.data.database.tables.TranslationsTable.*;
-import static  com.dyszlewskiR.edu.scientling.data.database.tables.WordsTranslationsTable.*;
+
+import static com.dyszlewskiR.edu.scientling.data.database.tables.TranslationsTable.TranslationsColumns;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTranslationsTable.TABLE_NAME;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTranslationsTable.WordsTranslationsColumns;
 
 /**
  * Created by Razjelll on 07.11.2016.
@@ -21,19 +22,17 @@ import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTranslati
 public class TranslationDao extends BaseDao<Translation> {
 
 
-
     private final String INSERT_STATEMENT =
             "INSERT INTO " + TranslationsTable.TABLE_NAME + "("
-            +TranslationsColumns.CONTENT + ") VALUES (?)";
+                    + TranslationsColumns.CONTENT + ") VALUES (?)";
     private final String SELECT_LINK_STATEMENT =
             "SELECT T.* FROM " + WordsTranslationsTable.TABLE_NAME
-            + " WT JOIN "+ TranslationsTable.TABLE_NAME + " T ON WT."
-            + WordsTranslationsColumns.TRANSLATION_FK +" = T." + TranslationsColumns.ID
-            + " WHERE WT." +WordsTranslationsColumns.WORD_FK + " = ?";
+                    + " WT JOIN " + TranslationsTable.TABLE_NAME + " T ON WT."
+                    + WordsTranslationsColumns.TRANSLATION_FK + " = T." + TranslationsColumns.ID
+                    + " WHERE WT." + WordsTranslationsColumns.WORD_FK + " = ?";
     private final String WHERE_ID = TranslationsColumns.ID + " = ?";
 
-    public TranslationDao(SQLiteDatabase db)
-    {
+    public TranslationDao(SQLiteDatabase db) {
         super(db);
         mInsertStatement = mDb.compileStatement(INSERT_STATEMENT);
         mTableColumns = TranslationsTable.getColumns();
@@ -51,16 +50,14 @@ public class TranslationDao extends BaseDao<Translation> {
         final ContentValues values = new ContentValues();
         values.put(TranslationsColumns.CONTENT, entity.getContent());
         String[] whereArguments = new String[]{String.valueOf(entity.getId())};
-        mDb.update(TranslationsTable.TABLE_NAME,values, WHERE_ID, whereArguments);
+        mDb.update(TranslationsTable.TABLE_NAME, values, WHERE_ID, whereArguments);
     }
 
     @Override
     public void delete(Translation entity) {
-        if(entity != null)
-        {
+        if (entity != null) {
             long id = entity.getId();
-            if(id > 0)
-            {
+            if (id > 0) {
                 String[] whereAttributes = new String[]{String.valueOf(id)};
                 mDb.delete(TranslationsTable.TABLE_NAME, WHERE_ID, whereAttributes);
             }
@@ -68,27 +65,23 @@ public class TranslationDao extends BaseDao<Translation> {
     }
 
     @Override
-    public Translation get(long id){
+    public Translation get(long id) {
         Translation translation = null;
         String[] whereAttributes = new String[]{String.valueOf(id)};
         Cursor cursor = mDb.query(TranslationsTable.TABLE_NAME, mTableColumns, WHERE_ID, whereAttributes,
-                null,null,null,null);
-        if(cursor.moveToFirst())
-        {
+                null, null, null, null);
+        if (cursor.moveToFirst()) {
             translation = this.buildTranslationFromCursor(cursor);
         }
-        if(!cursor.isClosed())
-        {
+        if (!cursor.isClosed()) {
             cursor.close();
         }
         return translation;
     }
 
-    private Translation buildTranslationFromCursor(Cursor cursor)
-    {
+    private Translation buildTranslationFromCursor(Cursor cursor) {
         Translation translation = null;
-        if(cursor != null)
-        {
+        if (cursor != null) {
             translation = new Translation();
             translation.setId(cursor.getLong(TranslationsColumns.ID_POSITION));
             translation.setContent(cursor.getString(TranslationsColumns.CONTENT_POSITION));
@@ -97,24 +90,21 @@ public class TranslationDao extends BaseDao<Translation> {
     }
 
     @Override
-    public List<Translation> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+    public List<Translation> getAll(boolean distinct, String[] columns, String selection, String[] selectionArgs,
                                     String groupBy, String having, String orderBy, String limit) {
         List<Translation> translationsList = new ArrayList<>();
         Cursor cursor = mDb.query(distinct, TranslationsTable.TABLE_NAME, columns, selection, selectionArgs,
-                groupBy,having,orderBy,limit);
-        if(cursor.moveToFirst())
-        {
+                groupBy, having, orderBy, limit);
+        if (cursor.moveToFirst()) {
             Translation translation = null;
-            do{
+            do {
                 translation = buildTranslationFromCursor(cursor);
-                if(translation != null)
-                {
+                if (translation != null) {
                     translationsList.add(translation);
                 }
-            } while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
-        if(!cursor.isClosed())
-        {
+        if (!cursor.isClosed()) {
             cursor.close();
         }
         return translationsList;
@@ -123,15 +113,14 @@ public class TranslationDao extends BaseDao<Translation> {
     public Translation getByContent(String content) //TODO też zastanowić się nad nazwą i zmianą nazwy kolumny
     {
         Translation translation = null;
-        String where  = TranslationsColumns.CONTENT + " =?";
+        String where = TranslationsColumns.CONTENT + " =?";
         String[] whereArguments = new String[]{content};
         Cursor cursor = mDb.query(TranslationsTable.TABLE_NAME, mTableColumns, where, whereArguments,
-                null,null,null,null);
-        if(cursor.moveToFirst()) {
+                null, null, null, null);
+        if (cursor.moveToFirst()) {
             translation = buildTranslationFromCursor(cursor);
         }
-        if(!cursor.isClosed())
-        {
+        if (!cursor.isClosed()) {
             cursor.close();
         }
         return translation;
@@ -139,9 +128,8 @@ public class TranslationDao extends BaseDao<Translation> {
 
     //TUTAJ ZNAJDUJĄ SIE METODY , KTÓRE OBSLUGUJA TABLE WORDSTRANSLATION
 
-    public void link(long translationId, long wordId)
-    {
-       final ContentValues values = new ContentValues();
+    public void link(long translationId, long wordId) {
+        final ContentValues values = new ContentValues();
         values.put(WordsTranslationsColumns.WORD_FK, wordId);
         values.put(WordsTranslationsColumns.TRANSLATION_FK, translationId);
         mDb.insert(WordsTranslationsTable.TABLE_NAME, null, values);
@@ -161,12 +149,12 @@ public class TranslationDao extends BaseDao<Translation> {
      * Było by trzeba dokonywać skomlikowanych operacji, aby się tego dowiedzieć,/ Lepszym
      * rozwiązaniem jest usunięcie wszystkich tłumaczeń słowka powiązanego z słówkiem
      * a następnie wprowadzenie wszystkich, które znajdują się w zedytowanym polu użytkownika.
+     *
      * @param wordId
      */
-    public void unLink(long wordId)
-    {
-        String where = WordsTranslationsColumns.WORD_FK +" =?";
-        String[] whereArguments = new String[] {String.valueOf(wordId)};
+    public void unLink(long wordId) {
+        String where = WordsTranslationsColumns.WORD_FK + " =?";
+        String[] whereArguments = new String[]{String.valueOf(wordId)};
         mDb.delete(WordsTranslationsTable.TABLE_NAME, where, whereArguments);
     }
 
@@ -174,37 +162,33 @@ public class TranslationDao extends BaseDao<Translation> {
      * Metoda zwracajaca wszystkie tłumaczenia do danego słówka. Metoda operauje na tablicy
      * WordsTranslations. Metoda dokonuje złączenia WordsTranslations z Translations, otrzymujace\
      * w ten sposób danych tłumaczeń powiązanych z danym słówkiem.
+     *
      * @param wordId numer identyfikacyjny słowka do którego chemy uzyskać tłumaczenia
      * @return lista obiektów modelu Translation które są powiązane ze słówkiem
      */
-    public ArrayList<Translation> getLinked(long wordId)
-    {
+    public ArrayList<Translation> getLinked(long wordId) {
         ArrayList<Translation> translationsList = new ArrayList<>();
         String[] whereArguments = new String[]{String.valueOf(wordId)};
-        Cursor cursor = mDb.rawQuery(SELECT_LINK_STATEMENT,whereArguments);
-        if(cursor.moveToFirst())
-        {
+        Cursor cursor = mDb.rawQuery(SELECT_LINK_STATEMENT, whereArguments);
+        if (cursor.moveToFirst()) {
             Translation translation = null;
             do {
                 translation = buildTranslationFromCursor(cursor);
-                if(translation != null)
-                {
+                if (translation != null) {
                     translationsList.add(translation);
                 }
-            } while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
-        if(!cursor.isClosed())
-        {
+        if (!cursor.isClosed()) {
             cursor.close();
         }
         return translationsList;
     }
 
-    public void deleteUnlinked()
-    {
+    public void deleteUnlinked() {
         String statement = "DELETE FROM "
-                +TABLE_NAME + "WHERE " + TranslationsColumns.ID + "IS NO IN ("
-                + "SELECT "  + WordsTranslationsColumns.TRANSLATION_FK+ " FROM "
+                + TABLE_NAME + "WHERE " + TranslationsColumns.ID + "IS NO IN ("
+                + "SELECT " + WordsTranslationsColumns.TRANSLATION_FK + " FROM "
                 + WordsTranslationsTable.TABLE_NAME;
         mDb.execSQL(statement);
     }

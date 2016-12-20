@@ -1,9 +1,7 @@
 package com.dyszlewskiR.edu.scientling.services.speech;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -14,7 +12,7 @@ import java.util.ArrayList;
 
 /**
  * Klasa służąca do rozpoznawania mowy.
- *
+ * <p>
  * Rozpoznawanie mowy w systemach Android wspiera mniej języków niż synteza mowy na podstawie tekstu.
  * Rozpoznawanie mowy umożliwa alternatywny sposób komnunikacji z programem, przydatny zwłaszcza
  * w przypakach, kiedy użytkownik nie moze skorzystać z tradycyjnydch metod sterowaniem programem.
@@ -30,8 +28,7 @@ public class SpeechToText {
     private Context mContext;
     private String mLanguage;
 
-    public SpeechToText(Context context, String language, ISpeechRecognitionResult callback)
-    {
+    public SpeechToText(Context context, String language, ISpeechRecognitionResult callback) {
         mContext = context;
         mLanguage = language;
         mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(mContext);
@@ -43,17 +40,14 @@ public class SpeechToText {
 
     }
 
-    public void startListening()
-    {
+    public void startListening() {
         mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
     }
 
-    private class SpeechRecognitionListener implements RecognitionListener
-    {
+    private class SpeechRecognitionListener implements RecognitionListener {
         private ISpeechRecognitionResult mCallback;
 
-        public SpeechRecognitionListener(ISpeechRecognitionResult callback)
-        {
+        public SpeechRecognitionListener(ISpeechRecognitionResult callback) {
             mCallback = callback;
         }
 
@@ -90,10 +84,8 @@ public class SpeechToText {
         @Override
         public void onResults(Bundle results) {
             ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION); //TODO ciekawy błąd java.util.ArrayList cannot be cast to java.lang.Stirng[]
-            if(matches != null)
-            {
-                for(int i=0; i<matches.size(); ++i)
-                {
+            if (matches != null) {
+                for (int i = 0; i < matches.size(); ++i) {
                     Log.d(TAG, "onResult " + i + " : " + matches.get(i));
                 }
             }

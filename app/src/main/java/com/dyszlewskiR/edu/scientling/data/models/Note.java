@@ -9,11 +9,13 @@ public class Note {
     private long id;
     private String content;
 
-    public Note(){}
-    public Note(long id)
-    {
+    public Note() {
+    }
+
+    public Note(long id) {
         this.id = id;
     }
+
     public long getId() {
         return id;
     }

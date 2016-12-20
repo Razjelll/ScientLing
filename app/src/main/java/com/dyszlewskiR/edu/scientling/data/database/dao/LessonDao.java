@@ -7,11 +7,13 @@ import android.database.sqlite.SQLiteDatabase;
 import com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable;
 import com.dyszlewskiR.edu.scientling.data.models.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.creators.LessonCreator;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.*;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns;
+
 /**
  * Created by Razjelll on 09.11.2016.
  */
@@ -21,13 +23,12 @@ public class LessonDao extends BaseDao<Lesson> {
 
     private final String INSERT_STATEMENT =
             "INSERT INTO " + LessonsTable.TABLE_NAME + "("
-            + LessonsColumns.NAME + ", " + LessonsColumns.NUMBER + ", "
-            + LessonsColumns.SET_FK + ") VALUES (?,?,?)";
-    private final String WHERE_ID = LessonsColumns.ID +"= ?";
+                    + LessonsColumns.NAME + ", " + LessonsColumns.NUMBER + ", "
+                    + LessonsColumns.SET_FK + ") VALUES (?,?,?)";
+    private final String WHERE_ID = LessonsColumns.ID + "= ?";
 
 
-    public LessonDao(SQLiteDatabase db)
-    {
+    public LessonDao(SQLiteDatabase db) {
         super(db);
         mInsertStatement = mDb.compileStatement(INSERT_STATEMENT);
 
@@ -57,9 +58,8 @@ public class LessonDao extends BaseDao<Lesson> {
     @Override
     public void delete(Lesson entity) {
         long id = entity.getId();
-        if(id>0)
-        {
-            String[] whereArguments = new String[] {String.valueOf(id)};
+        if (id > 0) {
+            String[] whereArguments = new String[]{String.valueOf(id)};
             mDb.delete(LessonsTable.TABLE_NAME, WHERE_ID, whereArguments);
         }
     }
@@ -67,32 +67,28 @@ public class LessonDao extends BaseDao<Lesson> {
     @Override
     public Lesson get(long id) {
         Lesson lesson = null;
-        String[] whereArguments = new String[] {String.valueOf(id)};
+        String[] whereArguments = new String[]{String.valueOf(id)};
         Cursor cursor = mDb.query(LessonsTable.TABLE_NAME, mTableColumns, WHERE_ID, whereArguments,
-                null,null,null,null);
-        if(cursor.moveToFirst())
-        {
-            lesson = buildLessonFromCursor(cursor);
+                null, null, null, null);
+        if (cursor.moveToFirst()) {
+            LessonCreator creator = new LessonCreator();
+            lesson = creator.createFromCursor(cursor);
         }
-        if(!cursor.isClosed())
-        {
+        if (!cursor.isClosed()) {
             cursor.close();
         }
         return lesson;
     }
 
-    private Lesson buildLessonFromCursor(Cursor cursor)
-    {
+    private Lesson buildLessonFromCursor(Cursor cursor) {
         Lesson lesson = null;
-        if(cursor != null)
-        {
+        if (cursor != null) {
             lesson = new Lesson();
             lesson.setId(cursor.getLong(LessonsColumns.ID_POSITION));
             lesson.setName(cursor.getString(LessonsColumns.NAME_POSITION));
             lesson.setNumber(cursor.getLong(LessonsColumns.NUMBER_POSITION));
             long setId = cursor.getLong(LessonsColumns.SET_FK_POSITION);
-            if(setId > 0)
-            {
+            if (setId > 0) {
                 VocabularySet set = new VocabularySet();
                 set.setId(setId);
                 lesson.setSet(set);
@@ -102,24 +98,22 @@ public class LessonDao extends BaseDao<Lesson> {
     }
 
     @Override
-    public List<Lesson> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+    public List<Lesson> getAll(boolean distinct, String[] columns, String selection, String[] selectionArgs,
                                String groupBy, String having, String orderBy, String limit) {
         List<Lesson> lessonsList = new ArrayList<>();
-        Cursor cursor = mDb.query(distinct, LessonsTable.TABLE_NAME, columns, selection,selectionArgs,
-                groupBy,having,orderBy,limit);
-        if(cursor.moveToFirst())
-        {
+        Cursor cursor = mDb.query(distinct, LessonsTable.TABLE_NAME, columns, selection, selectionArgs,
+                groupBy, having, orderBy, limit);
+        if (cursor.moveToFirst()) {
             Lesson lesson = null;
+            LessonCreator creator = new LessonCreator();
             do {
-                lesson = buildLessonFromCursor(cursor);
-                if(lesson != null)
-                {
+                lesson = creator.createFromCursor(cursor);
+                if (lesson != null) {
                     lessonsList.add(lesson);
                 }
-            } while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
-        if(!cursor.isClosed())
-        {
+        if (!cursor.isClosed()) {
             cursor.close();
         }
         assert cursor.isClosed();

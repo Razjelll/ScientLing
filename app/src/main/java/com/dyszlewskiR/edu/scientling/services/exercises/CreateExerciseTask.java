@@ -1,10 +1,8 @@
 package com.dyszlewskiR.edu.scientling.services.exercises;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 
 import com.dyszlewskiR.edu.scientling.activity.ExerciseActivity;
-import com.dyszlewskiR.edu.scientling.data.models.Exercise;
 
 /**
  * Created by Razjelll on 16.11.2016.
@@ -14,14 +12,12 @@ public class CreateExerciseTask extends AsyncTask<ExerciseParameters, Void, Exer
 
     private ExerciseActivity mActivity;
 
-    public CreateExerciseTask(ExerciseActivity activity)
-    {
+    public CreateExerciseTask(ExerciseActivity activity) {
         mActivity = activity;
     }
 
     @Override
-    protected void onPreExecute()
-    {
+    protected void onPreExecute() {
 
     }
 
@@ -39,8 +35,7 @@ public class CreateExerciseTask extends AsyncTask<ExerciseParameters, Void, Exer
 
 
     @Override
-    protected void onPostExecute(ExerciseManager result)
-    {
+    protected void onPostExecute(ExerciseManager result) {
         mActivity.prepareExerciseProgress(result.getNumQuestions());
         mActivity.setExerciseManager(result);
         mActivity.hideCircleProgressBar();

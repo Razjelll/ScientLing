@@ -1,7 +1,5 @@
 package com.dyszlewskiR.edu.scientling.data.models;
 
-import android.icu.text.MessagePattern;
-
 /**
  * Created by Razjelll on 03.11.2016.
  */
@@ -11,9 +9,10 @@ public class PartOfSpeech {
     private long id;
     private String name;
 
-    public PartOfSpeech(){}
-    public PartOfSpeech(long id)
-    {
+    public PartOfSpeech() {
+    }
+
+    public PartOfSpeech(long id) {
         this.id = id;
     }
 

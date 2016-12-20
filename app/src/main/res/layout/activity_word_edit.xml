@@ -5,13 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.dyszlewskiR.edu.scientling.activity.WordEditActivity">
+    tools:context="com.dyszlewskiR.edu.scientling.activity.WordEditActivity"
+    android:background="@color/colorFirstBackground">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppBarOverlay"
-        >
+        android:theme="@style/AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -19,18 +19,29 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorMain"
             app:popupTheme="@style/PopupOverlay"
-            />
+            app:navigationIcon="?attr/homeAsUpIndicator" >
 
+            </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <!--
-    <include layout="@layout/content_word_edit" />
-    -->>
 
-    <fragment xmlns:tools="http://schemas.android.com/apk/res/android"
+
+    <!--<Button
+        style="@style/ButtonStyle"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout="@layout/fragment_word_edit"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"/>-->
 
+    <include layout="@layout/content_word_edit" />
+
+    <ToggleButton
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:id="@+id/mode_switch"
+        android:layout_margin="16dp"
+        android:background="@drawable/more_toggle_button"
+        android:layout_gravity="top|right"
         />
+
+
 </android.support.design.widget.CoordinatorLayout>

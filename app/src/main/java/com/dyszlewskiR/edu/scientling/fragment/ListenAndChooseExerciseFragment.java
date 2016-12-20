@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,7 @@ import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseLanguage;
  */
 public class ListenAndChooseExerciseFragment extends Fragment {
 
+    private static ExerciseManager mExerciseManager;
     private Button speechButton;
     private Button answer1Button;
     private Button answer2Button;
@@ -33,10 +33,8 @@ public class ListenAndChooseExerciseFragment extends Fragment {
     private Button answer4Button;
     private Button answer5Button;
     private Button answer6Button;
-
     private OnFragmentInteractionListener mListener;
 
-    private static ExerciseManager mExerciseManager;
     public ListenAndChooseExerciseFragment() {
         // Required empty public constructor
     }
@@ -45,7 +43,6 @@ public class ListenAndChooseExerciseFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-
      * @return A new instance of fragment ListenAndChooseExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
@@ -68,13 +65,13 @@ public class ListenAndChooseExerciseFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_listen_and_choose_exercise, container, false);
-        speechButton = (Button)view.findViewById(R.id.speechButton);
-        answer1Button = (Button)view.findViewById(R.id.answer1);
-        answer2Button = (Button)view.findViewById(R.id.answer2);
-        answer3Button = (Button)view.findViewById(R.id.answer3);
-        answer4Button = (Button)view.findViewById(R.id.answer4);
-        answer5Button = (Button)view.findViewById(R.id.answer5);
-        answer6Button = (Button)view.findViewById(R.id.answer6);
+        speechButton = (Button) view.findViewById(R.id.speechButton);
+        answer1Button = (Button) view.findViewById(R.id.answer1);
+        answer2Button = (Button) view.findViewById(R.id.answer2);
+        answer3Button = (Button) view.findViewById(R.id.answer3);
+        answer4Button = (Button) view.findViewById(R.id.answer4);
+        answer5Button = (Button) view.findViewById(R.id.answer5);
+        answer6Button = (Button) view.findViewById(R.id.answer6);
 
         return view;
     }

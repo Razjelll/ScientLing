@@ -1,16 +1,18 @@
-package com.dyszlewskiR.edu.scientling.data.database;
+package com.dyszlewskiR.edu.scientling.services;
 
-import android.app.DownloadManager;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.dyszlewskiR.edu.scientling.BuildConfig;
+import com.dyszlewskiR.edu.scientling.data.database.DatabaseHelper;
 import com.dyszlewskiR.edu.scientling.data.database.dao.CategoryDao;
 import com.dyszlewskiR.edu.scientling.data.database.dao.DefinitionDao;
+import com.dyszlewskiR.edu.scientling.data.database.dao.LanguageDao;
+import com.dyszlewskiR.edu.scientling.data.database.dao.LessonDao;
 import com.dyszlewskiR.edu.scientling.data.database.dao.SentenceDao;
+import com.dyszlewskiR.edu.scientling.data.database.dao.SetDao;
 import com.dyszlewskiR.edu.scientling.data.database.dao.TranslationDao;
 import com.dyszlewskiR.edu.scientling.data.database.dao.WordDao;
+import com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.TranslationsTable;
@@ -18,18 +20,21 @@ import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTranslationsTable;
 import com.dyszlewskiR.edu.scientling.data.models.Category;
 import com.dyszlewskiR.edu.scientling.data.models.Definition;
+import com.dyszlewskiR.edu.scientling.data.models.Language;
+import com.dyszlewskiR.edu.scientling.data.models.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.Sentence;
 import com.dyszlewskiR.edu.scientling.data.models.Translation;
+import com.dyszlewskiR.edu.scientling.data.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.Word;
-import com.dyszlewskiR.edu.scientling.utils.ResourcesFileOpener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Arrays;
 import java.util.List;
 
-import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable.*;
-import static com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable.*;
-import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.*;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable.SetsColumns;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable.WordsColumns;
 
 /**
  * Created by Razjelll on 10.11.2016.
@@ -45,6 +50,8 @@ public class DataManager {
     private SentenceDao mSentenceDao;
     private DefinitionDao mDefinitionDao;
     private CategoryDao mCategoryDao;
+    private SetDao mSetDao;
+
 
     public DataManager(Context context) {
         mContext = context;
@@ -62,6 +69,7 @@ public class DataManager {
         mSentenceDao = new SentenceDao(mDb);
         mDefinitionDao = new DefinitionDao(mDb);
         mCategoryDao = new CategoryDao(mDb);
+        mSetDao = new SetDao(mDb);
     }
 
 
@@ -105,7 +113,11 @@ public class DataManager {
 
         long wordId = mWordDao.save(word);
         saveTranslations(word.getTranslations(), wordId);
-        saveSentences(word.getSentences(), wordId);
+        if(word.getSentences() != null)
+        {
+            saveSentences(word.getSentences(), wordId);
+        }
+
 
         mDb.setTransactionSuccessful();
         mDb.endTransaction();
@@ -139,14 +151,15 @@ public class DataManager {
     }
 
     private void saveTranslations(ArrayList<Translation> translationsList, long wordId) {
-        Translation translation = null;
-        for (Translation t : translationsList) {
-            translation = mTranslationDao.getByContent(t.getContent());
+        //TODO pozmieniać nazwy translation i t
+        Translation existentTranslation = null;
+        for (Translation translation : translationsList) {
+            existentTranslation= mTranslationDao.getByContent(translation.getContent());
             long translationId;
-            if (t == null) {
+            if (existentTranslation == null) {
                 translationId = mTranslationDao.save(translation);
             } else {
-                translationId = translation.getId();
+                translationId = existentTranslation.getId();
             }
             mTranslationDao.link(translationId, wordId);
         }
@@ -311,8 +324,7 @@ public class DataManager {
                     .append(" = ").append("?");
             queryArguments.add(String.valueOf(difficult));
         }
-        if(differentFrom !=null)
-        {
+        if (differentFrom != null) {
             for (String s : differentFrom) {
                 queryBuilder.append(" AND ").append(WordsTable.ALIAS_DOT).append(WordsColumns.CONTENT)
                         .append("<>").append("?");
@@ -325,5 +337,104 @@ public class DataManager {
         return translationsList;
     }
 
+    public List<VocabularySet> getSets() {
+        List<VocabularySet> sets = mSetDao.getAll();
+        //TODO niezbyt dobre rozwiązanie, chyba lepiej będzie pobierać bezpośrednio w zapytaniu języki
+        //tutaj weźmiemy stworzymy obiekt lokalnie, ponieważ raczej nie ma potrzeby przechowywać to w pamięci
+        LanguageDao languageDao = new LanguageDao(mDb);
+        for (VocabularySet s : sets) {
+            s.setLanguageL2(languageDao.get(s.getLanguageL2().getId()));
+        }
+        return sets;
+    }
+
+    public VocabularySet getSetById(long id) {
+        return mSetDao.get(id);
+    }
+
+    public List<Category> getCategories() {
+        return mCategoryDao.getAll();
+    }
+
+    public List<Category> getCategoriesByLanguage(long languageId) {
+
+        String where = CategoriesTable.CategoriesColumns.LANGUAGE_FK + "=?";
+        String[] whereArguments = new String[]{String.valueOf(languageId)};
+        return mCategoryDao.getAll(true, CategoriesTable.getColumn(), where, whereArguments,
+                null, null, CategoriesTable.CategoriesColumns.NAME, null);
+    }
+
+    public List<Language> getLanguages() {
+        LanguageDao dao = new LanguageDao(mDb);
+        return dao.getAll();
+    }
+
+    public long saveSet(VocabularySet set) {
+        mDb.beginTransaction();
+        long id = mSetDao.save(set);
+        if (id > 0) {
+            mDb.setTransactionSuccessful();
+        }
+        mDb.endTransaction();
+        return id;
+    }
+
+    public List<Lesson> getLessons(VocabularySet set) {
+        LessonDao lessonDao = new LessonDao(mDb);
+        if (set == null) {
+            return lessonDao.getAll();
+        }
+        String where = LessonsColumns.SET_FK + " = ?";
+        String orderBy = LessonsColumns.NUMBER;
+        return lessonDao.getAll(true, LessonsTable.getColumns(), where, new String[]{String.valueOf(set.getId())}, null, null, orderBy, null);
+    }
+
+    public List<Lesson> getLessonsWithProgress(VocabularySet set)
+    {
+        List<Lesson> lessons = new ArrayList<>();
+        LessonDao lessonDao = new LessonDao(mDb);
+        if(set == null) return lessons;
+        ArrayList<String> queryColumns  = new ArrayList<>(Arrays.asList(LessonsTable.getColumns()));
+        String queryPart = "(SELECT COUNT(1) FROM " + WordsTable.TABLE_NAME
+                + " WHERE " + WordsColumns.LESSON_FK + " = " + LessonsTable.TABLE_NAME +"."+ LessonsColumns.ID;
+        String progressColumn = queryPart + " AND " + WordsColumns.MASTER_LEVEL + "> -1 )*1.0/"
+                + queryPart + ")*100";
+        queryColumns.add(progressColumn);
+
+        String where = LessonsColumns.SET_FK + " =?";
+        String[] whereArguments = {String.valueOf(set.getId())};
+        String groupBy = LessonsColumns.ID;
+        String orderBy = LessonsColumns.NUMBER;
+        lessons = lessonDao.getAll(false,queryColumns.toArray(new String[0]),where, whereArguments,
+                groupBy,null,orderBy,null);
+        return lessons;
+    }
+
+    public long saveLesson(Lesson lesson) {
+        LessonDao dao = new LessonDao(mDb);
+        mDb.beginTransaction();
+        long id = dao.save(lesson);
+        if (id > 0) {
+            mDb.setTransactionSuccessful();
+        }
+        mDb.endTransaction();
+        return id;
+    }
+
+
+
+    public List<Word> getAllWords()
+    {
+        List<Word> words = mWordDao.getAll();
+        for(Word word : words)
+        {
+            completeWord(word);
+        }
+        return words;
+    }
+
+    public void release() {
+        mDb.close();
+    }
 
 }

@@ -11,7 +11,8 @@ import com.dyszlewskiR.edu.scientling.data.models.creators.CategoryCreator;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable.*;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable.CategoriesColumns;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable.TABLE_NAME;
 
 /**
  * Created by Razjelll on 07.11.2016.
@@ -77,7 +78,7 @@ public class CategoryDao extends BaseDao<Category> {
     }
 
     @Override
-    public List<Category> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+    public List<Category> getAll(boolean distinct, String[] columns, String selection, String[] selectionArgs,
                                  String groupBy, String having, String orderBy, String limit) {
 
         List<Category> categoriesList = new ArrayList<>();

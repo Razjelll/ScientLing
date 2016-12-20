@@ -26,8 +26,7 @@ public class WordCreator implements IModelCreator<Word> {
             word = new Word();
             word.setId(cursor.getLong(WordsTable.WordsColumns.ID_POSITION));
             word.setContent(cursor.getString(WordsTable.WordsColumns.CONTENT_POSITION));
-            if(cursor.getColumnCount() > 2)
-            {
+            if (cursor.getColumnCount() > 2) {
                 word.setTranscription(cursor.getString(WordsTable.WordsColumns.TRANSCRIPTION_POSITION));
                 long definitionId = cursor.getLong(WordsTable.WordsColumns.DEFINITION_FK_POSITION);
                 if (definitionId > 0) {

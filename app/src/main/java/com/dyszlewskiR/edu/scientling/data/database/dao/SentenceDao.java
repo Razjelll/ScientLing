@@ -12,7 +12,9 @@ import com.dyszlewskiR.edu.scientling.data.models.creators.SentenceCreator;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dyszlewskiR.edu.scientling.data.database.tables.SentencesTable.*;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.SentencesTable.SentencesColumns;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.SentencesTable.TABLE_NAME;
+
 /**
  * Created by Razjelll on 08.11.2016.
  */
@@ -20,25 +22,24 @@ import static com.dyszlewskiR.edu.scientling.data.database.tables.SentencesTable
 public class SentenceDao extends BaseDao<Sentence> {
 
 
-
     private final String INSERT_STATEMENT =
             "INSERT INTO " + TABLE_NAME + "("
-            +SentencesColumns.CONTENT + ", " + SentencesColumns.TRANSLATION
-            +") VALUES (?,?)";
+                    + SentencesColumns.CONTENT + ", " + SentencesColumns.TRANSLATION
+                    + ") VALUES (?,?)";
 
     private final String SELECT_LINK_STATEMENT =
-            "SELECT S.* FROM " + ExampleSentences.TABLE_NAME+ " ES JOIN "
-            + SentencesTable.TABLE_NAME + " S ON ES."
-            + ExampleSentences.ExampleSentencesColumns.SENTENCE_FK + "= S."
-            + SentencesColumns.ID + " WHERE ES." + ExampleSentences.ExampleSentencesColumns.WORD_FK
-            + " = ?";
+            "SELECT S.* FROM " + ExampleSentences.TABLE_NAME + " ES JOIN "
+                    + SentencesTable.TABLE_NAME + " S ON ES."
+                    + ExampleSentences.ExampleSentencesColumns.SENTENCE_FK + "= S."
+                    + SentencesColumns.ID + " WHERE ES." + ExampleSentences.ExampleSentencesColumns.WORD_FK
+                    + " = ?";
 
-    public SentenceDao(SQLiteDatabase db)
-    {
+    public SentenceDao(SQLiteDatabase db) {
         super(db);
         mInsertStatement = mDb.compileStatement(INSERT_STATEMENT);
         mTableColumns = SentencesTable.getColumns();
     }
+
     @Override
     public long save(Sentence entity) {
         mInsertStatement.clearBindings();
@@ -55,14 +56,13 @@ public class SentenceDao extends BaseDao<Sentence> {
 
         String where = SentencesColumns.ID + "= ?";
         String[] whereArguments = new String[]{String.valueOf(entity.getId())};
-        mDb.update(TABLE_NAME,values, where, whereArguments);
+        mDb.update(TABLE_NAME, values, where, whereArguments);
     }
 
     @Override
     public void delete(Sentence entity) {
         long id = entity.getId();
-        if( id > 0)
-        {
+        if (id > 0) {
             String where = SentencesColumns.ID + "= ?";
             String[] whereArguments = new String[]{String.valueOf(id)};
             mDb.delete(TABLE_NAME, where, whereArguments);
@@ -74,10 +74,9 @@ public class SentenceDao extends BaseDao<Sentence> {
         Sentence sentence = null;
         String where = SentencesColumns.ID + "= ?";
         String[] whereArguments = new String[]{String.valueOf(id)};
-        Cursor cursor = mDb.query(TABLE_NAME, mTableColumns,where,whereArguments,
-                null,null, null,null);
-        if(cursor.moveToFirst())
-        {
+        Cursor cursor = mDb.query(TABLE_NAME, mTableColumns, where, whereArguments,
+                null, null, null, null);
+        if (cursor.moveToFirst()) {
             SentenceCreator sentenceCreator = new SentenceCreator();
             sentence = sentenceCreator.createFromCursor(cursor);
         }
@@ -86,22 +85,20 @@ public class SentenceDao extends BaseDao<Sentence> {
     }
 
     @Override
-    public List<Sentence> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
-                                 String groupBy, String having, String orderBy, String limit){
+    public List<Sentence> getAll(boolean distinct, String[] columns, String selection, String[] selectionArgs,
+                                 String groupBy, String having, String orderBy, String limit) {
         List<Sentence> sentencesList = new ArrayList<>();
-        Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection,selectionArgs,
-                groupBy,having,orderBy,limit);
-        if(cursor.moveToFirst())
-        {
+        Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection, selectionArgs,
+                groupBy, having, orderBy, limit);
+        if (cursor.moveToFirst()) {
             Sentence sentence = null;
             SentenceCreator sentenceCreator = new SentenceCreator();
             do {
                 sentence = sentenceCreator.createFromCursor(cursor);
-                if(sentence != null)
-                {
+                if (sentence != null) {
                     sentencesList.add(sentence);
                 }
-            } while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         closeCursor(cursor);
         return sentencesList;
@@ -109,9 +106,8 @@ public class SentenceDao extends BaseDao<Sentence> {
 
     //Tutaj znajdują sie metody, ktróre obsługują tabele ExampelSentences
 
-    public void link(long sentenceId, long wordId)
-    {
-        final ContentValues values= new ContentValues();
+    public void link(long sentenceId, long wordId) {
+        final ContentValues values = new ContentValues();
         values.put(ExampleSentences.ExampleSentencesColumns.WORD_FK, wordId);
         values.put(ExampleSentences.ExampleSentencesColumns.SENTENCE_FK, sentenceId);
         mDb.insert(ExampleSentences.TABLE_NAME, null, values);
@@ -119,35 +115,31 @@ public class SentenceDao extends BaseDao<Sentence> {
 
     //TODO dorobić metodę unlink, zastanowić się jak ma działać
 
-    public List<Sentence> getLinked(long wordId)
-    {
+    public List<Sentence> getLinked(long wordId) {
         List<Sentence> sentencesList = new ArrayList<>();
         String[] whereArguments = new String[]{String.valueOf(wordId)};
         Cursor cursor = mDb.rawQuery(SELECT_LINK_STATEMENT, whereArguments);
-        if(cursor.moveToFirst())
-        {
+        if (cursor.moveToFirst()) {
             Sentence sentence;
             SentenceCreator sentenceCreator = new SentenceCreator();
-            do{
-                sentence =sentenceCreator.createFromCursor(cursor);
-                if(sentence != null)
-                {
+            do {
+                sentence = sentenceCreator.createFromCursor(cursor);
+                if (sentence != null) {
                     sentencesList.add(sentence);
                 }
-            } while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         closeCursor(cursor);
         return sentencesList;
     }
 
-    public Sentence getByContent(String content)
-    {
+    public Sentence getByContent(String content) {
         Sentence sentence = null;
         String where = SentencesColumns.CONTENT + " = ?";
         String[] whereArguments = new String[]{content};
         Cursor cursor = mDb.query(SentencesTable.TABLE_NAME, mTableColumns, where, whereArguments,
-                null,null,null,null);
-        if(cursor.moveToFirst()){
+                null, null, null, null);
+        if (cursor.moveToFirst()) {
             SentenceCreator sentenceCreator = new SentenceCreator();
             sentence = sentenceCreator.createFromCursor(cursor);
         }

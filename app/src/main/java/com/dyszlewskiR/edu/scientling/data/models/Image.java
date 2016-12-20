@@ -12,7 +12,9 @@ public class Image {
     private String extension;
     private Image image;
 
-    public Image(){}
+    public Image() {
+    }
+
     public Image(long id) {
         this.id = id;
     }

@@ -14,9 +14,10 @@ public class Record {
     private String extension;
     private File soundFile; //TODO zastanowić się
 
-    public Record(){}
-    public Record(long id )
-    {
+    public Record() {
+    }
+
+    public Record(long id) {
         this.id = id;
     }
 

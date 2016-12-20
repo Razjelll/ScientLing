@@ -13,8 +13,7 @@ public class SentenceCreator implements IModelCreator<Sentence> {
     @Override
     public Sentence createFromCursor(Cursor cursor) {
         Sentence sentence = null;
-        if(cursor != null)
-        {
+        if (cursor != null) {
             sentence = new Sentence();
             sentence.setId(cursor.getLong(SentencesTable.SentencesColumns.ID_POSITION));
             sentence.setContent(cursor.getString(SentencesTable.SentencesColumns.CONTENT_POSITION));

@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +28,7 @@ import com.dyszlewskiR.edu.scientling.services.exercises.KnowExercise;
 public class KnowExerciseFragment extends Fragment {
 
 
+    private static ExerciseManager mExerciseManager; //TODO zastanowić się czy te statiki mogą być
     private TextView mWordTextView;
     private TextView mTranscriptionTextView;
     private TextView mTranslationTextView;
@@ -37,11 +37,7 @@ public class KnowExerciseFragment extends Fragment {
     private Button mKnowButton;
     private Button mDontKnowButton;
     private Button mAlmostKnowButton;
-    
-
     private OnFragmentInteractionListener mListener;
-
-    private static ExerciseManager mExerciseManager; //TODO zastanowić się czy te statiki mogą być
 
     public KnowExerciseFragment() {
         // Required empty public constructor
@@ -50,7 +46,6 @@ public class KnowExerciseFragment extends Fragment {
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
-     *
      *
      * @return A new instance of fragment KnowExerciseFragment.
      */
@@ -84,8 +79,7 @@ public class KnowExerciseFragment extends Fragment {
         mExerciseManager.checkAnswer(answer);
     }
 
-    private void showAnswer()
-    {
+    private void showAnswer() {
         mShowAnswerButton.setVisibility(View.GONE);
 
         mKnowButton.setVisibility(View.VISIBLE);
@@ -115,8 +109,8 @@ public class KnowExerciseFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_know_exercise, container, false);
         //return inflater.inflate(R.layout.fragment_know_exercise, container, false);
         mWordTextView = (TextView) view.findViewById(R.id.wordTextView);
-        mTranscriptionTextView = (TextView)view.findViewById(R.id.transcriptionTextView);
-        mTranslationTextView = (TextView)view.findViewById(R.id.knowTranslation);
+        mTranscriptionTextView = (TextView) view.findViewById(R.id.transcriptionTextView);
+        mTranslationTextView = (TextView) view.findViewById(R.id.knowTranslation);
         mShowAnswerButton = (Button) view.findViewById(R.id.showAnswerButton);
         mSpeechButton = (Button) view.findViewById(R.id.knowSpeechButton);
         mKnowButton = (Button) view.findViewById(R.id.knowButton);
@@ -139,8 +133,7 @@ public class KnowExerciseFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState)
-    {
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
     }
@@ -184,12 +177,10 @@ public class KnowExerciseFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    protected class KnowButtonOnClickListener implements View.OnClickListener
-    {
+    protected class KnowButtonOnClickListener implements View.OnClickListener {
         private String mValue;
 
-        public KnowButtonOnClickListener(String value)
-        {
+        public KnowButtonOnClickListener(String value) {
             mValue = value;
         }
 
@@ -197,13 +188,12 @@ public class KnowExerciseFragment extends Fragment {
         public void onClick(View v) {
             toAnswer(mValue);
             mExerciseManager.nextQuestion();
-            ((ExerciseActivity)getActivity()).updateQuestion();
+            ((ExerciseActivity) getActivity()).updateQuestion();
             showQuestion();
         }
     }
 
-    protected class ShowAnswerOnClickListener implements View.OnClickListener
-    {
+    protected class ShowAnswerOnClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {

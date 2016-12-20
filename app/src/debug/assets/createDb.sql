@@ -31,8 +31,10 @@ CREATE TABLE Exercises (
 CREATE TABLE Sets (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        language_fk INTEGER,
-        FOREIGN KEY (language_fk) REFERENCES Languages(id)
+        language_l2_fk INTEGER,
+        language_l1_fk INTEGER,
+        FOREIGN KEY (language_l2_fk) REFERENCES Languages(id),
+        FOREIGN KEY (language_l1_fk) REFERENCES Languages(id)
 );
 CREATE TABLE Lessons (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

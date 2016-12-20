@@ -3,7 +3,6 @@ package com.dyszlewskiR.edu.scientling.data.database.dao;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.ExercisesTable;
 import com.dyszlewskiR.edu.scientling.data.models.Exercise;
@@ -11,7 +10,8 @@ import com.dyszlewskiR.edu.scientling.data.models.Exercise;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dyszlewskiR.edu.scientling.data.database.tables.ExercisesTable.*;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.ExercisesTable.ExercisesColumns;
+
 /**
  * Created by Razjelll on 08.11.2016.
  */
@@ -19,14 +19,12 @@ import static com.dyszlewskiR.edu.scientling.data.database.tables.ExercisesTable
 public class ExerciseDao extends BaseDao<Exercise> {
 
 
-
     private final String INSERT_STATEMENT =
             "INSERT INTO " + ExercisesTable.TABLE_NAME + "("
-            + ExercisesColumns.NAME + ") VALUES (?)";
+                    + ExercisesColumns.NAME + ") VALUES (?)";
     private final String WHERE_ID = ExercisesColumns.ID + "= ?";
 
-    public ExerciseDao(SQLiteDatabase db)
-    {
+    public ExerciseDao(SQLiteDatabase db) {
         super(db);
         mInsertStatement = mDb.compileStatement(INSERT_STATEMENT);
 
@@ -53,8 +51,7 @@ public class ExerciseDao extends BaseDao<Exercise> {
     @Override
     public void delete(Exercise entity) {
         long id = entity.getId();
-        if(id >0 )
-        {
+        if (id > 0) {
             String[] whereArguments = new String[]{String.valueOf(id)};
             mDb.delete(ExercisesTable.TABLE_NAME, WHERE_ID, whereArguments);
         }
@@ -63,25 +60,21 @@ public class ExerciseDao extends BaseDao<Exercise> {
     @Override
     public Exercise get(long id) {
         Exercise exercise = null;
-        String[] whereArguments = new String[] {String.valueOf(id)};
+        String[] whereArguments = new String[]{String.valueOf(id)};
         Cursor cursor = mDb.query(ExercisesTable.TABLE_NAME, mTableColumns, WHERE_ID, whereArguments,
-                null,null,null,null);
-        if(cursor.moveToFirst())
-        {
+                null, null, null, null);
+        if (cursor.moveToFirst()) {
             exercise = buildExerciseFromCursor(cursor);
         }
-        if(!cursor.isClosed())
-        {
+        if (!cursor.isClosed()) {
             cursor.close();
         }
         return exercise;
     }
 
-    private Exercise buildExerciseFromCursor(Cursor cursor)
-    {
+    private Exercise buildExerciseFromCursor(Cursor cursor) {
         Exercise exercise = null;
-        if(cursor != null)
-        {
+        if (cursor != null) {
             exercise = new Exercise();
             exercise.setId(cursor.getLong(ExercisesColumns.ID_POSITION));
             exercise.setName(cursor.getString(ExercisesColumns.NAME_POSITION));
@@ -90,18 +83,16 @@ public class ExerciseDao extends BaseDao<Exercise> {
     }
 
     @Override
-    public List<Exercise> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+    public List<Exercise> getAll(boolean distinct, String[] columns, String selection, String[] selectionArgs,
                                  String groupBy, String having, String orderBy, String limit) {
         List<Exercise> exercisesList = new ArrayList<>();
         Cursor cursor = mDb.query(distinct, ExercisesTable.TABLE_NAME, columns, selection, selectionArgs,
-                groupBy,having,orderBy,limit);
-        if(cursor.moveToFirst())
-        {
+                groupBy, having, orderBy, limit);
+        if (cursor.moveToFirst()) {
             Exercise exercise = null;
-            do{
+            do {
                 exercise = buildExerciseFromCursor(cursor);
-                if(exercise != null)
-                {
+                if (exercise != null) {
                     exercisesList.add(exercise);
                 }
             } while (cursor.moveToNext());

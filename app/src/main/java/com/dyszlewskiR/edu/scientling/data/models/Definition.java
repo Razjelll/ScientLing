@@ -9,9 +9,10 @@ public class Definition {
     private String content;
     private String translation;
 
-    public Definition(){}
-    public Definition(long id)
-    {
+    public Definition() {
+    }
+
+    public Definition(long id) {
         this.id = id;
     }
 
