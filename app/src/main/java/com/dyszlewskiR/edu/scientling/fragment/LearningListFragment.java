@@ -1,19 +1,24 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
+import android.content.Intent;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
+import com.dyszlewskiR.edu.scientling.activity.LearningActivity;
 import com.dyszlewskiR.edu.scientling.adapters.LearningWordsAdapter;
 import com.dyszlewskiR.edu.scientling.asyncTasks.LoadLearningAsyncTask;
 import com.dyszlewskiR.edu.scientling.data.models.Word;
 import com.dyszlewskiR.edu.scientling.services.DataManager;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
@@ -25,6 +30,8 @@ public class LearningListFragment extends Fragment {
     private List<Word> mWords;
     private ListView mWordsListView;
     private DataManager mDataManager;
+
+    private Button mStartButton;
 
     public LearningListFragment() {
     }
@@ -41,6 +48,7 @@ public class LearningListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_learning_list, container, false);
         mWordsListView = (ListView) view.findViewById(R.id.list);
+        mStartButton = (Button) view.findViewById(R.id.start_button);
 
         return view;
     }
@@ -49,6 +57,14 @@ public class LearningListFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
+
+        mStartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startLearningActivity();
+            }
+        });
+
         LoadLearningAsyncTask task = new LoadLearningAsyncTask(mDataManager);
         try {
             mWords = task.execute().get();
@@ -60,4 +76,12 @@ public class LearningListFragment extends Fragment {
         LearningWordsAdapter adapter = new LearningWordsAdapter(getActivity(), R.layout.item_learning_word, mWords);
         mWordsListView.setAdapter(adapter);
     }
+
+    private void startLearningActivity()
+    {
+        Intent intent = new Intent(getActivity(), LearningActivity.class);
+        intent.putParcelableArrayListExtra("items", new ArrayList<Word>(mWords));
+        startActivity(intent);
+    }
+
 }

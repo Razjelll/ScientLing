@@ -1,10 +1,13 @@
 package com.dyszlewskiR.edu.scientling.data.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Razjelll on 09.11.2016.
  */
 
-public class Definition {
+public class Definition implements Parcelable {
     private long id;
     private String content;
     private String translation;
@@ -16,6 +19,24 @@ public class Definition {
         this.id = id;
     }
 
+
+    protected Definition(Parcel in) {
+        id = in.readLong();
+        content = in.readString();
+        translation = in.readString();
+    }
+
+    public static final Creator<Definition> CREATOR = new Creator<Definition>() {
+        @Override
+        public Definition createFromParcel(Parcel in) {
+            return new Definition(in);
+        }
+
+        @Override
+        public Definition[] newArray(int size) {
+            return new Definition[size];
+        }
+    };
 
     public long getId() {
         return id;
@@ -61,5 +82,17 @@ public class Definition {
         result = 31 * result + (content != null ? content.hashCode() : 0);
         result = 31 * result + (translation != null ? translation.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(content);
+        dest.writeString(translation);
     }
 }

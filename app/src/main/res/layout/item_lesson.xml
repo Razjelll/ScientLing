@@ -19,7 +19,7 @@
         <TextView
             style="@style/LabelStyle"
             android:layout_width="wrap_content"
-            android:textSize="@dimen/small_item_text_size"
+            android:textSize="@dimen/small_text_size"
             android:text="@string/set"
             android:layout_gravity="center_vertical"
             />
@@ -27,14 +27,14 @@
            style="@style/TextViewStyle"
             android:layout_width="wrap_content"
             android:id="@+id/set_text_view"
-            android:textSize="@dimen/small_item_text_size"
+            android:textSize="@dimen/small_text_size"
             android:text="Angielski dla wytrwyałych"
             android:layout_weight="0.5"/>
 
         <TextView
             style="@style/LabelStyle"
             android:layout_width="wrap_content"
-            android:textSize="@dimen/small_item_text_size"
+            android:textSize="@dimen/small_text_size"
             android:text="@string/lesson_number"
             android:layout_gravity="center_vertical"
             />
@@ -43,7 +43,7 @@
           style="@style/TextViewStyle"
             android:layout_width="wrap_content"
             android:id="@+id/lesson_number_text_view"
-            android:textSize="@dimen/small_item_text_size"
+            android:textSize="@dimen/small_text_size"
             android:text="4"/>
 
     </LinearLayout>

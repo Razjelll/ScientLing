@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.BuildConfig;
 import com.dyszlewskiR.edu.scientling.data.database.DatabaseHelper;
-import com.dyszlewskiR.edu.scientling.data.models.Tip;
+import com.dyszlewskiR.edu.scientling.data.models.Hint;
 import com.dyszlewskiR.edu.scientling.utils.ResourcesFileOpener;
 
 import org.junit.Test;
@@ -28,25 +28,25 @@ import static org.junit.Assert.fail;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 17)
-public class TipDaoTest {
+public class HintDaoTest {
 
     private Context mContext = RuntimeEnvironment.application;
     private DatabaseHelper mDbHelper = new DatabaseHelper(mContext);
 
     private TipDao mDao;
 
-    private Tip mTip1;
-    private Tip mTip2;
+    private Hint mHint1;
+    private Hint mHint2;
 
-    public TipDaoTest()
+    public HintDaoTest()
     {
-        mTip1 = new Tip();
-        mTip1.setId(1);
-        mTip1.setContent("Odmiana 'to be' I am you are...");
+        mHint1 = new Hint();
+        mHint1.setId(1);
+        mHint1.setContent("Odmiana 'to be' I am you are...");
 
-        mTip2 = new Tip();
-        mTip2.setId(2);
-        mTip2.setContent(""); //TODO coś tutaj wpisać
+        mHint2 = new Hint();
+        mHint2.setId(2);
+        mHint2.setContent(""); //TODO coś tutaj wpisać
 
         mDbHelper.setFileOpener(new ResourcesFileOpener());
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
@@ -56,13 +56,13 @@ public class TipDaoTest {
     @Test
     public void testInsertTip()
     {
-        long id = mDao.save(mTip1);
+        long id = mDao.save(mHint1);
         assertEquals(1,id);
-        id = mDao.save(mTip2);
+        id = mDao.save(mHint2);
         assertEquals(2, id);
         try
         {
-            id = mDao.save(mTip1);
+            id = mDao.save(mHint1);
             fail("Złamano ograniczenie unikalnej wartości");
         } catch(SQLiteConstraintException ex )
         {
@@ -73,42 +73,42 @@ public class TipDaoTest {
     @Test
     public void testGetTip()
     {
-        mDao.save(mTip1);
-        Tip tip = mDao.get(1);
-        assertEquals(1, tip.getId());
-        assertEquals("Odmiana 'to be' I am you are...", tip.getContent());
+        mDao.save(mHint1);
+        Hint hint = mDao.get(1);
+        assertEquals(1, hint.getId());
+        assertEquals("Odmiana 'to be' I am you are...", hint.getContent());
     }
 
     @Test
     public void testDeleteTip()
     {
-        long id = mDao.save(mTip1);
-        Tip tip = mDao.get(id);
-        mDao.delete(tip);
-        tip = mDao.get(id);
-        assertNull(tip);
+        long id = mDao.save(mHint1);
+        Hint hint = mDao.get(id);
+        mDao.delete(hint);
+        hint = mDao.get(id);
+        assertNull(hint);
     }
 
     @Test
     public void testGetAllTips()
     {
-        mDao.save(mTip1);
-        mDao.save(mTip2);
-        ArrayList<Tip> tipsList = (ArrayList<Tip>)mDao.getAll();
+        mDao.save(mHint1);
+        mDao.save(mHint2);
+        ArrayList<Hint> tipsList = (ArrayList<Hint>)mDao.getAll();
         assertEquals(2, tipsList.size());
-        assertTrue(tipsList.get(0).equals(mTip1));
-        assertTrue(tipsList.get(1).equals(mTip2));
+        assertTrue(tipsList.get(0).equals(mHint1));
+        assertTrue(tipsList.get(1).equals(mHint2));
     }
 
     @Test
     public void testUpdateTip()
     {
-        long id = mDao.save(mTip1);
-        Tip tip = mDao.get(id);
-        tip.setContent("Brak");
-        mDao.update(tip);
-        tip = mDao.get(id);
-        assertEquals("Brak", tip.getContent());
+        long id = mDao.save(mHint1);
+        Hint hint = mDao.get(id);
+        hint.setContent("Brak");
+        mDao.update(hint);
+        hint = mDao.get(id);
+        assertEquals("Brak", hint.getContent());
     }
 
 }

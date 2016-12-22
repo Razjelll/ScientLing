@@ -205,5 +205,13 @@ VALUES (18,25);
 INSERT INTO WordsTranslations (word_fk, translation_fk)
 VALUES (19,26);
 
+INSERT INTO ExampleSentences (word_fk, sentence_fk)
+VALUES (1, 1);
+INSERT INTO ExampleSentences (word_fk, sentence_fk)
+VALUES (2, 2);
+INSERT INTO ExampleSentences (word_fk, sentence_fk)
+VALUES (1, 2);
+
+
 
 

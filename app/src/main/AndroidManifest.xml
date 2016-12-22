@@ -35,7 +35,7 @@
         <activity
             android:name=".activity.WordEditActivity"
             android:label="@string/title_activity_word_edit"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".activity.SentenceDetailActivity"
             android:label="@string/title_activity_sentence_detail"
@@ -74,9 +74,14 @@
             android:theme="@style/NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activity.LearningActivity"
+            android:label="@string/title_activity_learning"
+            android:theme="@style/NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -4,15 +4,15 @@ package com.dyszlewskiR.edu.scientling.data.models;
  * Created by Razjelll on 03.11.2016.
  */
 
-public class Tip {
+public class Hint {
 
     private long id;
     private String content;
 
-    public Tip() {
+    public Hint() {
     }
 
-    public Tip(long id) {
+    public Hint(long id) {
         this.id = id;
     }
 
@@ -29,10 +29,10 @@ public class Tip {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Tip tip = (Tip) o;
+        Hint hint = (Hint) o;
 
-        if (id != tip.id) return false;
-        return content != null ? content.equals(tip.content) : tip.content == null;
+        if (id != hint.id) return false;
+        return content != null ? content.equals(hint.content) : hint.content == null;
 
     }
 

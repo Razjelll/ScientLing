@@ -1,5 +1,8 @@
 package com.dyszlewskiR.edu.scientling.data.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
 /**
@@ -8,7 +11,7 @@ import java.util.ArrayList;
  * wynika ze związków pomiędzy tabelami bazy danych
  */
 
-public class Word {
+public class Word implements Parcelable{
 
     private long id;
     private String content;
@@ -22,7 +25,7 @@ public class Word {
     private boolean selected;
     private ArrayList<Translation> translations;
     private ArrayList<Sentence> sentences;
-    private ArrayList<Tip> tips;
+    private ArrayList<Hint> hints;
     private ArrayList<Mnemonic> mnemonics;
     //private ArrayList<String> synonyms;
     //private ArrayList<String> antonyms;
@@ -38,6 +41,59 @@ public class Word {
     public Word(long id) {
         this.id = id;
     }
+
+    public boolean hasSentences()
+    {
+        return sentences != null && sentences.size() != 0;
+    }
+
+    public boolean hasHints()
+    {
+        return hints != null;
+    }
+
+    public boolean hasDefinition()
+    {
+        return definition != null;
+    }
+
+    public boolean hasImage()
+    {
+        return image != null;
+    }
+
+    public boolean hasRecord()
+    {
+        return record != null;
+    }
+
+
+    protected Word(Parcel in) {
+        id = in.readLong();
+        content = in.readString();
+        transcription = in.readString();
+        category = in.readParcelable(Category.class.getClassLoader());
+        lessonId = in.readLong();
+        difficult = in.readByte();
+        masterLevel = in.readByte();
+        selected = in.readByte() != 0;
+        sentences = in.createTypedArrayList(Sentence.CREATOR);
+        //in.readTypedList(translations, Translation.CREATOR);
+        translations = in.createTypedArrayList(Translation.CREATOR);
+        definition = in.readParcelable(Definition.class.getClassLoader());
+    }
+
+    public static final Creator<Word> CREATOR = new Creator<Word>() {
+        @Override
+        public Word createFromParcel(Parcel in) {
+            return new Word(in);
+        }
+
+        @Override
+        public Word[] newArray(int size) {
+            return new Word[size];
+        }
+    };
 
     public long getId() {
         return id;
@@ -127,12 +183,12 @@ public class Word {
         this.sentences = sentences;
     }
 
-    public ArrayList<Tip> getTips() {
-        return tips;
+    public ArrayList<Hint> getHints() {
+        return hints;
     }
 
-    public void setTips(ArrayList<Tip> tips) {
-        this.tips = tips;
+    public void setHints(ArrayList<Hint> hints) {
+        this.hints = hints;
     }
 
     public ArrayList<Mnemonic> getMnemonics() {
@@ -189,5 +245,25 @@ public class Word {
 
     public void setDefinition(Definition definition) {
         this.definition = definition;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(content);
+        dest.writeString(transcription);
+        dest.writeParcelable(category, flags);
+        dest.writeLong(lessonId);
+        dest.writeByte(difficult);
+        dest.writeByte(masterLevel);
+        dest.writeByte((byte) (selected ? 1 : 0));
+        dest.writeTypedList(sentences);
+        dest.writeTypedList(translations);
+        dest.writeParcelable(definition, flags);
     }
 }

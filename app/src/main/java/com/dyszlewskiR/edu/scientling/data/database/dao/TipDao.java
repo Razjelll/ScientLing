@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.dyszlewskiR.edu.scientling.data.models.Tip;
+import com.dyszlewskiR.edu.scientling.data.models.Hint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.List;
  * Created by Razjelll on 08.11.2016.
  */
 
-public class TipDao extends BaseDao<Tip> {
+public class TipDao extends BaseDao<Hint> {
 
     private static final String TABLE_NAME = "Tips";
     private final String INSERT_STATEMENT =
@@ -30,7 +30,7 @@ public class TipDao extends BaseDao<Tip> {
     }
 
     @Override
-    public long save(Tip entity) {
+    public long save(Hint entity) {
         mInsertStatement.clearBindings();
         mInsertStatement.bindString(1, entity.getContent());
 
@@ -38,7 +38,7 @@ public class TipDao extends BaseDao<Tip> {
     }
 
     @Override
-    public void update(Tip entity) {
+    public void update(Hint entity) {
         final ContentValues values = new ContentValues();
         values.put(TipsColumns.CONTENT, entity.getContent());
 
@@ -47,7 +47,7 @@ public class TipDao extends BaseDao<Tip> {
     }
 
     @Override
-    public void delete(Tip entity) {
+    public void delete(Hint entity) {
         long id = entity.getId();
         if (id > 0) {
             String[] whereArguments = new String[]{String.valueOf(id)};
@@ -56,42 +56,42 @@ public class TipDao extends BaseDao<Tip> {
     }
 
     @Override
-    public Tip get(long id) {
-        Tip tip = null;
+    public Hint get(long id) {
+        Hint hint = null;
         String[] whereArguments = new String[]{String.valueOf(id)};
         Cursor cursor = mDb.query(TABLE_NAME, mTableColumns, WHERE_ID, whereArguments,
                 null, null, null, null);
         if (cursor.moveToFirst()) {
-            tip = buildTipFromCursor(cursor);
+            hint = buildTipFromCursor(cursor);
         }
         if (!cursor.isClosed()) {
             cursor.close();
         }
-        return tip;
+        return hint;
     }
 
-    private Tip buildTipFromCursor(Cursor cursor) {
-        Tip tip = null;
+    private Hint buildTipFromCursor(Cursor cursor) {
+        Hint hint = null;
         if (cursor != null) {
-            tip = new Tip();
-            tip.setId(cursor.getLong(TipsColumns.ID_POSITION));
-            tip.setContent(cursor.getString(TipsColumns.CONTENT_POSITION));
+            hint = new Hint();
+            hint.setId(cursor.getLong(TipsColumns.ID_POSITION));
+            hint.setContent(cursor.getString(TipsColumns.CONTENT_POSITION));
         }
-        return tip;
+        return hint;
     }
 
     @Override
-    public List<Tip> getAll(boolean distinct, String[] columns, String selection, String[] selectionArgs,
-                            String groupBy, String having, String orderBy, String limit) {
-        List<Tip> tipsList = new ArrayList<>();
+    public List<Hint> getAll(boolean distinct, String[] columns, String selection, String[] selectionArgs,
+                             String groupBy, String having, String orderBy, String limit) {
+        List<Hint> tipsList = new ArrayList<>();
         Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection, selectionArgs,
                 groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
-            Tip tip = null;
+            Hint hint = null;
             do {
-                tip = buildTipFromCursor(cursor);
-                if (tip != null) {
-                    tipsList.add(tip);
+                hint = buildTipFromCursor(cursor);
+                if (hint != null) {
+                    tipsList.add(hint);
                 }
             } while (cursor.moveToNext());
         }
