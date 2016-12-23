@@ -125,7 +125,6 @@ public class ChooseExerciseFragment extends Fragment {
     }
 
     private void showQuestion() {
-
         String question = mExerciseManager.getQuestion();
         if (question != null) {
             mWordTextView.setText(question);

@@ -2,6 +2,7 @@ package com.dyszlewskiR.edu.scientling.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.IntentCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -108,6 +109,7 @@ public class MainActivity extends AppCompatActivity
     private void startLearningActivity()
     {
         Intent intent = new Intent(getBaseContext(), LearningListActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
 
@@ -154,6 +156,10 @@ public class MainActivity extends AppCompatActivity
         {
             startAddWordActivity();
         }
+        if(id == R.id.nav_flashcard)
+        {
+            startFlashcardActivity();
+        }
 
         /*if (id == R.id.nav_camera) {
             // Handle the camera action
@@ -177,6 +183,12 @@ public class MainActivity extends AppCompatActivity
     private void startAddWordActivity()
     {
         Intent intent = new Intent(getBaseContext(), WordEditActivity.class);
+        startActivity(intent);
+    }
+
+    private void startFlashcardActivity()
+    {
+        Intent intent = new Intent(getBaseContext(), FlashcardActivity.class);
         startActivity(intent);
     }
 }

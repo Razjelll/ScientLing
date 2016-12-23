@@ -212,6 +212,19 @@ VALUES (2, 2);
 INSERT INTO ExampleSentences (word_fk, sentence_fk)
 VALUES (1, 2);
 
+INSERT INTO Hints(content)
+VALUES ("pinata");
+INSERT INTO Hints(content)
+VALUES ("W języku brytyjskim używamy hound");
+INSERT INTO Hints(content)
+VALUES ("just cause - tylko powód");
+
+INSERT INTO WordsHints(word_fk, hint_fk)
+VALUES (1,2);
+INSERT INTO WordsHints(word_fk, hint_fk)
+VALUES (5,1);
+INSERT INTO WordsHints(word_fk, hint_fk)
+VALUES (3,3);
 
 
 

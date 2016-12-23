@@ -33,7 +33,7 @@ public class HintDaoTest {
     private Context mContext = RuntimeEnvironment.application;
     private DatabaseHelper mDbHelper = new DatabaseHelper(mContext);
 
-    private TipDao mDao;
+    private HintDao mDao;
 
     private Hint mHint1;
     private Hint mHint2;
@@ -50,7 +50,7 @@ public class HintDaoTest {
 
         mDbHelper.setFileOpener(new ResourcesFileOpener());
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
-        mDao = new TipDao(db);
+        mDao = new HintDao(db);
     }
 
     @Test

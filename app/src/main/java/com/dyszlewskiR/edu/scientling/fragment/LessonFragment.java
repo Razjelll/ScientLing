@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.IntentCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -77,6 +78,7 @@ public class LessonFragment extends Fragment {
 
     private void setResultAndFinish(Lesson lesson) {
         Intent intent = new Intent();
+
         intent.putExtra("result", lesson);
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();

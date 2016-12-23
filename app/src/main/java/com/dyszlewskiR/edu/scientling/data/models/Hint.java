@@ -1,10 +1,13 @@
 package com.dyszlewskiR.edu.scientling.data.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Razjelll on 03.11.2016.
  */
 
-public class Hint {
+public class Hint implements Parcelable {
 
     private long id;
     private String content;
@@ -15,6 +18,23 @@ public class Hint {
     public Hint(long id) {
         this.id = id;
     }
+
+    protected Hint(Parcel in) {
+        id = in.readLong();
+        content = in.readString();
+    }
+
+    public static final Creator<Hint> CREATOR = new Creator<Hint>() {
+        @Override
+        public Hint createFromParcel(Parcel in) {
+            return new Hint(in);
+        }
+
+        @Override
+        public Hint[] newArray(int size) {
+            return new Hint[size];
+        }
+    };
 
     public long getId() {
         return id;
@@ -49,5 +69,16 @@ public class Hint {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(content);
     }
 }

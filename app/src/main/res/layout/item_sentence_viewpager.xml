@@ -5,8 +5,11 @@
 
     <TextView
         style="@style/WordTextViewStyle"
+        android:layout_height="match_parent"
         android:id="@+id/sentence_content_text_view"
         android:padding="@dimen/padding"
+        android:layout_above="@+id/separator"
+        android:gravity="center_vertical"
         android:text="To jest przykładowe zdanie"/>
     <View
         android:layout_width="match_parent"
@@ -19,9 +22,11 @@
         />
     <TextView
         style="@style/WordTextViewStyle"
+        android:layout_height="match_parent"
         android:id="@+id/sentence_translation_text_view"
         android:layout_below="@id/separator"
         android:padding="@dimen/padding"
+        android:gravity="center_vertical"
         android:text="To jest tłumaczenie przykładowego zdania"
         />
 

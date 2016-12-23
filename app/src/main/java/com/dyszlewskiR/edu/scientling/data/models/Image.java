@@ -1,5 +1,6 @@
 package com.dyszlewskiR.edu.scientling.data.models;
 
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -11,9 +12,7 @@ public class Image implements Parcelable {
 
     private long id;
     private String name;
-    private String catalog;
-    private String extension;
-    private Image image;
+    private Bitmap bitmap;
 
     public Image() {
     }
@@ -22,12 +21,11 @@ public class Image implements Parcelable {
         this.id = id;
     }
 
+
     protected Image(Parcel in) {
         id = in.readLong();
         name = in.readString();
-        catalog = in.readString();
-        extension = in.readString();
-        image = in.readParcelable(Image.class.getClassLoader());
+        bitmap = in.readParcelable(Bitmap.class.getClassLoader());
     }
 
     public static final Creator<Image> CREATOR = new Creator<Image>() {
@@ -58,29 +56,15 @@ public class Image implements Parcelable {
         this.name = name;
     }
 
-    public String getCatalog() {
-        return catalog;
+
+    public Bitmap getBitmap() {
+        return bitmap;
     }
 
-    public void setCatalog(String catalog) {
-        this.catalog = catalog;
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
     }
 
-    public String getExtension() {
-        return extension;
-    }
-
-    public void setExtension(String extension) {
-        this.extension = extension;
-    }
-
-    public Image getImage() {
-        return image;
-    }
-
-    public void setImage(Image image) {
-        this.image = image;
-    }
 
     @Override
     public int describeContents() {
@@ -91,8 +75,6 @@ public class Image implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(name);
-        dest.writeString(catalog);
-        dest.writeString(extension);
-        dest.writeParcelable(image, flags);
+        dest.writeParcelable(bitmap, flags);
     }
 }

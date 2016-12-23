@@ -81,6 +81,14 @@
         <activity
             android:name=".activity.LearningActivity"
             android:label="@string/title_activity_learning"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".activity.SummaryLearningActivity"
+            android:label="@string/title_activity_summary_learning"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".activity.FlashcardActivity"
+            android:label="@string/title_activity_flashcard"
             android:theme="@style/NoActionBar"></activity>
     </application>
 

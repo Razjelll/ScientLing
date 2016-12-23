@@ -110,7 +110,7 @@ public class TranslationDao extends BaseDao<Translation> {
         return translationsList;
     }
 
-    public Translation getByContent(String content) //TODO też zastanowić się nad nazwą i zmianą nazwy kolumny
+    public Translation getByContent(String content)
     {
         Translation translation = null;
         String where = TranslationsColumns.CONTENT + " =?";
@@ -189,7 +189,7 @@ public class TranslationDao extends BaseDao<Translation> {
         String statement = "DELETE FROM "
                 + TABLE_NAME + "WHERE " + TranslationsColumns.ID + "IS NO IN ("
                 + "SELECT " + WordsTranslationsColumns.TRANSLATION_FK + " FROM "
-                + WordsTranslationsTable.TABLE_NAME;
+                + WordsTranslationsTable.TABLE_NAME + ")";
         mDb.execSQL(statement);
     }
 

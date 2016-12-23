@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.dyszlewskiR.edu.scientling.data.database.DatabaseHelper;
 import com.dyszlewskiR.edu.scientling.data.database.dao.CategoryDao;
 import com.dyszlewskiR.edu.scientling.data.database.dao.DefinitionDao;
+import com.dyszlewskiR.edu.scientling.data.database.dao.HintDao;
 import com.dyszlewskiR.edu.scientling.data.database.dao.LanguageDao;
 import com.dyszlewskiR.edu.scientling.data.database.dao.LessonDao;
 import com.dyszlewskiR.edu.scientling.data.database.dao.SentenceDao;
@@ -20,6 +21,7 @@ import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTranslationsTable;
 import com.dyszlewskiR.edu.scientling.data.models.Category;
 import com.dyszlewskiR.edu.scientling.data.models.Definition;
+import com.dyszlewskiR.edu.scientling.data.models.Hint;
 import com.dyszlewskiR.edu.scientling.data.models.Language;
 import com.dyszlewskiR.edu.scientling.data.models.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.Sentence;
@@ -88,6 +90,12 @@ public class DataManager {
             ArrayList<Sentence> sentences = (ArrayList<Sentence>) mSentenceDao.getLinked(word.getId());
             if (sentences != null) {
                 word.setSentences(sentences);
+            }
+            HintDao hintDao = new HintDao(mDb);
+            ArrayList<Hint> hints = (ArrayList<Hint>)hintDao.getLinked(word.getId());
+            if(hints != null)
+            {
+                word.setHints(hints);
             }
         }
     }

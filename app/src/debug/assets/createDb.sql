@@ -20,7 +20,7 @@ CREATE TABLE Sentences(
        content TEXT NOT NULL UNIQUE,
        translation TEXT
 );
-CREATE TABLE Tips(
+CREATE TABLE Hints(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         content TEXT NOT NULL UNIQUE
 );
@@ -80,4 +80,11 @@ CREATE TABLE ExampleSentences (
         sentence_fk INTEGER NOT NULL,
         FOREIGN KEY (word_fk) REFERENCES Words(id),
         FOREIGN KEY (sentence_fk) REFERENCES Sentences(id)
+);
+
+CREATE TABLE WordsHints(
+        word_fk INTEGER NOT NULL,
+        hint_fk INTEGER NOT NULL,
+        FOREIGN KEY (word_fk) REFERENCES Words(id),
+        FOREIGN KEY (hint_fk) REFERENCES Hints(id)
 );

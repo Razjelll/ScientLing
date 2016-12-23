@@ -49,7 +49,7 @@ public class Word implements Parcelable{
 
     public boolean hasHints()
     {
-        return hints != null;
+        return hints != null && hints.size() != 0;
     }
 
     public boolean hasDefinition()
@@ -81,6 +81,7 @@ public class Word implements Parcelable{
         //in.readTypedList(translations, Translation.CREATOR);
         translations = in.createTypedArrayList(Translation.CREATOR);
         definition = in.readParcelable(Definition.class.getClassLoader());
+        hints = in.createTypedArrayList(Hint.CREATOR);
     }
 
     public static final Creator<Word> CREATOR = new Creator<Word>() {
@@ -265,5 +266,6 @@ public class Word implements Parcelable{
         dest.writeTypedList(sentences);
         dest.writeTypedList(translations);
         dest.writeParcelable(definition, flags);
+        dest.writeTypedList(hints);
     }
 }

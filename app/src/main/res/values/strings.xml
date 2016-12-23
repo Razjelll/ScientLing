@@ -35,7 +35,8 @@
     <string name="start">Rozpocznij</string>
     <!--OGOLNE ELEMENTY-->
     <string name="name">Nazwa</string>
-
+    <string name="show_translation">Pokaż tłumaczenie</string>
+    <string name="hide_translation">Ukryj tłumaczenie</string>
 
     <!--SLOWKO -->
     <string name="word">Słówko</string>
@@ -117,6 +118,7 @@
     <!--MENU-->
     <string name="manage_words">Zarządzaj bazą słówek</string>
     <string name="add_words">Dodaj słówka</string>
+    <string name="flashcards">Fiszki</string>
     <string name="change_set">Zmień zestaw</string>
     <string name="settings">Ustawienia</string>
     <string name="start_learning">Zacznij naukę</string>
@@ -211,6 +213,8 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="title_activity_learning">LearningActivity</string>
+    <string name="title_activity_summary_learning">SummaryLearningActivity</string>
+    <string name="title_activity_flashcard">FlashcardActivity</string>
 
 
 </resources>

@@ -1,7 +1,9 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Parcelable;
+import android.support.v4.animation.AnimatorCompatHelper;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,6 +28,8 @@ import java.util.concurrent.ExecutionException;
  * A placeholder fragment containing a simple view.
  */
 public class LearningListFragment extends Fragment {
+
+    private final int LEARNING_REQUEST = 400;
 
     private List<Word> mWords;
     private ListView mWordsListView;
@@ -81,7 +85,16 @@ public class LearningListFragment extends Fragment {
     {
         Intent intent = new Intent(getActivity(), LearningActivity.class);
         intent.putParcelableArrayListExtra("items", new ArrayList<Word>(mWords));
-        startActivity(intent);
+        getActivity().startActivityForResult(intent, LEARNING_REQUEST);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == LEARNING_REQUEST) {
+            if(resultCode == Activity.RESULT_OK) {
+                getActivity().finish();
+            }
+        }
     }
 
 }
