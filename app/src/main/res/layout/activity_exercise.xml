@@ -9,21 +9,28 @@
 
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="?attr/actionBarSize"
         android:id="@+id/my_toolbar"
         android:background="@color/colorMain"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-
         >
-        <android.support.v7.widget.AppCompatSpinner
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/actionBarSpinner"
-            >
-
-        </android.support.v7.widget.AppCompatSpinner>
+        <ImageView
+            android:id="@+id/close_button"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_gravity="left"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:padding="10dp"
+            />
+        <ImageView
+            android:id="@+id/action_bar_speech_button"
+            android:layout_width="?attr/actionBarSize"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_gravity="right"
+            android:src="@android:drawable/ic_dialog_alert"
+            android:padding="10dp"/>
     </android.support.v7.widget.Toolbar>
 
     <LinearLayout

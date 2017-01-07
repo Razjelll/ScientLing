@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable;
-import com.dyszlewskiR.edu.scientling.data.models.Category;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
 import com.dyszlewskiR.edu.scientling.data.models.creators.CategoryCreator;
 
 import java.util.ArrayList;
@@ -44,37 +44,44 @@ public class CategoryDao extends BaseDao<Category> {
     public void update(Category entity) {
         final ContentValues values = new ContentValues();
         values.put(CategoriesColumns.NAME, entity.getName());
-        //TODO może język też dodać, przenieśc where do stałej
-        String where = CategoriesColumns.ID + " =?";
-        String[] whereAttributes = new String[]{String.valueOf(entity.getId())};
-        mDb.update(TABLE_NAME, values, where, whereAttributes);
+        //TODO może język też dodać
+        mDb.update(TABLE_NAME, values, getWhereStatement(), getWhereArguments(entity));
+    }
+
+    private String getWhereStatement()
+    {
+        return CategoriesColumns.ID +"=?";
+    }
+
+    private String[] getWhereArguments(Category entity)
+    {
+        return new String[]{String.valueOf(entity.getId())};
     }
 
     @Override
     public void delete(Category entity) {
         long id = entity.getId();
         if (id > 0) {
-            String where = CategoriesColumns.ID + " =?";
-            String[] whereArguments = new String[]{String.valueOf(id)};
-            mDb.delete(CategoriesTable.TABLE_NAME, where, whereArguments);
+            mDb.delete(CategoriesTable.TABLE_NAME, getWhereStatement(), getWhereArguments(entity));
         }
     }
 
     @Override
     public Category get(long id) {
         Category category = null;
-        String where = CategoriesColumns.ID + " =?";
-        String[] whereAttributes = new String[]{String.valueOf(id)};
-        Cursor cursor = mDb.query(TABLE_NAME, mTableColumns, where, whereAttributes,
+        Cursor cursor = mDb.query(TABLE_NAME, mTableColumns, getWhereStatement(), getWhereArguments(id),
                 null, null, null, null);
         if (cursor.moveToFirst()) {
             CategoryCreator categoryCreator = new CategoryCreator();
             category = categoryCreator.createFromCursor(cursor);
         }
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
+        closeCursor(cursor);
         return category;
+    }
+
+    private String[] getWhereArguments(long id)
+    {
+        return new String[]{String.valueOf(id)};
     }
 
     @Override
@@ -83,19 +90,18 @@ public class CategoryDao extends BaseDao<Category> {
 
         List<Category> categoriesList = new ArrayList<>();
         Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection, selectionArgs,
-                groupBy, having, orderBy, limit);// TODO zobaczyć co oznacza nazwa
+                groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
             CategoryCreator categoryCreator = new CategoryCreator();
+            Category category = null;
             do {
-                Category category = categoryCreator.createFromCursor(cursor);
+                category = categoryCreator.createFromCursor(cursor);
                 if (category != null) {
                     categoriesList.add(category);
                 }
             } while (cursor.moveToNext());
         }
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
+        closeCursor(cursor);
         return categoriesList;
     }
 }

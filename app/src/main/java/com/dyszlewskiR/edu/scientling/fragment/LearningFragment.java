@@ -5,12 +5,9 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.IntentCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +22,8 @@ import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.SummaryLearningActivity;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
-import com.dyszlewskiR.edu.scientling.utils.TranslationListToString;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -290,7 +287,7 @@ public class LearningFragment extends Fragment {
 
     private void setTexts(int position) {
         mContentTextView.setText(mWords.get(position).getContent());
-        String translations = TranslationListToString.toString(mWords.get(position).getTranslations());
+        String translations = TranslationListConverter.toString(mWords.get(position).getTranslations());
         mTranslationTextView.setText(translations);
         if (mWords.get(position).getPartsOfSpeech() != null) {
             mPartOfSpeechTextView.setText(mWords.get(position).getPartsOfSpeech().getName());

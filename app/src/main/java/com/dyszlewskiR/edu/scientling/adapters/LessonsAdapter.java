@@ -8,7 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
+import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import java.util.List;
 
@@ -46,18 +47,24 @@ public class LessonsAdapter extends ArrayAdapter {
             viewHolder = (ViewHolder) rowView.getTag();
         }
 
-        viewHolder.lessonNameTextView.setText(mItems.get(position).getName());
+        if(!mItems.get(position).getName().equals(Constants.DEFAULT_LESSON_NAME)){
+            viewHolder.lessonNameTextView.setText(mItems.get(position).getName());
+        } else {
+            viewHolder.lessonNameTextView.setText(mContext.getString(R.string.lack));
+        }
+
         if (mItems.get(position).getSet() != null) {
             viewHolder.setNameTextView.setText(mItems.get(position).getSet().getName());
         }
-        viewHolder.lessonNumberTextView.setText(String.valueOf(mItems.get(position).getNumber()));
-
+        if(mItems.get(position).getNumber() != Constants.DEFAULT_LESSON_NUMBER){
+            viewHolder.lessonNumberTextView.setText(String.valueOf(mItems.get(position).getNumber()));
+        } else {
+            viewHolder.lessonNumberTextView.setText(mContext.getString(R.string.lack));
+        }
         return rowView;
 
 
     }
-
-
 
     static class ViewHolder {
         public TextView lessonNameTextView;

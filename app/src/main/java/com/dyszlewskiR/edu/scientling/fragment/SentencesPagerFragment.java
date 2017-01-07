@@ -10,9 +10,8 @@ import android.view.ViewGroup;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.SentencesPagerAdapter;
-import com.dyszlewskiR.edu.scientling.data.models.Sentence;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

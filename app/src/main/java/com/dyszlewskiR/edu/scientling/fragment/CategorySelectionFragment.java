@@ -17,8 +17,8 @@ import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.CategoriesAdapter;
 import com.dyszlewskiR.edu.scientling.services.DataManager;
-import com.dyszlewskiR.edu.scientling.data.models.Category;
-import com.dyszlewskiR.edu.scientling.data.models.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 
 import java.util.List;
 

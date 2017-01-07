@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
@@ -20,7 +21,15 @@
             android:background="@color/colorMain"
             app:popupTheme="@style/PopupOverlay"
             app:navigationIcon="?attr/homeAsUpIndicator" >
-
+            <ToggleButton
+                android:id="@+id/more_toggle_button"
+                android:layout_width="?attr/actionBarSize"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@android:drawable/ic_menu_more"
+                android:textOn=""
+                android:textOff=""
+                android:layout_gravity="right"
+                />
             </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
@@ -34,14 +43,7 @@
 
     <include layout="@layout/content_word_edit" />
 
-    <ToggleButton
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:id="@+id/mode_switch"
-        android:layout_margin="16dp"
-        android:background="@drawable/more_toggle_button"
-        android:layout_gravity="top|right"
-        />
+
 
 
 </android.support.design.widget.CoordinatorLayout>

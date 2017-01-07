@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.PartsOfSpeechTable;
-import com.dyszlewskiR.edu.scientling.data.models.PartOfSpeech;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.PartOfSpeech;
 
 import java.util.ArrayList;
 import java.util.List;

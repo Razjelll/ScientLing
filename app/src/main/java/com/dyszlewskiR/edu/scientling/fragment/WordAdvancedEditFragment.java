@@ -22,11 +22,11 @@ import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.CategorySelectionActivity;
 import com.dyszlewskiR.edu.scientling.activity.SentencesListActivity;
 import com.dyszlewskiR.edu.scientling.activity.WordEditActivity;
-import com.dyszlewskiR.edu.scientling.data.models.Category;
-import com.dyszlewskiR.edu.scientling.data.models.Definition;
-import com.dyszlewskiR.edu.scientling.data.models.Sentence;
-import com.dyszlewskiR.edu.scientling.data.models.VocabularySet;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Definition;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 
 import java.util.ArrayList;
 
@@ -64,46 +64,32 @@ public class WordAdvancedEditFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_word_advanced_edit, container, false);
+        setupControls(view);
+        setListeners(view);
+        return view;
+    }
 
+    private void setupControls(View view) {
         mPartsOfSpeechSpinner = (Spinner) view.findViewById(R.id.part_of_speech_spinner);
         mDefinitionEditText = (EditText) view.findViewById(R.id.definition_edit_text);
         mTranslationDefinitionEditText = (EditText) view.findViewById(R.id.definition_translation_edit_text);
         mTranslationDefinitionEditText.setVisibility(View.GONE);
         mDifficultRatingbar = (RatingBar)view.findViewById(R.id.difficult_ratingbar);
         mCategoryButton = (Button) view.findViewById(R.id.category_button);
+        mSentencesButton = (Button) view.findViewById(R.id.sentencesButton);
+    }
+
+    private void setListeners(View view) {
         mCategoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startCategorySelectionActivity();
             }
         });
+
         final TextView translationLabel = (TextView) view.findViewById(R.id.definition_translation_label);
-        mDefinitionEditText.addTextChangedListener(new TextWatcher() { //pokazywajnie
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                Log.d("WordAdvanced", "beforeTextChanged");
-            }
+        mDefinitionEditText.addTextChangedListener(new DefinitionTextWatcher(translationLabel));
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d("WordAdvanced", String.valueOf(s));
-                if (mDefinitionEditText.getText().length() == 0) {
-                    translationLabel.setVisibility(View.GONE);
-                    mTranslationDefinitionEditText.setVisibility(View.GONE);
-                } else {
-                    if (mTranslationDefinitionEditText.getVisibility() != View.VISIBLE) {
-                        translationLabel.setVisibility(View.VISIBLE);
-                        mTranslationDefinitionEditText.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                Log.d("WordAdvanced", s.toString());
-            }
-        });
-        mSentencesButton = (Button) view.findViewById(R.id.sentencesButton);
         mSentencesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,7 +102,6 @@ public class WordAdvancedEditFragment extends Fragment {
                 }
             }
         });
-        return view;
     }
 
     private void startCategorySelectionActivity() {
@@ -180,4 +165,35 @@ public class WordAdvancedEditFragment extends Fragment {
         return true;
     }
 
+    private class DefinitionTextWatcher implements TextWatcher {
+
+        private TextView mTranslationLabel;
+
+        public DefinitionTextWatcher(TextView translationLabel) {
+            mTranslationLabel = translationLabel;
+        }
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            Log.d("WordAdvanced", "beforeTextChanged");
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            Log.d("WordAdvanced", String.valueOf(s));
+            if (mDefinitionEditText.getText().length() == 0) {
+                mTranslationLabel.setVisibility(View.GONE);
+                mTranslationDefinitionEditText.setVisibility(View.GONE);
+            } else {
+                if (mTranslationDefinitionEditText.getVisibility() != View.VISIBLE) {
+                    mTranslationLabel.setVisibility(View.VISIBLE);
+                    mTranslationDefinitionEditText.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            Log.d("WordAdvanced", s.toString());
+        }
+    }
 }

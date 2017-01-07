@@ -8,8 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
-import com.dyszlewskiR.edu.scientling.utils.TranslationListToString;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.List;
 
@@ -65,7 +65,7 @@ public class LearningWordsAdapter extends BaseAdapter {
         }
 
         viewHolder.contentTextView.setText(mItems.get(position).getContent());
-        String translations = TranslationListToString.toString(mItems.get(position).getTranslations());
+        String translations = TranslationListConverter.toString(mItems.get(position).getTranslations());
         viewHolder.translationTextView.setText(translations);
         if (mItems.get(position).getCategory() != null) {
             viewHolder.categoryTextView.setText(mItems.get(position).getCategory().getName());

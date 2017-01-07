@@ -3,7 +3,7 @@ package com.dyszlewskiR.edu.scientling.data.models.creators;
 import android.database.Cursor;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.SentencesTable;
-import com.dyszlewskiR.edu.scientling.data.models.Sentence;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
 
 /**
  * Created by Razjelll on 12.11.2016.

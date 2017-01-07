@@ -11,16 +11,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.LessonSelectionActivity;
 import com.dyszlewskiR.edu.scientling.activity.WordEditActivity;
 import com.dyszlewskiR.edu.scientling.activity.WordManagerActivity;
-import com.dyszlewskiR.edu.scientling.data.models.Lesson;
-import com.dyszlewskiR.edu.scientling.data.models.Translation;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Translation;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.services.DataManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -37,8 +39,6 @@ public class WordEditFragment extends Fragment {
     private EditText mWordEditText;
     private EditText mTranslationText;
 
-    private Button slowka;
-
     private Word mWord;
     private Lesson mLesson;
 
@@ -49,41 +49,38 @@ public class WordEditFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLesson = new Lesson(); //TODO ustalone na sztywno, zmienić
-        mLesson.setId(1);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_word_edit, container, false);
+        setupControls(view);
+        return view;
+    }
 
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState){
+        setDefaultLesson();
+        setLessonControls(mLesson);
+        setListeners();
+    }
+
+    private void setupControls(View view){
         mWordEditText = (EditText) view.findViewById(R.id.word_edit_text);
         mTranslationText = (EditText) view.findViewById(R.id.translation_edit_text);
-
         mSetText = (TextView) view.findViewById(R.id.set_text_view);
         mLessonText = (TextView) view.findViewById(R.id.lesson_text_view);
-
         mLessonButton = (Button) view.findViewById(R.id.lesson_change_button);
+    }
 
+    private void setListeners(){
         mLessonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startLessonSelectionActivity();
             }
         });
-
-
-        slowka = (Button) view.findViewById(R.id.slowka);
-        slowka.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), WordManagerActivity.class);
-                getActivity().startActivity(intent);
-            }
-        });
-
-        return view;
     }
 
     private void startLessonSelectionActivity() {
@@ -91,15 +88,30 @@ public class WordEditFragment extends Fragment {
         getActivity().startActivityForResult(intent, LESSON_REQUEST);
     }
 
+    private void setDefaultLesson(){
+        VocabularySet set = ((WordEditActivity)getActivity()).getSet();
+        DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
+        mLesson = dataManager.getDefaultLesson(set.getId());
+        mLesson.setSet(set);
+    }
+
+    private void setLessonControls(Lesson lesson){
+        if(!lesson.getName().isEmpty()){
+            mLessonText.setText(lesson.getName());
+        } else {
+            mLessonText.setText(getString(R.string.lack));
+        }
+
+        mSetText.setText(lesson.getSet().getName());
+        mLesson = lesson;
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         if (requestCode == LESSON_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 Lesson lesson = data.getParcelableExtra("result");
-                mLessonText.setText(lesson.getName());
-                mSetText.setText(lesson.getSet().getName());
-                mLesson = lesson;
+                setLessonControls(lesson);
                 ((WordEditActivity) getActivity()).setSet(mLesson.getSet());
             }
         }

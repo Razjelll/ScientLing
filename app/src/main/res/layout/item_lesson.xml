@@ -20,7 +20,7 @@
             style="@style/LabelStyle"
             android:layout_width="wrap_content"
             android:textSize="@dimen/small_text_size"
-            android:text="@string/set"
+            android:text="@string/vocabulary_set"
             android:layout_gravity="center_vertical"
             />
         <TextView

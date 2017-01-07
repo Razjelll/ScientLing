@@ -9,8 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
-import com.dyszlewskiR.edu.scientling.utils.TranslationListToString;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,7 +49,7 @@ public class SecondSideFlashcardFragment extends SideFlashcardFragment {
     }
 
     private void setTexts() {
-        String translation = TranslationListToString.toString(mWord.getTranslations());
+        String translation = TranslationListConverter.toString(mWord.getTranslations());
         mTranslationTextView.setText(translation);
     }
 

@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.HintsPagerAdapter;
-import com.dyszlewskiR.edu.scientling.data.models.Hint;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Hint;
 
 import java.util.List;
 

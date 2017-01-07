@@ -15,27 +15,32 @@ import com.dyszlewskiR.edu.scientling.data.database.dao.TranslationDao;
 import com.dyszlewskiR.edu.scientling.data.database.dao.WordDao;
 import com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable;
-import com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable;
-import com.dyszlewskiR.edu.scientling.data.database.tables.TranslationsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable;
-import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTranslationsTable;
-import com.dyszlewskiR.edu.scientling.data.models.Category;
-import com.dyszlewskiR.edu.scientling.data.models.Definition;
-import com.dyszlewskiR.edu.scientling.data.models.Hint;
-import com.dyszlewskiR.edu.scientling.data.models.Language;
-import com.dyszlewskiR.edu.scientling.data.models.Lesson;
-import com.dyszlewskiR.edu.scientling.data.models.Sentence;
-import com.dyszlewskiR.edu.scientling.data.models.Translation;
-import com.dyszlewskiR.edu.scientling.data.models.VocabularySet;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
+import com.dyszlewskiR.edu.scientling.data.models.params.FlashcardParams;
+import com.dyszlewskiR.edu.scientling.data.models.params.LearningParams;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Definition;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Hint;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Language;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Translation;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.data.models.params.AnswersParams;
+import com.dyszlewskiR.edu.scientling.data.models.params.QuestionsParams;
+import com.dyszlewskiR.edu.scientling.data.models.params.WordsParams;
+import com.dyszlewskiR.edu.scientling.services.builders.AnswerSelectionBuilder;
+import com.dyszlewskiR.edu.scientling.services.builders.FlashcardSelectionBuilder;
+import com.dyszlewskiR.edu.scientling.services.builders.LearningSelectionBuilder;
+import com.dyszlewskiR.edu.scientling.services.builders.QuestionSelectionBuilder;
+import com.dyszlewskiR.edu.scientling.utils.Constants;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns;
-import static com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable.SetsColumns;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable.WordsColumns;
 
 /**
@@ -83,22 +88,36 @@ public class DataManager {
 
     private void completeWord(Word word) {
         if (word != null) {
-            ArrayList<Translation> translations = mTranslationDao.getLinked(word.getId());
-            if (translations != null) {
-                word.setTranslations(translations);
-            }
-            ArrayList<Sentence> sentences = (ArrayList<Sentence>) mSentenceDao.getLinked(word.getId());
-            if (sentences != null) {
-                word.setSentences(sentences);
-            }
-            HintDao hintDao = new HintDao(mDb);
-            ArrayList<Hint> hints = (ArrayList<Hint>)hintDao.getLinked(word.getId());
-            if(hints != null)
-            {
-                word.setHints(hints);
-            }
+            getAndSetTranslations(word, mDb);
+            getAndSetSentences(word, mDb);
+            getAndSetHints(word, mDb);
         }
     }
+
+    private void getAndSetTranslations(Word word, SQLiteDatabase db) {
+        TranslationDao translationDao = new TranslationDao(db);
+        ArrayList<Translation> translations = translationDao.getLinked(word.getId());
+        if (translations != null) {
+            word.setTranslations(translations);
+        }
+    }
+
+    private void getAndSetSentences(Word word, SQLiteDatabase db) {
+        SentenceDao sentenceDao = new SentenceDao(db);
+        ArrayList<Sentence> sentences = (ArrayList<Sentence>) sentenceDao.getLinked(word.getId());
+        if (sentences != null) {
+            word.setSentences(sentences);
+        }
+    }
+
+    private void getAndSetHints(Word word, SQLiteDatabase db) {
+        HintDao hintDao = new HintDao(db);
+        ArrayList<Hint> hints = (ArrayList<Hint>) hintDao.getLinked(word.getId());
+        if (hints != null) {
+            word.setHints(hints);
+        }
+    }
+
 
     public long saveWord(Word word) {
         mDb.beginTransaction();
@@ -119,10 +138,10 @@ public class DataManager {
         //Zapusywanie tłumaczeń, raczej nie przyjmujemy, że nie będzie przypisanych tłuamczeń do słówka
         assert word.getTranslations() != null;
 
-        long wordId = mWordDao.save(word);
+        WordDao wordDao = new WordDao(mDb);
+        long wordId = wordDao.save(word);
         saveTranslations(word.getTranslations(), wordId);
-        if(word.getSentences() != null)
-        {
+        if (word.getSentences() != null) {
             saveSentences(word.getSentences(), wordId);
         }
 
@@ -162,7 +181,7 @@ public class DataManager {
         //TODO pozmieniać nazwy translation i t
         Translation existentTranslation = null;
         for (Translation translation : translationsList) {
-            existentTranslation= mTranslationDao.getByContent(translation.getContent());
+            existentTranslation = mTranslationDao.getByContent(translation.getContent());
             long translationId;
             if (existentTranslation == null) {
                 translationId = mTranslationDao.save(translation);
@@ -187,162 +206,60 @@ public class DataManager {
         }
     }
 
-    public List<Word> getQuestions(long set, long lesson, long category, long difficult, int howMuch) {
-        assert lesson != -1 || set != -1;
-        StringBuilder stringBuilder = new StringBuilder();
-        List<String> queryArguments = new ArrayList<>();
-        stringBuilder.append(WordsTable.WordsColumns.LESSON_FK);
-        if (lesson != -1) //jeśli ograniczamy się do jednej lekcji
-        {
-            stringBuilder.append(" = ").append("?");
-            queryArguments.add(String.valueOf(lesson));
-        } else {
-            stringBuilder.append(" IN (");
-            stringBuilder.append(" SELECT ").append("L.").append(LessonsColumns.ID);
-            stringBuilder.append(" FROM ").append(LessonsTable.TABLE_NAME).append(" L");
-            stringBuilder.append(" JOIN ").append(SetsTable.TABLE_NAME).append(" S");
-            stringBuilder.append(" ON ").append("L.").append(LessonsColumns.SET_FK);
-            stringBuilder.append(" = ").append("S.").append(SetsColumns.ID);
-            stringBuilder.append(" WHERE ").append("S.").append(SetsColumns.ID).append(" = ").append("?");
-            stringBuilder.append(")");
-            queryArguments.add(String.valueOf(set));
+    public List<Word> getQuestions(QuestionsParams params) {
+        String where = QuestionSelectionBuilder.getStatement(params);
+        String[] whereArguments = QuestionSelectionBuilder.getArguments(params);
+        String limit = null;
+        if (params.getLimit() > 0) {
+            limit = String.valueOf(params.getLimit());
         }
-        if (category != -1) {
-            stringBuilder.append(" AND ").append(WordsColumns.CATEGORY_FK).append(" = ").append("?");
-            queryArguments.add(String.valueOf(category));
-        }
-        if (difficult != -1) {
-            stringBuilder.append(" AND ").append(WordsColumns.DIFFICULT).append(" = ").append("?");
-            queryArguments.add(String.valueOf(difficult));
-        }
-
-        stringBuilder.append(" AND ").append(WordsColumns.MASTER_LEVEL).append("<0");
-
-        String where = stringBuilder.toString();
-        String[] whereArguments = queryArguments.toArray(new String[0]);
-        String limit = String.valueOf(howMuch);
-
-        List<Word> words = mWordDao.getAll(false, WordsTable.getColumns(), where, whereArguments,
-                "RANDOM()", null, null, limit); //TODO chyba dorobić random
+        List<Word> words = mWordDao.getAllWithJoins(false, where, whereArguments,
+                "RANDOM()", null, null, limit);
         for (Word word : words) {
             completeWord(word);
         }
-
         return (List<Word>) words;
     }
 
-    /**
-     * Metoda wyszukująca słówka które posłużą za odpowiedzi w teście. Metoda powinna zwracać o jedno
-     * słówko mniej, niż jest możliwych odpowiedzi w teście, ponieważ jedno słówko będzie prawidłowe.
-     * Metoda zwraca obiekty posiadające tylko numer identyfikacyjny i słówko. Numer identyfikacyjny
-     * potrzebny jest w razie, kiedy użytkownik odpowie źle i będzie chciał sprawdzić tłumaczenie
-     * słówka które wskazał. Wtedy na podstawie numeru identyfikacyjnego będzie można pobrać
-     * tłumaczenia z bazy(niezaimplementowane w tej wersji).
-     * Metoda wybiera słówka z konkretnego zestawu. Może istnieć problem, gdy zestaw ma zbyt mało
-     * słowek, ale bedzie to dotyczyło tylko początkowego stadium towrzenia zestawu przez użytkownika.
-     * Dlatego postanowiono nie wyszukiwać słówek z zakresu wszystkich słowek w bazie w danym języku.
-     * Metoda wyszukuj losowe słowka dzięki wykorzystaniu funkcji RANDOM umieszczonej w klauzuli
-     * ORDER BY.
-     * Metoda wyszukuje słówka w L2
-     * Zazwyczaj słówka będą wybierane z tego samego zestawu, ale moze istnieć sytuacja,
-     * kiedy w danym zestawie jest zbyt mała liczba słówek Nie mam pojęcia
-     *
-     * @param set           numer identyfikacyjny zbioruz którego pochodząszukane słówka
-     * @param category      kategoria z jakiej mają być szukane słówka
-     * @param difficult     poziom trudności jaki mają mieć szukane słówka
-     * @param howMuch       ile słówek należy wyszukać
-     * @param differentFrom słówka jakie mają nie być wyszukiwane
-     * @return
-     */
-    public List<Word> getAnswersL2(long set, long category, long difficult, int howMuch, String[] differentFrom) {
-        assert (difficult >= -1 && difficult <= 5) && difficult != 0;
-
-        StringBuilder queryBuilder = new StringBuilder();
-        /*  SELECT id, content
-            FROM Words
-            WHERE lesson_fk IN (
-                SELECT id
-                FROM Lessons
-                WHERE set_fk = ?
-            )
-         */
-        queryBuilder.append(WordsColumns.LESSON_FK).append(" IN (");
-        queryBuilder.append(" SELECT ").append(LessonsColumns.ID);
-        queryBuilder.append(" FROM ").append(LessonsTable.TABLE_NAME);
-        queryBuilder.append(" WHERE ").append(LessonsColumns.SET_FK).append(" = ").append("?");
-        queryBuilder.append(" ) ");
-        ArrayList<String> queryArguments = new ArrayList<>(); //TODO można wstawić wartość od razu do zapytania
-        queryArguments.add(String.valueOf(String.valueOf(set)));
-        if (category > 0) {
-            queryBuilder.append(" AND ").append(WordsColumns.CATEGORY_FK).append(" = ").append("?");
-            queryArguments.add(String.valueOf(category));
+    public List<Word> getAnswers(AnswersParams params) {
+        String where = AnswerSelectionBuilder.getStatement(params);
+        String[] whereArguments = AnswerSelectionBuilder.getArguments(params);
+        String limit = null;
+        if (params.getLimit() > 0) {
+            limit = String.valueOf(params.getLimit());
         }
-        if (difficult > 0) {
-            queryBuilder.append(" AND ").append(WordsColumns.DIFFICULT).append(" = ").append("?");
-            queryArguments.add(String.valueOf(difficult));
-        }
-        for (int i = 0; i < differentFrom.length; ++i) {
-            if (differentFrom[i].equals("")) {
-                queryBuilder.append(" AND ").append(WordsColumns.CONTENT).append("<>").append("?");
-                queryArguments.add(differentFrom[i]);
+        String[] columns = {WordsColumns.ID, WordsColumns.CONTENT};
+        List<Word> words = mWordDao.getAll(false, columns, where, whereArguments,
+                "RANDOM()", null, null, limit);
+        //Jeżeli pobierano słówka z danej lekcji lub kategorii i pobrano niewystarczającą ich liczbę
+        //należy pobrać brakujace słowa spoza lekcji lub kategorii
+        if((params.getCategoryId()>0 || params.getLessonId() >0) && words.size() < params.getLimit())
+        {
+            //TODO REFAKTORYZACJA
+            params.setLessonId(0);
+            params.setCategoryId(0);
+            long[] previousWordsIds = new long[words.size()];
+            for(int i =0; i< words.size(); i++)
+            {
+                previousWordsIds[i] = words.get(i).getId();
             }
+            params.setPreviousWordsIds(previousWordsIds);
+            int newLimit = params.getLimit() - words.size();
+            params.setLimit(newLimit);
+            where = AnswerSelectionBuilder.getMoreStatement(params);
+            whereArguments = AnswerSelectionBuilder.getMoreArguments(params);
+
+            List<Word> newWords = mWordDao.getAll(false, columns, where, whereArguments,
+                    "RANDOM{}",null,null,String.valueOf(newLimit));
+            words.addAll(newWords);
+
+        }
+        assert params.getLimit() <=0 || words.size() == params.getLimit();
+        for (Word word : words) {
+            getAndSetTranslations(word, mDb);
         }
 
-        String orderBy = "RANDOM()";
-        List<Word> wordsList = mWordDao.getSimpleWords(queryBuilder.toString(),
-                queryArguments.toArray(new String[0]), orderBy, String.valueOf(howMuch));
-
-        return wordsList;
-    }
-
-    public List<Translation> getAnswersL1(long set, long category, long difficult, int howMuch, String[] differentFrom) {
-        //TODO Refaktoryzacja
-        /*
-            id IN (
-                SELECT WT.translation_fk
-                FROM WordsTranslation WT LEFT OUTER JOIN Words W ON WT.word_fk = W.id
-                    LEFT OUTER JOIN Lessons LE ON W.lesson_fk = LE.id
-                    WHERE LE.set_fk = ?
-             )
-         */
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append(WordsColumns.ID).append(" IN (")
-                .append(" SELECT ").append(WordsTranslationsTable.ALIAS_DOT)
-                .append(WordsTranslationsTable.WordsTranslationsColumns.TRANSLATION_FK)
-                .append(" FROM ").append(WordsTranslationsTable.TABLE_NAME).append(" ")
-                .append(WordsTranslationsTable.ALIAS).append(" LEFT OUTER JOIN ")
-                .append(WordsTable.TABLE_NAME).append(" ").append(WordsTable.ALIAS)
-                .append(" ON ").append(WordsTranslationsTable.ALIAS_DOT)
-                .append(WordsTranslationsTable.WordsTranslationsColumns.WORD_FK)
-                .append(" = ").append(WordsTable.ALIAS_DOT).append(WordsColumns.ID)
-                .append(" LEFT OUTER JOIN ").append(LessonsTable.TABLE_NAME).append(" ")
-                .append(LessonsTable.ALIAS).append(" ON ").append(WordsTable.ALIAS_DOT)
-                .append(WordsColumns.LESSON_FK).append(" = ").append(LessonsTable.ALIAS_DOT)
-                .append(LessonsColumns.ID).append(" WHERE ").append(LessonsTable.ALIAS_DOT)
-                .append(LessonsColumns.SET_FK).append(" = ?"); //TODO można argumenty wrzucić prosto do zapytania
-        ArrayList<String> queryArguments = new ArrayList<>();
-        queryArguments.add(String.valueOf(set));
-        if (category > 0) {
-            queryBuilder.append(" AND ").append(WordsTable.ALIAS_DOT).append(WordsColumns.CATEGORY_FK)
-                    .append(" = ").append("?");
-            queryArguments.add(String.valueOf(category));
-        }
-        if (difficult > 0) {
-            queryBuilder.append(" AND ").append(WordsTable.ALIAS_DOT).append(WordsColumns.DIFFICULT)
-                    .append(" = ").append("?");
-            queryArguments.add(String.valueOf(difficult));
-        }
-        if (differentFrom != null) {
-            for (String s : differentFrom) {
-                queryBuilder.append(" AND ").append(WordsTable.ALIAS_DOT).append(WordsColumns.CONTENT)
-                        .append("<>").append("?");
-                queryArguments.add(String.valueOf(s));
-            }
-        }
-        queryBuilder.append(")");// zamknięcie zapytania wewnętrzenego
-        List<Translation> translationsList = mTranslationDao.getAll(false, TranslationsTable.getColumns(),
-                queryBuilder.toString(), queryArguments.toArray(new String[0]), null, null, null, String.valueOf(howMuch));
-        return translationsList;
+        return words;
     }
 
     public List<VocabularySet> getSets() {
@@ -397,14 +314,13 @@ public class DataManager {
         return lessonDao.getAll(true, LessonsTable.getColumns(), where, new String[]{String.valueOf(set.getId())}, null, null, orderBy, null);
     }
 
-    public List<Lesson> getLessonsWithProgress(VocabularySet set)
-    {
+    public List<Lesson> getLessonsWithProgress(VocabularySet set) {
         List<Lesson> lessons = new ArrayList<>();
         LessonDao lessonDao = new LessonDao(mDb);
-        if(set == null) return lessons;
-        ArrayList<String> queryColumns  = new ArrayList<>(Arrays.asList(LessonsTable.getColumns()));
+        if (set == null) return lessons;
+        ArrayList<String> queryColumns = new ArrayList<>(Arrays.asList(LessonsTable.getColumns()));
         String queryPart = "(SELECT COUNT(1) FROM " + WordsTable.TABLE_NAME
-                + " WHERE " + WordsColumns.LESSON_FK + " = " + LessonsTable.TABLE_NAME +"."+ LessonsColumns.ID;
+                + " WHERE " + WordsColumns.LESSON_FK + " = " + LessonsTable.TABLE_NAME + "." + LessonsColumns.ID;
         String progressColumn = queryPart + " AND " + WordsColumns.MASTER_LEVEL + "> -1 )*1.0/"
                 + queryPart + ")*100";
         queryColumns.add(progressColumn);
@@ -413,8 +329,8 @@ public class DataManager {
         String[] whereArguments = {String.valueOf(set.getId())};
         String groupBy = LessonsColumns.ID;
         String orderBy = LessonsColumns.NUMBER;
-        lessons = lessonDao.getAll(false,queryColumns.toArray(new String[0]),where, whereArguments,
-                groupBy,null,orderBy,null);
+        lessons = lessonDao.getAll(false, queryColumns.toArray(new String[0]), where, whereArguments,
+                groupBy, null, orderBy, null);
         return lessons;
     }
 
@@ -430,16 +346,102 @@ public class DataManager {
     }
 
 
-
-    public List<Word> getAllWords()
-    {
+    public List<Word> getAllWords() {
         List<Word> words = mWordDao.getAll();
-        for(Word word : words)
-        {
+        for (Word word : words) {
             completeWord(word);
         }
         return words;
     }
+
+    public List<Word> getWords(WordsParams params) {
+        assert params.getSetId() > 0;
+        StringBuilder whereBuilder = new StringBuilder();
+
+        ArrayList<String> whereArgumentsList = new ArrayList<>();
+        //słówko musi być z podanego zestawu
+        whereBuilder.append(WordsColumns.LESSON_FK + " IN (SELECT " + LessonsColumns.ID + " FROM " + LessonsTable.TABLE_NAME);
+        whereBuilder.append(" WHERE " + LessonsColumns.SET_FK + " = ?)");
+        whereArgumentsList.add(String.valueOf(params.getSetId()));
+        if (params.getLessonId() > 0) {
+            //słówka muszą być z podanej lekcji lub z lekcji nastepnej. W przypadku jesli lekcja
+            //nie zostaje podana, słówka są wyszukiwane w obrebie całego zestawu
+            whereBuilder.append(" AND " + WordsColumns.LESSON_FK + ">= ?");
+            whereArgumentsList.add(String.valueOf(params.getLessonId()));
+        }
+        if (params.getCategoryId() > 0) {
+            whereBuilder.append(" AND " + WordsColumns.CATEGORY_FK + " =?");
+            whereArgumentsList.add(String.valueOf(params.getLessonId()));
+        }
+        if (params.getDifficult() > 0) {
+            //słówka muszą mieć podany lub wyższy stopień trudności
+            whereBuilder.append(" AND " + WordsColumns.MASTER_LEVEL + ">=?");
+            whereArgumentsList.add(String.valueOf(params.getDifficult()));
+        }
+        String where = whereBuilder.toString();
+        String[] whereArguments = whereArgumentsList.toArray(new String[0]);
+        int limit = params.getLimit();
+
+        String order = WordsColumns.LESSON_FK + ", " + WordsColumns.DIFFICULT;
+
+        List<Word> words = mWordDao.getAllWithJoins(true, where, whereArguments, null, null, order, String.valueOf(limit));
+        for (Word word : words) {
+            completeWord(word);
+        }
+        return words;
+    }
+
+    public List<Word> getWords(LearningParams params) {
+        String where = LearningSelectionBuilder.getStatement(params);
+        String[] whereArguments = LearningSelectionBuilder.getArguments(params);
+        List<Word> words = mWordDao.getAllWithJoins(true, where, whereArguments, null, null,
+                "RANDOM()",String.valueOf(params.getLimit()));
+        for(Word word:words) {
+            completeWord(word);
+        }
+        return words;
+    }
+
+    public List<Word> getWords(FlashcardParams params){
+        String where = FlashcardSelectionBuilder.getStatement(params);
+        String[] whereArguments = FlashcardSelectionBuilder.getArguments(params);
+        String order = null;
+        switch (params.getChoiceType()){
+            case RANDOM:
+                order = "RANDOM()";
+                break;
+            case LAST_LEARNED:
+                order = WordsColumns.LEARNING_DATE;
+                break;
+            case ONLY_LEARNED:
+                order = "RANDOM()";
+                break;
+        }
+        List<Word> words = mWordDao.getAllWithJoins(true, where, whereArguments, null,null,
+                order,String.valueOf(params.getLimit()));
+        for(Word word: words){
+            completeWord(word);
+        }
+        return words;
+    }
+
+    /**Metoda pobierająca domyślną lekcję w danym zestawie słówek.
+     * Domyślna lekcja nie ma nazwy i zawsze ma numer 0. Do domyślnej lekcji zostana przypisane
+     * wszystkie słówka, które nie zostały przypisane do żadnej innej lekcji
+     * @param setId numer identyfikacyjny zestawu z którego chcemy pobrać domyślną lekcję
+     * @return domyślna lekcja z podanego zestawu
+     */
+   public Lesson getDefaultLesson(long setId) {
+       LessonDao lessonDao = new LessonDao(mDb);
+       String where = LessonsColumns.SET_FK + "=? AND " + LessonsColumns.NUMBER + "=?";
+       String[] whereArguments = {String.valueOf(setId), String.valueOf(Constants.DEFAULT_LESSON_NUMBER)};
+       //wykorzystano metodę pobierającą listę słowek aby móc wprowadzić selekcję
+       //ograniczamy liste wyników do 1(ponieważ moze być tylko jedna lekcja domyślna)
+       //bierzemy tylko pierwszy element z listy pobranych lekcji
+       Lesson lesson = lessonDao.getAll(false, LessonsTable.getColumns(), where, whereArguments,
+               null, null, null, String.valueOf(1)).get(0);
+       return lesson;
+   }
 
     public void release() {
         mDb.close();

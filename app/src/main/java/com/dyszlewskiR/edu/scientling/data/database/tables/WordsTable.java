@@ -11,7 +11,7 @@ public class WordsTable {
     public static final String ALIAS_DOT = ALIAS + ".";
 
     public static final String[] getColumns() {
-        String[] columns = new String[10];
+        String[] columns = new String[WordsColumns.COLUMNS_COUNT];
         columns[WordsColumns.ID_POSITION] = WordsColumns.ID;
         columns[WordsColumns.CONTENT_POSITION] = WordsColumns.CONTENT;
         columns[WordsColumns.TRANSCRIPTION_POSITION] = WordsColumns.TRANSCRIPTION;
@@ -22,7 +22,8 @@ public class WordsTable {
         columns[WordsColumns.DIFFICULT_POSITION] = WordsColumns.DIFFICULT;
         columns[WordsColumns.MASTER_LEVEL_POSITION] = WordsColumns.MASTER_LEVEL;
         columns[WordsColumns.SELECTED_POSITION] = WordsColumns.SELECTED;
-
+        columns[WordsColumns.OWN_POSITION] = WordsColumns.OWN;
+        columns[WordsColumns.LEARNING_DATE_POSITION] = WordsColumns.LEARNING_DATE;
         return columns;
     }
 
@@ -37,6 +38,8 @@ public class WordsTable {
         public static final String DIFFICULT = "difficult";
         public static final String MASTER_LEVEL = "master_level";
         public static final String SELECTED = "selected";
+        public static final String OWN = "own";
+        public static final String LEARNING_DATE = "learning_date";
         //TODO zobaczyć, czy nie dodać notatki
 
         public static final int ID_POSITION = 0;
@@ -49,8 +52,10 @@ public class WordsTable {
         public static final int DIFFICULT_POSITION = 7;
         public static final int MASTER_LEVEL_POSITION = 8;
         public static final int SELECTED_POSITION = 9;
+        public static final int OWN_POSITION = 10;
+        public static final int LEARNING_DATE_POSITION = 11;
 
-        public static final int COLUMNS_COUNT = 10;
+        public static final int COLUMNS_COUNT = 12;
     }
 
 }

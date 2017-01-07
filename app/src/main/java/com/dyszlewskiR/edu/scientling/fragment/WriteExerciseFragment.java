@@ -1,6 +1,7 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
@@ -77,16 +78,14 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
 
         mWordTextView.setText(mExerciseManager.getQuestion());
         mTranscriptionTextView.setText(mExerciseManager.getTranscription());
-
     }
 
     private void toAnswer(String answer) {
         boolean correct = mExerciseManager.checkAnswer(answer);
         if (correct) {
-            final Dialog dialog = new Dialog(getActivity());
+            /*final Dialog dialog = new Dialog(getActivity());
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
             dialog.setContentView(R.layout.correct_dialog);
-
 
             TextView text = (TextView) dialog.findViewById(R.id.correctDialogText);
             Button nextButton = (Button) dialog.findViewById(R.id.correctDialogNextButton);
@@ -98,13 +97,13 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
                     dialog.dismiss();
                 }
             });
-            dialog.show();
+            dialog.show();*/
+            new CorrectDialog(getActivity()).show();
 
-
-            setDialogWidth(dialog);
+            //setDialogWidth(dialog);
 
         } else {
-            final Dialog dialog = new Dialog(getActivity());
+            /*final Dialog dialog = new Dialog(getActivity());
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
             dialog.setContentView(R.layout.incorrect_dialog);
@@ -124,7 +123,8 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
             });
             dialog.show();
 
-            setDialogWidth(dialog);
+            setDialogWidth(dialog);*/
+            new IncorrectDialog(getActivity(), answer, mExerciseManager.getCorrectAnswer()).show();
         }
     }
 
@@ -139,7 +139,7 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
         window.setAttributes(lp);
     }
 
-    private void nextQuestion() {
+    public void nextQuestion() {
         mExerciseManager.nextQuestion();
         showQuestion();
     }
@@ -173,9 +173,11 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         showQuestion();
+        showKeyboard();
+    }
 
+    private void showKeyboard() {
         //ustawienie klawiatury zawsze widocznej, klawiatura wyświetlana jest po każdym pytaniu
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         //ustawienie klawiatury widocznej przy starcie fragmentu
@@ -192,20 +194,8 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
     public void onDetach() {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
         super.onDetach();
         mListener = null;
     }
@@ -263,6 +253,100 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
                 return true;
             }
             return false;
+        }
+    }
+
+    public class CorrectDialog extends Dialog {
+
+        private Button mNextButton;
+
+        public CorrectDialog(Context context) {
+            super(context);
+            setupDialog();
+            setupControls();
+            setListeners();
+            setDialogSize();
+        }
+
+        private void setupDialog(){
+            this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            this.setContentView(R.layout.correct_dialog);
+        }
+
+        private void setDialogSize(){
+            new DialogSizeHelper().setDialogWidthMatchParent(this);
+        }
+
+        private void setupControls(){
+            mNextButton = (Button) this.findViewById(R.id.correctDialogNextButton);
+        }
+
+        private void setListeners(){
+            mNextButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    nextQuestion();
+                    ((ExerciseActivity) getActivity()).updateQuestion();
+                    dismiss();
+                }
+            });
+        }
+    }
+
+    public class IncorrectDialog extends Dialog {
+
+        private TextView mUserAnswer;
+        private TextView mCorrectAnswer;
+        private Button mNextButton;
+
+        public IncorrectDialog(Context context, String userAnswer, String correctAnswer){
+            super(context);
+            setupDialog();
+            setupControls();
+            setControlsValue(userAnswer, correctAnswer);
+            setListeners();
+            setDialogSize();
+        }
+
+        private void setupDialog(){
+            this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            this.setContentView(R.layout.incorrect_dialog);
+        }
+
+        private void setDialogSize(){
+            new DialogSizeHelper().setDialogWidthMatchParent(this);
+        }
+
+        private void setupControls(){
+            mUserAnswer = (TextView) this.findViewById(R.id.yourAnswerTextView);
+            mCorrectAnswer = (TextView) this.findViewById(R.id.correctAnswerTextView);
+            mNextButton = (Button) this.findViewById(R.id.nextButton);
+        }
+
+        private void setControlsValue(String userAnswer, String correctAnswer){
+            mUserAnswer.setText(userAnswer);
+            mCorrectAnswer.setText(correctAnswer);
+        }
+
+        private void setListeners(){
+            mNextButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    nextQuestion();
+                    dismiss();
+                }
+            });
+        }
+    }
+
+    private class DialogSizeHelper{
+        public void setDialogWidthMatchParent(Dialog dialog) {
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+            Window window = dialog.getWindow();
+            lp.copyFrom(window.getAttributes());
+            lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+            lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+            window.setAttributes(lp);
         }
     }
 }

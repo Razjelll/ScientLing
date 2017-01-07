@@ -3,7 +3,6 @@ package com.dyszlewskiR.edu.scientling.fragment;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,8 +11,11 @@ import android.view.ViewGroup;
 import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.FlashcardAdapter;
+import com.dyszlewskiR.edu.scientling.asyncTasks.LoadFlashcardsAsyncTask;
 import com.dyszlewskiR.edu.scientling.asyncTasks.LoadLearningAsyncTask;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
+import com.dyszlewskiR.edu.scientling.data.models.params.FlashcardParams;
+import com.dyszlewskiR.edu.scientling.data.models.params.QuestionsParams;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.services.DataManager;
 
 import java.util.List;
@@ -47,9 +49,14 @@ public class FlashcardFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        LoadLearningAsyncTask task = new LoadLearningAsyncTask(mDataManager);
+        FlashcardParams params = new FlashcardParams();
+        long setId = ((LingApplication)getActivity().getApplication()).getCurrentSetId();
+        params.setSetId(setId);
+        params.setChoiceType(FlashcardParams.ChoiceType.RANDOM);
+        params.setLimit(5);
+        LoadFlashcardsAsyncTask task = new LoadFlashcardsAsyncTask(mDataManager);
         try {
-            mWords = task.execute().get();
+            mWords = task.execute(params).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

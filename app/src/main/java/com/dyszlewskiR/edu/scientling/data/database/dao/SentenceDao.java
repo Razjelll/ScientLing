@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.ExampleSentences;
 import com.dyszlewskiR.edu.scientling.data.database.tables.SentencesTable;
-import com.dyszlewskiR.edu.scientling.data.models.Sentence;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
 import com.dyszlewskiR.edu.scientling.data.models.creators.SentenceCreator;
 
 import java.util.ArrayList;

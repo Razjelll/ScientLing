@@ -20,7 +20,8 @@
         <activity android:name=".activity.LoginActivity" />
         <activity
             android:name=".activity.ExerciseActivity"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".activity.RepetitionListActivity"
             android:label="@string/title_activity_repetition_list"
@@ -89,6 +90,16 @@
         <activity
             android:name=".activity.FlashcardActivity"
             android:label="@string/title_activity_flashcard"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:label="@string/title_activity_settings" />
+        <activity
+            android:name=".activity.PreferenceActivity"
+            android:label="@string/title_activity_preference" />
+        <activity
+            android:name=".activity.RepetitionsActivity"
+            android:label="@string/title_activity_repetitions"
             android:theme="@style/NoActionBar"></activity>
     </application>
 

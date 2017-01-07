@@ -6,14 +6,13 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.HintsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsHintsTable;
-import com.dyszlewskiR.edu.scientling.data.models.Hint;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Hint;
 import com.dyszlewskiR.edu.scientling.data.models.creators.HintCreator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.HintsTable.*;
-import static com.dyszlewskiR.edu.scientling.data.database.tables.HintsTable.TABLE_NAME;
 
 /**
  * Created by Razjelll on 08.11.2016.

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/general_category">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="prefSounds"
+            android:summary=""
+            android:title="@string/sounds"
+            />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/learning_category" >
+        <com.dyszlewskiR.edu.scientling.widgets.EditTextPreferenceWithValue
+            android:title="@string/words_in_learning"
+            android:key="prefWordsInLearning"
+            android:defaultValue="5"
+            android:inputType="number"
+            />
+        <com.dyszlewskiR.edu.scientling.widgets.EditTextPreferenceWithValue
+            android:title="@string/words_in_repetitions"
+            android:key="prefWordsInRepetitions"
+            android:defaultValue="5"
+            android:inputType="number"
+            />
+        <com.dyszlewskiR.edu.scientling.widgets.EditTextPreferenceWithValue
+            android:title="@string/number_answers"
+            android:key="prefNumberAnswers"
+            android:defaultValue="6"
+            android:inputType="number"
+            />
+        <ListPreference
+            android:key="prefDefaultExercise"
+            android:entries="@array/exercises_types"
+            android:title="@string/start_exercise"
+            android:entryValues="@array/exercises_types_values"
+            />
+        <ListPreference
+            android:key="prefAnswerConnection"
+            android:entries="@array/answer_connection_array"
+            android:title="@string/answer_connection"
+            android:summary="@string/answer_connection_hint"
+            android:entryValues="@array/answer_connection_values"
+            />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/notification_category">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="prefNotification"
+            android:title="@string/notifications"
+            />
+        <com.dyszlewskiR.edu.scientling.widgets.EditTextPreferenceWithValue
+            android:title="@string/notifications_time"
+            android:key="prefNotificationTime"
+            android:inputType="datetime"
+            />
+
+    </PreferenceCategory>
+</PreferenceScreen>

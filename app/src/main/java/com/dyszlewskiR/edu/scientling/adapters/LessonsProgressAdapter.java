@@ -9,7 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
 
 import java.util.List;
 

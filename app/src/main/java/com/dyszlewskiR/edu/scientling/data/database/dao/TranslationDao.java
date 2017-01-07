@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.TranslationsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTranslationsTable;
-import com.dyszlewskiR.edu.scientling.data.models.Translation;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Translation;
 
 import java.util.ArrayList;
 import java.util.List;

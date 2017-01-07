@@ -10,8 +10,9 @@ import com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.PartsOfSpeechTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.data.models.creators.WordCreator;
+import com.dyszlewskiR.edu.scientling.utils.DateCalculator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,15 +32,17 @@ public class WordDao extends BaseDao<Word> {
                     + WordsColumns.DEFINITION_FK + ", "
                     + WordsColumns.LESSON_FK + ", " + WordsColumns.PART_OF_SPEECH_FK + ", "
                     + WordsColumns.CATEGORY_FK + ", " + WordsColumns.DIFFICULT + ", "
-                    + WordsColumns.MASTER_LEVEL + " , " + WordsColumns.SELECTED
-                    + ") VALUES (?,?,?,?,?,?,?,?,?)";
+                    + WordsColumns.MASTER_LEVEL + " , " + WordsColumns.SELECTED + " , "
+                    + WordsColumns.OWN + " , " + WordsColumns.LEARNING_DATE
+                    + ") VALUES (?,?,?,?,?,?,?,?,?,?,?)";
 
     private final String SELECT_STATEMENT =
-            "SELECT W." + WordsColumns.ID + ", W." + WordsColumns.CONTENT
+            " W." + WordsColumns.ID + ", W." + WordsColumns.CONTENT
                     + ", W." + WordsColumns.TRANSCRIPTION + ", W." + WordsColumns.DEFINITION_FK
                     + ", W." + WordsColumns.LESSON_FK + ", W." + WordsColumns.PART_OF_SPEECH_FK
                     + ", W." + WordsColumns.CATEGORY_FK + ", W." + WordsColumns.DIFFICULT + ", W." + WordsColumns.MASTER_LEVEL
-                    + ", W." + WordsColumns.SELECTED + ", D." + DefinitionsTable.DefinitionsColumns.CONTENT
+                    + ", W." + WordsColumns.SELECTED + ", W." + WordsColumns.OWN + ", W." + WordsColumns.LEARNING_DATE
+                    + ", D." + DefinitionsTable.DefinitionsColumns.CONTENT
                     + ", D." + DefinitionsTable.DefinitionsColumns.TRANSLATION
                     + ", P." + PartsOfSpeechTable.PartsOfSpeechColumns.NAME
                     + ", C." + CategoriesTable.CategoriesColumns.NAME
@@ -52,7 +55,7 @@ public class WordDao extends BaseDao<Word> {
     // + " WHERE W." + WordsColumns.ID + " = ?";
 
     private final String SIMPLE_SELECT_STATEMENT =
-            "SELECT " + WordsColumns.ID + ", " + WordsColumns.CONTENT
+            WordsColumns.ID + ", " + WordsColumns.CONTENT
                     + " FROM " + WordsTable.TABLE_NAME;
 
     private final String WHERE_ID = WordsColumns.ID + "= ?";
@@ -94,7 +97,12 @@ public class WordDao extends BaseDao<Word> {
         mInsertStatement.bindLong(WordsColumns.MASTER_LEVEL_POSITION, entity.getMasterLevel());
         long selected = entity.isSelected() ? 1 : 0;
         mInsertStatement.bindLong(WordsColumns.SELECTED_POSITION, selected);
-
+        long own = entity.isOwn() ? 1 : 0;
+        mInsertStatement.bindLong(WordsColumns.OWN_POSITION, own);
+        if(entity.isLearningDate()){
+            long date = DateCalculator.dateToInt(entity.getLearningDate());
+            mInsertStatement.bindLong(WordsColumns.LEARNING_DATE_POSITION, date);
+        }
         return mInsertStatement.executeInsert();
     }
 
@@ -129,6 +137,12 @@ public class WordDao extends BaseDao<Word> {
 
         long selected = entity.isSelected() ? 1 : 0;
         values.put(WordsColumns.SELECTED, selected);
+
+        long own = entity.isOwn() ? 1 : 0;
+        values.put(WordsColumns.OWN, own);
+
+        long date = DateCalculator.dateToInt(entity.getLearningDate());
+        values.put(WordsColumns.LEARNING_DATE, date);
 
         String[] whereArguments = new String[]{String.valueOf(entity.getId())};
         mDb.update(WordsTable.TABLE_NAME, values, WHERE_ID, whereArguments);
@@ -165,7 +179,7 @@ public class WordDao extends BaseDao<Word> {
     }
 
    /* @Override
-    public List<Word> getAll(boolean distinct,String[] columns, String selection, String[] selectionArgs,
+    public List<Word> getAllWithJoins(boolean distinct,String[] columns, String selection, String[] selectionArgs,
                              String groupBy, String having, String orderBy, String limit) {
 
         List<Word> wordsList = new ArrayList<>();
@@ -193,9 +207,33 @@ public class WordDao extends BaseDao<Word> {
     @Override
     public List<Word> getAll(boolean distinct, String[] columns, String selection, String[] selectionArgs,
                              String groupBy, String having, String orderBy, String limit) {
+        Cursor cursor = mDb.query(distinct, WordsTable.TABLE_NAME + " " + WordsTable.ALIAS, columns, selection, selectionArgs,
+                groupBy, having, orderBy, limit);
+        List<Word> wordsList = getWordsListFromCursor(cursor);
+        closeCursor(cursor);
+        return wordsList;
+    }
 
+    private List<Word> getWordsListFromCursor(Cursor cursor) {
         List<Word> wordsList = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            Word word = null;
+            WordCreator creator = new WordCreator();
+            do {
+                word = creator.createFromCursor(cursor);
+                if (word != null) {
+                    wordsList.add(word);
+                }
+            } while (cursor.moveToNext());
+        }
+        return wordsList;
+    }
+
+    public List<Word> getAllWithJoins(boolean distinct, String selection, String[] selectionArgs,
+                                      String groupBy, String having, String orderBy, String limit) {
+
         StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT ");
         if (distinct) {
             queryBuilder.append("DISTINCT ");
         }
@@ -219,19 +257,8 @@ public class WordDao extends BaseDao<Word> {
             queryBuilder.append(" LIMIT ").append(limit);
         }
         Cursor cursor = mDb.rawQuery(queryBuilder.toString(), selectionArgs);
-        if (cursor.moveToFirst()) {
-            Word word;
-            WordCreator wordCreator = new WordCreator();
-            do {
-                word = wordCreator.createFromCursor(cursor);
-                if (word != null) {
-                    wordsList.add(word);
-                }
-            } while (cursor.moveToNext());
-        }
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
+        List<Word> wordsList = getWordsListFromCursor(cursor);
+        closeCursor(cursor);
         assert cursor.isClosed();
 
         return wordsList;
@@ -239,7 +266,8 @@ public class WordDao extends BaseDao<Word> {
 
     public List<Word> getSimpleWords(String selection, String[] selectionArgs, String orderBy,
                                      String limit) {
-        StringBuilder queryBuilder = new StringBuilder(SIMPLE_SELECT_STATEMENT);
+        StringBuilder queryBuilder = new StringBuilder();
+        queryBuilder.append("SELECT ").append(SIMPLE_SELECT_STATEMENT);
         if (selection != null) {
             queryBuilder.append(" WHERE ").append(selection);
         }
@@ -250,19 +278,9 @@ public class WordDao extends BaseDao<Word> {
             queryBuilder.append(" LIMIT ").append(limit);
         }
         Cursor cursor = mDb.rawQuery(queryBuilder.toString(), selectionArgs);
-        ArrayList<Word> wordsList = new ArrayList<>();
-        if (cursor.moveToFirst()) {
-            Word word = null;
-            WordCreator wordCreator = new WordCreator();
-            do {
-                word = wordCreator.createFromCursor(cursor);
-                if (word != null) {
-                    wordsList.add(word);
-                }
-            } while (cursor.moveToNext());
-        }
+        List<Word> wordsList = getWordsListFromCursor(cursor);
+
         closeCursor(cursor);
         return wordsList;
     }
-
 }

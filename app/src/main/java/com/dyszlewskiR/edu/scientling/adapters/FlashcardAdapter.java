@@ -3,7 +3,6 @@ package com.dyszlewskiR.edu.scientling.adapters;
 import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -12,14 +11,11 @@ import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
-import com.dyszlewskiR.edu.scientling.utils.TranslationListToString;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -123,7 +119,7 @@ public class FlashcardAdapter extends PagerAdapter {
         if (mSides.get(position)) {
             mFlashcardTextView.setText(mItems.get(position).getContent());
         } else {
-            String translation = TranslationListToString.toString(mItems.get(position).getTranslations());
+            String translation = TranslationListConverter.toString(mItems.get(position).getTranslations());
             mFlashcardTextView.setText(translation);
         }
         mFlashcardTextView.setOnClickListener(new View.OnClickListener() {
@@ -171,7 +167,7 @@ public class FlashcardAdapter extends PagerAdapter {
         if(mFirstSide) {
             mFlashcardTextView.setText(mItems.get(position).getContent());
         } else {
-            String translations = TranslationListToString.toString(mItems.get(position).getTranslations());
+            String translations = TranslationListConverter.toString(mItems.get(position).getTranslations());
             mFlashcardTextView.setText(translations);
         }
         mFirstSide = !mFirstSide;

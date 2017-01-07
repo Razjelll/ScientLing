@@ -17,8 +17,8 @@ import com.dyszlewskiR.edu.scientling.activity.LessonActivity;
 import com.dyszlewskiR.edu.scientling.activity.SetSelectionActivity;
 import com.dyszlewskiR.edu.scientling.adapters.LessonsAdapter;
 import com.dyszlewskiR.edu.scientling.services.DataManager;
-import com.dyszlewskiR.edu.scientling.data.models.Lesson;
-import com.dyszlewskiR.edu.scientling.data.models.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 
 import java.util.List;
 

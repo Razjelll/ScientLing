@@ -5,8 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable;
-import com.dyszlewskiR.edu.scientling.data.models.Lesson;
-import com.dyszlewskiR.edu.scientling.data.models.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.creators.LessonCreator;
 
 import java.util.ArrayList;
@@ -113,9 +113,7 @@ public class LessonDao extends BaseDao<Lesson> {
                 }
             } while (cursor.moveToNext());
         }
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
+        closeCursor(cursor);
         assert cursor.isClosed();
 
         return lessonsList;

@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.BuildConfig;
 import com.dyszlewskiR.edu.scientling.data.database.DatabaseHelper;
-import com.dyszlewskiR.edu.scientling.data.models.Translation;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Translation;
 import com.dyszlewskiR.edu.scientling.utils.ResourcesFileOpener;
 
 import org.junit.Test;

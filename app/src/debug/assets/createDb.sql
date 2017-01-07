@@ -2,7 +2,8 @@ CREATE TABLE Languages (
        id INTEGER PRIMARY KEY AUTOINCREMENT,
        name TEXT NOT NULL,
        abbreviation TEXT CHECK (length(abbreviation)<=4) NOT NULL,
-       code TEXT CHECK(length(code) = 5)NOT NULL UNIQUE
+       code TEXT CHECK(length(code) = 5)NOT NULL UNIQUE,
+       flag BLOB NULL
 );
 CREATE TABLE Categories(
        id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,9 +40,9 @@ CREATE TABLE Sets (
 CREATE TABLE Lessons (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
-        number INTEGER NOT NULL CHECK(number > 0) DEFAULT 1,
-        set_FK INTEGER NOT NULL,
-        FOREIGN KEY (set_FK) REFERENCES Sets(id)
+        number INTEGER NOT NULL CHECK(number >= 0) DEFAULT 1,
+        set_fk INTEGER NOT NULL,
+        FOREIGN KEY (set_fk) REFERENCES Sets(id)
 );
 CREATE TABLE PartsOfSpeech (
         id INTEGER PRIMARY KEY,
@@ -63,6 +64,8 @@ CREATE TABLE Words (
         difficult INTEGER NOT NULL CHECK(difficult >=0 AND difficult <=5) DEFAULT 0,
         master_level INTEGER NOT NULL CHECK(master_level <= 100) DEFAULT -1,
         selected INTEGER NOT NULL CHECK(selected = 0 OR selected = 1) DEFAULT 0,
+        own INTEGER NOT NULL CHECK(own = 0 OR own = 1) DEFAULT 1,
+        learning_date INTEGER NULL,
         FOREIGN KEY (definition_fk) REFERENCES Definitions(id),
         FOREIGN KEY (lesson_fk) REFERENCES Lessons(id),
         FOREIGN KEY (part_of_speech_fk) REFERENCES PartsOfSpeech(id),
@@ -70,9 +73,9 @@ CREATE TABLE Words (
 );
 CREATE TABLE WordsTranslations (
        word_fk INTEGER NOT NULL,
-       translation_FK INTEGER NOT NULL,
+       translation_fk INTEGER NOT NULL,
        PRIMARY KEY(word_fk, translation_fk),
-       FOREIGN KEY(word_FK) REFERENCES Words(id),
+       FOREIGN KEY(word_fk) REFERENCES Words(id),
        FOREIGN KEY (translation_fk) REFERENCES Translations(id)
 );
 CREATE TABLE ExampleSentences (
@@ -87,4 +90,12 @@ CREATE TABLE WordsHints(
         hint_fk INTEGER NOT NULL,
         FOREIGN KEY (word_fk) REFERENCES Words(id),
         FOREIGN KEY (hint_fk) REFERENCES Hints(id)
+);
+
+CREATE TABLE Repetitions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        word_fk INTEGER NOT NULL,
+        month INTEGER NOT NULL CHECK(month >=1 AND month <=12),
+        day INTEGER NOT NULL CHECK(day >= 1 AND day <=31),
+        FOREIGN KEY(word_fk) REFERENCES Words(id)
 );

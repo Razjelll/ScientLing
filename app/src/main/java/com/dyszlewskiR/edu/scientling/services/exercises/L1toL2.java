@@ -1,9 +1,11 @@
 package com.dyszlewskiR.edu.scientling.services.exercises;
 
 import com.dyszlewskiR.edu.scientling.services.DataManager;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Razjelll on 17.11.2016.
@@ -13,15 +15,9 @@ public class L1toL2 implements IExerciseLanguage {
 
     @Override
     public String getQuestion(Word word) {
-        //TODO prawdopodobnie można to trochę usprawnić
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < word.getTranslations().size(); i++) {
-            builder.append(word.getTranslations().get(i).getContent());
-            if (i != word.getTranslations().size() - 1) {
-                builder.append(", ");
-            }
-        }
-        return builder.toString();
+        assert word != null;
+        assert word.getTranslations() != null;
+        return TranslationListConverter.toString(word.getTranslations());
     }
 
     @Override
@@ -35,20 +31,14 @@ public class L1toL2 implements IExerciseLanguage {
     }
 
     @Override
-    public Answer[] getAnswers(ExerciseParameters parameters, String[] differentFrom, DataManager dataManager) {
-        long set = parameters.getSet();
-
-        long difficult = parameters.getDifficult();
-        long category = parameters.getCategory();
-        int howMuch = parameters.getNumQuestions();
-        ArrayList<Word> words = (ArrayList<Word>) dataManager.getAnswersL2(set, difficult, category, howMuch, differentFrom);
-
-        Answer[] answers = new Answer[words.size()]; //TODO sprawdzić czy to jest potrzebne
-        Answer answer = null;
-        for (int i = 0; i < words.size(); i++) {
-            answer = new Answer(words.get(i).getId(), words.get(i).getContent());
-            answers[i] = answer;
+    public String[] getAnswers(List<Word> words) {
+        assert words != null && words.size() != 0;
+        int length = words.size();
+        String[] answers = new String[length];
+        for(int i = 0; i<length; i++) {
+            answers[i] = words.get(i).getContent();
         }
         return answers;
+
     }
 }

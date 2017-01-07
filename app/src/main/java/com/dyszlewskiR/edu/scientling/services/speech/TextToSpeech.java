@@ -90,7 +90,7 @@ public class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListe
         HashMap<String, String> params = new HashMap<>();
         // params.put(android.speech.tts.TextToSpeech.Engine.KEY_PARAM_STREAM, "STREAM_NOTIFICATION");
         params.put(android.speech.tts.TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //LILLIPOP, nie można użyć stałej gdy nie ma zainstalowanych nowszych wersji
             String utteranceId = this.hashCode() + "";
             mTextToSpeech.speak(message, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, utteranceId);
         } else {

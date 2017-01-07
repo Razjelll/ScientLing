@@ -3,7 +3,7 @@ package com.dyszlewskiR.edu.scientling.data.models.creators;
 import android.database.Cursor;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.HintsTable;
-import com.dyszlewskiR.edu.scientling.data.models.Hint;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Hint;
 
 /**
  * Created by Razjelll on 22.12.2016.

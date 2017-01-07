@@ -4,14 +4,13 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.Category;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +29,8 @@ public class CategoriesAdapter extends BaseAdapter implements Filterable {
     private ValueFilter mFilter;
 
     public CategoriesAdapter(Context context, int resource, List<Category> data) {
-        //super(context, resource, data);
-        mItems = new ArrayList(data);
+        //super(context, resource);
+        mItems = data;
         mFilteredItems = data;
         mContext = context;
         mResource = resource;

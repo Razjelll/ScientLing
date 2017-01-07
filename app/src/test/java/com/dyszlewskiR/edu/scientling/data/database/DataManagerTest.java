@@ -5,12 +5,12 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.BuildConfig;
 import com.dyszlewskiR.edu.scientling.data.database.utils.QueryReader;
-import com.dyszlewskiR.edu.scientling.data.models.Category;
-import com.dyszlewskiR.edu.scientling.data.models.Definition;
-import com.dyszlewskiR.edu.scientling.data.models.PartOfSpeech;
-import com.dyszlewskiR.edu.scientling.data.models.Sentence;
-import com.dyszlewskiR.edu.scientling.data.models.Translation;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Definition;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.PartOfSpeech;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Translation;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.services.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.ResourcesFileOpener;
 
@@ -112,6 +112,8 @@ public class DataManagerTest {
     @Test
     public void testGetQuestions()
     {
+        /*QuestionsParams params = new QuestionsParams();
+        params.
         List<Word> questions = mDataManager.getQuestions(-1, 1, 1, 3, 5);
         assertTrue(questions.size() != 0);
         assertEquals("lamp", questions.get(0).getContent());
@@ -119,14 +121,9 @@ public class DataManagerTest {
         assertEquals("Lampa", questions.get(0).getTranslations().get(0).getContent());
 
         questions = mDataManager.getQuestions(-1, 1, -1, -1, 5);
-        assertTrue(questions.size() != 0);
+        assertTrue(questions.size() != 0);*/
     }
 
-    @Test
-    public void testGetAnswers()
-    {
-        List<Word> answers = mDataManager.getAnswersL2(1,-1,-1,5, new String[]{"Dog"});
-        List<Translation> answerL1 = mDataManager.getAnswersL1(2,1,1,5,null);
-}
+
 
 }

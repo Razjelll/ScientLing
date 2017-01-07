@@ -3,8 +3,8 @@ package com.dyszlewskiR.edu.scientling.data.models.creators;
 import android.database.Cursor;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable;
-import com.dyszlewskiR.edu.scientling.data.models.Lesson;
-import com.dyszlewskiR.edu.scientling.data.models.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 
 /**
  * Created by Razjelll on 19.12.2016.

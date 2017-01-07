@@ -2,7 +2,7 @@ package com.dyszlewskiR.edu.scientling.data.models.creators;
 
 import android.database.Cursor;
 
-import com.dyszlewskiR.edu.scientling.data.models.Definition;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Definition;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable.DefinitionsColumns;
 

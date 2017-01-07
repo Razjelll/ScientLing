@@ -1,7 +1,9 @@
 package com.dyszlewskiR.edu.scientling.services.exercises;
 
 import com.dyszlewskiR.edu.scientling.services.DataManager;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+
+import java.util.List;
 
 /**
  * Created by Razjelll on 16.11.2016.
@@ -15,5 +17,5 @@ public interface IExerciseLanguage {
 
     String getTranscription(Word word); //TODO prawdopodobnie będzie to można obsłużyć we fragmencie
 
-    Answer[] getAnswers(ExerciseParameters parameters, String[] differentFrom, DataManager dataManager);
+   String[] getAnswers(List<Word> words);
 }

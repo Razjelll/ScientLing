@@ -5,7 +5,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.LanguagesTable;
-import com.dyszlewskiR.edu.scientling.data.models.Language;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Language;
+import com.dyszlewskiR.edu.scientling.data.models.creators.LanguageCreator;
+import com.dyszlewskiR.edu.scientling.utils.BitmapHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +25,8 @@ public class LanguageDao extends BaseDao<Language> {
     private final String INSERT_STATEMENT =
             "INSERT INTO " + TABLE_NAME + "("
                     + LanguagesColumns.NAME + ", " + LanguagesColumns.ABBREVIATION + ", "
-                    + LanguagesColumns.CODE + ") VALUES (?, ?, ?)";
+                    + LanguagesColumns.CODE + "," + LanguagesColumns.FLAG
+                    + ") VALUES (?, ?, ?, ?)";
 
 
     /**
@@ -32,7 +35,6 @@ public class LanguageDao extends BaseDao<Language> {
     public LanguageDao(SQLiteDatabase db) {
         super(db);
         mInsertStatement = db.compileStatement(INSERT_STATEMENT);
-
         mTableColumns = LanguagesTable.getColumns();
     }
 
@@ -60,10 +62,20 @@ public class LanguageDao extends BaseDao<Language> {
     @Override
     public long save(Language entity) {
         mInsertStatement.clearBindings();
-        mInsertStatement.bindString(1, entity.getName());
-        mInsertStatement.bindString(2, entity.getAbbreviation());
-        mInsertStatement.bindString(3, entity.getCode());
-        // long id = insertStatement.executeInsert(); //TODO sprawdzić czy powinno robić się to w tym miejscu
+        mInsertStatement.bindString(LanguagesColumns.NAME_POSITION, entity.getName());
+        if(entity.getAbbreviation() != null){
+            mInsertStatement.bindString(LanguagesColumns.ABBREVIATION_POSITION, entity.getAbbreviation());
+        } else {
+            mInsertStatement.bindNull(LanguagesColumns.ABBREVIATION_POSITION);
+        }
+        mInsertStatement.bindString(LanguagesColumns.CODE_POSITION, entity.getCode());
+        if(entity.getFlag() !=null ) {
+            mInsertStatement.bindBlob(LanguagesColumns.FLAG_POSITION, BitmapHelper.convertToByteArray(entity.getFlag()));
+        } else {
+            mInsertStatement.bindNull(LanguagesColumns.FLAG_POSITION);
+        }
+
+
         return mInsertStatement.executeInsert();
     }
 
@@ -82,10 +94,19 @@ public class LanguageDao extends BaseDao<Language> {
         values.put(LanguagesColumns.NAME, entity.getName());
         values.put(LanguagesColumns.ABBREVIATION, entity.getAbbreviation());
         values.put(LanguagesColumns.CODE, entity.getCode());
+        values.put(LanguagesColumns.FLAG, BitmapHelper.convertToByteArray(entity.getFlag()));
 
-        String where = LanguagesColumns.ID + " =?";
-        String[] whereArguments = new String[]{String.valueOf(entity.getId())};
-        mDb.update(TABLE_NAME, values, where, whereArguments);
+        mDb.update(TABLE_NAME, values, getWhereStatement(), getWhereArguments(entity));
+    }
+
+    private String getWhereStatement()
+    {
+        return  LanguagesColumns.ID +"=?";
+    }
+
+    private String[] getWhereArguments(Language entity)
+    {
+        return new String[]{String.valueOf(entity.getId())};
     }
 
     /**
@@ -102,9 +123,7 @@ public class LanguageDao extends BaseDao<Language> {
     public void delete(Language entity) {
         long id = entity.getId();
         if (id > 0) {
-            String where = LanguagesColumns.ID + " =?";
-            String[] whereArguments = new String[]{String.valueOf(id)};
-            mDb.delete(TABLE_NAME, where, whereArguments);
+            mDb.delete(TABLE_NAME, getWhereStatement(), getWhereArguments(entity));
         }
     }
 
@@ -120,48 +139,33 @@ public class LanguageDao extends BaseDao<Language> {
     @Override
     public Language get(long id) {
         Language language = null;
-        String where = LanguagesColumns.ID + " =?";
-        String[] whereAttributes = new String[]{String.valueOf(id)};
-        Cursor cursor = mDb.query(TABLE_NAME, mTableColumns, where, whereAttributes,
+        Cursor cursor = mDb.query(TABLE_NAME, mTableColumns, getWhereStatement(), getWhereArguments(id),
                 null, null, null, null);
         if (cursor.moveToFirst()) {
-            language = this.buildLanguageFromCursor(cursor);
+            LanguageCreator creator = new LanguageCreator();
+            language = creator.createFromCursor(cursor);
         }
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
+        closeCursor(cursor);
         return language;
     }
 
-
-    /**
-     * Metoda tworząca obiekt modelu na podstawie obiektu klasy Cursor.
-     *
-     * @param cursor kursor, na postawie którego zostanie utworzony obiekt modelu
-     * @return utworzony obiekt modelu
-     */
-    private Language buildLanguageFromCursor(Cursor cursor) {
-        Language language = null;
-        if (cursor != null) {
-            language = new Language();
-            language.setId(cursor.getLong(LanguagesColumns.ID_POSITION));
-            language.setName(cursor.getString(LanguagesColumns.NAME_POSITION));
-            language.setAbbreviation(cursor.getString(LanguagesColumns.ABBREVIATION_POSITION));
-            language.setCode(cursor.getString(LanguagesColumns.CODE_POSITION));
-        }
-        return language;
+    private String[] getWhereArguments(long id)
+    {
+        return new String[]{String.valueOf(id)};
     }
 
     @Override
     public List<Language> getAll(boolean distinct, String[] columns, String selection, String[] selectionArgs,
                                  String groupBy, String having, String orderBy, String limit) {
-        List<Language> languagesList = new ArrayList<Language>();
+        List<Language> languagesList = new ArrayList<>();
 
         Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection, selectionArgs,
                 groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
+            Language language = null;
+            LanguageCreator creator = new LanguageCreator();
             do {
-                Language language = buildLanguageFromCursor(cursor);
+                language = creator.createFromCursor(cursor);
                 if (language != null) {
                     languagesList.add(language);
                 }

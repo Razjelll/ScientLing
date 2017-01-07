@@ -11,7 +11,7 @@ import android.widget.ListView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.SummaryRepetitionAdapter;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 
 import java.util.List;
 

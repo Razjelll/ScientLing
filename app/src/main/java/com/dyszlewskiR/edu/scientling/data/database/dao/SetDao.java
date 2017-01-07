@@ -5,8 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable;
-import com.dyszlewskiR.edu.scientling.data.models.Language;
-import com.dyszlewskiR.edu.scientling.data.models.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Language;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 
 import java.util.ArrayList;
 import java.util.List;

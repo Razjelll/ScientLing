@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.ExercisesTable;
-import com.dyszlewskiR.edu.scientling.data.models.Exercise;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Exercise;
 
 import java.util.ArrayList;
 import java.util.List;

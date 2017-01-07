@@ -3,55 +3,48 @@
     android:layout_width="match_parent" android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@drawable/shadow_border"
-    android:padding="5dp"
+    android:padding="@dimen/padding"
     >
 
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/TextViewStyle"
         android:id="@+id/incorrectDialogText"
-        android:text="Źle"
-
+        android:text="@string/bad"
+        android:textColor="@color/incorrectColor"
         android:textAlignment="center"
-        android:textSize="32dp"/>
+        android:textSize="@dimen/xxlarge_text_size"/>
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/darker_gray"/>
+        android:background="@android:color/darker_gray"
+        android:layout_marginBottom="10dp"/>
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/LabelStyle"
         android:id="@+id/yourAnswerLabel"
-        android:text= "Twoja odpowiedź: "
+        android:text= "@string/your_answer"
+        android:textSize="@dimen/normal_text_size"
         />
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/yourAnswerTextView"/>
+        style="@style/TextViewStyle"
+        android:id="@+id/yourAnswerTextView"
+        android:textColor="@color/incorrectColor"/>
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/LabelStyle"
         android:id="@+id/correctAnswerLabel"
-        android:text = "Poprawna odpowiedź "
+        android:text = "@string/correct_answer"
+        android:textSize="@dimen/normal_text_size"
         android:layout_marginTop="15dp"/>
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+       style="@style/TextViewStyle"
         android:id="@+id/correctAnswerTextView"
         android:textColor="@color/correctColor"
         />
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        style="@style/ButtonStyle"
         android:id="@+id/nextButton"
         android:background="@drawable/button_style"
-        android:text="Następne"
+        android:text="@string/next_question"
         android:layout_marginTop="30dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:textColor="@color/white"
-
         />
 
 </LinearLayout>

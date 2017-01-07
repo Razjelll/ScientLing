@@ -1,14 +1,17 @@
 package com.dyszlewskiR.edu.scientling.services.exercises;
 
-import android.content.Context;
 import android.util.Log;
 
+import com.dyszlewskiR.edu.scientling.data.models.params.AnswersParams;
+import com.dyszlewskiR.edu.scientling.data.models.params.QuestionsParams;
 import com.dyszlewskiR.edu.scientling.services.DataManager;
-import com.dyszlewskiR.edu.scientling.data.models.RepetitionItem;
-import com.dyszlewskiR.edu.scientling.data.models.Translation;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.RepetitionItem;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -68,46 +71,49 @@ public class ExerciseManager {
      */
     private List<Integer> mToRepeat;
 
-    private List<Word> mAnswersL2;
-    private List<Translation> mAnswersL1;
     private List<Word> mIncorrectAnswers;
-    private Answer[] mAnswers; //TODO posprawdzać czy lepiej się sprawdzi to czy mAnswersL1 i L2
+    private List<Word> mAnswers; //TODO posprawdzać czy lepiej się sprawdzi to czy mAnswersL1 i L2
     private IExercise mExerciseType;
     private IExerciseLanguage mExerciseLanguage; //TODO przydałaby się lepsza nazwa
     private DataManager mDataManager;
 
-    private long mSet;
-    private long mLesson;
-    private long mDifficult;
-    private long mCategory;
+    private ExerciseParams mExerciseParams;
 
-    public ExerciseManager(ExerciseParameters parameters, Context context) {
-        mSet = parameters.getSet();
-        mLesson = parameters.getLesson();
-        mDifficult = parameters.getDifficult();
-        mCategory = parameters.getCategory();
-        mNumQuestions = parameters.getNumQuestions();
-        mNumCorrectAnswers = 0;
-        mNumIncorrectAnswers = 0;
+    public ExerciseManager(ExerciseParams exerciseParams, DataManager dataManager) {
+        setupParams(exerciseParams);
+        prepareFields();
+        mDataManager = dataManager;
 
-        mDataManager = new DataManager(context);
-        long start = System.currentTimeMillis();
-        mQuestions = mDataManager.getQuestions(mSet, mLesson, mCategory, mDifficult, mNumQuestions);
-        mQuestionsQueue = new LinkedList<>();
-        //wypełnianie kolejki numerami identyfikacyjnymi słówek
-        for (int i = 0; i < mNumQuestions; i++) {
-            Log.d("ExerciseManager", mQuestions.get(i).getContent());
-            mQuestionsQueue.add(i);
-        }
+        QuestionsParams questionsParams = ExerciseParamsHelper.getQuestionParams(exerciseParams);
+        mQuestions = mDataManager.getQuestions(questionsParams);
+        mNumQuestions = mQuestions.size();
+        mQuestionsQueue = getFilledQuestionQueue(questionsParams.getLimit());
+
         //od razu pobieramy pierwszy element z kolejki, ponieważ pierwsze pytanie zostaje wyświetlane
         //po załadowaniu się obiektu. Jesli wartość 0 zostałaby w kolejce, słówko pojawiłoby się
         //na liście 2 razy
-        mCurrentQuestion = mQuestionsQueue.poll();
-        mToRepeat = new ArrayList<>();
+        if(!mQuestionsQueue.isEmpty()) {
+            mCurrentQuestion = mQuestionsQueue.poll();
+        }
+    }
 
-        long stop = System.currentTimeMillis(); //TODO później usunąć
-        Log.d("ExerciseManager", String.valueOf(stop - start));
+    private void setupParams(ExerciseParams params){
+        mExerciseParams = params;
+    }
+
+    private void prepareFields() {
+        mNumCorrectAnswers = 0;
+        mNumIncorrectAnswers = 0;
+        mToRepeat = new ArrayList<>();
         mIncorrectAnswers = new ArrayList<>();
+    }
+
+    private Queue<Integer> getFilledQuestionQueue(int numQuestion) {
+        Queue<Integer> questionQueue = new LinkedList<>();
+        for (int i = 0; i < numQuestion; i++) {
+            questionQueue.add(i);
+        }
+        return questionQueue;
     }
 
     public int getNumCorrectAnswers() {
@@ -131,11 +137,15 @@ public class ExerciseManager {
     }
 
     public String getQuestion() {
-        return mExerciseLanguage.getQuestion(mQuestions.get(mCurrentQuestion));
+        return mExerciseLanguage.getQuestion(getCurrentQuestionWord());
+    }
+
+    private Word getCurrentQuestionWord() {
+        return mQuestions.get(mCurrentQuestion);
     }
 
     public String getTranscription() {
-        return mExerciseLanguage.getTranscription(mQuestions.get(mCurrentQuestion));
+        return mExerciseLanguage.getTranscription(getCurrentQuestionWord());
     }
 
     public int getRemainingQuestion() {
@@ -143,37 +153,13 @@ public class ExerciseManager {
     }
 
     public String[] getAnswers(int howMuch) {
-        //TODO dorobić zapamiętywanie odpowiedznich odpowiedzi
-        ExerciseParameters parameters = new ExerciseParameters(mSet, -1, mDifficult, mCategory, mNumQuestions * QUESTION_ANSWERS_RATIO);
-        String[] presentQuestion = new String[mQuestions.size()];
-        for (int i = 0; i < mQuestions.size(); i++) {
-            presentQuestion[i] = mQuestions.get(i).getContent();
-        }
-        mAnswers = mExerciseLanguage.getAnswers(parameters, presentQuestion, mDataManager);
-
-        String[] answersArray = new String[mAnswers.length];
-        for (int i = 0; i < mAnswers.length; i++) {
-            answersArray[i] = mAnswers[i].getAnswer();
-        }
-        String correctAnswer = mExerciseLanguage.getAnswer(mQuestions.get(mCurrentQuestion));
-        String[] resultArray = getRandomStringsFromArray(answersArray, howMuch, correctAnswer); //TODO wstawiona wartość poprawić
-        return resultArray;
-    }
-
-    private String[] getRandomStringsFromArray(String[] fullArray, int howMuch, String correct) {
-        //TODO trochę prymitywna metoda, odpowiedzi będą wyświetlane w kolejności alfabetycznej
-        TreeSet<String> set = new TreeSet<>();
-        Random random = new Random();
-        int range = fullArray.length;
-        set.add(correct);
-        while (set.size() != howMuch) {
-            int i = random.nextInt(range);
-            String s = fullArray[i];
-            if (!set.contains(s)) {
-                set.add(s);
-            }
-        }
-        return set.toArray(new String[0]);
+        Word currentWord = getCurrentQuestionWord();
+        AnswersParams answersParams = ExerciseParamsHelper.getAnswerParams(mExerciseParams, currentWord);
+        mAnswers = mDataManager.getAnswers(answersParams);
+        mAnswers.add(getCurrentQuestionWord()); //dodajemy prawidłową odpowiedź
+        //lista wartości odpowiedzi które będą wyświetlone w aktywności
+        String[] answers = mExerciseLanguage.getAnswers(mAnswers);
+        return answers;
     }
 
     /**
@@ -258,5 +244,38 @@ public class ExerciseManager {
                     translationsBuilder.toString()));
         }
         return repetitions;
+    }
+
+    private static class ExerciseParamsHelper {
+        public static QuestionsParams getQuestionParams(ExerciseParams exerciseParams) {
+            QuestionsParams questionsParams = new QuestionsParams();
+            questionsParams.setSetId(exerciseParams.getSetId());
+            if(exerciseParams.isRepetitionDate())
+            {
+                questionsParams.setMonth(exerciseParams.getRepetitionMonth());
+                questionsParams.setDay(exerciseParams.getRepetitionDay());
+            }
+            questionsParams.setLimit(exerciseParams.getNumberQuestion());
+
+            return questionsParams;
+        }
+
+        public static AnswersParams getAnswerParams(ExerciseParams exerciseParams, Word word) {
+            AnswersParams answersParams = new AnswersParams();
+            answersParams.setSetId(exerciseParams.getSetId());
+            if(exerciseParams.isAnswerFromLesson()) {
+                answersParams.setLessonId(word.getLessonId());
+            }
+            if(exerciseParams.isAnswerFromCategory()){
+                if(word.getCategory() != null){
+                    answersParams.setCategoryId(word.getCategory().getId());
+                }
+            }
+            answersParams.setUsedContent(word.getContent());
+            String[] usedTranslations = TranslationListConverter.toStringArray(word.getTranslations());
+            answersParams.setUsedTranslations(usedTranslations);
+            answersParams.setLimit(exerciseParams.getNumberAnswers()-1);
+            return answersParams;
+        }
     }
 }

@@ -3,7 +3,10 @@ package com.dyszlewskiR.edu.scientling;
 import android.app.Application;
 import android.util.Log;
 
+import com.dyszlewskiR.edu.scientling.preferences.PreferenceInitializer;
+import com.dyszlewskiR.edu.scientling.preferences.Settings;
 import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 /**
  * Created by Razjelll on 01.12.2016.
@@ -34,7 +37,11 @@ public class LingApplication extends Application {
         Log.d(TAG, "onCreate");
         super.onCreate();
         mDataManager = new DataManager(getBaseContext());
-        mCurrentSetId = 1; //TODO zmienić na pobieranie z opcji
+        mCurrentSetId = Settings.getCurrentSetId(getBaseContext());
+        if(!PreferenceInitializer.isInitialize(getBaseContext())) {
+            PreferenceInitializer.initialize(getBaseContext());
+            Settings.setCurrentSetId(Constants.DEFAULT_SET_ID, getBaseContext());
+        }
     }
 
     @Override

@@ -36,11 +36,15 @@ INSERT INTO Sets(name, language_l2_fk, language_l1_fk)
 VALUES ('Polski dla obcych', 3,1);
 
 INSERT INTO Lessons(name, number, set_fk)
+VALUES ('', 0, 1);
+INSERT INTO Lessons(name, number, set_fk)
 VALUES ('Lekcja 1', 1, 1);
 INSERT INTO Lessons(name, number, set_fk)
 VALUES ('Lekcja 2', 2, 1);
 INSERT INTO Lessons(name, number, set_fk)
 VALUES ('Lekcja 3', 3, 1);
+INSERT INTO Lessons(name, number, set_fk)
+VALUES ('', 0, 2);
 INSERT INTO Lessons(name, number, set_fk)
 VALUES ('Lekcja o niczym', 1, 2);
 
@@ -225,6 +229,26 @@ INSERT INTO WordsHints(word_fk, hint_fk)
 VALUES (5,1);
 INSERT INTO WordsHints(word_fk, hint_fk)
 VALUES (3,3);
+
+INSERT INTO Repetitions(word_fk, month, day)
+VALUES (1,4,4);
+INSERT INTO Repetitions(word_fk, month, day)
+VALUES (2,4,4);
+INSERT INTO Repetitions(word_fk, month, day)
+VALUES (3,4,4);
+INSERT INTO Repetitions(word_fk, month, day)
+VALUES (4,4,4);
+INSERT INTO Repetitions(word_fk, month, day)
+VALUES (5,4,4);
+INSERT INTO Repetitions(word_fk, month, day)
+VALUES (6,4,4);
+INSERT INTO Repetitions(word_fk, month, day)
+VALUES (7,4,4);
+INSERT INTO Repetitions(word_fk, month, day)
+VALUES (8,4,4);
+INSERT INTO Repetitions(word_fk, month, day)
+VALUES (9,4,4);
+
 
 
 

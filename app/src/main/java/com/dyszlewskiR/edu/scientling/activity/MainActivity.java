@@ -2,7 +2,6 @@ package com.dyszlewskiR.edu.scientling.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.IntentCompat;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,9 +18,13 @@ import android.widget.ProgressBar;
 import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.LessonsProgressAdapter;
-import com.dyszlewskiR.edu.scientling.data.models.Lesson;
-import com.dyszlewskiR.edu.scientling.data.models.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.others.RepetitionDate;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
+import com.dyszlewskiR.edu.scientling.preferences.Preferences;
+import com.dyszlewskiR.edu.scientling.preferences.Settings;
 import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.utils.DateHelper;
 
 import java.util.List;
 
@@ -31,12 +34,11 @@ public class MainActivity extends AppCompatActivity
     private ListView mLessonListView;
     private Button mRepetitionButton;
     private Button mLearningButton;
+    private Button mMoreRepetitionsButton;
     private ProgressBar mSetProgressBar;
 
     private List<Lesson> mLessons;
     private DataManager mDataManager;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity
         //ustawianie postępu dla całego zestawu
         int setProgress = calculateSetProgress();
         mSetProgressBar.setProgress(setProgress);
+
     }
 
     private void prepareComponents()
@@ -74,6 +77,7 @@ public class MainActivity extends AppCompatActivity
         mLessonListView = (ListView) findViewById(R.id.list);
         mRepetitionButton = (Button) findViewById(R.id.repetition_button);
         mLearningButton = (Button) findViewById(R.id.learning_button);
+        mMoreRepetitionsButton = (Button)findViewById(R.id.more_repetition_button);
         mSetProgressBar = (ProgressBar)findViewById(R.id.set_progress_bar);
 
         mRepetitionButton.setOnClickListener(new View.OnClickListener() {
@@ -88,6 +92,13 @@ public class MainActivity extends AppCompatActivity
                 startLearningActivity();
             }
         });
+        mMoreRepetitionsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startRepetitionActivity();
+            }
+        });
+
     }
 
     private int calculateSetProgress()
@@ -103,6 +114,23 @@ public class MainActivity extends AppCompatActivity
     private void startExerciseActivity()
     {
         Intent intent = new Intent(getBaseContext(), ExerciseActivity.class);
+        intent.putExtra("set", Settings.getCurrentSetId(getBaseContext()));
+        intent.putExtra("repetitionMonth", /*DateHelper.getCurrentMonth()*/4);
+        intent.putExtra("repetitionDay",/*DateHelper.getCurrentDay()*/4);
+        intent.putExtra("questions", Preferences.getNumberWordsInRepetitions(getBaseContext()));
+        intent.putExtra("answers",Preferences.getNumberAnswer(getBaseContext()));
+        Preferences.AnswerConnection connection = Preferences.getAnswerConnection(getBaseContext());
+        if(connection == Preferences.AnswerConnection.LESSON) {
+            intent.putExtra("fromLesson", true);
+        } else {
+            intent.putExtra("fromLesson", false);
+        }
+        if(connection == Preferences.AnswerConnection.CATEGORY){
+            intent.putExtra("fromCategory", true);
+        } else {
+            intent.putExtra("fromCategory", false);
+        }
+        intent.putExtra("exercise", Preferences.getDefaultExercise(getBaseContext()));
         startActivity(intent);
     }
 
@@ -110,6 +138,11 @@ public class MainActivity extends AppCompatActivity
     {
         Intent intent = new Intent(getBaseContext(), LearningListActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    private void startRepetitionActivity(){
+        Intent intent = new Intent(getBaseContext(), RepetitionsActivity.class);
         startActivity(intent);
     }
 
@@ -160,6 +193,10 @@ public class MainActivity extends AppCompatActivity
         {
             startFlashcardActivity();
         }
+        if(id ==R.id.nav_settings)
+        {
+            startSettingsActivity();
+        }
 
         /*if (id == R.id.nav_camera) {
             // Handle the camera action
@@ -189,6 +226,12 @@ public class MainActivity extends AppCompatActivity
     private void startFlashcardActivity()
     {
         Intent intent = new Intent(getBaseContext(), FlashcardActivity.class);
+        startActivity(intent);
+    }
+
+    private void startSettingsActivity()
+    {
+        Intent intent = new Intent(getBaseContext(), PreferenceActivity.class);
         startActivity(intent);
     }
 }

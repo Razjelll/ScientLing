@@ -2,8 +2,6 @@ package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Parcelable;
-import android.support.v4.animation.AnimatorCompatHelper;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,7 +15,9 @@ import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.LearningActivity;
 import com.dyszlewskiR.edu.scientling.adapters.LearningWordsAdapter;
 import com.dyszlewskiR.edu.scientling.asyncTasks.LoadLearningAsyncTask;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
+import com.dyszlewskiR.edu.scientling.data.models.params.LearningParams;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.data.models.params.WordsParams;
 import com.dyszlewskiR.edu.scientling.services.DataManager;
 
 import java.util.ArrayList;
@@ -70,8 +70,12 @@ public class LearningListFragment extends Fragment {
         });
 
         LoadLearningAsyncTask task = new LoadLearningAsyncTask(mDataManager);
+        LearningParams params = new LearningParams();
+        long setId = ((LingApplication)getActivity().getApplication()).getCurrentSetId();
+        params.setSetId(setId);
+        params.setLimit(5);
         try {
-            mWords = task.execute().get();
+            mWords = task.execute(params).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {

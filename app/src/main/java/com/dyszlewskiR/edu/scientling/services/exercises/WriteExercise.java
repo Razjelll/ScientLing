@@ -1,5 +1,7 @@
 package com.dyszlewskiR.edu.scientling.services.exercises;
 
+import com.dyszlewskiR.edu.scientling.utils.Constants;
+
 /**
  * Created by Razjelll on 17.11.2016.
  */
@@ -7,7 +9,13 @@ package com.dyszlewskiR.edu.scientling.services.exercises;
 public class WriteExercise implements IExercise {
     @Override
     public boolean checkAnswer(String answer, String correctAnswer) {
-        return answer.equals(correctAnswer); //TODO To jest uproszczenie. Wprowadzić wykrywanie literówek
+        String[] correctAnswerArray = correctAnswer.split(Constants.TRANSLATION_SEPARATOR);
+        for (String word : correctAnswerArray) {
+            if (word.equals(answer)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

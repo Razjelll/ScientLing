@@ -38,8 +38,8 @@ CREATE TABLE Lessons (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         number INTEGER NOT NULL CHECK(number > 0) DEFAULT 1,
-        set_FK INTEGER NOT NULL,
-        FOREIGN KEY (set_FK) REFERENCES Sets(id)
+        set_fk INTEGER NOT NULL,
+        FOREIGN KEY (set_fk) REFERENCES Sets(id)
 );
 CREATE TABLE PartsOfSpeech (
         id INTEGER PRIMARY KEY,
@@ -68,7 +68,7 @@ CREATE TABLE Words (
 );
 CREATE TABLE WordsTranslations (
        word_fk INTEGER NOT NULL,
-       translation_FK INTEGER NOT NULL,
+       translation_fk INTEGER NOT NULL,
        PRIMARY KEY(word_fk, translation_fk),
        FOREIGN KEY(word_FK) REFERENCES Words(id),
        FOREIGN KEY (translation_fk) REFERENCES Translations(id)
@@ -78,4 +78,12 @@ CREATE TABLE ExampleSentences (
         sentence_fk INTEGER NOT NULL,
         FOREIGN KEY (word_fk) REFERENCES Words(id),
         FOREIGN KEY (sentence_fk) REFERENCES Sentences(id)
+);
+
+CREATE TABLE Repetitions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        word_fk INTEGER NOT NULL,
+        month INTEGER NOT NULL CHECK(month >=1 AND month <=12),
+        day INTEGER NOT NULL CHECK(day >= 1 AND day <=31),
+        FOREIGN KEY(word_fk) REFERENCES Words(id)
 );

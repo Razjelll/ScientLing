@@ -9,7 +9,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.RepetitionItem;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.RepetitionItem;
 
 import java.util.List;
 

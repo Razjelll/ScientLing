@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.Sentence;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
 
 /**
  * A placeholder fragment containing a simple view.

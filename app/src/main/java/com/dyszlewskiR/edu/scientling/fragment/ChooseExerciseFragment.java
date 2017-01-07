@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.dyszlewskiR.edu.scientling.services.exercises.ChooseExercise;
 import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
 import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseLanguage;
 import com.dyszlewskiR.edu.scientling.services.speech.TextToSpeech;
+import com.dyszlewskiR.edu.scientling.utils.resources.Colors;
 
 
 /**
@@ -59,8 +61,6 @@ public class ChooseExerciseFragment extends Fragment {
 
     }
 
-
-    // TODO: Rename and change types and number of parameters
     public static ChooseExerciseFragment newInstance(ExerciseManager exerciseManager, IExerciseLanguage language) {
         ChooseExerciseFragment fragment = new ChooseExerciseFragment();
         mExerciseManager = exerciseManager;
@@ -144,16 +144,16 @@ public class ChooseExerciseFragment extends Fragment {
         if (isCorrect) {
             // mAnswersButtons[button].setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style_green));
             GradientDrawable buttonShape = (GradientDrawable) mAnswersButtons[button].getBackground().getCurrent();
-            buttonShape.setColor(getResources().getColor(R.color.correctColor));
+            buttonShape.setColor(Colors.getColor(R.color.correctColor, getActivity().getBaseContext()));
         } else {
             GradientDrawable buttonShape = (GradientDrawable) mAnswersButtons[button].getBackground().getCurrent();
-            buttonShape.setColor(getResources().getColor(R.color.incorrectColor));
+            buttonShape.setColor(Colors.getColor(R.color.incorrectColor, getActivity().getBaseContext()));
             // mAnswersButtons[button].setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style_red));
             String correctAnswer = mExerciseManager.getCorrectAnswer();
             Button correctButton = findButton(correctAnswer);
             //correctButton.setBackgroundDrawable(getResources().getDrawable(R.drawable.button_style_green));
             GradientDrawable correctButtonShape = (GradientDrawable) correctButton.getBackground().getCurrent();
-            correctButtonShape.setColor(getResources().getColor(R.color.correctColor));
+            correctButtonShape.setColor(Colors.getColor(R.color.correctColor, getActivity().getBaseContext()));
             //correctButton.setBackgroundColor(getResources().getColor(R.color.correctColor));
         }
 
@@ -259,7 +259,7 @@ public class ChooseExerciseFragment extends Fragment {
         }
     }
 
-    @Override
+    /*@Override
     public void onAttach(Context context) {
         Log.d(TAG, "onAttach");
         super.onAttach(context);
@@ -270,7 +270,7 @@ public class ChooseExerciseFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-    }
+    }*/
 
     @Override
     public void onDetach() {

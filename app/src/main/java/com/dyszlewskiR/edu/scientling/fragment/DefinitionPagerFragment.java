@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.Definition;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Definition;
 
 /**
  * A simple {@link Fragment} subclass.

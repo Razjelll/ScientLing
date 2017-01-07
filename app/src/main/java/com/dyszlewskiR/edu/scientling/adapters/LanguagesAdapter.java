@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.Language;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Language;
 
 import java.util.List;
 

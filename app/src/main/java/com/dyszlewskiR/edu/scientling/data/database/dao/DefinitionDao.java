@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable;
-import com.dyszlewskiR.edu.scientling.data.models.Definition;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Definition;
 import com.dyszlewskiR.edu.scientling.data.models.creators.DefinitionCreator;
 
 import java.util.ArrayList;
@@ -25,7 +25,6 @@ public class DefinitionDao extends BaseDao<Definition> {
             "INSERT INTO " + DefinitionsTable.TABLE_NAME + "("
                     + DefinitionsColumns.CONTENT + ", " + DefinitionsColumns.TRANSLATION
                     + ") VALUES (?, ?)";
-    private final String WHERE_ID = DefinitionsColumns.ID + "= ?";
 
     public DefinitionDao(SQLiteDatabase db) {
         super(db);
@@ -55,7 +54,15 @@ public class DefinitionDao extends BaseDao<Definition> {
         values.put(DefinitionsColumns.TRANSLATION, entity.getTranslation());
 
         String[] whereArguments = new String[]{String.valueOf(entity.getId())};
-        mDb.update(DefinitionsTable.TABLE_NAME, values, WHERE_ID, whereArguments);
+        mDb.update(DefinitionsTable.TABLE_NAME, values, getWhereStatement(), getWhereArguments(entity));
+    }
+
+    private String getWhereStatement() {
+        return DefinitionsColumns.ID + "=?";
+    }
+
+    private String[] getWhereArguments(Definition entity) {
+        return new String[]{String.valueOf(entity.getId())};
     }
 
     @Override
@@ -63,26 +70,28 @@ public class DefinitionDao extends BaseDao<Definition> {
         long id = entity.getId();
         if (id > 0) {
             String[] whereArguments = new String[]{String.valueOf(id)};
-            mDb.delete(TABLE_NAME, WHERE_ID, whereArguments);
+            mDb.delete(TABLE_NAME, getWhereStatement(), getWhereArguments(entity));
         }
-
     }
 
     @Override
     public Definition get(long id) {
         String[] whereArguments = new String[]{String.valueOf(id)};
-        Cursor cursor = mDb.query(DefinitionsTable.TABLE_NAME, mTableColumns, WHERE_ID, whereArguments,
+        Cursor cursor = mDb.query(DefinitionsTable.TABLE_NAME, mTableColumns, getWhereStatement(), getWhereArguments(id),
                 null, null, null, null);
         Definition definition = null;
         if (cursor.moveToFirst()) {
             DefinitionCreator definitionCreator = new DefinitionCreator();
             definition = definitionCreator.createFromCursor(cursor);
         }
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
+        closeCursor(cursor);
         return definition;
     }
+
+    private String[] getWhereArguments(long id) {
+        return new String[]{String.valueOf(id)};
+    }
+
 
     @Override
     public List<Definition> getAll(boolean distinct, String[] columns, String selection, String[] selectionArgs,
@@ -100,11 +109,7 @@ public class DefinitionDao extends BaseDao<Definition> {
                 }
             } while (cursor.moveToNext());
         }
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
-        assert cursor.isClosed();
-
+        closeCursor(cursor);
         return definitionsList;
     }
 }

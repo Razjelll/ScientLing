@@ -3,17 +3,16 @@ package com.dyszlewskiR.edu.scientling.adapters;
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.Hint;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Hint;
 
 import java.util.List;
-import java.util.Objects;
+
 
 /**
  * Created by Razjelll on 22.12.2016.

@@ -15,7 +15,7 @@ import android.widget.ListView;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.SentenceDetailActivity;
 import com.dyszlewskiR.edu.scientling.adapters.SentencesAdapter;
-import com.dyszlewskiR.edu.scientling.data.models.Sentence;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
 
 import java.util.ArrayList;
 import java.util.List;

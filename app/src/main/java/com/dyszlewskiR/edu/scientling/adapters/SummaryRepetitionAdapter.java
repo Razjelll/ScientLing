@@ -11,8 +11,8 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
-import com.dyszlewskiR.edu.scientling.utils.TranslationListToString;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.List;
 
@@ -47,7 +47,7 @@ public class SummaryRepetitionAdapter extends ArrayAdapter {
         }
         //TODO zobaczyć jak działa zaznaczenie
         viewHolder.contentTextView.setText(mItems.get(position).getContent());
-        String translations = TranslationListToString.toString(mItems.get(position).getTranslations());
+        String translations = TranslationListConverter.toString(mItems.get(position).getTranslations());
         viewHolder.translationTextView.setText(translations);
         int progress = mItems.get(position).getMasterLevel();
         if(progress < 0) { //jeżeli jest to pierwsze uczenia słówka, które nie jest zaznaczone w powtórkach ukrywamy postęp

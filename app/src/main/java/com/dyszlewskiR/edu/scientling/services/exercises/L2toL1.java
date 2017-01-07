@@ -1,8 +1,9 @@
 package com.dyszlewskiR.edu.scientling.services.exercises;
 
 import com.dyszlewskiR.edu.scientling.services.DataManager;
-import com.dyszlewskiR.edu.scientling.data.models.Translation;
-import com.dyszlewskiR.edu.scientling.data.models.Word;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Translation;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.List;
 
@@ -19,8 +20,8 @@ public class L2toL1 implements IExerciseLanguage {
 
     @Override
     public String getAnswer(Word word) {
-        //TODO pobiera tylko jedną odpowiedź, może będzie to trzeba zmienić
-        return word.getTranslations().get(0).getContent();
+        assert word!=null && word.getTranslations() != null;
+       return TranslationListConverter.toString(word.getTranslations());
     }
 
     @Override
@@ -29,19 +30,13 @@ public class L2toL1 implements IExerciseLanguage {
     }
 
     @Override
-    public Answer[] getAnswers(ExerciseParameters parameters, String[] differentFrom, DataManager dataManager) {
-        long set = parameters.getSet();
-
-        long difficult = parameters.getDifficult();
-        long category = parameters.getCategory();
-        int howMuch = parameters.getNumQuestions();
-        List<Translation> translations = dataManager.getAnswersL1(set, difficult, category, howMuch, differentFrom);
-
-        Answer[] answers = new Answer[translations.size()]; //TODO sprawdzić czy to jest potrzebne
-        Answer answer = null;
-        for (int i = 0; i < translations.size(); i++) {
-            answer = new Answer(translations.get(i).getId(), translations.get(i).getContent());
-            answers[i] = answer;
+    public String[] getAnswers(List<Word> words) {
+        assert words != null && words.size() != 0;
+        int length = words.size();
+        String[] answers = new String[length];
+        for(int i =0; i <length; i++) {
+            assert  words.get(i).getTranslations() != null;
+            answers[i] = TranslationListConverter.toString(words.get(i).getTranslations());
         }
         return answers;
     }
