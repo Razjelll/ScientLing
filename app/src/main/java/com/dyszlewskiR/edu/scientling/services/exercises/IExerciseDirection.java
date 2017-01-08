@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Razjelll on 16.11.2016.
  */
 
-public interface IExerciseLanguage {
+public interface IExerciseDirection {
 
     String getQuestion(Word word);
 

@@ -1,4 +1,4 @@
-package com.dyszlewskiR.edu.scientling.utils;
+package com.dyszlewskiR.edu.scientling.utils.resources;
 
 import android.content.Context;
 import android.os.Build;

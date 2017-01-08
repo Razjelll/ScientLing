@@ -1,7 +1,6 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,7 +12,7 @@ import android.widget.TextView;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.ExerciseActivity;
 import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
-import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseLanguage;
+import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseDirection;
 import com.dyszlewskiR.edu.scientling.services.exercises.KnowExercise;
 
 
@@ -50,7 +49,7 @@ public class KnowExerciseFragment extends Fragment {
      * @return A new instance of fragment KnowExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static KnowExerciseFragment newInstance(ExerciseManager exerciseManager, IExerciseLanguage language) {
+    public static KnowExerciseFragment newInstance(ExerciseManager exerciseManager, IExerciseDirection language) {
         KnowExerciseFragment fragment = new KnowExerciseFragment();
         mExerciseManager = exerciseManager;
         mExerciseManager.setExerciseType(new KnowExercise());

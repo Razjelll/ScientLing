@@ -12,7 +12,7 @@ import android.widget.EditText;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
-import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseLanguage;
+import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseDirection;
 import com.dyszlewskiR.edu.scientling.services.exercises.WriteExercise;
 
 /**
@@ -42,7 +42,7 @@ public class ListenAndWriteExerciseFragment extends Fragment {
      * @return A new instance of fragment ListenAndWriteExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ListenAndWriteExerciseFragment newInstance(ExerciseManager exerciseManager, IExerciseLanguage language) {
+    public static ListenAndWriteExerciseFragment newInstance(ExerciseManager exerciseManager, IExerciseDirection language) {
         ListenAndWriteExerciseFragment fragment = new ListenAndWriteExerciseFragment();
         mExerciseManager = exerciseManager;
         mExerciseManager.setExerciseType(new WriteExercise());

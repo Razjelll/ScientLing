@@ -15,11 +15,10 @@ import com.dyszlewskiR.edu.scientling.services.DataManager;
 public class CreateExerciseTask extends AsyncTask<ExerciseParams, Void, ExerciseManager> {
 
     private ExerciseActivity mActivity;
-    private int mFragmentToStart;
+    private ExerciseParams mParams;
 
-    public CreateExerciseTask(ExerciseActivity activity, int fragmentToStart) {
+    public CreateExerciseTask(ExerciseActivity activity) {
         mActivity = activity;
-        mFragmentToStart = fragmentToStart;
     }
 
     @Override
@@ -29,21 +28,13 @@ public class CreateExerciseTask extends AsyncTask<ExerciseParams, Void, Exercise
 
     @Override
     protected ExerciseManager doInBackground(ExerciseParams... params) {
+        mParams = params[0];
         DataManager dataManager = ((LingApplication)mActivity.getApplication()).getDataManager();
-        return new ExerciseManager(params[0], dataManager);
+        return new ExerciseManager(mParams, dataManager);
     }
 
     @Override
     protected void onPostExecute(ExerciseManager result) {
-        mActivity.prepareExerciseProgress(result.getNumQuestions());
-
-        mActivity.hideCircleProgressBar();
-
-        mActivity.setExerciseManager(result);
-        if(result.getNumQuestions()==0){
-            mActivity.finish();
-        }
-        mActivity.setNumQuestions(result.getNumQuestions());
-        mActivity.changeFragment(mFragmentToStart);
+        mActivity.onEndCreatingExercise(result, mParams);
     }
 }

@@ -1,7 +1,6 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,7 +11,7 @@ import android.widget.Button;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.services.exercises.ChooseExercise;
 import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
-import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseLanguage;
+import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseDirection;
 
 
 /**
@@ -46,7 +45,7 @@ public class ListenAndChooseExerciseFragment extends Fragment {
      * @return A new instance of fragment ListenAndChooseExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ListenAndChooseExerciseFragment newInstance(ExerciseManager exerciseManager, IExerciseLanguage language) {
+    public static ListenAndChooseExerciseFragment newInstance(ExerciseManager exerciseManager, IExerciseDirection language) {
         ListenAndChooseExerciseFragment fragment = new ListenAndChooseExerciseFragment();
         mExerciseManager = exerciseManager;
         mExerciseManager.setExerciseType(new ChooseExercise());

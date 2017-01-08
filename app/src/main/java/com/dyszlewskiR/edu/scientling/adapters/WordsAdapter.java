@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Translation;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
-import com.dyszlewskiR.edu.scientling.utils.ResourceTranslator;
+import com.dyszlewskiR.edu.scientling.utils.ResourceHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +72,7 @@ public class WordsAdapter extends BaseAdapter implements Filterable {
             viewHolder.categoryTextView.setText(mFilteredItems.get(position).getCategory().getName());
         if (mFilteredItems.get(position).getPartsOfSpeech() != null) {
             String partOfSpeech = mFilteredItems.get(position).getPartsOfSpeech().getName();
-            String translatedPart = ResourceTranslator.translate(partOfSpeech, mContext);
+            String translatedPart = ResourceHelper.getString(partOfSpeech, mContext);
             viewHolder.partOfSpeechTextView.setText(translatedPart);
         }
         return rowView;

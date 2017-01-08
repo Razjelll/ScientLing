@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.fragment.SetSelectionFragment;
@@ -17,16 +18,29 @@ public class SetSelectionActivity extends AppCompatActivity {
 
     private SetSelectionFragment mFragment;
 
-    private FloatingActionButton mAddButton;
+    private ImageView mAddButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_list);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setupToolbar();
+        setupControls();
+        setListeners();
+    }
 
-        mAddButton = (FloatingActionButton) findViewById(R.id.fab);
+    private void setupToolbar(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void setupControls(){
+        mAddButton = (ImageView) findViewById(R.id.add_button);
+    }
+
+    private void setListeners(){
         mAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

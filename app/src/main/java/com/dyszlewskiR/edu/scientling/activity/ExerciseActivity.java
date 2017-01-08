@@ -1,14 +1,14 @@
 package com.dyszlewskiR.edu.scientling.activity;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,18 +16,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethod;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.database.DatabaseHelper;
-import com.dyszlewskiR.edu.scientling.data.models.others.RepetitionDate;
+import com.dyszlewskiR.edu.scientling.dialogs.OKFinishAlertDialog;
 import com.dyszlewskiR.edu.scientling.fragment.ChooseExerciseFragment;
 import com.dyszlewskiR.edu.scientling.fragment.KnowExerciseFragment;
 import com.dyszlewskiR.edu.scientling.fragment.ListenAndChooseExerciseFragment;
@@ -35,19 +31,13 @@ import com.dyszlewskiR.edu.scientling.fragment.ListenAndWriteExerciseFragment;
 import com.dyszlewskiR.edu.scientling.fragment.SummaryExerciseFragment;
 import com.dyszlewskiR.edu.scientling.fragment.WriteExerciseFragment;
 import com.dyszlewskiR.edu.scientling.fragment.dialogs.ExercisesListDialogFragment;
-import com.dyszlewskiR.edu.scientling.services.exercises.ChooseExercise;
 import com.dyszlewskiR.edu.scientling.services.exercises.CreateExerciseTask;
 import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
 import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseParams;
-import com.dyszlewskiR.edu.scientling.services.exercises.IExercise;
-import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseLanguage;
+import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseDirection;
 import com.dyszlewskiR.edu.scientling.services.exercises.L1toL2;
 import com.dyszlewskiR.edu.scientling.services.exercises.L2toL1;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
-import com.dyszlewskiR.edu.scientling.utils.DateHelper;
-
-import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 
 public class ExerciseActivity extends AppCompatActivity implements WriteExerciseFragment.OnFragmentInteractionListener,
@@ -61,12 +51,16 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
     private final int KNOW_EXERCISE = 3;
     private final int SUMMARY_EXERCISE = 0;
 
+    private final int L1_TO_L2 = 0;
+    private final int L2_TO_L1 = 1;
+
     /**
      * Kontrolka zaznaczajaca postęp danego ćwiczenia
      */
     private ProgressBar mExerciseProgress;
     private ProgressBar mCircleProgressBar;
     private TextView mCircleProgressBarText;
+    private ImageView mCloseButton;
     /**
      * Zmienna, która określa jakie ćwiczenie jest w tej chwili aktywne
      */
@@ -76,9 +70,8 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
      */
     private FragmentManager fragmentManager;
     private ExerciseManager mExerciseManager;
-    private int mNumQuestions;
 
-    private IExerciseLanguage mExerciseLanguage;
+    private int mExerciseDirection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,23 +84,27 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         setInitialValues(params);
         setSpinnerAdapter();
         setListeners();
-        //mExerciseManager = new ExerciseManager(new ExerciseParameters(1,-1,-1,-1,5),this.getApplicationContext());
-
         fragmentManager = getFragmentManager();
-
-
-        CreateExerciseTask createExerciseTask = new CreateExerciseTask(this, params.getFirstExercise());
-
+        CreateExerciseTask createExerciseTask = new CreateExerciseTask(this);
         createExerciseTask.execute(params);
+        Log.d("ExerciseActivity", "onCreate");
+    }
 
+    public void onEndCreatingExercise(ExerciseManager exerciseManager,ExerciseParams params)
+    {
+        mExerciseManager = exerciseManager;
         /*if(mExerciseManager.getNumQuestions()==0){
-            Toast.makeText(getBaseContext(), "Koniec",Toast.LENGTH_LONG);
-            finish();
-        }*/
+            finishWithDialog(params);
+        }*/ //zostało to obsłużone w głównej aktywności
+        prepareExerciseProgress(mExerciseManager.getNumQuestions());
+        hideCircleProgressBar();
+        changeFragment();
+    }
 
-        //mExerciseProgress.setMax(mExerciseManager.getNumQuestions()); //zrobimy ro w asynctask
-
-        Log.d("ExerciseActivity", "onCreate"); //DEBUG //TODO podorabiać pozostałe
+    public void finishWithDialog(ExerciseParams params){
+        if(params.isRepetitionDate()){
+            new OKFinishAlertDialog(ExerciseActivity.this, "Ni ma", "Ja Krzacze").show();
+        }
     }
 
     private void setupToolbar(){
@@ -128,9 +125,9 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         boolean fromLesson = intent.getBooleanExtra("fromLesson",false);
         boolean fromCategory = intent.getBooleanExtra("fromCategory",false);
         int firstExercise = intent.getIntExtra("exercise",1);
+        int direction = intent.getIntExtra("direction",0);
 
         params.setSetId(setId);
-
         params.setNumberQuestion(numberQuestions);
         params.setNumberAnswers(numberAnswers);
         if(repetitionMonth >0 && repetitionDay > 0) {
@@ -140,6 +137,7 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         params.setAnswerFromLesson(fromLesson);
         params.setAnswerFromCategory(fromCategory);
         params.setFirstExercise(firstExercise);
+        params.setExerciseDirection(direction);
 
         return params;
     }
@@ -148,6 +146,7 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         mExerciseProgress = (ProgressBar) findViewById(R.id.exerciseProgressBar);
         mCircleProgressBar = (ProgressBar) findViewById(R.id.circleWaitingBar);
         mCircleProgressBarText = (TextView) findViewById(R.id.circleWaitingBarText);
+        mCloseButton = (ImageView) findViewById(R.id.close_button);
     }
 
     private void setSpinnerAdapter(){
@@ -156,18 +155,30 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
     }
 
     private void setListeners(){
+        mCloseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showExitAlertDialog();
+            }
+        });
+    }
 
+    private void showExitAlertDialog(){
+        new ExitAlertDialog(ExerciseActivity.this).show();
     }
 
     private void setInitialValues(ExerciseParams params){
         mExerciseProgress.setMax(params.getNumberQuestion());
         mExerciseProgress.setProgress(0);
-        mExerciseLanguage = new L1toL2();
+        mExerciseDirection = params.getExerciseDirection();
+        mCurrentFragmentNumber = params.getFirstExercise();
     }
 
-    public void finishActivity(){
-        finish();
+    @Override
+    public void onBackPressed(){
+        showExitAlertDialog();
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
@@ -187,7 +198,7 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
                 dialog.show(getFragmentManager(),"TAG");
                 return true;
             case R.id.item_reverse_exercise:
-                //TODO
+                new ChangeDirectionAlertDialog(ExerciseActivity.this).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -205,27 +216,6 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         mExerciseProgress.setProgress(0);
     }
 
-    public void changeFragment(int fragmentNumber)
-    {
-        if(fragmentNumber != mCurrentFragmentNumber){
-            switch (fragmentNumber) {
-                case CHOOSE_EXERCISE:
-                    replaceFragment(ChooseExerciseFragment.newInstance(mExerciseManager, mExerciseLanguage));
-                    break;
-                case WRITE_EXERCISE:
-                    replaceFragment(WriteExerciseFragment.newInstance(mExerciseManager, mExerciseLanguage));
-                    break;
-                case KNOW_EXERCISE:
-                    replaceFragment(KnowExerciseFragment.newInstance(mExerciseManager, mExerciseLanguage));
-                    break;
-                case SUMMARY_EXERCISE:
-                    replaceFragment(SummaryExerciseFragment.newInstance(mExerciseManager));
-                    break;
-            }
-            mCurrentFragmentNumber = fragmentNumber;
-        }
-    }
-
     private void hideKeyboard(){
         View view = this.getCurrentFocus();
         if(view == null){
@@ -233,6 +223,55 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         }
         InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public void setExerciseDirection(int direction){
+        Log.d(getClass().getSimpleName(), "direction " + direction);
+        if(mExerciseDirection != direction){
+            Log.d(getClass().getSimpleName(), "Direction zamieniono");
+            mExerciseDirection = direction;
+            changeFragment();
+            restart();
+        }
+    }
+
+    public void setExerciseFragment(int fragment){
+        if(mCurrentFragmentNumber != fragment){
+            mCurrentFragmentNumber = fragment;
+            changeFragment();
+        }
+    }
+
+    private void changeFragment(){
+        IExerciseDirection direction = getExerciseDirection(mExerciseDirection);
+        Fragment fragment = getExerciseFragment(mCurrentFragmentNumber, direction);
+        replaceFragment(fragment);
+    }
+
+    private IExerciseDirection getExerciseDirection(int direction){
+        switch (direction){
+            case L1_TO_L2:
+                return new L1toL2();
+            case L2_TO_L1:
+                return new L2toL1();
+        }
+        assert false;
+        return null;
+    }
+
+    private Fragment getExerciseFragment(int fragment, IExerciseDirection direction){
+        switch(fragment){
+            case CHOOSE_EXERCISE:
+                return ChooseExerciseFragment.newInstance(mExerciseManager, direction);
+            case WRITE_EXERCISE:
+                return WriteExerciseFragment.newInstance(mExerciseManager,direction);
+            case KNOW_EXERCISE:
+                return KnowExerciseFragment.newInstance(mExerciseManager,direction);
+            case SUMMARY_EXERCISE:
+                return SummaryExerciseFragment.newInstance(mExerciseManager);
+        }
+        assert false;
+        return null;
     }
 
 
@@ -257,34 +296,61 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         mCircleProgressBarText.setVisibility(View.GONE);
     }
 
-    public void showCurrentFragment() {
-        changeFragment(mCurrentFragmentNumber);
-    }
-
-    public void setExerciseManager(ExerciseManager exerciseManager) {
-        mExerciseManager = exerciseManager;
-    }
-
-    public void setNumQuestions(int numQuestions) {
-        mNumQuestions = numQuestions;
-    }
-
     public void updateQuestion() {
         int correctAnswers = mExerciseManager.getNumCorrectAnswers();
-        if (correctAnswers == mNumQuestions) {
-            changeFragment(SUMMARY_EXERCISE);
+        if (correctAnswers == mExerciseManager.getNumQuestions()) {
+            setExerciseFragment(SUMMARY_EXERCISE);
         }
         mExerciseProgress.setProgress(correctAnswers);
     }
 
-    public void restart(int fragment) {
+    public void restart() {
         mExerciseProgress.setProgress(0);
-        changeFragment(fragment); //TODO ustawione domyślenie
-    }
-
-    public enum ExerciseLanguage {
-        L1, L2
+        mExerciseManager.restart();
     }
 
 
+    private class ExitAlertDialog extends AlertDialog {
+        protected ExitAlertDialog(Context context) {
+            super(context);
+            this.setTitle(getString(R.string.close_exercise));
+            String message = getString(R.string.your_sure_leave) + " " + getString(R.string.you_lost_progress_exercise);
+            this.setMessage(message);
+            this.setCancelable(true);
+            this.setButton(BUTTON_POSITIVE, getString(R.string.yes), new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            this.setButton(BUTTON_NEUTRAL, getString(R.string.back), new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+        }
+    }
+
+    private class ChangeDirectionAlertDialog extends AlertDialog {
+
+        protected ChangeDirectionAlertDialog(Context context) {
+            super(context);
+            this.setTitle(getString(R.string.you_are_sure));
+            this.setMessage(getString(R.string.change_direction_message));
+            this.setCancelable(true);
+            this.setButton(BUTTON_POSITIVE, getString(R.string.yes), new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    setExerciseDirection((mExerciseDirection+1)%2);
+                }
+            });
+            this.setButton(BUTTON_NEGATIVE, getString(R.string.back), new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+        }
+    }
 }

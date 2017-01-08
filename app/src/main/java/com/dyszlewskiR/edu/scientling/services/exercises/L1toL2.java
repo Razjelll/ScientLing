@@ -1,17 +1,15 @@
 package com.dyszlewskiR.edu.scientling.services.exercises;
 
-import com.dyszlewskiR.edu.scientling.services.DataManager;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Razjelll on 17.11.2016.
  */
 
-public class L1toL2 implements IExerciseLanguage {
+public class L1toL2 implements IExerciseDirection {
 
     @Override
     public String getQuestion(Word word) {

@@ -10,13 +10,9 @@ import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Random;
-import java.util.TreeSet;
 
 /**
  * Created by Razjelll on 16.11.2016.
@@ -74,7 +70,7 @@ public class ExerciseManager {
     private List<Word> mIncorrectAnswers;
     private List<Word> mAnswers; //TODO posprawdzać czy lepiej się sprawdzi to czy mAnswersL1 i L2
     private IExercise mExerciseType;
-    private IExerciseLanguage mExerciseLanguage; //TODO przydałaby się lepsza nazwa
+    private IExerciseDirection mExerciseLanguage; //TODO przydałaby się lepsza nazwa
     private DataManager mDataManager;
 
     private ExerciseParams mExerciseParams;
@@ -87,7 +83,7 @@ public class ExerciseManager {
         QuestionsParams questionsParams = ExerciseParamsHelper.getQuestionParams(exerciseParams);
         mQuestions = mDataManager.getQuestions(questionsParams);
         mNumQuestions = mQuestions.size();
-        mQuestionsQueue = getFilledQuestionQueue(questionsParams.getLimit());
+        mQuestionsQueue = getFilledQuestionQueue(mNumQuestions);
 
         //od razu pobieramy pierwszy element z kolejki, ponieważ pierwsze pytanie zostaje wyświetlane
         //po załadowaniu się obiektu. Jesli wartość 0 zostałaby w kolejce, słówko pojawiłoby się
@@ -132,7 +128,7 @@ public class ExerciseManager {
         mExerciseType = exerciseType;
     }
 
-    public void setExerciseLanguage(IExerciseLanguage exerciseLanguage) {
+    public void setExerciseLanguage(IExerciseDirection exerciseLanguage) {
         mExerciseLanguage = exerciseLanguage;
     }
 

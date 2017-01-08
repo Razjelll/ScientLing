@@ -12,10 +12,10 @@ public class FlashcardSelectionBuilder {
         builder.append(WordSelectionBuilder.Parts.SET_PART);
         switch(params.getChoiceType()){
             case LAST_LEARNED:
-                builder.append(WordSelectionBuilder.Parts.LEARNING_DATE_PART);
+                builder.append(WordSelectionBuilder.Parts.AND).append(WordSelectionBuilder.Parts.LEARNING_DATE_PART);
                 break;
             case ONLY_LEARNED:
-                builder.append(WordSelectionBuilder.Parts.LEARNING_DATE_PART);
+                builder.append(WordSelectionBuilder.Parts.AND).append(WordSelectionBuilder.Parts.LEARNING_DATE_PART);
                 break;
         }
         return builder.toString();

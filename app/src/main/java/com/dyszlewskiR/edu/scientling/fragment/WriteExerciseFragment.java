@@ -1,7 +1,6 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
@@ -22,7 +21,7 @@ import android.widget.TextView;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.ExerciseActivity;
 import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
-import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseLanguage;
+import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseDirection;
 import com.dyszlewskiR.edu.scientling.services.exercises.WriteExercise;
 import com.dyszlewskiR.edu.scientling.services.speech.ISpeechRecognitionResult;
 import com.dyszlewskiR.edu.scientling.services.speech.SpeechToText;
@@ -59,7 +58,7 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
      * @return A new instance of fragment WriteExerciseFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static WriteExerciseFragment newInstance(ExerciseManager exerciseManager, IExerciseLanguage language) {
+    public static WriteExerciseFragment newInstance(ExerciseManager exerciseManager, IExerciseDirection language) {
         WriteExerciseFragment fragment = new WriteExerciseFragment();
         mExerciseManager = exerciseManager;
         mExerciseManager.setExerciseType(new WriteExercise());
@@ -271,6 +270,7 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
         private void setupDialog(){
             this.requestWindowFeature(Window.FEATURE_NO_TITLE);
             this.setContentView(R.layout.correct_dialog);
+            this.setCancelable(false);
         }
 
         private void setDialogSize(){
@@ -311,6 +311,7 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
         private void setupDialog(){
             this.requestWindowFeature(Window.FEATURE_NO_TITLE);
             this.setContentView(R.layout.incorrect_dialog);
+            this.setCancelable(false);
         }
 
         private void setDialogSize(){

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
+import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import java.util.List;
 
@@ -64,7 +65,11 @@ public class LessonsProgressAdapter extends ArrayAdapter {
 
         viewHolder.lessonNumberTextView.setText(String.valueOf(mItems.get(position).getNumber()));
         viewHolder.lessonProgressBar.setProgress(mItems.get(position).getProgress());
-        viewHolder.lessonNameTextView.setText(mItems.get(position).getName());
+        if(!mItems.get(position).getName().equals(Constants.DEFAULT_LESSON_NAME)) {
+            viewHolder.lessonNameTextView.setText(mItems.get(position).getName());
+        } else {
+            viewHolder.lessonNameTextView.setText(mContext.getString(R.string.lack));
+        }
         viewHolder.lessonProgressTextView.setText(String.valueOf(mItems.get(position).getProgress() + "%"));
 
         return rowView;

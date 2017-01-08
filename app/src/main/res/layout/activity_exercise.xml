@@ -21,16 +21,9 @@
             android:layout_width="?attr/actionBarSize"
             android:layout_height="?attr/actionBarSize"
             android:layout_gravity="left"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            android:padding="10dp"
+            android:src="@drawable/ic_close"
+            android:padding="20dp"
             />
-        <ImageView
-            android:id="@+id/action_bar_speech_button"
-            android:layout_width="?attr/actionBarSize"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_gravity="right"
-            android:src="@android:drawable/ic_dialog_alert"
-            android:padding="10dp"/>
     </android.support.v7.widget.Toolbar>
 
     <LinearLayout

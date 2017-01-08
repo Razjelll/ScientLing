@@ -15,7 +15,9 @@ import com.dyszlewskiR.edu.scientling.data.database.dao.TranslationDao;
 import com.dyszlewskiR.edu.scientling.data.database.dao.WordDao;
 import com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable;
+import com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable;
+import com.dyszlewskiR.edu.scientling.data.models.others.RepetitionDate;
 import com.dyszlewskiR.edu.scientling.data.models.params.FlashcardParams;
 import com.dyszlewskiR.edu.scientling.data.models.params.LearningParams;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
@@ -34,10 +36,12 @@ import com.dyszlewskiR.edu.scientling.services.builders.AnswerSelectionBuilder;
 import com.dyszlewskiR.edu.scientling.services.builders.FlashcardSelectionBuilder;
 import com.dyszlewskiR.edu.scientling.services.builders.LearningSelectionBuilder;
 import com.dyszlewskiR.edu.scientling.services.builders.QuestionSelectionBuilder;
+import com.dyszlewskiR.edu.scientling.services.builders.WordSelectionBuilder;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns;
@@ -263,12 +267,12 @@ public class DataManager {
     }
 
     public List<VocabularySet> getSets() {
-        List<VocabularySet> sets = mSetDao.getAll();
+        List<VocabularySet> sets = new SetDao(mDb).getAll();
         //TODO niezbyt dobre rozwiązanie, chyba lepiej będzie pobierać bezpośrednio w zapytaniu języki
-        //tutaj weźmiemy stworzymy obiekt lokalnie, ponieważ raczej nie ma potrzeby przechowywać to w pamięci
         LanguageDao languageDao = new LanguageDao(mDb);
         for (VocabularySet s : sets) {
             s.setLanguageL2(languageDao.get(s.getLanguageL2().getId()));
+            s.setLanguageL1(languageDao.get(s.getLanguageL1().getId()));
         }
         return sets;
     }
@@ -319,13 +323,24 @@ public class DataManager {
         LessonDao lessonDao = new LessonDao(mDb);
         if (set == null) return lessons;
         ArrayList<String> queryColumns = new ArrayList<>(Arrays.asList(LessonsTable.getColumns()));
-        String queryPart = "(SELECT COUNT(1) FROM " + WordsTable.TABLE_NAME
+        /*String queryPart = "(SELECT COUNT(1) FROM " + WordsTable.TABLE_NAME
                 + " WHERE " + WordsColumns.LESSON_FK + " = " + LessonsTable.TABLE_NAME + "." + LessonsColumns.ID;
-        String progressColumn = queryPart + " AND " + WordsColumns.MASTER_LEVEL + "> -1 )*1.0/"
-                + queryPart + ")*100";
+        String progressColumn = queryPart + " AND " + WordsColumns.LEARNING_DATE + " IS NOT NULL)*1.0/"
+                + queryPart + ")*100 AS X";*/
+
+
+        String wordCount = new StringBuilder()
+                .append("(SELECT COUNT(1) FROM ").append(WordsTable.TABLE_NAME)
+                .append(" WHERE ").append(WordsColumns.LESSON_FK).append("=").append(LessonsTable.TABLE_NAME + "." + LessonsColumns.ID)
+                .toString();
+        String progressColumn = new StringBuilder(wordCount)
+                .append(" AND ").append(WordsColumns.LEARNING_DATE).append(" IS NOT NULL)")
+                .append("*1.0/").append(wordCount).append(")")
+                .toString();
         queryColumns.add(progressColumn);
 
-        String where = LessonsColumns.SET_FK + " =?";
+
+        String where = LessonsColumns.SET_FK + " =? AND" + wordCount +")<>0";
         String[] whereArguments = {String.valueOf(set.getId())};
         String groupBy = LessonsColumns.ID;
         String orderBy = LessonsColumns.NUMBER;
@@ -442,6 +457,15 @@ public class DataManager {
                null, null, null, String.valueOf(1)).get(0);
        return lesson;
    }
+
+    public int getRepetitionsCount(long setId, int repetitionMonth, int repetitionDay){
+        String where = new WordSelectionBuilder().append(WordSelectionBuilder.Parts.SET_PART)
+                .append(WordSelectionBuilder.Parts.AND).append(WordSelectionBuilder.Parts.REPETITION_PART)
+                .toString();
+        String[] whereArguments = {String.valueOf(setId), String.valueOf(repetitionMonth), String.valueOf(repetitionDay)};
+        int count = new WordDao(mDb).getCount(where, whereArguments);
+        return count;
+    }
 
     public void release() {
         mDb.close();

@@ -13,12 +13,10 @@
 
     <EditText
         style="@style/EditTextStyle"
-        android:lines="3"
         android:id="@+id/sentenceEditText"
         android:hint="@string/sentence"/>
     <EditText
         style="@style/EditTextStyle"
-        android:lines="3"
         android:id="@+id/translationEditText"
         android:layout_below="@id/sentenceEditText"
         android:hint="@string/sentence_translation"/>

@@ -16,7 +16,7 @@ public class LearningSelectionBuilder{
         WordSelectionBuilder builder = new WordSelectionBuilder();
         builder.append(WordSelectionBuilder.Parts.SET_PART);
         if(params.isFromLesson()){
-            builder.append(WordSelectionBuilder.Parts.AND).append(WordSelectionBuilder.Parts.GREATER_DIFFICULT_PART);
+            builder.append(WordSelectionBuilder.Parts.AND).append(WordSelectionBuilder.Parts.LESSON_PART);
         } else if(params.isFromCategory()){
             builder.append(WordSelectionBuilder.Parts.AND).append(WordSelectionBuilder.Parts.CATEGORY_PART);
         }

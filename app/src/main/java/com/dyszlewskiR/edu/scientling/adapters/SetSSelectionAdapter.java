@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
-import com.dyszlewskiR.edu.scientling.utils.ResourceTranslator;
+import com.dyszlewskiR.edu.scientling.utils.ResourceHelper;
 
 import java.util.List;
 
@@ -64,7 +64,7 @@ public class SetsSelectionAdapter extends ArrayAdapter<VocabularySet> {
         }
 
         viewHolder.nameTextView.setText(mItems.get(position).getName());
-        String language = ResourceTranslator.translate(mItems.get(position).getLanguageL2().getName(), mContext);
+        String language = ResourceHelper.getString(mItems.get(position).getLanguageL2().getName(), mContext);
         viewHolder.languageTextView.setText(language);
 
         return rowView;

@@ -1,5 +1,6 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -12,11 +13,11 @@ import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.FlashcardAdapter;
 import com.dyszlewskiR.edu.scientling.asyncTasks.LoadFlashcardsAsyncTask;
-import com.dyszlewskiR.edu.scientling.asyncTasks.LoadLearningAsyncTask;
 import com.dyszlewskiR.edu.scientling.data.models.params.FlashcardParams;
-import com.dyszlewskiR.edu.scientling.data.models.params.QuestionsParams;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.dialogs.OKFinishAlertDialog;
 import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -31,6 +32,7 @@ public class FlashcardFragment extends Fragment {
     private List<Word> mWords;
     private ViewPager mViewPager;
     private DataManager mDataManager;
+
     public FlashcardFragment() {
     }
 
@@ -49,11 +51,7 @@ public class FlashcardFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        FlashcardParams params = new FlashcardParams();
-        long setId = ((LingApplication)getActivity().getApplication()).getCurrentSetId();
-        params.setSetId(setId);
-        params.setChoiceType(FlashcardParams.ChoiceType.RANDOM);
-        params.setLimit(5);
+        FlashcardParams params = getFlashcardParams();
         LoadFlashcardsAsyncTask task = new LoadFlashcardsAsyncTask(mDataManager);
         try {
             mWords = task.execute(params).get();
@@ -62,6 +60,9 @@ public class FlashcardFragment extends Fragment {
         } catch (ExecutionException e) {
             e.printStackTrace();
         } // TODO zrobić komunikaty
+        if(mWords.size() == 0){
+            closeActivity();
+        }
         final FlashcardAdapter adapter = new FlashcardAdapter(getActivity(), R.layout.item_flashcard, mWords);
         mViewPager.setAdapter(adapter);
 
@@ -87,6 +88,8 @@ public class FlashcardFragment extends Fragment {
             }
         });
 
+
+
         /*mViewPager.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,4 +100,24 @@ public class FlashcardFragment extends Fragment {
             }
         });*/
     }
+    private FlashcardParams getFlashcardParams(){
+        Intent intent = getActivity().getIntent();
+        long setId = intent.getLongExtra("set", Constants.DEFAULT_SET_ID);
+        FlashcardParams.ChoiceType type = (FlashcardParams.ChoiceType)intent.getSerializableExtra("type");
+        int limit = intent.getIntExtra("limit",0);
+
+        FlashcardParams params = new FlashcardParams();
+        params.setSetId(setId);
+        params.setChoiceType(type);
+        params.setLimit(limit);
+        return params;
+    }
+
+    /**Metoda wyświetlana w przypadku braku posujących słowek*/
+    private void closeActivity(){
+        new OKFinishAlertDialog(getActivity(), getString(R.string.no_words), getString(R.string.not_found_words)).show();
+    }
+
+
+
 }

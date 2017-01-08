@@ -1,7 +1,6 @@
 package com.dyszlewskiR.edu.scientling.widgets;
 
 import android.content.Context;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.adapters.RepetitionsCalendarAdapter;
-import com.dyszlewskiR.edu.scientling.utils.LocaleHelper;
+import com.dyszlewskiR.edu.scientling.utils.resources.LocaleHelper;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

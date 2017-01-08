@@ -43,11 +43,13 @@
         <Button
             style="@style/ButtonStyle"
             android:id="@+id/repetition_button"
+            android:text="@string/repetitions"
             android:layout_weight="0.2"/>
 
-        <Button
+        <ImageButton
             style="@style/ButtonStyle"
             android:id="@+id/more_repetition_button"
+
             android:layout_weight="0.8"/>
     </LinearLayout>
     <LinearLayout
@@ -60,9 +62,10 @@
         <Button
             style="@style/ButtonStyle"
             android:id="@+id/learning_button"
+            android:text="@string/new_words"
             android:layout_weight="0.2"/>
 
-        <Button
+        <ImageButton
             style="@style/ButtonStyle"
             android:id="@+id/more_learning_button"
             android:layout_weight="0.8"/>

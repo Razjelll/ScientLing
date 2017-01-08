@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.dyszlewskiR.edu.scientling.activity.CategorySelectionActivity">
+    tools:context="com.dyszlewskiR.edu.scientling.activity.CurrentSetSelectionActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -17,20 +17,10 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorMain"
-            app:popupTheme="@style/PopupOverlay" >
-            <ImageView
-                android:id="@+id/add_button"
-                android:layout_width="56dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="right"
-                android:src="@drawable/ic_add"
-                android:padding="20dp"/>
-        </android.support.v7.widget.Toolbar>
+            app:popupTheme="@style/PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_category_selection" />
-
-
+    <include layout="@layout/content_current_set_selection" />
 
 </android.support.design.widget.CoordinatorLayout>

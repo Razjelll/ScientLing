@@ -91,7 +91,9 @@
         <item>@string/linking_word</item>
     </string-array>
 
-
+    <!--STRONA GLOWNA-->
+    <string name="new_words">Nowe słówka</string>
+    <string name="repetitions">Powtórki</string>
     <!--JEZYKI -->
     <string name="englishUS">Angielski</string>
     <string name="polish">Polski</string>
@@ -116,8 +118,21 @@
     <string name="set_save_failed">Wystapił błąd podczas zapisywania do bazy dancyh :(</string>
     <string name="save_word_failed">Wystąpił błąd podczas zapisywania słówka do bazy danych</string>
     <string name="save_word_success">Pomyślnie zapisano słówko do bazy danych</string>
+    <string name="press_again">Naciśnij ponownie wstecz aby wyjść</string>
+    <string name="you_lost_progress_learning">Stracisz cały postęp z tej lekcji</string>
+    <string name="you_lost_progress_exercise">Stracisz cały postęp z tego ćwiczenia</string>
+    <string name="your_sure_leave">Czy na pewno chcesz wyjść?</string>
+    <string name="close_session_learning">Zamknij sesje nauki</string>
+    <string name="close_exercise">Zamknij ćwiczenie</string>
+    <string name="no_words">Brak słówek</string>
+    <string name="not_found_words">Nie znaleziono pasujacych słówek</string>
+    <string name="you_are_sure">Czy jesteś pewien?</string>
+    <string name="change_direction_message">Zmiana kierunku ćwiczenia spowoduje rozpoczęcie ćwiczenia od początku.</string>
+    <string name="no_repetitions_today">Nie ma zaplanowanych powtórek na dzisiaj</string>
 
     <string name="ok">OK</string>
+    <string name="yes">Tak</string>
+    <string name="back">Cofnij</string>
     <string name="title_activity_lesson_selection">LessonSelectionActivity</string>
     <string name="title_activity_category_selection">CategorySelectionActivity</string>
     <string name="title_activity_main">MainActivity</string>
@@ -226,7 +241,10 @@
     <string name="words_in_learning">Liczba słów w każdej sesji nauki</string>
     <string name="words_in_repetitions">Liczba słów w każdej powtórce</string>
     <string name="number_answers">Liczba odpowiedzi w teście wyboru</string>
+    <string name="number_flashcard">Liczba fiszek</string>
     <string name="start_exercise">Początkowe ćwiczenie w powtórce</string>
+    <string name="start_direction">Domyślny kierunek ćwiczenia</string>
+    <string name="start_direction_summary">Określa czy ćwiczenie będzie prowadzone z języka obego na ojczysty czy odwrotnie</string>
     <string name="notifications">Powiadomienia</string>
     <string name="notifications_time">Czas powiadomień</string>
     <string name="sounds">Dźwięki</string>
@@ -238,26 +256,36 @@
         <item>@string/lesson</item>
         <item>@string/category</item>
     </string-array>
-    <array name="answer_connection_values">
+    <string-array name="answer_connection_values">
         <item>1</item>
         <item>2</item>
         <item>3</item>
-    </array>
+    </string-array>
+    <string name="l1_to_l2">Z ojczystego na obcy</string>
+    <string name="l2_to_l1">Z obcego na ojczysty</string>
+    <string-array name="exercise_direction_array">
+        <item>@string/l1_to_l2</item>
+        <item>@string/l2_to_l1</item>
+    </string-array>
+    <string-array name="exercise_direction_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
 
     <!--CWICZENIA-->
     <string name="choose_exercise">Wybieranie</string>
     <string name="write_exercise">Wpisywanie</string>
     <string name="know_exercise">Wiem/Nie wiem</string>
-    <array name="exercises_types">
+    <string-array name="exercises_types">
         <item>@string/choose_exercise</item>
         <item>@string/write_exercise</item>
         <item>@string/know_exercise</item>
-    </array>
-    <array name="exercises_types_values">
+    </string-array>
+    <string-array name="exercises_types_values">
         <item>1</item>
         <item>2</item>
         <item>3</item>
-    </array>
+    </string-array>
     <string name="title_activity_repetitions">RepetitionsActivity</string>
 
     <!--KALENDARZ-->
@@ -268,5 +296,6 @@
     <string name="friday_abbr">PT</string>
     <string name="saturday_abbr">SOB</string>
     <string name="sunday_abbr">NIEDZ</string>
+    <string name="title_activity_current_set_selection">CurrentSetSelectionActivity</string>
 
 </resources>

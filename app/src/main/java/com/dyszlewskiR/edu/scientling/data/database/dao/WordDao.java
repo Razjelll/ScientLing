@@ -283,4 +283,13 @@ public class WordDao extends BaseDao<Word> {
         closeCursor(cursor);
         return wordsList;
     }
+
+    public int getCount(String selection, String[] selectionArgs) {
+        Cursor cursor = mDb.query(false, WordsTable.TABLE_NAME + " " + WordsTable.ALIAS, new String[]{"COUNT(1)"},selection, selectionArgs,
+                null,null,null,null);
+        if(cursor.moveToFirst()){
+            return cursor.getInt(0);
+        }
+        return 0;
+    }
 }

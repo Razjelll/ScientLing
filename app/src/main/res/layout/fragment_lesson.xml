@@ -34,9 +34,9 @@
         />
    <Button
       style="@style/ButtonStyle"
+       android:layout_height="wrap_content"
        android:id="@+id/save_button"
        android:text="@string/save"
-       android:layout_below="@id/lesson_name_edit_text"
-       android:layout_marginTop="10dp"/>
+       android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

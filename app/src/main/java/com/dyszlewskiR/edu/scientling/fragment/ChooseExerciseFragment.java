@@ -3,8 +3,6 @@ package com.dyszlewskiR.edu.scientling.fragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,7 +20,7 @@ import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.ExerciseActivity;
 import com.dyszlewskiR.edu.scientling.services.exercises.ChooseExercise;
 import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
-import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseLanguage;
+import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseDirection;
 import com.dyszlewskiR.edu.scientling.services.speech.TextToSpeech;
 import com.dyszlewskiR.edu.scientling.utils.resources.Colors;
 
@@ -61,7 +59,7 @@ public class ChooseExerciseFragment extends Fragment {
 
     }
 
-    public static ChooseExerciseFragment newInstance(ExerciseManager exerciseManager, IExerciseLanguage language) {
+    public static ChooseExerciseFragment newInstance(ExerciseManager exerciseManager, IExerciseDirection language) {
         ChooseExerciseFragment fragment = new ChooseExerciseFragment();
         mExerciseManager = exerciseManager;
         mExerciseManager.setExerciseType(new ChooseExercise());

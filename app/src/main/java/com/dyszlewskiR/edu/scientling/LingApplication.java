@@ -53,6 +53,7 @@ public class LingApplication extends Application {
     @Override
     public void onTerminate() {
         Log.d(TAG, "onTerminate");
+        mDataManager.release();
         super.onTerminate();
 
     }

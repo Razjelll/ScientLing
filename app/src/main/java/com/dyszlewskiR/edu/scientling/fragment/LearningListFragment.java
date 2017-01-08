@@ -17,8 +17,9 @@ import com.dyszlewskiR.edu.scientling.adapters.LearningWordsAdapter;
 import com.dyszlewskiR.edu.scientling.asyncTasks.LoadLearningAsyncTask;
 import com.dyszlewskiR.edu.scientling.data.models.params.LearningParams;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
-import com.dyszlewskiR.edu.scientling.data.models.params.WordsParams;
+import com.dyszlewskiR.edu.scientling.dialogs.OKFinishAlertDialog;
 import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,10 +71,7 @@ public class LearningListFragment extends Fragment {
         });
 
         LoadLearningAsyncTask task = new LoadLearningAsyncTask(mDataManager);
-        LearningParams params = new LearningParams();
-        long setId = ((LingApplication)getActivity().getApplication()).getCurrentSetId();
-        params.setSetId(setId);
-        params.setLimit(5);
+        LearningParams params = getLearningParams();
         try {
             mWords = task.execute(params).get();
         } catch (InterruptedException e) {
@@ -81,8 +79,39 @@ public class LearningListFragment extends Fragment {
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+        if(mWords.size()==0){
+            closeWithDialog(params);
+        }
         LearningWordsAdapter adapter = new LearningWordsAdapter(getActivity(), R.layout.item_learning_word, mWords);
         mWordsListView.setAdapter(adapter);
+    }
+
+    private void closeWithDialog(LearningParams params){
+        //params będą służyły do udzielania inych komunikatow w zależności od parametrów
+        new OKFinishAlertDialog(getActivity(), getString(R.string.no_words), getString(R.string.not_found_words)).show();
+    }
+
+    private LearningParams getLearningParams(){
+        Intent intent = getActivity().getIntent();
+        long setId = intent.getLongExtra("set", Constants.DEFAULT_SET_ID);
+        long lessonId = intent.getLongExtra("lesson", 0);
+        long categoryId = intent.getLongExtra("category",0);
+        int difficult = intent.getIntExtra("difficult",-1);
+        int limit = intent.getIntExtra("limit", 0);
+
+        LearningParams params = new LearningParams();
+        params.setSetId(setId);
+        if(lessonId>0){
+            params.setLessonId(lessonId);
+        }
+        if(categoryId>0){
+            params.setCategoryId(categoryId);
+        }
+        if(difficult>0){
+            params.setDifficult(difficult);
+        }
+        params.setLimit(limit);
+        return params;
     }
 
     private void startLearningActivity()

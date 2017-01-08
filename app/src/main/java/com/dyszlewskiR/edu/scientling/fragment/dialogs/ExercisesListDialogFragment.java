@@ -44,7 +44,7 @@ public class ExercisesListDialogFragment  extends DialogFragment implements Dial
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 ExerciseActivity activity = (ExerciseActivity)getActivity();
-                activity.changeFragment(which+1);
+                activity.setExerciseFragment(which+1);
                 dismiss();
             }
         });
