@@ -92,9 +92,6 @@
             android:label="@string/title_activity_flashcard"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".activity.SettingsActivity"
-            android:label="@string/title_activity_settings" />
-        <activity
             android:name=".activity.PreferenceActivity"
             android:label="@string/title_activity_preference" />
         <activity

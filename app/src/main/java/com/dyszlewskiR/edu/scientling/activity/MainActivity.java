@@ -23,6 +23,7 @@ import android.widget.ProgressBar;
 import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.LessonsProgressAdapter;
+import com.dyszlewskiR.edu.scientling.asyncTasks.MainInitializationValuesTask;
 import com.dyszlewskiR.edu.scientling.data.models.params.FlashcardParams;
 import com.dyszlewskiR.edu.scientling.data.models.params.LearningParams;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
@@ -134,6 +135,8 @@ public class MainActivity extends AppCompatActivity
 
     private void setInitialValues() {
         mDataManager = ((LingApplication) getApplication()).getDataManager();
+        new MainInitializationValuesTask(this).execute(mDataManager);
+        /*mDataManager = ((LingApplication) getApplication()).getDataManager();
         //TODO to zrobić w osobnym wątku
         VocabularySet set = mDataManager.getSetById(Settings.getCurrentSetId(getBaseContext()));
         mLessons = mDataManager.getLessonsWithProgress(set);
@@ -143,7 +146,22 @@ public class MainActivity extends AppCompatActivity
 
         //ustawianie postępu dla całego zestawu
         int setProgress = calculateSetProgress();
+        mSetProgressBar.setProgress(setProgress);*/
+    }
+
+    public void onPostGetDataTask(VocabularySet set, List<Lesson> lessons){
+        getSupportActionBar().setTitle(set.getName());
+        mLessons = lessons;
+        setLessonListValues();
+        int setProgress = calculateSetProgress();
         mSetProgressBar.setProgress(setProgress);
+    }
+
+    public void onPreGetDataTask()
+    {
+        mLessonListView.setAdapter(null);
+        mLessonListView.deferNotifyDataSetChanged();
+        getSupportActionBar().setTitle("");
     }
 
     private void setRepetitionNumber() {

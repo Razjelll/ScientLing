@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 
 import com.dyszlewskiR.edu.scientling.R;
+import com.dyszlewskiR.edu.scientling.utils.resources.Colors;
 
 public class PreferenceActivity extends AppCompatPreferenceActivity {
 
@@ -25,12 +26,7 @@ public class PreferenceActivity extends AppCompatPreferenceActivity {
         if(actionBar != null)
         {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            {
-                actionBar.setBackgroundDrawable(new ColorDrawable(ContextCompat.getColor(getBaseContext(),R.color.colorMain)));
-            } else {
-                actionBar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorMain)));
-            }
+            actionBar.setBackgroundDrawable(new ColorDrawable(Colors.getColor(R.color.colorMain,getBaseContext())));
         }
     }
 
