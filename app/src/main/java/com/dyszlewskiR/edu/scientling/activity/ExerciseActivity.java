@@ -1,14 +1,14 @@
 package com.dyszlewskiR.edu.scientling.activity;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -40,11 +40,7 @@ import com.dyszlewskiR.edu.scientling.services.exercises.L2toL1;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 
-public class ExerciseActivity extends AppCompatActivity implements WriteExerciseFragment.OnFragmentInteractionListener,
-        KnowExerciseFragment.OnFragmentInteractionListener,
-        ChooseExerciseFragment.OnFragmentInteractionListener,
-        ListenAndChooseExerciseFragment.OnFragmentInteractionListener,
-        ListenAndWriteExerciseFragment.OnFragmentInteractionListener {
+public class ExerciseActivity extends AppCompatActivity {
 
     private final int CHOOSE_EXERCISE = 1;
     private final int WRITE_EXERCISE = 2;
@@ -84,7 +80,7 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         setInitialValues(params);
         setSpinnerAdapter();
         setListeners();
-        fragmentManager = getFragmentManager();
+        fragmentManager = getSupportFragmentManager();
         CreateExerciseTask createExerciseTask = new CreateExerciseTask(this);
         createExerciseTask.execute(params);
         Log.d("ExerciseActivity", "onCreate");
@@ -274,7 +270,6 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         return null;
     }
 
-
     /**
      * Metoda zamieniająca fragmenty z ćwiczeniami na aktywności
      *
@@ -284,11 +279,6 @@ public class ExerciseActivity extends AppCompatActivity implements WriteExercise
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.exerciseFragment, fragment);
         fragmentTransaction.commit();
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 
     public void hideCircleProgressBar() {

@@ -1,11 +1,11 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+
 import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,14 +25,6 @@ import com.dyszlewskiR.edu.scientling.services.speech.TextToSpeech;
 import com.dyszlewskiR.edu.scientling.utils.resources.Colors;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ChooseExerciseFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ChooseExerciseFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class ChooseExerciseFragment extends Fragment {
 
     private final static String TAG = "ChooseExerciseFragment";
@@ -49,10 +41,9 @@ public class ChooseExerciseFragment extends Fragment {
     private Button mAnswerButton6;
     private Button mNextButton;
     private Button moreButton;
-    private int mNumAnswersButtons = 6; //TODO wartość ustalona z góry, zmienić, pobierać z preferencji
+    private int mNumAnswersButtons;
     private Button[] mAnswersButtons;
     private boolean mCanAnswer;
-    private OnFragmentInteractionListener mListener;
     private View mFragmentView;
 
     public ChooseExerciseFragment() {
@@ -64,10 +55,7 @@ public class ChooseExerciseFragment extends Fragment {
         mExerciseManager = exerciseManager;
         mExerciseManager.setExerciseType(new ChooseExercise());
         mExerciseManager.setExerciseLanguage(language);
-        /*Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);*/
+
 
         return fragment;
     }
@@ -80,10 +68,6 @@ public class ChooseExerciseFragment extends Fragment {
         FragmentManager fragmentManager = getFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         mCanAnswer = true;
-        /*if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }*/
     }
 
     private void createAnswersButtonArray() {
@@ -131,7 +115,6 @@ public class ChooseExerciseFragment extends Fragment {
 
             Animation animation = AnimationUtils.makeInAnimation(getActivity(), false);
             mFragmentView.startAnimation(animation);
-            //getActivity().overridePendingTransition(R.anim.move_from_right_side, R.anim.move_to_left_side);
         }
     }
 
@@ -176,10 +159,25 @@ public class ChooseExerciseFragment extends Fragment {
         Log.d(TAG, "onCreateView");
         View view = inflater.inflate(R.layout.fragment_choose_exercise, container, false);
         mFragmentView = view;
+        setupControls(view);
+        setListeners();
+        return view;
+    }
+
+    private void setupControls(View view){
         mWordTextView = (TextView) view.findViewById(R.id.wordTextView);
         mTranscriptionTextView = (TextView) view.findViewById(R.id.transcriptionTextView);
         mSpeechButton = (Button) view.findViewById(R.id.speechButton);
+        mAnswerButton1 = (Button) view.findViewById(R.id.answer1);
+        mAnswerButton2 = (Button) view.findViewById(R.id.answer2);
+        mAnswerButton3 = (Button) view.findViewById(R.id.answer3);
+        mAnswerButton4 = (Button) view.findViewById(R.id.answer4);
+        mAnswerButton5 = (Button) view.findViewById(R.id.answer5);
+        mAnswerButton6 = (Button) view.findViewById(R.id.answer6);
+        mNextButton = (Button) view.findViewById(R.id.nextButton);
+    }
 
+    private void setListeners(){
         mSpeechButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -188,16 +186,7 @@ public class ChooseExerciseFragment extends Fragment {
             }
         });
 
-        mAnswerButton1 = (Button) view.findViewById(R.id.answer1);
-        mAnswerButton2 = (Button) view.findViewById(R.id.answer2);
-        mAnswerButton3 = (Button) view.findViewById(R.id.answer3);
-        mAnswerButton4 = (Button) view.findViewById(R.id.answer4);
-        mAnswerButton5 = (Button) view.findViewById(R.id.answer5);
-        mAnswerButton6 = (Button) view.findViewById(R.id.answer6);
-        mNextButton = (Button) view.findViewById(R.id.nextButton);
         mNextButton.setOnClickListener(new NextButtonOnClickListener());
-
-        return view;
     }
 
     /**
@@ -216,7 +205,7 @@ public class ChooseExerciseFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         Log.d(TAG, "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
-
+        mNumAnswersButtons = mExerciseManager.getNumAnswers();
 
         createAnswersButtonArray();
         hideNonUseAnswersButtons();
@@ -243,55 +232,19 @@ public class ChooseExerciseFragment extends Fragment {
         }
     }
 
-
     private void showExercise() //TODO kolejna nazwa do zmienienia :(
     {
         showQuestion();
         showAnswers();
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    /*@Override
-    public void onAttach(Context context) {
-        Log.d(TAG, "onAttach");
-        super.onAttach(context);
-
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }*/
-
     @Override
     public void onDetach() {
         Log.d(TAG, "onDetach");
         resetButtons();
         super.onDetach();
-        mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
 
     protected class AnswerOnClickListener implements View.OnClickListener {
         int mIndex;
@@ -309,7 +262,6 @@ public class ChooseExerciseFragment extends Fragment {
     }
 
     protected class NextButtonOnClickListener implements View.OnClickListener {
-
         @Override
         public void onClick(View v) {
             //TODO to może będzie można usunąć ponieważ nie widać rezultatu
@@ -328,7 +280,6 @@ public class ChooseExerciseFragment extends Fragment {
                 showExercise();
             }
             ((ExerciseActivity) getActivity()).updateQuestion();
-
         }
     }
 }

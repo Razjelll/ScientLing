@@ -409,8 +409,23 @@ public class DataManager {
     public List<Word> getWords(LearningParams params) {
         String where = LearningSelectionBuilder.getStatement(params);
         String[] whereArguments = LearningSelectionBuilder.getArguments(params);
+        String order = null;
+        switch (params.getOrder()){
+            case RANDOM:
+                order = "RANDOM()";
+                break;
+            case LESSON:
+                order = WordsColumns.LESSON_FK;
+                break;
+            case DIFFICULT:
+                order = WordsColumns.DIFFICULT;
+                break;
+            case LESSON_AND_DIFFICULT:
+                order = WordsColumns.LESSON_FK + ", " + WordsColumns.DIFFICULT;
+                break;
+        }
         List<Word> words = mWordDao.getAllWithJoins(true, where, whereArguments, null, null,
-                "RANDOM()",String.valueOf(params.getLimit()));
+                order,String.valueOf(params.getLimit()));
         for(Word word:words) {
             completeWord(word);
         }

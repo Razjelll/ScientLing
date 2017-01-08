@@ -36,13 +36,16 @@ public class Preferences {
         String getStringValue(){return String.valueOf(id);}
     }
 
+
+
     public static final String WORDS_IN_LEARNING_PREF = "prefWordsInLearning";
     public static final String WORDS_IN_REPETITION_PREF = "prefWordsInRepetitions";
-    public static final String NUMBER_ANSWER_PREF = "prefNumberAnswer";
+    public static final String NUMBER_ANSWER_PREF = "prefNumberAnswers";
     public static final String ANSWER_CONNECTION_PREF = "prefAnswerConnection";
     public static final String DEFAULT_EXERCISE_PREF ="prefDefaultExercise";
     public static final String DEFAULT_DIRECTION_PREF="prefDefaultDirection";
     public static final String NUMBER_FLASHCARD_PREF = "prefNumberFlashcard";
+    public static final String ORDER_LEARNING_PREF = "prefOrderLearning";
 
     public static int getNumberWordsInLearning(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -102,6 +105,13 @@ public class Preferences {
         String valueString = prefs.getString(DEFAULT_DIRECTION_PREF, null);
         int position = Integer.valueOf(valueString);
         return ExerciseDirection.values()[position];
+    }
+
+    public static int getOrderLearning(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String valueString =prefs.getString(ORDER_LEARNING_PREF, null);
+        int value = Integer.valueOf(valueString);
+        return value;
     }
 
 

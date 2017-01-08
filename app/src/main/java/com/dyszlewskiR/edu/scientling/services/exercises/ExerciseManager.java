@@ -10,6 +10,7 @@ import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
@@ -68,9 +69,9 @@ public class ExerciseManager {
     private List<Integer> mToRepeat;
 
     private List<Word> mIncorrectAnswers;
-    private List<Word> mAnswers; //TODO posprawdzać czy lepiej się sprawdzi to czy mAnswersL1 i L2
+    private List<Word> mAnswers;
     private IExercise mExerciseType;
-    private IExerciseDirection mExerciseLanguage; //TODO przydałaby się lepsza nazwa
+    private IExerciseDirection mExerciseDirection;
     private DataManager mDataManager;
 
     private ExerciseParams mExerciseParams;
@@ -124,16 +125,18 @@ public class ExerciseManager {
         return mCurrentQuestion;
     }
 
+    public int getNumAnswers(){return mExerciseParams.getNumberAnswers();}
+
     public void setExerciseType(IExercise exerciseType) {
         mExerciseType = exerciseType;
     }
 
     public void setExerciseLanguage(IExerciseDirection exerciseLanguage) {
-        mExerciseLanguage = exerciseLanguage;
+        mExerciseDirection = exerciseLanguage;
     }
 
     public String getQuestion() {
-        return mExerciseLanguage.getQuestion(getCurrentQuestionWord());
+        return mExerciseDirection.getQuestion(getCurrentQuestionWord());
     }
 
     private Word getCurrentQuestionWord() {
@@ -141,7 +144,7 @@ public class ExerciseManager {
     }
 
     public String getTranscription() {
-        return mExerciseLanguage.getTranscription(getCurrentQuestionWord());
+        return mExerciseDirection.getTranscription(getCurrentQuestionWord());
     }
 
     public int getRemainingQuestion() {
@@ -153,8 +156,9 @@ public class ExerciseManager {
         AnswersParams answersParams = ExerciseParamsHelper.getAnswerParams(mExerciseParams, currentWord);
         mAnswers = mDataManager.getAnswers(answersParams);
         mAnswers.add(getCurrentQuestionWord()); //dodajemy prawidłową odpowiedź
+        Collections.shuffle(mAnswers);
         //lista wartości odpowiedzi które będą wyświetlone w aktywności
-        String[] answers = mExerciseLanguage.getAnswers(mAnswers);
+        String[] answers = mExerciseDirection.getAnswers(mAnswers);
         return answers;
     }
 
@@ -171,7 +175,7 @@ public class ExerciseManager {
      * @return
      */
     public boolean checkAnswer(String answer) {
-        String correctAnswer = mExerciseLanguage.getAnswer(mQuestions.get(mCurrentQuestion));
+        String correctAnswer = mExerciseDirection.getAnswer(mQuestions.get(mCurrentQuestion));
         boolean correct = mExerciseType.checkAnswer(answer, correctAnswer);
 
         serveAnswer(correct);
@@ -194,7 +198,7 @@ public class ExerciseManager {
     }
 
     public String getCorrectAnswer() {
-        return mExerciseLanguage.getAnswer(mQuestions.get(mCurrentQuestion));
+        return mExerciseDirection.getAnswer(mQuestions.get(mCurrentQuestion));
     }
 
     /**

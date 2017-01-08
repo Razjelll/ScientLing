@@ -231,6 +231,7 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(getBaseContext(), LearningListActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("set", Settings.getCurrentSetId(getBaseContext()));
+        intent.putExtra("order", Preferences.getOrderLearning(getBaseContext()));
         intent.putExtra("limit", Preferences.getNumberWordsInLearning(getBaseContext()));
         return intent;
     }

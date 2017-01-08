@@ -15,6 +15,7 @@ import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.LearningActivity;
 import com.dyszlewskiR.edu.scientling.adapters.LearningWordsAdapter;
 import com.dyszlewskiR.edu.scientling.asyncTasks.LoadLearningAsyncTask;
+import com.dyszlewskiR.edu.scientling.data.models.params.FlashcardParams;
 import com.dyszlewskiR.edu.scientling.data.models.params.LearningParams;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.dialogs.OKFinishAlertDialog;
@@ -97,6 +98,8 @@ public class LearningListFragment extends Fragment {
         long lessonId = intent.getLongExtra("lesson", 0);
         long categoryId = intent.getLongExtra("category",0);
         int difficult = intent.getIntExtra("difficult",-1);
+        FlashcardParams.ChoiceType type = (FlashcardParams.ChoiceType)intent.getSerializableExtra("type");
+        int order = intent.getIntExtra("order",2);
         int limit = intent.getIntExtra("limit", 0);
 
         LearningParams params = new LearningParams();
@@ -110,6 +113,7 @@ public class LearningListFragment extends Fragment {
         if(difficult>0){
             params.setDifficult(difficult);
         }
+        params.setOrder(order);
         params.setLimit(limit);
         return params;
     }

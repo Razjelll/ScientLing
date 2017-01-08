@@ -13,14 +13,14 @@ import android.util.Log;
 public class PreferenceInitializer {
     private static final String INITIALIZE_PREF = "prefInitialize";
 
-    private static final int DEFAULT_WORDS_IN_LEARNING = 2;
+    private static final int DEFAULT_WORDS_IN_LEARNING = 5;
     private static final int DEFAULT_WORDS_IN_REPETITION = 5;
     private static final int DEFAULT_NUMBER_ANSWERS = 6;
     private static final int DEFAULT_NUMBER_FLASHCARD = 7;
     private static final int DEFAULT_ANSWER_CONNECTION = Preferences.AnswerConnection.LACK.getValue();
     private static final int DEFAULT_EXERCISE = 1;
     private static final int DEFAULT_DIRECTION = 0;
-
+    private static final int DEFAULT_ORDER_LEARNING = 2;
 
     public static boolean isInitialize(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -39,7 +39,9 @@ public class PreferenceInitializer {
         editor.putString(Preferences.DEFAULT_DIRECTION_PREF, String.valueOf(DEFAULT_DIRECTION));
         editor.putString(Preferences.NUMBER_FLASHCARD_PREF, String.valueOf(DEFAULT_NUMBER_FLASHCARD));
         editor.putBoolean(INITIALIZE_PREF, true);
+        editor.putString(Preferences.ORDER_LEARNING_PREF, String.valueOf(DEFAULT_ORDER_LEARNING));
 
         editor.apply();
     }
+
 }

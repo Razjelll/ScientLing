@@ -1,10 +1,10 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.app.Dialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -45,19 +45,10 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
     private Button mSpeechButton;
     private EditText mAnswerEditText;
     private Button mCheckAnswerButton;
-    private OnFragmentInteractionListener mListener;
 
     public WriteExerciseFragment() {
-        // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment WriteExerciseFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static WriteExerciseFragment newInstance(ExerciseManager exerciseManager, IExerciseDirection language) {
         WriteExerciseFragment fragment = new WriteExerciseFragment();
         mExerciseManager = exerciseManager;
@@ -69,7 +60,6 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     private void showQuestion() {
@@ -82,60 +72,10 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
     private void toAnswer(String answer) {
         boolean correct = mExerciseManager.checkAnswer(answer);
         if (correct) {
-            /*final Dialog dialog = new Dialog(getActivity());
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setContentView(R.layout.correct_dialog);
-
-            TextView text = (TextView) dialog.findViewById(R.id.correctDialogText);
-            Button nextButton = (Button) dialog.findViewById(R.id.correctDialogNextButton);
-            nextButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    nextQuestion();
-                    ((ExerciseActivity) getActivity()).updateQuestion();
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();*/
             new CorrectDialog(getActivity()).show();
-
-            //setDialogWidth(dialog);
-
         } else {
-            /*final Dialog dialog = new Dialog(getActivity());
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-            dialog.setContentView(R.layout.incorrect_dialog);
-
-
-            TextView yourAnswer = (TextView) dialog.findViewById(R.id.yourAnswerTextView);
-            yourAnswer.setText(answer);
-            TextView correctsAnswers = (TextView) dialog.findViewById(R.id.correctAnswerTextView);
-            correctsAnswers.setText(mExerciseManager.getCorrectAnswer());
-            Button nextButton = (Button) dialog.findViewById(R.id.nextButton);
-            nextButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    nextQuestion();
-                    dialog.dismiss();
-                }
-            });
-            dialog.show();
-
-            setDialogWidth(dialog);*/
             new IncorrectDialog(getActivity(), answer, mExerciseManager.getCorrectAnswer()).show();
         }
-    }
-
-    private void setDialogWidth(Dialog dialog) {
-        //ustawianie szerokości powiadomienia. Nie można tego zrobić w xml, ponieważ
-        // miejscu okno dialogowe nie zna szerokości rodzica
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        Window window = dialog.getWindow();
-        lp.copyFrom(window.getAttributes());
-        lp.width = WindowManager.LayoutParams.MATCH_PARENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        window.setAttributes(lp);
     }
 
     public void nextQuestion() {
@@ -185,18 +125,10 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
         inputMethodManager.showSoftInput(mAnswerEditText, 0);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onDetach() {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         super.onDetach();
-        mListener = null;
     }
 
     @Override
@@ -208,31 +140,13 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
         }
     }
 
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
     protected class AcceptAnswerOnClickListener implements View.OnClickListener {
-
         @Override
         public void onClick(View v) {
             String answer = String.valueOf(mAnswerEditText.getText());
             toAnswer(answer);
         }
     }
-
 
     /**
      * Listener, który nasłuchuje specjalnych akcji pola edycyjnego. W tym rpzypadku

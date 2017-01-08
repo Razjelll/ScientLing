@@ -179,6 +179,22 @@
     <string name="sounds">Dźwięki</string>
     <string name="answer_connection">Odpowiedzi połączone z pytaniem</string>
     <string name="answer_connection_hint">Czy odpowiedzi w ćwiczeniu wyboru mają być powiązane z tematem pytania</string>
+    <string name="order_learning">Kolejność wyboru słów do uczenia</string>
+
+    <string name="random">Losowe</string>
+    <string name="lesson_and_difficult">Lekcja i trudność</string>
+    <string-array name="order_learning_array">
+        <item>@string/random</item>
+        <item>@string/lesson</item>
+        <item>@string/difficult</item>
+        <item>@string/lesson_and_difficult</item>
+    </string-array>
+    <string-array name="order_learning_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
 
     <string-array name="answer_connection_array">
         <item>@string/lack</item>
@@ -190,6 +206,7 @@
         <item>2</item>
         <item>3</item>
     </string-array>
+
     <string name="l1_to_l2">Z ojczystego na obcy</string>
     <string name="l2_to_l1">Z obcego na ojczysty</string>
     <string-array name="exercise_direction_array">
