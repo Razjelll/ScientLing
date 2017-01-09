@@ -100,7 +100,7 @@ public class WordDao extends BaseDao<Word> {
         long own = entity.isOwn() ? 1 : 0;
         mInsertStatement.bindLong(WordsColumns.OWN_POSITION, own);
         if(entity.isLearningDate()){
-            long date = DateCalculator.dateToInt(entity.getLearningDate());
+            long date = entity.getLearningDate();
             mInsertStatement.bindLong(WordsColumns.LEARNING_DATE_POSITION, date);
         }
         return mInsertStatement.executeInsert();
@@ -141,7 +141,7 @@ public class WordDao extends BaseDao<Word> {
         long own = entity.isOwn() ? 1 : 0;
         values.put(WordsColumns.OWN, own);
 
-        long date = DateCalculator.dateToInt(entity.getLearningDate());
+        long date = entity.getLearningDate();
         values.put(WordsColumns.LEARNING_DATE, date);
 
         String[] whereArguments = new String[]{String.valueOf(entity.getId())};

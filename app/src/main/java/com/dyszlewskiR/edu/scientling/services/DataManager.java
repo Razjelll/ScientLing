@@ -9,6 +9,7 @@ import com.dyszlewskiR.edu.scientling.data.database.dao.DefinitionDao;
 import com.dyszlewskiR.edu.scientling.data.database.dao.HintDao;
 import com.dyszlewskiR.edu.scientling.data.database.dao.LanguageDao;
 import com.dyszlewskiR.edu.scientling.data.database.dao.LessonDao;
+import com.dyszlewskiR.edu.scientling.data.database.dao.RepetitionDao;
 import com.dyszlewskiR.edu.scientling.data.database.dao.SentenceDao;
 import com.dyszlewskiR.edu.scientling.data.database.dao.SetDao;
 import com.dyszlewskiR.edu.scientling.data.database.dao.TranslationDao;
@@ -25,6 +26,7 @@ import com.dyszlewskiR.edu.scientling.data.models.tableModels.Definition;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Hint;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Language;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Repetition;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Translation;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
@@ -62,6 +64,7 @@ public class DataManager {
     private DefinitionDao mDefinitionDao;
     private CategoryDao mCategoryDao;
     private SetDao mSetDao;
+    private RepetitionDao mRepetitionDao;
 
 
     public DataManager(Context context) {
@@ -447,6 +450,9 @@ public class DataManager {
                 order = "RANDOM()";
                 break;
         }
+        if (mWordDao == null){
+            mWordDao = new WordDao(mDb);
+        }
         List<Word> words = mWordDao.getAllWithJoins(true, where, whereArguments, null,null,
                 order,String.valueOf(params.getLimit()));
         for(Word word: words){
@@ -473,11 +479,11 @@ public class DataManager {
        return lesson;
    }
 
-    public int getRepetitionsCount(long setId, int repetitionMonth, int repetitionDay){
+    public int getRepetitionsCount(long setId, int date){
         String where = new WordSelectionBuilder().append(WordSelectionBuilder.Parts.SET_PART)
                 .append(WordSelectionBuilder.Parts.AND).append(WordSelectionBuilder.Parts.REPETITION_PART)
                 .toString();
-        String[] whereArguments = {String.valueOf(setId), String.valueOf(repetitionMonth), String.valueOf(repetitionDay)};
+        String[] whereArguments = {String.valueOf(setId), String.valueOf(date)};
         int count = new WordDao(mDb).getCount(where, whereArguments);
         return count;
     }
@@ -486,4 +492,27 @@ public class DataManager {
         mDb.close();
     }
 
+    public void saveRepetitionAndUpdateWords(List<Repetition> repetitions, List<Word> words){
+        RepetitionDao repetitionDao = new RepetitionDao(mDb);
+        WordDao wordDao = new WordDao(mDb);
+        mDb.beginTransaction();
+        for(Repetition repetition: repetitions){
+            switch(repetition.getAction()){
+                case DELETE:
+                    repetitionDao.delete(repetition);
+                    break;
+                case SAVE:
+                    repetitionDao.save(repetition);
+                    break;
+                case UPDATE:
+                    repetitionDao.update(repetition);
+                    break;
+            }
+        }
+        for(Word word:words){
+            wordDao.update(word);
+        }
+        mDb.setTransactionSuccessful();
+        mDb.endTransaction();
+    }
 }

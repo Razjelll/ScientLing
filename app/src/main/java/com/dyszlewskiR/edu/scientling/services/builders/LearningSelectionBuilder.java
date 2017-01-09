@@ -14,7 +14,8 @@ public class LearningSelectionBuilder{
 
     public static String getStatement(LearningParams params) {
         WordSelectionBuilder builder = new WordSelectionBuilder();
-        builder.append(WordSelectionBuilder.Parts.SET_PART);
+        builder.append(WordSelectionBuilder.Parts.SET_PART)
+                .append(WordSelectionBuilder.Parts.AND).append(WordSelectionBuilder.Parts.LEARNING_DATE_PART);
         if(params.isFromLesson()){
             builder.append(WordSelectionBuilder.Parts.AND).append(WordSelectionBuilder.Parts.LESSON_PART);
         } else if(params.isFromCategory()){

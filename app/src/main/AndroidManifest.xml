@@ -102,6 +102,7 @@
             android:name=".activity.CurrentSetSelectionActivity"
             android:label="@string/title_activity_current_set_selection"
             android:theme="@style/NoActionBar"></activity>
+        <service android:enabled="true" android:name=".services.repetitions.SaveExerciseService" />
     </application>
 
 </manifest>

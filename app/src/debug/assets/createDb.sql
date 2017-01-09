@@ -62,7 +62,7 @@ CREATE TABLE Words (
         part_of_speech_fk INTEGER NULL,
         category_fk INTEGER NULL,
         difficult INTEGER NOT NULL CHECK(difficult >=0 AND difficult <=5) DEFAULT 0,
-        master_level INTEGER NOT NULL CHECK(master_level <= 100) DEFAULT -1,
+        master_level INTEGER NOT NULL CHECK(master_level <= 100) DEFAULT 0,
         selected INTEGER NOT NULL CHECK(selected = 0 OR selected = 1) DEFAULT 0,
         own INTEGER NOT NULL CHECK(own = 0 OR own = 1) DEFAULT 1,
         learning_date INTEGER NULL,
@@ -93,9 +93,7 @@ CREATE TABLE WordsHints(
 );
 
 CREATE TABLE Repetitions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        word_fk INTEGER NOT NULL,
-        month INTEGER NOT NULL CHECK(month >=1 AND month <=12),
-        day INTEGER NOT NULL CHECK(day >= 1 AND day <=31),
+        word_fk INTEGER PRIMARY KEY,
+        date INTEGER NOT NULL,
         FOREIGN KEY(word_fk) REFERENCES Words(id)
 );

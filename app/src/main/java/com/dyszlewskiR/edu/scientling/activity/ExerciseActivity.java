@@ -61,6 +61,7 @@ public class ExerciseActivity extends AppCompatActivity {
      * Zmienna, która określa jakie ćwiczenie jest w tej chwili aktywne
      */
     private int mCurrentFragmentNumber;
+    private int mLastFragmentNumber;
     /**
      * Manager, który służy do zarządzanai fragmentami
      */
@@ -116,8 +117,7 @@ public class ExerciseActivity extends AppCompatActivity {
         long setId = intent.getLongExtra("set", Constants.DEFAULT_SET_ID);
         int numberQuestions = intent.getIntExtra("questions", 0);
         int numberAnswers = intent.getIntExtra("answers", 4);
-        int repetitionMonth = intent.getIntExtra("repetitionMonth",0);
-        int repetitionDay = intent.getIntExtra("repetitionDay",0);
+        int repetitionDate= intent.getIntExtra("repetitionDate",0);
         boolean fromLesson = intent.getBooleanExtra("fromLesson",false);
         boolean fromCategory = intent.getBooleanExtra("fromCategory",false);
         int firstExercise = intent.getIntExtra("exercise",1);
@@ -126,9 +126,8 @@ public class ExerciseActivity extends AppCompatActivity {
         params.setSetId(setId);
         params.setNumberQuestion(numberQuestions);
         params.setNumberAnswers(numberAnswers);
-        if(repetitionMonth >0 && repetitionDay > 0) {
-            params.setRepetitionMonth(repetitionMonth);
-            params.setRepetitionDay(repetitionDay);
+        if(repetitionDate != 0){
+            params.setRepetitionDate(repetitionDate);
         }
         params.setAnswerFromLesson(fromLesson);
         params.setAnswerFromCategory(fromCategory);
@@ -233,6 +232,7 @@ public class ExerciseActivity extends AppCompatActivity {
 
     public void setExerciseFragment(int fragment){
         if(mCurrentFragmentNumber != fragment){
+            mLastFragmentNumber = mCurrentFragmentNumber;
             mCurrentFragmentNumber = fragment;
             changeFragment();
         }
@@ -264,7 +264,9 @@ public class ExerciseActivity extends AppCompatActivity {
             case KNOW_EXERCISE:
                 return KnowExerciseFragment.newInstance(mExerciseManager,direction);
             case SUMMARY_EXERCISE:
-                return SummaryExerciseFragment.newInstance(mExerciseManager);
+                SummaryExerciseFragment fragment1 = SummaryExerciseFragment.newInstance(mExerciseManager);
+                fragment1.setLastFragment(mLastFragmentNumber-1);
+                return fragment1; //TODO to moze wymagać poprawki
         }
         assert false;
         return null;

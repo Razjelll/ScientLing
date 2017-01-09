@@ -121,7 +121,7 @@ public class LearningListFragment extends Fragment {
     private void startLearningActivity()
     {
         Intent intent = new Intent(getActivity(), LearningActivity.class);
-        intent.putParcelableArrayListExtra("items", new ArrayList<Word>(mWords));
+        intent.putParcelableArrayListExtra("items", new ArrayList<>(mWords));
         getActivity().startActivityForResult(intent, LEARNING_REQUEST);
     }
 

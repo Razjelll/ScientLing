@@ -125,6 +125,8 @@ public class ExerciseManager {
         return mCurrentQuestion;
     }
 
+    public List<Word> getQuestions(){return mQuestions;}
+
     public int getNumAnswers(){return mExerciseParams.getNumberAnswers();}
 
     public void setExerciseType(IExercise exerciseType) {
@@ -252,8 +254,7 @@ public class ExerciseManager {
             questionsParams.setSetId(exerciseParams.getSetId());
             if(exerciseParams.isRepetitionDate())
             {
-                questionsParams.setMonth(exerciseParams.getRepetitionMonth());
-                questionsParams.setDay(exerciseParams.getRepetitionDay());
+                questionsParams.setDate(exerciseParams.getRepetitionDate());
             }
             questionsParams.setLimit(exerciseParams.getNumberQuestion());
 

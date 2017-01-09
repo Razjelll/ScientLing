@@ -44,7 +44,6 @@ public class CategoryDao extends BaseDao<Category> {
     public void update(Category entity) {
         final ContentValues values = new ContentValues();
         values.put(CategoriesColumns.NAME, entity.getName());
-        //TODO może język też dodać
         mDb.update(TABLE_NAME, values, getWhereStatement(), getWhereArguments(entity));
     }
 

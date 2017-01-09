@@ -32,6 +32,8 @@ import com.dyszlewskiR.edu.scientling.preferences.Preferences;
 import com.dyszlewskiR.edu.scientling.preferences.Settings;
 import com.dyszlewskiR.edu.scientling.services.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
+import com.dyszlewskiR.edu.scientling.utils.DateCalculator;
+import com.dyszlewskiR.edu.scientling.utils.DateHelper;
 
 import java.util.List;
 import java.util.Set;
@@ -166,9 +168,9 @@ public class MainActivity extends AppCompatActivity
 
     private void setRepetitionNumber() {
         long setId = Settings.getCurrentSetId(getBaseContext());
-        int month = 4;
-        int day = 4;
-        int repetitionCount = mDataManager.getRepetitionsCount(setId, month, day);
+        //int date = 160404;
+        int date = DateCalculator.dateToInt(DateHelper.getTodayDate());
+        int repetitionCount = mDataManager.getRepetitionsCount(setId, date);
         String repetitionButtonText = getString(R.string.repetitions);
         if (repetitionCount != 0) {
             repetitionButtonText += "(" + repetitionCount + ")";
@@ -196,8 +198,8 @@ public class MainActivity extends AppCompatActivity
     private void startDefaultRepetition() {
         Intent intent = new Intent(getBaseContext(), ExerciseActivity.class);
         intent.putExtra("set", Settings.getCurrentSetId(getBaseContext()));
-        intent.putExtra("repetitionMonth", /*DateHelper.getCurrentMonth()*/4);
-        intent.putExtra("repetitionDay",/*DateHelper.getCurrentDay()*/4);
+        //intent.putExtra("repetitionDate", /*DateHelper.getCurrentMonth()*/160404);
+        intent.putExtra("repetitionDate", DateCalculator.dateToInt(DateHelper.getTodayDate()));
         intent.putExtra("questions", Preferences.getNumberWordsInRepetitions(getBaseContext()));
         intent.putExtra("answers", Preferences.getNumberAnswers(getBaseContext()));
         Preferences.AnswerConnection connection = Preferences.getAnswerConnection(getBaseContext());

@@ -37,7 +37,7 @@ public class WordCreator implements IModelCreator<Word> {
                 word.setMasterLevel((byte) cursor.getLong(WordsTable.WordsColumns.MASTER_LEVEL_POSITION));
                 word.setSelected(getSelectedFromCursor(cursor));
                 word.setOwn(getOwnFromCursor(cursor));
-                word.setLearningDate(getLearningDateFromCursor(cursor));
+                word.setLearningDate(cursor.getInt(WordsTable.WordsColumns.LEARNING_DATE_POSITION));
             }
         }
         return word;

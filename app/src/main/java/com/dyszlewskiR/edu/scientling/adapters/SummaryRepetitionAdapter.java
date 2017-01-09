@@ -1,11 +1,14 @@
 package com.dyszlewskiR.edu.scientling.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -22,6 +25,9 @@ import java.util.List;
 
 public class SummaryRepetitionAdapter extends ArrayAdapter {
 
+    private final int SELECTED_ICON = R.drawable.ic_hint;
+    private final int UNSELECTED_ICON = R.drawable.ic_add;
+
     private List<Word> mItems;
     private Context mContext;
     private int mResource;
@@ -34,8 +40,8 @@ public class SummaryRepetitionAdapter extends ArrayAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder;
+    public View getView(final int position, View convertView, ViewGroup parent) {
+        final ViewHolder viewHolder;
         View rowView = convertView;
         if(rowView == null) {
             LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -45,40 +51,59 @@ public class SummaryRepetitionAdapter extends ArrayAdapter {
         } else {
             viewHolder = (ViewHolder)rowView.getTag();
         }
-        //TODO zobaczyć jak działa zaznaczenie
         viewHolder.contentTextView.setText(mItems.get(position).getContent());
         String translations = TranslationListConverter.toString(mItems.get(position).getTranslations());
         viewHolder.translationTextView.setText(translations);
-        int progress = mItems.get(position).getMasterLevel();
-        if(progress < 0) { //jeżeli jest to pierwsze uczenia słówka, które nie jest zaznaczone w powtórkach ukrywamy postęp
-            viewHolder.progressBar.setVisibility(View.GONE);
-            viewHolder.progressTextView.setVisibility(View.GONE);
-        } else //w przeciwnym razie ustawiamy wartości
-        {
-            viewHolder.progressBar.setProgress(progress);
-            viewHolder.progressTextView.setText(progress + "%");
-        }
-        viewHolder.selectionButton.setSelected(mItems.get(position).isSelected());
 
+        /*final boolean isSelected = mItems.get(position).isSelected();
+        if(isSelected){
+            viewHolder.selectedButton.setBackgroundResource(SELECTED_ICON);
+        } else {
+            viewHolder.selectedButton.setBackgroundResource(UNSELECTED_ICON);
+        }*/
+        setSelectedButton(position,viewHolder);
+        viewHolder.selectedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(getClass().getSimpleName(), "onClick " + position);
+
+                boolean isSelected = mItems.get(position).isSelected();
+
+
+                mItems.get(position).setSelected(!isSelected);
+                viewHolder.selectedButton.setActivated(!isSelected);
+                viewHolder.selectedButton.invalidate();
+                Log.d(getClass().getSimpleName(), "selected" + viewHolder.selectedButton.isActivated());
+                setSelectedButton(position,viewHolder);
+            }
+        });
         return rowView;
     }
 
-    static class ViewHolder {
-        public CheckBox checkBox;
-        public TextView contentTextView;
-        public TextView translationTextView;
-        public ProgressBar progressBar;
-        public TextView progressTextView;
-        public ToggleButton selectionButton;
+    private void setSelectedButton(int position, ViewHolder viewHolder){
+        final boolean isSelected = mItems.get(position).isSelected();
 
-        public ViewHolder(View view)
-        {
-            checkBox = (CheckBox) view.findViewById(R.id.word_check_box);
-            contentTextView = (TextView) view.findViewById(R.id.word_content_text_view);
-            translationTextView = (TextView) view.findViewById(R.id.word_translation_text_view);
-            progressBar = (ProgressBar)view.findViewById(R.id.word_progress_bar);
-            progressTextView = (TextView)view.findViewById(R.id.word_progress_text_view);
-            selectionButton = (ToggleButton)view.findViewById(R.id.word_selected_toggle_button);
+        if(isSelected){
+            //viewHolder.selectedButton.setImageDrawable(ContextCompat.getDrawable(mContext,SELECTED_ICON));
+            //viewHolder.selectedButton.setBackgroundResource(SELECTED_ICON);
+            viewHolder.selectedButton.setImageResource(SELECTED_ICON);
+        } else {
+            //viewHolder.selectedButton.setImageDrawable(ContextCompat.getDrawable(mContext,UNSELECTED_ICON));
+            //viewHolder.selectedButton.setBackgroundResource(UNSELECTED_ICON);
+            viewHolder.selectedButton.setImageResource(UNSELECTED_ICON);
         }
     }
+
+    static class ViewHolder {
+        public TextView contentTextView;
+        public TextView translationTextView;
+        public ImageView selectedButton;
+
+        public ViewHolder(View view){
+            contentTextView = (TextView) view.findViewById(R.id.word_content_text_view);
+            translationTextView = (TextView)view.findViewById(R.id.word_translation_text_view);
+            selectedButton = (ImageView) view.findViewById(R.id.selected_button);
+        }
+    }
+
 }

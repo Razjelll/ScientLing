@@ -94,7 +94,7 @@ public class SetDao extends BaseDao<VocabularySet> {
             set.setName(cursor.getString(SetsColumns.NAME_POSITION));
             long languageL2Id = cursor.getLong(SetsColumns.LANGUAGE_L2_FK_POSITION);
             if (languageL2Id > 0) {
-                Language language = new Language(); //TODO sprawdzić w praniu
+                Language language = new Language();
                 language.setId(languageL2Id);
                 set.setLanguageL2(language);
             }

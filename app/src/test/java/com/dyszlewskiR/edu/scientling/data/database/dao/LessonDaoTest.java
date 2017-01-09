@@ -34,7 +34,6 @@ public class LessonDaoTest {
         mLesson1.setId(1);
         mLesson1.setName("Ubrania 1");
         mLesson1.setNumber(1);
-        //TODO zastanowić się czy Lesson będzie zawierał id do Setu czy Set będzie zawierał liste Lessonów
 
         mDbHelper.setFileOpener(new ResourcesFileOpener());
         SQLiteDatabase db = mDbHelper.getWritableDatabase();

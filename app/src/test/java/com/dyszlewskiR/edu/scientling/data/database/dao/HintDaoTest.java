@@ -46,7 +46,7 @@ public class HintDaoTest {
 
         mHint2 = new Hint();
         mHint2.setId(2);
-        mHint2.setContent(""); //TODO coś tutaj wpisać
+        mHint2.setContent("");
 
         mDbHelper.setFileOpener(new ResourcesFileOpener());
         SQLiteDatabase db = mDbHelper.getWritableDatabase();

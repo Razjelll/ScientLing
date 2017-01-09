@@ -40,7 +40,6 @@ public class WordsTable {
         public static final String SELECTED = "selected";
         public static final String OWN = "own";
         public static final String LEARNING_DATE = "learning_date";
-        //TODO zobaczyć, czy nie dodać notatki
 
         public static final int ID_POSITION = 0;
         public static final int CONTENT_POSITION = 1;

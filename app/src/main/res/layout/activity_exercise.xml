@@ -40,9 +40,7 @@
             android:indeterminateOnly="false"
             android:progressDrawable="@drawable/exercise_progress_bar"
             android:layout_weight="0.3"
-            android:layout_marginLeft="3dp"
-            android:layout_marginRight="3dp"
-
+            android:layout_margin="@dimen/margin"
             />
 
     </LinearLayout>

@@ -44,7 +44,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Metoda ustawijąca z sposób otwierania zasonów. //TODO uzupełnić
+     * Metoda ustawijąca z sposób otwierania zasonów.
      *
      * @param fileOpener
      */

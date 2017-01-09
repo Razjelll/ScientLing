@@ -20,7 +20,6 @@ INSERT INTO Categories(name, language_fk)
 VALUES  ('War',1);
 
 
-
 INSERT INTO Sentences(content, translation)
 VALUES ('This is very polite dog', 'To jest bardzo grzeczny piesek');
 INSERT INTO Sentences(content, translation)
@@ -61,44 +60,44 @@ INSERT INTO Definitions(content, translation)
 VALUES ('domestic mammal closely related with gray wold','udomowiony ssak blisko powiązany z szarym wilkiem');
 
 
-INSERT INTO Words(content, transcription, definition_fk, lesson_fk, part_of_speech_fk, category_fk, difficult, master_level, selected)
-VALUES ('dog', 'dog', 2,2,1,1,5,50,0); --1
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('great', 'grejt',2,1,5,-1,0); --2
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('cause', 'kous',2,1,5,100,0); --3
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('old', 'old',3,1,5,-1,0); --4
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('time', 'tajm',2,1,5,-1,0); --5
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('men', 'men',2,1,5,-1,0); --6
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('need', 'nid',3,1,5,20,0); --7
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('father', 'fater',2,1,5,-1,0); --8
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('head', 'hed',2,1,5,-1,0); --9
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('point', 'pojnt',2,1,5,40,0); --10
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('world', 'łerld',3,1,5,-1,0); --10
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('run', 'ran',2,1,5,-1,0); --12
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('left', 'left',2,1,5,100,0); --13
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('car', 'kar',2,1,5,-1,0); --14
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('book', 'buk',3,1,5,0,0); --15
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('room', 'rum',2,1,5,-1,0); --16
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('dark', 'dark',3,1,5,-1,0); --17
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('short', 'szort',3,1,5,-1,0); --18
-INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, master_level, selected)
-VALUES ('blue', 'blu',3,1,5,-1,0); --19
+INSERT INTO Words(content, transcription, definition_fk, lesson_fk, part_of_speech_fk, category_fk, difficult, selected)
+VALUES ('dog', 'dog', 2,2,1,1,5,0); --1
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, selected)
+VALUES ('great', 'grejt',2,1,5,0); --2
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, selected)
+VALUES ('cause', 'kous',2,1,5,0); --3
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, selected)
+VALUES ('old', 'old',3,1,5,0); --4
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult , selected)
+VALUES ('time', 'tajm',2,1,5,0); --5
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult , selected)
+VALUES ('men', 'men',2,1,5,0); --6
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult , selected)
+VALUES ('need', 'nid',3,1,5,0); --7
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, selected)
+VALUES ('father', 'fater',2,1,5,0); --8
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, selected)
+VALUES ('head', 'hed',2,1,5,0); --9
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, selected)
+VALUES ('point', 'pojnt',2,1,5,0); --10
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, selected)
+VALUES ('world', 'łerld',3,1,5,0); --10
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, selected)
+VALUES ('run', 'ran',2,1,5,0); --12
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, selected)
+VALUES ('left', 'left',2,1,5,0); --13
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, selected)
+VALUES ('car', 'kar',2,1,5,0); --14
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, selected)
+VALUES ('book', 'buk',3,1,5,0); --15
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, selected)
+VALUES ('room', 'rum',2,1,5,0); --16
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, selected)
+VALUES ('dark', 'dark',3,1,5,0); --17
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, selected)
+VALUES ('short', 'szort',3,1,5,0); --18
+INSERT INTO Words(content, transcription, lesson_fk,  category_fk, difficult, selected)
+VALUES ('blue', 'blu',3,1,5,0); --19
 
 INSERT INTO Translations(content)
 VALUES ('pies'); --1
@@ -230,24 +229,8 @@ VALUES (5,1);
 INSERT INTO WordsHints(word_fk, hint_fk)
 VALUES (3,3);
 
-INSERT INTO Repetitions(word_fk, month, day)
-VALUES (1,4,4);
-INSERT INTO Repetitions(word_fk, month, day)
-VALUES (2,4,4);
-INSERT INTO Repetitions(word_fk, month, day)
-VALUES (3,4,4);
-INSERT INTO Repetitions(word_fk, month, day)
-VALUES (4,4,4);
-INSERT INTO Repetitions(word_fk, month, day)
-VALUES (5,4,4);
-INSERT INTO Repetitions(word_fk, month, day)
-VALUES (6,4,4);
-INSERT INTO Repetitions(word_fk, month, day)
-VALUES (7,4,4);
-INSERT INTO Repetitions(word_fk, month, day)
-VALUES (8,4,4);
-INSERT INTO Repetitions(word_fk, month, day)
-VALUES (9,4,4);
+
+
 
 
 

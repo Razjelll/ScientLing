@@ -138,7 +138,6 @@ public class FlashcardAdapter extends PagerAdapter {
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         Log.d("TAG", "destroyItem " + position);
-        //container.removeView((View)object);
         View view = (View) object;
         ((ViewPager) container).removeView(view);
         mViews.remove(position);
@@ -156,27 +155,4 @@ public class FlashcardAdapter extends PagerAdapter {
         super.notifyDataSetChanged();
 
     }
-
-
-
-
-    /*private void changeSide(int position)
-    {
-        Log.d(TAG, "changeSide " + position);
-        //TODO zrobienie animacji
-        if(mFirstSide) {
-            mFlashcardTextView.setText(mItems.get(position).getContent());
-        } else {
-            String translations = TranslationListConverter.toString(mItems.get(position).getTranslations());
-            mFlashcardTextView.setText(translations);
-        }
-        mFirstSide = !mFirstSide;
-        notifyDaaSetChanged();
-    }*/
-
-    /*@Override
-    public int getItemPosition(Object object)
-    {
-        return mPosition;
-    }*/
 }

@@ -3,6 +3,7 @@ package com.dyszlewskiR.edu.scientling.fragment;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,9 @@ import android.widget.ListView;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.SummaryRepetitionAdapter;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.services.repetitions.SaveExerciseService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,20 +42,29 @@ public class SummaryLearningFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_summary_learning, container, false);
-        mListView = (ListView) view.findViewById(R.id.list);
-        mSaveButton = (Button)view.findViewById(R.id.save_button);
+        setupControls(view);
         return view;
     }
 
+    private void setupControls(View view){
+        mListView = (ListView) view.findViewById(R.id.list);
+        mSaveButton = (Button)view.findViewById(R.id.save_button);
+    }
+
+
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        SummaryRepetitionAdapter adapter = new SummaryRepetitionAdapter(getActivity(), R.layout.item_summary_repetition, mWords);
+        SummaryRepetitionAdapter adapter = new SummaryRepetitionAdapter(getActivity(), R.layout.item_summary_exercise, mWords);
         mListView.setAdapter(adapter);
 
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO odpalenie usługi zapisujące zaznaczone słówka
+                Log.d(getClass().getSimpleName(), "onClick service");
+                Intent intent = new Intent(getActivity().getBaseContext(), SaveExerciseService.class);
+                intent.putParcelableArrayListExtra("list",(ArrayList<Word>)mWords);
+                getActivity().startService(intent);
                 getActivity().finish();
             }
         });

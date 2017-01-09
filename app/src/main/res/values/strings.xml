@@ -17,11 +17,12 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="put_translation">Wpisz tłumaczenie </string>
     <string name="check_answer">Sprawdź odpowiedź</string>
-    <string name="reperat">Powtórz</string>
+    <string name="repeat">Powtórz</string>
     <string name="menage_repetitions">Zarządzaj powórkami</string>
     <string name="finish">Zakończ</string>
     <string name="title_activity_repetition_list">RepetitionListActivity</string>
     <string name="title_activity_word_edit">WordEditActivity</string>
+    <string name="master_words">Przećwiczonych słowek: </string>
 
     <!--OGOLNE-->
     <string name="lack">Brak</string>

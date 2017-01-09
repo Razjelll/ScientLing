@@ -47,7 +47,6 @@ public class SentencesPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position)
     {
-        //TODO zobaczyć czy uda się to zrobić inaczej
         View view = mInflater.inflate(R.layout.item_sentence_viewpager, null);
         TextView contentTextView = (TextView)view.findViewById(R.id.sentence_content_text_view);
         TextView translationTextView = (TextView)view.findViewById(R.id.sentence_translation_text_view);
