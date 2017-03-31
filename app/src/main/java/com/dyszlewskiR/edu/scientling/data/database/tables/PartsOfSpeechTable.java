@@ -21,6 +21,8 @@ public class PartsOfSpeechTable {
         public static final String ID = "id";
         public static final String NAME = "name";
 
+        public static final String NAME_ALIAS = "part_of_speech_name";
+
         public static final int ID_POSITION = 0;
         public static final int NAME_POSITION = 1;
 

@@ -14,7 +14,7 @@ import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.ExerciseActivity;
 import com.dyszlewskiR.edu.scientling.adapters.SummaryRepetitionAdapter;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
-import com.dyszlewskiR.edu.scientling.fragment.dialogs.ExercisesListDialogFragment;
+import com.dyszlewskiR.edu.scientling.dialogs.ExercisesListDialogFragment;
 import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
 import com.dyszlewskiR.edu.scientling.services.repetitions.SaveExerciseService;
 

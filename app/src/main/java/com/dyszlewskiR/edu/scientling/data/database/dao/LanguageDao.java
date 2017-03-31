@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.dyszlewskiR.edu.scientling.data.database.tables.LanguagesTable;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Language;
 import com.dyszlewskiR.edu.scientling.data.models.creators.LanguageCreator;
-import com.dyszlewskiR.edu.scientling.utils.BitmapHelper;
+import com.dyszlewskiR.edu.scientling.utils.BitmapUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +70,7 @@ public class LanguageDao extends BaseDao<Language> {
         }
         mInsertStatement.bindString(LanguagesColumns.CODE_POSITION, entity.getCode());
         if(entity.getFlag() !=null ) {
-            mInsertStatement.bindBlob(LanguagesColumns.FLAG_POSITION, BitmapHelper.convertToByteArray(entity.getFlag()));
+            mInsertStatement.bindBlob(LanguagesColumns.FLAG_POSITION, BitmapUtils.toByteArray(entity.getFlag()));
         } else {
             mInsertStatement.bindNull(LanguagesColumns.FLAG_POSITION);
         }
@@ -94,7 +94,7 @@ public class LanguageDao extends BaseDao<Language> {
         values.put(LanguagesColumns.NAME, entity.getName());
         values.put(LanguagesColumns.ABBREVIATION, entity.getAbbreviation());
         values.put(LanguagesColumns.CODE, entity.getCode());
-        values.put(LanguagesColumns.FLAG, BitmapHelper.convertToByteArray(entity.getFlag()));
+        values.put(LanguagesColumns.FLAG, BitmapUtils.toByteArray(entity.getFlag()));
 
         mDb.update(TABLE_NAME, values, getWhereStatement(), getWhereArguments(entity));
     }

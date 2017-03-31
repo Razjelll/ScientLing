@@ -18,12 +18,11 @@ import static com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTabl
  * Created by Razjelll on 07.11.2016.
  */
 
-public class CategoryDao extends BaseDao<Category> {
+public class    CategoryDao extends BaseDao<Category> {
 
     private final String INSERT_STATEMENT =
             "INSERT INTO " + CategoriesTable.TABLE_NAME + "("
-                    + CategoriesColumns.NAME + ", " + CategoriesColumns.LANGUAGE_FK
-                    + ") VALUES (?,?)";
+                    + CategoriesColumns.NAME + ") VALUES (?)";
 
     public CategoryDao(SQLiteDatabase db) {
         super(db);
@@ -35,7 +34,6 @@ public class CategoryDao extends BaseDao<Category> {
     public long save(Category entity) {
         mInsertStatement.clearBindings();
         mInsertStatement.bindString(1, entity.getName());
-        mInsertStatement.bindLong(2, entity.getLanguage().getId());
 
         return mInsertStatement.executeInsert();
     }
@@ -47,13 +45,11 @@ public class CategoryDao extends BaseDao<Category> {
         mDb.update(TABLE_NAME, values, getWhereStatement(), getWhereArguments(entity));
     }
 
-    private String getWhereStatement()
-    {
-        return CategoriesColumns.ID +"=?";
+    private String getWhereStatement() {
+        return CategoriesColumns.ID + "=?";
     }
 
-    private String[] getWhereArguments(Category entity)
-    {
+    private String[] getWhereArguments(Category entity) {
         return new String[]{String.valueOf(entity.getId())};
     }
 
@@ -78,8 +74,7 @@ public class CategoryDao extends BaseDao<Category> {
         return category;
     }
 
-    private String[] getWhereArguments(long id)
-    {
+    private String[] getWhereArguments(long id) {
         return new String[]{String.valueOf(id)};
     }
 

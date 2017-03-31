@@ -1,17 +1,26 @@
 package com.dyszlewskiR.edu.scientling.adapters;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
+import com.dyszlewskiR.edu.scientling.activity.SentenceDetailActivity;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
+import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import java.util.List;
+import java.util.zip.CheckedOutputStream;
 
 /**
  * Created by Razjelll on 27.11.2016.
@@ -19,10 +28,13 @@ import java.util.List;
 
 public class SentencesAdapter extends ArrayAdapter {
 
+    private final int EDIT_REQUEST = 2845;
 
     private List<Sentence> mItems;
     private Context mContext;
     private int mResource;
+
+    private int mLastEdited;
 
     public SentencesAdapter(Context context, int resource, List<Sentence> data) {
         super(context, resource);
@@ -65,44 +77,70 @@ public class SentencesAdapter extends ArrayAdapter {
 
         viewHolder.contentTextView.setText(mItems.get(position).getContent());
         viewHolder.translationTextView.setText(mItems.get(position).getTranslation());
-        viewHolder.deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final int pos = position;
-                mItems.remove(pos);
-                notifyDataSetChanged();
-            }
-        });
+        setupMenu(position, viewHolder);
         return rowView;
     }
 
-    static class ViewHolder {
-        public TextView contentTextView;
-        public TextView translationTextView;
-        public Button deleteButton;
+    private void setupMenu(final int position, final ViewHolder viewHolder){
+        viewHolder.actionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popupMenu = new PopupMenu(mContext, viewHolder.actionButton);
+                popupMenu.getMenu().add(mContext.getString(Constants.MENU_EDIT));
+                popupMenu.getMenu().add(mContext.getString(Constants.MENU_DELETE));
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        if(item.getItemId() == Constants.MENU_EDIT){
+                            Log.d(getClass().getSimpleName(), "Udało się");
+                        }
+                        if(item.getTitle().equals(mContext.getString(Constants.MENU_EDIT))){
+                            startEditSentence(position);
+                        }
+                        if(item.getTitle().equals(mContext.getString(Constants.MENU_DELETE))){
+                            deleteSentence(position);
+                        }
+                        return true;
+                    }
+                });
+                popupMenu.show();
+            }
+        });
+    }
 
-        public ViewHolder(View view)
-        {
-            contentTextView = (TextView) view.findViewById(R.id.sentencesContentText);
-            translationTextView = (TextView) view.findViewById(R.id.sentencesTranslationText);
-            deleteButton = (Button) view.findViewById(R.id.sentencesDeleteButton);
+    public void startEditSentence(int position){
+        mLastEdited = position;
+        Intent intent = new Intent(mContext, SentenceDetailActivity.class);
+        intent.putExtra("item",mItems.get(position));
+        intent.putExtra("edit",true);
+        ((Activity)mContext).startActivityForResult(intent, EDIT_REQUEST);
+    }
+
+    private void deleteSentence(int position){
+        mItems.remove(position);
+        notifyDataSetChanged();
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(requestCode == EDIT_REQUEST){
+            if(resultCode == Activity.RESULT_OK){
+                Sentence sentence = data.getParcelableExtra("result");
+                mItems.set(mLastEdited, sentence);
+                notifyDataSetChanged();
+            }
         }
     }
 
-    /*private class OnDeleteClickListener implements View.OnClickListener {
+    public static class ViewHolder {
+        public TextView contentTextView;
+        public TextView translationTextView;
+        public ImageView actionButton;
 
-        private ListView mView;
-        private int mPosition;
-
-        public OnDeleteClickListener(ListView view, int position)
+        public ViewHolder(View view)
         {
-            mView= view;
-            mPosition = position;
+            contentTextView = (TextView) view.findViewById(R.id.sentence_content_text_view);
+            translationTextView = (TextView) view.findViewById(R.id.sentence_translation_text_view);
+            actionButton = (ImageView) view.findViewById(R.id.action_button);
         }
-        @Override
-        public void onClick(View v) {
-            mItems.remove(mPosition);
-            mView.invalidateViews();
-        }
-    }*/
+    }
 }

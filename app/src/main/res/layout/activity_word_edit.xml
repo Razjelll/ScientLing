@@ -25,7 +25,10 @@
                 android:id="@+id/more_toggle_button"
                 android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@android:drawable/ic_menu_more"
+
+
+
+                android:drawablePadding="15dp"
                 android:textOn=""
                 android:textOff=""
                 android:layout_gravity="right"

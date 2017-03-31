@@ -1,8 +1,14 @@
 package com.dyszlewskiR.edu.scientling.data.database.utils;
 
+import android.content.Context;
+
+import com.dyszlewskiR.edu.scientling.utils.AssetsFileOpener;
+import com.dyszlewskiR.edu.scientling.utils.ResourcesFileOpener;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -13,11 +19,11 @@ public class QueryReader {
 
     //private InputStream mStream;
 
-    private final String STATEMENTS_SEP = ";";
-    private final String OPEN_BRACKET = "(";
-    private final String COMMENT = "--";
-    private final String START_COMMENT = "/*";
-    private final String END_COMMENT = "*/";
+    private static final String STATEMENTS_SEP = ";";
+    private static final String OPEN_BRACKET = "(";
+    private static final String COMMENT = "--";
+    private static final String START_COMMENT = "/*";
+    private static final String END_COMMENT = "*/";
 
 
     public QueryReader() {
@@ -73,9 +79,7 @@ public class QueryReader {
                     int commentEndIndex = word.indexOf(END_COMMENT);
                     word = word.substring(commentEndIndex + 2, word.length());
                 }
-
             }
-
             if (!word.equals("")) {
                 statementBuilder.append(word);
                 if (word.contains(STATEMENTS_SEP)) {
@@ -86,11 +90,105 @@ public class QueryReader {
                     statementBuilder.append(" ");
                 }
             }
-
-
         }
-
         return statementsList;
+    }
+
+    public static String getQuery(String assetPath, Context context) throws IOException {
+        AssetsFileOpener opener = new AssetsFileOpener(context);
+        InputStream inputStream = opener.getStream(assetPath);
+        Scanner scanner = new Scanner(inputStream);
+        String query = getQueryFromScanner(scanner);
+        return query;
+    }
+
+    public static String getQuery(String javaResourcePath) throws IOException {
+        ResourcesFileOpener opener = new ResourcesFileOpener();
+        InputStream inputStream = opener.getStream(javaResourcePath);
+        Scanner scanner = new Scanner(inputStream);
+        String query = getQueryFromScanner(scanner);
+        return query;
+    }
+
+    public static String getQuery(InputStream inputStream){
+        Scanner scanner = new Scanner(inputStream);
+        String query = getQueryFromScanner(scanner);
+        return query;
+    }
+
+    public static List<String> getQueries(String queryPath, Context context) throws IOException{
+        AssetsFileOpener opener = new AssetsFileOpener(context);
+        InputStream inputStream = opener.getStream(queryPath);
+        Scanner scanner = new Scanner(inputStream);
+        List<String> queriesList = new ArrayList<>();
+        String query = null;
+        while(scanner.hasNext()){
+            query = getQueryFromScanner(scanner);
+            if(query!= null){
+                queriesList.add(query);
+            }
+        }
+        return queriesList;
+    }
+
+    public static List<String> getQueries(InputStream inputStream){
+        Scanner scanner = new Scanner(inputStream);
+        List<String> queriesList = new ArrayList<>();
+        String query = null;
+        while(scanner.hasNext()){
+            query = getQueryFromScanner(scanner);
+            if(query!=null){
+                queriesList.add(query);
+            }
+        }
+        return queriesList;
+    }
+
+    private static String getQueryFromScanner(Scanner scanner){
+        StringBuilder queryBuilder = new StringBuilder();
+        String word = null;
+        if(!scanner.hasNext()){return word;}
+        do{ //wykonujemy do końca pliku lub do napotkania znaku końca zapytania
+            word = scanner.next();
+            if(word.contains(COMMENT)){
+                word = parseComment(word);
+                scanner.nextLine();
+            } else if(word.contains(START_COMMENT)){
+                word = parseStartComment(word);
+            } else if(word.contains(END_COMMENT)){
+                word = parseStartComment(word);
+            }
+            if(!word.equals("")){
+                queryBuilder.append(word).append(" ");
+            }
+            /*if(word.contains(STATEMENTS_SEP)){
+                return queryBuilder.toString();
+            }*/
+        }while(scanner.hasNext() && !word.contains(STATEMENTS_SEP));
+        return queryBuilder.toString();
+    }
+
+    private static String parseComment(String word){
+        int commentBeginIndex = word.indexOf(COMMENT);
+        word = word.substring(0, commentBeginIndex);
+        return word;
+    }
+
+    private static String parseStartComment(String word){
+        int commentBeginIndex = word.indexOf(START_COMMENT);
+        if(word.contains(END_COMMENT)){
+            String secondPartWord = parseEndComment(word);
+            word = word.substring(0, commentBeginIndex) + " " + secondPartWord;
+        } else {
+            word = word.substring(0, commentBeginIndex);
+        }
+        return word;
+    }
+
+    private static String parseEndComment(String word){
+        int commentEndIndex = word.indexOf(END_COMMENT);
+        word = word.substring(commentEndIndex + 2, word.length());
+        return word;
     }
 
 

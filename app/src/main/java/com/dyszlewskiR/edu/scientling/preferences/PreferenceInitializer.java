@@ -21,6 +21,12 @@ public class PreferenceInitializer {
     private static final int DEFAULT_EXERCISE = 1;
     private static final int DEFAULT_DIRECTION = 0;
     private static final int DEFAULT_ORDER_LEARNING = 2;
+    private static final boolean DEFAULT_SHOW_SPEECH_BUTTON = false;
+    private static final boolean DEFAULT_REMINDER = true;
+    private static final String DEFAULT_REMINDER_TIME = "16:00";
+    private static final boolean DEFAULT_REMINDER_SOUND = false;
+    private static final boolean DEFAULT_REMINDER_VIBRATION = true;
+
 
     public static boolean isInitialize(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -38,8 +44,13 @@ public class PreferenceInitializer {
         editor.putString(Preferences.DEFAULT_EXERCISE_PREF, String.valueOf(DEFAULT_EXERCISE));
         editor.putString(Preferences.DEFAULT_DIRECTION_PREF, String.valueOf(DEFAULT_DIRECTION));
         editor.putString(Preferences.NUMBER_FLASHCARD_PREF, String.valueOf(DEFAULT_NUMBER_FLASHCARD));
-        editor.putBoolean(INITIALIZE_PREF, true);
         editor.putString(Preferences.ORDER_LEARNING_PREF, String.valueOf(DEFAULT_ORDER_LEARNING));
+        editor.putBoolean(Preferences.SHOW_SPEECH_BUTTON_PREF, DEFAULT_SHOW_SPEECH_BUTTON);
+        editor.putBoolean(Preferences.REMINDER_PREF, DEFAULT_REMINDER);
+        editor.putString(Preferences.REMINDER_TIME_PREF, DEFAULT_REMINDER_TIME);
+        editor.putBoolean(Preferences.REMINDER_SOUND, DEFAULT_REMINDER_SOUND);
+        editor.putBoolean(Preferences.REMINDER_VIBRATION, DEFAULT_REMINDER_VIBRATION);
+        editor.putBoolean(INITIALIZE_PREF, true);
 
         editor.apply();
     }

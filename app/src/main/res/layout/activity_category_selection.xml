@@ -18,13 +18,6 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorMain"
             app:popupTheme="@style/PopupOverlay" >
-            <ImageView
-                android:id="@+id/add_button"
-                android:layout_width="56dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="right"
-                android:src="@drawable/ic_add"
-                android:padding="20dp"/>
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>

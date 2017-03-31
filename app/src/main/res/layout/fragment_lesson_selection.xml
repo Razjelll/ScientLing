@@ -13,13 +13,9 @@
     tools:showIn="@layout/activity_lesson_selection"
     android:background="@drawable/shadow_border">
 
-    <Button
-        style="@style/ButtonStyle"
-        android:id="@+id/set_button"/>
-    <ListView
+    <ListView android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/list"
         />
 
 </LinearLayout>

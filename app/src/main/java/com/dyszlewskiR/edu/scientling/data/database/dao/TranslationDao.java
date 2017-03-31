@@ -186,10 +186,11 @@ public class TranslationDao extends BaseDao<Translation> {
     }
 
     public void deleteUnlinked() {
-        String statement = "DELETE FROM "
-                + TABLE_NAME + "WHERE " + TranslationsColumns.ID + "IS NO IN ("
-                + "SELECT " + WordsTranslationsColumns.TRANSLATION_FK + " FROM "
-                + WordsTranslationsTable.TABLE_NAME + ")";
+        String statement = new StringBuilder()
+                .append("DELETE FROM ").append(TranslationsTable.TABLE_NAME)
+                .append(" WHERE ").append(TranslationsColumns.ID).append(" NOT IN")
+                .append(" (SELECT ").append(WordsTranslationsColumns.TRANSLATION_FK)
+                .append(" FROM ").append(WordsTranslationsTable.TABLE_NAME).append(")").toString();
         mDb.execSQL(statement);
     }
 

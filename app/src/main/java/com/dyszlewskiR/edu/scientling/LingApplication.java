@@ -42,6 +42,10 @@ public class LingApplication extends Application {
             PreferenceInitializer.initialize(getBaseContext());
             Settings.setCurrentSetId(Constants.DEFAULT_SET_ID, getBaseContext());
         }
+
+        ApplicationLifecycleHandler handler = new ApplicationLifecycleHandler();
+        registerActivityLifecycleCallbacks(handler);
+        registerComponentCallbacks(handler);
     }
 
     @Override

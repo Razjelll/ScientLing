@@ -34,5 +34,4 @@ public class LessonActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
 }

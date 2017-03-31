@@ -56,7 +56,7 @@ public class CurrentSetSelectionFragment extends Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Settings.setCurrentSetId(mItems.get(position).getId(),getActivity());
+                //Settings.setCurrentSetId(mItems.get(position).getWordId(),getActivity());
                 setResultAndFinish(position);
             }
         });

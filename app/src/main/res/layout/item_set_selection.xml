@@ -1,18 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-    
-    <TextView
-        style="@style/TextViewStyle" 
-        android:id="@+id/set_list_name"
-        android:text="to jest pustka"
-        android:textStyle="bold" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1">
+        <TextView
+            style="@style/TextViewStyle"
+            android:id="@+id/set_list_name"
+            android:text="to jest pustka"
+            android:textStyle="bold" />
+        <TextView
+            style="@style/LabelStyle"
+            android:id="@+id/set_list_language"
+            android:text="Angielski"/>
+    </LinearLayout>
 
-    <!--uzyłbym tutaj stylu, ale Android twierdzi przy inflate że tak nie można -->
-    <TextView
-        style="@style/LabelStyle"
-        android:id="@+id/set_list_language"
-        android:text="Angielski"/>
+
+    <ImageView
+        android:id="@+id/action_button"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/ic_menu"
+        android:padding="15dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/shadow_border"
+        />
+
 </LinearLayout>

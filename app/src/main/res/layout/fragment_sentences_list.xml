@@ -12,17 +12,17 @@
     tools:showIn="@layout/activity_sentences_list"
     android:background="@drawable/shadow_border"
     >
-
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/sentenceList"
-        android:focusable="false">
-
+        android:id="@+id/list"
+        android:focusable="false"
+        android:layout_above="@+id/ok_button">
     </ListView>
     <Button
         style="@style/ButtonStyle"
-        android:id="@+id/saveButton"
+        android:id="@+id/ok_button"
         android:layout_alignParentBottom="true"
-        android:text="@string/save"/>
+        android:text="@string/ok"
+        android:layout_marginTop="@dimen/margin"/>
 </RelativeLayout>

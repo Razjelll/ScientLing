@@ -1,5 +1,7 @@
 package com.dyszlewskiR.edu.scientling.data.database.tables;
 
+import com.dyszlewskiR.edu.scientling.data.models.creators.WordCreator;
+
 /**
  * Created by Razjelll on 11.11.2016.
  */
@@ -24,6 +26,8 @@ public class WordsTable {
         columns[WordsColumns.SELECTED_POSITION] = WordsColumns.SELECTED;
         columns[WordsColumns.OWN_POSITION] = WordsColumns.OWN;
         columns[WordsColumns.LEARNING_DATE_POSITION] = WordsColumns.LEARNING_DATE;
+        columns[WordsColumns.IMAGE_NAME_POSITION] = WordsColumns.IMAGE_NAME;
+        columns[WordsColumns.RECORD_NAME_POSITION] = WordsColumns.RECORD_NAME;
         return columns;
     }
 
@@ -40,6 +44,8 @@ public class WordsTable {
         public static final String SELECTED = "selected";
         public static final String OWN = "own";
         public static final String LEARNING_DATE = "learning_date";
+        public static final String IMAGE_NAME = "image_name";
+        public static final String RECORD_NAME = "record_name";
 
         public static final int ID_POSITION = 0;
         public static final int CONTENT_POSITION = 1;
@@ -53,8 +59,10 @@ public class WordsTable {
         public static final int SELECTED_POSITION = 9;
         public static final int OWN_POSITION = 10;
         public static final int LEARNING_DATE_POSITION = 11;
+        public static final int IMAGE_NAME_POSITION = 12;
+        public static final int RECORD_NAME_POSITION = 13;
 
-        public static final int COLUMNS_COUNT = 12;
+        public static final int COLUMNS_COUNT = 14;
     }
 
 }

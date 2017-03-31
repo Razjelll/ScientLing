@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
      android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <TextView
@@ -11,40 +11,31 @@
         android:text="Lekcja 1"
         />
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/lesson_number_label"
+        style="@style/LabelStyle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:textSize="@dimen/small_text_size"
+        android:text="@string/lesson_number"
+        android:layout_below="@id/lesson_text_view"
+        />
 
-        <TextView
-            style="@style/LabelStyle"
-            android:layout_width="wrap_content"
-            android:textSize="@dimen/small_text_size"
-            android:text="@string/vocabulary_set"
-            android:layout_gravity="center_vertical"
-            />
-        <TextView
-           style="@style/TextViewStyle"
-            android:layout_width="wrap_content"
-            android:id="@+id/set_text_view"
-            android:textSize="@dimen/small_text_size"
-            android:text="Angielski dla wytrwyałych"
-            android:layout_weight="0.5"/>
+    <TextView
+         style="@style/TextViewStyle"
+        android:layout_width="wrap_content"
+        android:id="@+id/lesson_number_text_view"
+        android:textSize="@dimen/small_text_size"
+        android:text="4"
+        android:layout_toRightOf="@id/lesson_number_label"
+        android:layout_below="@id/lesson_text_view"
+        android:gravity="center"
+        />
 
-        <TextView
-            style="@style/LabelStyle"
-            android:layout_width="wrap_content"
-            android:textSize="@dimen/small_text_size"
-            android:text="@string/lesson_number"
-            android:layout_gravity="center_vertical"
-            />
+    <ImageView
+        android:id="@+id/action_button"
+        style="@style/ActionButtonWithBorder"
+        />
 
-        <TextView
-          style="@style/TextViewStyle"
-            android:layout_width="wrap_content"
-            android:id="@+id/lesson_number_text_view"
-            android:textSize="@dimen/small_text_size"
-            android:text="4"/>
 
-    </LinearLayout>
-</LinearLayout>
+</RelativeLayout>

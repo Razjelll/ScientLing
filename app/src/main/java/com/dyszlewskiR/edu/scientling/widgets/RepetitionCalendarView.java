@@ -11,7 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.utils.resources.LocaleHelper;
+import com.dyszlewskiR.edu.scientling.utils.resources.LocaleUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ public class RepetitionCalendarView extends LinearLayout{
         setButtonsListeners();
         setGridCellClickListener();
 
-        Locale locale = LocaleHelper.getLocale(context);
+        Locale locale = LocaleUtils.getLocale(context);
         mCalendar = Calendar.getInstance(locale);
         mFormatter = new SimpleDateFormat("MMMM yyyyy", locale);
     }

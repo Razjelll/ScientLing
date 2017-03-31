@@ -9,7 +9,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.dyszlewskiR.edu.scientling.fragment.RepetitionsFragment"
-    tools:showIn="@layout/activity_repetitions">
+    tools:showIn="@layout/activity_repetitions"
+    android:background="@drawable/shadow_border">
 
     <com.dyszlewskiR.edu.scientling.widgets.RepetitionCalendarView
         android:id="@+id/calendar_view"

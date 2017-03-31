@@ -26,38 +26,28 @@ public class LessonSelectionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lesson_selection);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        ImageView addButton = (ImageView)findViewById(R.id.add_button);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startLessonActivity();
-            }
-        });
+        setupToolbar();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         mFragment = (LessonSelectionFragment) fragmentManager.findFragmentById(R.id.lesson_selection_fragment);
+    }
+
+    private void setupToolbar(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                //NavUtils.navigateUpFromSameTask(this);
                 onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void startLessonActivity() {
-       /* Intent intent = new Intent(getBaseContext(), LessonActivity.class);
-        startActivityForResult(intent, LESSON_REQUEST);*/
-        mFragment.startLessonActivity();
     }
 
     @Override

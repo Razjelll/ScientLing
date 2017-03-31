@@ -14,24 +14,17 @@
         android:padding="5dp">
         <TextView
             style="@style/TextViewStyle"
-            android:id="@+id/sentencesContentText"
-            android:lines="3"
-
-            android:layout_marginBottom="4dp"
-            android:text="To jest jakieś tam zdanie które będzie sobie tam wyświetlione i chyba to będzie tyrpche fajne i cnie wiem jak to będzie lae bedzie i chujkk"/>
+            android:id="@+id/sentence_content_text_view"
+            android:textSize="@dimen/small_text_size"
+           />
         <TextView
             style="@style/LabelStyle"
-            android:id="@+id/sentencesTranslationText"
-            android:lines="3"
-            android:text="Tp jest z koleio tłumaczeni i nie wiem jak t ojest i hcyba tyo będzie fajne i nie wiem jak, lae nadal sobie myśle, że to nie ma sensu i chyba będzie fajnei "/>
+            android:id="@+id/sentence_translation_text_view"
+            android:textSize="@dimen/small_text_size"
+            />
     </LinearLayout>
-
-    <Button
-        style="@style/ButtonStyle"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_margin="10dp"
-        android:id="@+id/sentencesDeleteButton"
-
-        android:layout_gravity="center_vertical"/>
+    <ImageView
+        android:id="@+id/action_button"
+        style="@style/ActionButtonWithBorder"
+        />
 </LinearLayout>

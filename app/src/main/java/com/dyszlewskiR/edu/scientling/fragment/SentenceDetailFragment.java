@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupMenu;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
@@ -20,41 +21,94 @@ public class SentenceDetailFragment extends Fragment {
 
     private EditText mSentenceContent;
     private EditText mSentenceTranslation;
-    private Button mSaveButton;
+    private Button mOkButton;
+
+    private Sentence mSentence;
+    private boolean mEdit;
 
     public SentenceDetailFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        getData();
+    }
+
+    private void getData(){
+        Intent intent = getActivity().getIntent();
+        mSentence = intent.getParcelableExtra("item");
+        mEdit = intent.getBooleanExtra("edit",false);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sentence_detail, container, false);
-        mSentenceContent = (EditText) view.findViewById(R.id.sentenceEditText);
-        mSentenceTranslation = (EditText) view.findViewById(R.id.translationEditText);
-        mSaveButton = (Button) view.findViewById(R.id.saveButton);
-
-        Intent intent = getActivity().getIntent();
-        final Sentence sentence = intent.getParcelableExtra("sentence");
-
-        if (sentence != null) {
-            mSentenceContent.setText(sentence.getContent());
-            mSentenceTranslation.setText(sentence.getTranslation());
-        }
-
-        mSaveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Sentence resultSentence = new Sentence();
-                resultSentence.setContent(String.valueOf(mSentenceContent.getText()));
-                resultSentence.setTranslation(String.valueOf(mSentenceTranslation.getText()));
-                Intent result = new Intent();
-                result.putExtra("result", resultSentence);
-                getActivity().setResult(Activity.RESULT_OK, result);
-                getActivity().finish();
-            }
-        });
+        setupControls(view);
+        setListeners();
         return view;
     }
 
+    private void setupControls(View view){
+        mSentenceContent = (EditText) view.findViewById(R.id.content_edit_text);
+        mSentenceTranslation = (EditText) view.findViewById(R.id.translation_edit_text);
+        mOkButton = (Button) view.findViewById(R.id.ok_button);
+    }
 
+    private void setListeners(){
+        mOkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setResultAndFinish();
+            }
+        });
+    }
+
+    private boolean validate(){
+        if(mSentenceContent.getText().toString().trim().length()!=0){
+            return true;
+        } else {
+            mSentenceContent.setError(getString(R.string.not_empty_field));
+        }
+        return false;
+    }
+
+    private void setResultAndFinish(){
+        if(validate()){
+            Sentence sentence = getSentence();
+            Intent result = new Intent();
+            result.putExtra("result",sentence);
+            getActivity().setResult(Activity.RESULT_OK, result);
+            getActivity().finish();
+        }
+    }
+
+    private Sentence getSentence(){
+        Sentence sentence = null;
+        if(mSentence == null){
+            sentence = new Sentence();
+        } else {
+            sentence = mSentence;
+        }
+        sentence.setContent(mSentenceContent.getText().toString());
+        if(mSentenceTranslation.getText().toString().trim().length()!=0){
+            sentence.setTranslation(mSentenceTranslation.getText().toString());
+        }
+        return sentence;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState){
+        setValues();
+    }
+
+    private void setValues(){
+        if(mEdit && mSentence != null){
+            mSentenceContent.setText(mSentence.getContent());
+            if(mSentence.getTranslation()!=null){
+                mSentenceTranslation.setText(mSentence.getTranslation());
+            }
+        }
+    }
 }

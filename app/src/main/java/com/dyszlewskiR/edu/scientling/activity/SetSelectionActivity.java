@@ -2,10 +2,11 @@ package com.dyszlewskiR.edu.scientling.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -14,9 +15,7 @@ import com.dyszlewskiR.edu.scientling.fragment.SetSelectionFragment;
 
 public class SetSelectionActivity extends AppCompatActivity {
 
-    public static final int SET_REQUEST = 401;
-
-    private SetSelectionFragment mFragment;
+    public static final int ADD_SET_REQUEST = 401;
 
     private ImageView mAddButton;
 
@@ -51,22 +50,26 @@ public class SetSelectionActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (mFragment == null) {
-            findFragment();
-        }
         if (resultCode != RESULT_CANCELED) {
-            mFragment.onActivityResult(requestCode, resultCode, data);
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.set_selection_fragment);
+            fragment.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-    private void findFragment() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        mFragment = (SetSelectionFragment) fragmentManager.findFragmentById(R.id.set_selection_fragment);
     }
 
     private void startSetActivity() {
         Intent intent = new Intent(getBaseContext(), SetActivity.class);
-        startActivityForResult(intent, SET_REQUEST);
+        startActivityForResult(intent, ADD_SET_REQUEST);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                //NavUtils.navigateUpFromSameTask(this);
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }

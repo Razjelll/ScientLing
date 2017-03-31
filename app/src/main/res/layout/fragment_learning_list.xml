@@ -10,7 +10,8 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.dyszlewskiR.edu.scientling.fragment.LearningListFragment"
     tools:showIn="@layout/activity_learning_list"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/shadow_border">
 
     <ListView
         android:layout_width="match_parent"

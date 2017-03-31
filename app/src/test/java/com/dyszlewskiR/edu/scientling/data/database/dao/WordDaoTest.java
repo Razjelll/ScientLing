@@ -137,7 +137,6 @@ public class WordDaoTest {
         //Wstawianie kategorii
         Category category = new Category();
         category.setName("Zwierzęta");
-        category.setLanguage(language);
         category.setId(mCategoryDao.save(category));;
 
         //Dodawanie definicji

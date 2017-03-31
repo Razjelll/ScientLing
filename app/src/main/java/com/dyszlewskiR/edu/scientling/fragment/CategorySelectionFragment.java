@@ -15,6 +15,8 @@ import android.widget.ListView;
 
 import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
+import com.dyszlewskiR.edu.scientling.activity.CategoryActivity;
+import com.dyszlewskiR.edu.scientling.activity.CategorySelectionActivity;
 import com.dyszlewskiR.edu.scientling.adapters.CategoriesAdapter;
 import com.dyszlewskiR.edu.scientling.services.DataManager;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
@@ -41,11 +43,11 @@ public class CategorySelectionFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getActivity().getIntent();
-        VocabularySet set = intent.getParcelableExtra("set");
-        mLanguageL1Id = set.getLanguageL1().getId();
+        /*VocabularySet set = intent.getParcelableExtra("set");
+        mLanguageL1Id = set.getLanguageL1().getId();*/
 
         DataManager dataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
-        mItems = dataManager.getCategoriesByLanguage(mLanguageL1Id);
+        mItems = dataManager.getCategories();
     }
 
     @Override
@@ -66,7 +68,8 @@ public class CategorySelectionFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        mAdapter = new CategoriesAdapter(getActivity(), R.layout.item_category, mItems);
+        DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
+        mAdapter = new CategoriesAdapter(getActivity(), R.layout.item_category_selection, mItems, dataManager);
         mListView.setAdapter(mAdapter);
     }
 
@@ -82,11 +85,12 @@ public class CategorySelectionFragment extends Fragment {
         getActivity().finish();
     }
 
+
+
     private class SearchWatcher implements TextWatcher {
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
         }
 
         @Override
@@ -99,7 +103,6 @@ public class CategorySelectionFragment extends Fragment {
 
         @Override
         public void afterTextChanged(Editable s) {
-
         }
     }
 }

@@ -23,6 +23,9 @@ public class DefinitionsTable {
         public static final String CONTENT = "content";
         public static final String TRANSLATION = "translation";
 
+        public static final String CONTENT_ALIAS = "definition_content";
+        public static final String TRANSLATION_ALIAS = "definition_translation";
+
         public static final int ID_POSITION = 0;
         public static final int CONTENT_POSITION = 1;
         public static final int TRANSLATION_POSITION = 2;

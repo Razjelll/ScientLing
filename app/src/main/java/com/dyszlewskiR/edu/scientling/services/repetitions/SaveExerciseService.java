@@ -11,7 +11,7 @@ import com.dyszlewskiR.edu.scientling.data.models.tableModels.Repetition;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.services.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.DateCalculator;
-import com.dyszlewskiR.edu.scientling.utils.DateHelper;
+import com.dyszlewskiR.edu.scientling.utils.DateUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -73,7 +73,7 @@ public class SaveExerciseService extends IntentService {
     }
 
     private int getLearningDate(){
-        return DateCalculator.dateToInt(DateHelper.getTodayDate());
+        return DateCalculator.dateToInt(DateUtils.getTodayDate());
     }
 
     private Repetition getRepetition(Word word){
@@ -96,7 +96,7 @@ public class SaveExerciseService extends IntentService {
         Repetition repetition = new Repetition();
         repetition.setWordId(word.getId());
         int interval = Interval.getInterval(word.getMasterLevel());
-        Date repetitionDate = DateHelper.addDays(DateHelper.getTodayDate(),interval);
+        Date repetitionDate = DateUtils.addDays(DateUtils.getTodayDate(),interval);
         int date = DateCalculator.dateToInt(repetitionDate);
         repetition.setDate(date);
         return repetition;

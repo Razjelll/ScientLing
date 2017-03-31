@@ -4,8 +4,10 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.dyszlewskiR.edu.scientling.data.database.tables.ExampleSentences;
 import com.dyszlewskiR.edu.scientling.data.database.tables.HintsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsHintsTable;
+import com.dyszlewskiR.edu.scientling.data.models.creators.SentenceCreator;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Hint;
 import com.dyszlewskiR.edu.scientling.data.models.creators.HintCreator;
 
@@ -113,7 +115,7 @@ public class HintDao extends BaseDao<Hint> {
 
     public void unLink(long wordId)
     {
-        String where = WordsHintsTable.WordsHintsColumns.WORD_FK + "=?";;
+        String where = WordsHintsTable.WordsHintsColumns.WORD_FK + "=?";
         String[] whereArguments = {String.valueOf(wordId)};
         mDb.delete(WordsHintsTable.TABLE_NAME, where, whereArguments);
     }
@@ -141,10 +143,35 @@ public class HintDao extends BaseDao<Hint> {
         return hintsList;
     }
 
-    public void deleteUnlinked()
-    {
-        String statement = "DELETE FROM " + TABLE_NAME + " WHERE " + HintsColumns.ID + " IS NOT IN ("
-                + " SELECT " + WordsHintsTable.WordsHintsColumns.HINT_FK + " FROM " + WordsHintsTable.TABLE_NAME + " )";
+    public Hint getByContent(String content){
+        Hint hint=null;
+        String where = HintsColumns.CONTENT+"=?";
+        String[] whereArguments = {content};
+        Cursor cursor = mDb.query(HintsTable.TABLE_NAME, HintsTable.getColumns(), where, whereArguments,
+                null,null,null,"1");
+        if(cursor.moveToFirst()){
+            HintCreator hintCreator = new HintCreator();
+            hint = hintCreator.createFromCursor(cursor);
+        }
+        closeCursor(cursor);
+        return hint;
+    }
+
+    /**
+     * Metoda usuwająca wszystkie niepowiązane podpowiedzi. Metoda usuwa takie podpowiedzi, których
+     * klucze nie znajdują się w tabeli WordsHints
+     *
+     * DELETE FROM Hints
+     * WHERE id IS NOT IN (
+     *      SELECT hint_fk
+     *      FROM WordsHints )
+     */
+    public void deleteUnlinked(){
+        String statement = new StringBuilder()
+                .append("DELETE FROM ").append(HintsTable.TABLE_NAME)
+                .append(" WHERE ").append(HintsColumns.ID).append(" NOT IN")
+                .append(" (SELECT ").append(WordsHintsTable.WordsHintsColumns.HINT_FK)
+                .append(" FROM ").append(WordsHintsTable.TABLE_NAME).append(")").toString();
         mDb.execSQL(statement);
     }
 

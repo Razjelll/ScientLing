@@ -33,6 +33,15 @@ public class LanguagesAdapter extends ArrayAdapter {
         mItems = data;
     }
 
+    public int getPosition(String name){
+        for(int i=0;i<mItems.size(); i++){
+            if(mItems.get(i).getName().equals(name)){
+                return i;
+            }
+        }
+        return 0;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {

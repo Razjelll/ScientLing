@@ -9,7 +9,8 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.dyszlewskiR.edu.scientling.fragment.CurrentSetSelectionFragment"
-    tools:showIn="@layout/activity_current_set_selection">
+    tools:showIn="@layout/activity_current_set_selection"
+    android:background="@drawable/shadow_border">
 
     <ListView
         android:id="@+id/list"

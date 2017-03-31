@@ -29,6 +29,7 @@ public class SetSelectionFragment extends Fragment {
     private ListView mListView;
 
     private DataManager mDataManager;
+    private SetsSelectionAdapter mAdapter;
 
     public SetSelectionFragment() {
 
@@ -64,20 +65,22 @@ public class SetSelectionFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        SetsSelectionAdapter adapter = new SetsSelectionAdapter(getActivity(), R.layout.item_set_selection, mItems);
-        mListView.setAdapter(adapter);
+        mAdapter = new SetsSelectionAdapter(getActivity(), R.layout.item_set_selection, mItems, mDataManager);
+        mListView.setAdapter(mAdapter);
 
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SetSelectionActivity.SET_REQUEST) {
+        if (requestCode == SetSelectionActivity.ADD_SET_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 VocabularySet set = data.getParcelableExtra("result");
                 //Nowo dodane wstawiamy na pierwsze miejsce. Nie pobieramy ponownie elementów z bazy
                 mItems.add(0, set);
                 mListView.invalidateViews();
             }
+        } else { //obsługa przekazywana do adaptera
+            mAdapter.onActivityResult(requestCode, resultCode, data);
         }
     }
 }

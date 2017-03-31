@@ -11,6 +11,7 @@ import com.dyszlewskiR.edu.scientling.utils.AssetsFileOpener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Klasa służąca do otwierania plików bazy danych. Klasa sprawdza, czy plik istnieje,
@@ -28,6 +29,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_FILE_NAME = "createDb";
     private static final String UPDATE_FILE_NAME = "updateDb_";
     private static final String SQL_FILE_EXTENSION = ".sql";
+    private static final String SQL_FOLDER ="sql/";
 
     private Context mContext;
     private AndroidFileOpener mFileOpener;
@@ -97,7 +99,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @throws IOException
      */
     private void createDbStructure(SQLiteDatabase db) throws IOException { //TODO wyrzucenie własnego wyjątku
-        ArrayList<String> statements = getSQLStatements(CREATE_FILE_NAME + SQL_FILE_EXTENSION);
+        //ArrayList<String> statements = getSQLStatements(SQL_FOLDER+CREATE_FILE_NAME + SQL_FILE_EXTENSION);
+        List<String> statements = QueryReader.getQueries(SQL_FOLDER+CREATE_FILE_NAME + SQL_FILE_EXTENSION,mContext);
         db.beginTransaction();
         String query = null;
         for (int i = 0; i < statements.size(); ++i) {

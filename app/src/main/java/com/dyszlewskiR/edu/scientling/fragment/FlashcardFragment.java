@@ -103,7 +103,7 @@ public class FlashcardFragment extends Fragment {
     private FlashcardParams getFlashcardParams(){
         Intent intent = getActivity().getIntent();
         long setId = intent.getLongExtra("set", Constants.DEFAULT_SET_ID);
-        FlashcardParams.ChoiceType type = (FlashcardParams.ChoiceType)intent.getSerializableExtra("type");
+        int type = intent.getIntExtra("type",0);
         int limit = intent.getIntExtra("limit",0);
 
         FlashcardParams params = new FlashcardParams();

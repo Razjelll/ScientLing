@@ -9,20 +9,21 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.dyszlewskiR.edu.scientling.fragment.SentenceDetailFragment"
-    tools:showIn="@layout/activity_sentence_detail">
+    tools:showIn="@layout/activity_sentence_detail"
+    android:background="@drawable/shadow_border">
 
     <EditText
         style="@style/EditTextStyle"
-        android:id="@+id/sentenceEditText"
+        android:id="@+id/content_edit_text"
         android:hint="@string/sentence"/>
     <EditText
         style="@style/EditTextStyle"
-        android:id="@+id/translationEditText"
-        android:layout_below="@id/sentenceEditText"
+        android:id="@+id/translation_edit_text"
+        android:layout_below="@id/content_edit_text"
         android:hint="@string/sentence_translation"/>
     <Button
         style="@style/ButtonStyle"
-        android:id="@+id/saveButton"
+        android:id="@+id/ok_button"
         android:layout_alignParentBottom="true"
-        android:text="@string/save"/>
+        android:text="@string/ok"/>
 </RelativeLayout>

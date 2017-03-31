@@ -9,10 +9,9 @@ import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
-import com.dyszlewskiR.edu.scientling.utils.ResourceHelper;
+import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Razjelll on 08.01.2017.
@@ -55,9 +54,9 @@ public class CurrentSetAdapter extends ArrayAdapter<VocabularySet>{
         viewHolder.nameTextView.setText(mItems.get(position).getName());
         if(mItems.get(position).getLanguageL1()!=null && mItems.get(position).getLanguageL2()!=null){
             viewHolder.languagesTextView.setText(
-                    ResourceHelper.getString(mItems.get(position).getLanguageL1().getName(),mContext)
+                    ResourceUtils.getString(mItems.get(position).getLanguageL1().getName(),mContext)
                     + " - " +
-                    ResourceHelper.getString(mItems.get(position).getLanguageL2().getName(), mContext)
+                    ResourceUtils.getString(mItems.get(position).getLanguageL2().getName(), mContext)
             );
         }
         return rowView;

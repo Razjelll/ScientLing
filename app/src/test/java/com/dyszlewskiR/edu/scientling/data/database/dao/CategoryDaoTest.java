@@ -55,16 +55,16 @@ public class CategoryDaoTest {
         mCategory1 = new Category();
         mCategory1.setId(1);
         mCategory1.setName("Home");
-        mCategory1.setLanguage(mLanguage1);
+        //mCategory1.setLanguage(mLanguage1);
 
         mCategory2 = new Category();
         mCategory2.setId(2);
         mCategory2.setName("Ubrania");
-        mCategory2.setLanguage(mLanguage2);
+        //mCategory2.setLanguage(mLanguage2);
 
         mCategory3 = new Category();
         mCategory3.setName("Dom");
-        mCategory3.setLanguage(mLanguage2);
+        //mCategory3.setLanguage(mLanguage2);
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         mDao = new CategoryDao(db);

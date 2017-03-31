@@ -112,4 +112,16 @@ public class DefinitionDao extends BaseDao<Definition> {
         closeCursor(cursor);
         return definitionsList;
     }
+
+    public long getIdByContentAndTranslation(String content, String translation){
+        String where = DefinitionsColumns.CONTENT +"=?"
+                + " AND " + DefinitionsColumns.TRANSLATION  + "=?";
+        String[] whereArguments = {content, translation};
+        Cursor cursor = mDb.query(false, DefinitionsTable.TABLE_NAME,new String[]{DefinitionsColumns.ID}, where, whereArguments,
+                null,null,null,"1");
+        if(cursor.moveToFirst()){
+            return cursor.getLong(0);
+        }
+        return -1;
+    }
 }

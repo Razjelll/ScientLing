@@ -123,9 +123,7 @@ public class LearningFragment extends Fragment {
         if (mWords.get(position).hasDefinition()) {
             return DEFINITION_FRAGMENT;
         }
-        if (mWords.get(position).hasImage()) {
-            return IMAGE_FRAGMENT;
-        }
+        //TODO pobieranie i ustawianie obrazka
         if (mWords.get(position).hasHints()) {
             return HINTS_FRAGMENT;
         }
@@ -311,11 +309,7 @@ public class LearningFragment extends Fragment {
             mDefinitionButton.setVisibility(View.VISIBLE);
         }
 
-        if (!mWords.get(position).hasImage()) {
-            mImageButton.setVisibility(View.GONE);
-        } else {
-            mImageButton.setVisibility(View.VISIBLE);
-        }
+        //TODO ukrywanie i pokazywanie guzika obrazka
 
         if (!mWords.get(position).hasHints()) {
             mHintsButton.setVisibility(View.GONE);
@@ -382,10 +376,7 @@ public class LearningFragment extends Fragment {
 
     private void fillImageFragment(int position)
     {
-        if(mFragment != null)
-        {
-            ((ImagePagerFragment)mFragment).setImage(mWords.get(position).getImage().getBitmap());
-        }
+        //TODO ypełnienie obrazka
     }
 
 
@@ -425,11 +416,12 @@ public class LearningFragment extends Fragment {
                 bundle.putParcelableArrayList("items", mWords.get(position).getHints());
                 fragment.setArguments(bundle);
                 return fragment;
-            case IMAGE_FRAGMENT:
+            /*case IMAGE_FRAGMENT:
                 fragment = new ImagePagerFragment();
                 bundle.putParcelable("item", mWords.get(position).getImage().getBitmap());
                 fragment.setArguments(bundle);
-                return fragment;
+                return fragment;*/
+            //TODO zrobienie fragmentu obrazka
         }
         return null;
     }

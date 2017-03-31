@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.ExampleSentences;
 import com.dyszlewskiR.edu.scientling.data.database.tables.SentencesTable;
+import com.dyszlewskiR.edu.scientling.data.database.tables.WordsHintsTable;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
 import com.dyszlewskiR.edu.scientling.data.models.creators.SentenceCreator;
 
@@ -113,7 +114,11 @@ public class SentenceDao extends BaseDao<Sentence> {
         mDb.insert(ExampleSentences.TABLE_NAME, null, values);
     }
 
-    //TODO dorobić metodę unlink, zastanowić się jak ma działać
+    public void unlink(long wordId){
+        String where = ExampleSentences.ExampleSentencesColumns.WORD_FK + " =?";
+        String[] whereArguments = new String[]{String.valueOf(wordId)};
+        mDb.delete(ExampleSentences.TABLE_NAME, where, whereArguments);
+    }
 
     public List<Sentence> getLinked(long wordId) {
         List<Sentence> sentencesList = new ArrayList<>();
@@ -136,7 +141,7 @@ public class SentenceDao extends BaseDao<Sentence> {
     public Sentence getByContent(String content) {
         Sentence sentence = null;
         String where = SentencesColumns.CONTENT + " = ?";
-        String[] whereArguments = new String[]{content};
+        String[] whereArguments = {content};
         Cursor cursor = mDb.query(SentencesTable.TABLE_NAME, mTableColumns, where, whereArguments,
                 null, null, null, null);
         if (cursor.moveToFirst()) {
@@ -145,5 +150,23 @@ public class SentenceDao extends BaseDao<Sentence> {
         }
         closeCursor(cursor);
         return sentence;
+    }
+
+    /**
+     * Metoda usuwająca wszystkie niepowiązane zdania. Metoda usuwa takie zdanie, których klucze nie
+     * znajdują sie w tabeli ExampleSentences
+     *
+     * DELETE FROM Sentences
+     * WHERE id IS NOT IN(
+     *      SELECT sentence_fk
+     *      FROM EampleSentences )
+     */
+    public void deleteUnlinked(){
+        String statement = new StringBuilder()
+                .append("DELETE FROM ").append(SentencesTable.TABLE_NAME)
+                .append(" WHERE ").append(SentencesColumns.ID).append(" NOT IN ")
+                .append("(SELECT ").append(ExampleSentences.ExampleSentencesColumns.SENTENCE_FK)
+                .append(" FROM ").append(ExampleSentences.TABLE_NAME).append(")").toString();
+        mDb.execSQL(statement);
     }
 }

@@ -46,6 +46,12 @@ public class Preferences {
     public static final String DEFAULT_DIRECTION_PREF="prefDefaultDirection";
     public static final String NUMBER_FLASHCARD_PREF = "prefNumberFlashcard";
     public static final String ORDER_LEARNING_PREF = "prefOrderLearning";
+    public static final String SHOW_SPEECH_BUTTON_PREF = "prefSpeechButton";
+    public static final String REMINDER_PREF = "prefReminder";
+    public static final String REMINDER_TIME_PREF = "prefReminderTime";
+    public static final String REMINDER_SOUND = "reminder_sound";
+    public static final String REMINDER_VIBRATION = "reminder_vibration";
+
 
     public static int getNumberWordsInLearning(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -111,6 +117,32 @@ public class Preferences {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String valueString =prefs.getString(ORDER_LEARNING_PREF, null);
         int value = Integer.valueOf(valueString);
+        return value;
+    }
+
+    public static boolean getReminderEnabled(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(REMINDER_PREF, false);
+    }
+
+    public static String getReminderTime(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getString(REMINDER_TIME_PREF, "16:00");
+    }
+
+    public static boolean getReminderSound(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(REMINDER_SOUND, false);
+    }
+
+    public static boolean getReminderVibration(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(REMINDER_VIBRATION, false);
+    }
+
+    public static boolean isShowSpeechButton(Context context){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        boolean value = prefs.getBoolean(SHOW_SPEECH_BUTTON_PREF, false);
         return value;
     }
 

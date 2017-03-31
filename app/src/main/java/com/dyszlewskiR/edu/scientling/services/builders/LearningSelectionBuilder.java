@@ -22,7 +22,7 @@ public class LearningSelectionBuilder{
             builder.append(WordSelectionBuilder.Parts.AND).append(WordSelectionBuilder.Parts.CATEGORY_PART);
         }
         if(params.isDifficult()){
-            builder.append(WordSelectionBuilder.Parts.GREATER_DIFFICULT_PART);
+            builder.append(WordSelectionBuilder.Parts.AND).append(WordSelectionBuilder.Parts.GREATER_DIFFICULT_PART);
         }
         return builder.toString();
     }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/content_word_edit"
     android:layout_width="match_parent"
@@ -10,52 +10,105 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
     tools:context="com.dyszlewskiR.edu.scientling.fragment.WordEditFragment"
-    tools:showIn="@layout/activity_word_edit">
-
-        <LinearLayout
+    tools:showIn="@layout/activity_word_edit"
+        >
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="10dp">
-                <Button
-                    style="@style/ButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:id="@+id/lesson_change_button"
-                    android:text="@string/change"
-                    android:layout_marginTop="10dp"
-                   />
-                <TextView
-                    style="@style/LabelStyle"
-                    android:id="@+id/set_text_view"
-                    android:gravity="center_horizontal"
-                    android:text="Angielski w pigułce"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="0.6"/>
-                <TextView
-                    style="@style/TextViewStyle"
-                    android:id="@+id/lesson_text_view"
-                    android:gravity="center_horizontal"
-                    android:text="Zwierzaczki"
-                    android:layout_weight="0.4"/>
+            android:layout_height="match_parent"
+            android:layout_above="@+id/save_button">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+                        <LinearLayout android:id="@+id/basic_edit_group"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                                <EditText android:id="@+id/word_edit_text"
+                                    style="@style/SmallEditTextStyle"
+                                    android:hint="@string/word"
+                                    />
+                                <EditText android:id="@+id/translation_edit_text"
+                                    style="@style/SmallEditTextStyle"
+                                    android:hint="@string/translation_separator"
+                                    android:windowSoftInputMode="stateVisible" />
+                        </LinearLayout>
+                        <ImageButton android:id="@+id/more_image_button"
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:layout_below="@+id/basic_edit_group"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_add"/>
+                        <LinearLayout android:id="@+id/advanced_edit_group"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_below="@+id/more_image_button"
 
-        </LinearLayout>
+                            >
+                                <Button android:id="@+id/lesson_button"
+                                    style="@style/SmallEditTextStyle"
+                                    android:hint="@string/lesson" />
+                                <Button android:id="@+id/definition_button"
+                                    style="@style/SmallEditTextStyle"
+                                    android:hint="@string/definition"
+                                    android:focusableInTouchMode="false"
+                                    />
+                                <Button android:id="@+id/part_of_speech_button"
+                                    style="@style/SmallEditTextStyle"
+                                    android:hint="@string/part_of_speech"
+                                    android:focusableInTouchMode="false"
+                                    />
+                                <Button android:id="@+id/difficult_button"
+                                    style="@style/SmallEditTextStyle"
+                                    android:hint="@string/difficult"
+                                    android:focusableInTouchMode="false"
+                                    />
+                                <Button android:id="@+id/category_button"
+                                    style="@style/SmallEditTextStyle"
+                                    android:hint="@string/category"
+                                    android:focusableInTouchMode="false"
+                                    />
+                                <Button android:id="@+id/sentences_button"
+                                    style="@style/SmallEditTextStyle"
+                                    android:hint="@string/sentence"
+                                    android:focusableInTouchMode="false"
+                                    />
+                                <Button android:id="@+id/hints_button"
+                                    style="@style/SmallEditTextStyle"
+                                    android:hint="@string/hints"
+                                    android:focusableInTouchMode="false"
+                                    />
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+                                        <ImageView
+                                            android:layout_width="200dp"
+                                            android:layout_height="200dp"
+                                            android:visibility="gone"/>
+                                        <Button android:id="@+id/image_button"
+                                            style="@style/SmallEditTextStyle"
+                                            android:hint="@string/image"
+                                            android:focusableInTouchMode="false"
+                                            android:layout_gravity="center"
+                                            />
+                                </LinearLayout>
 
-        <TextView
-            style="@style/LabelStyle"
-            android:text="@string/word"
+                                <Button android:id="@+id/record_button"
+                                    style="@style/SmallEditTextStyle"
+                                    android:hint="@string/record"
+                                    android:focusableInTouchMode="false"
+                                    />
+                        </LinearLayout>
+                </LinearLayout>
+        </ScrollView>
+        <Button android:id="@+id/save_button"
+            style="@style/ButtonStyle"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="@dimen/margin"
+            android:text="@string/save"
             />
-        <EditText
-            style="@style/EditTextStyle"
-            android:id="@+id/word_edit_text"
-            />
-        <TextView
-            style="@style/LabelStyle"
-            android:text="@string/put_translation"/>
-        <EditText
-            style="@style/EditTextStyle"
-            android:id="@+id/translation_edit_text"
-            android:hint="@string/translation_separator"
-            />
+</RelativeLayout>
 
-</LinearLayout>
+

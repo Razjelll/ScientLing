@@ -8,16 +8,16 @@ INSERT INTO Languages(name, abbreviation,code)
 VALUES ('japanese', 'JAP', 'ja_JP');
 
 
-INSERT INTO Categories(name, language_fk)
-VALUES ('Zwierzęta', 3);
-INSERT INTO Categories(name, language_fk)
-VALUES ('Animmals',1);
-INSERT INTO Categories(name, language_fk)
-VALUES ("Czynności", 3);
-INSERT INTO Categories(name, language_fk)
-VALUES ('Work', 1);
-INSERT INTO Categories(name, language_fk)
-VALUES  ('War',1);
+INSERT INTO Categories(name)
+VALUES ('animals');
+INSERT INTO Categories(name)
+VALUES ('activities');
+INSERT INTO Categories(name)
+VALUES ("work");
+INSERT INTO Categories(name)
+VALUES ('house');
+INSERT INTO Categories(name)
+VALUES  ('war');
 
 
 INSERT INTO Sentences(content, translation)
@@ -25,14 +25,14 @@ VALUES ('This is very polite dog', 'To jest bardzo grzeczny piesek');
 INSERT INTO Sentences(content, translation)
 VALUES ('This is devil Tomek', 'To jest diabeł Tomek');
 
-INSERT INTO Sets(name, language_l2_fk, language_l1_fk)
-VALUES ('Angielski 1', 1, 3);
-INSERT INTO Sets(name, language_l2_fk, language_l1_fk)
-VALUES ('English for cgildren', 1,3);
-INSERT INTO Sets(name, language_l2_fk, language_l1_fk)
-VALUES ('Espanol', 2,3);
-INSERT INTO Sets(name, language_l2_fk, language_l1_fk)
-VALUES ('Polski dla obcych', 3,1);
+INSERT INTO Sets(name, language_l2_fk, language_l1_fk, catalog)
+VALUES ('Angielski 1', 1, 3, "Angielski");
+INSERT INTO Sets(name, language_l2_fk, language_l1_fk, catalog)
+VALUES ('English for cgildren', 1,3, "Angielski");
+INSERT INTO Sets(name, language_l2_fk, language_l1_fk, catalog)
+VALUES ('Espanol', 2,3, "Angielski");
+INSERT INTO Sets(name, language_l2_fk, language_l1_fk, catalog)
+VALUES ('Polski dla obcych', 3,1, "Angielski");
 
 INSERT INTO Lessons(name, number, set_fk)
 VALUES ('', 0, 1);

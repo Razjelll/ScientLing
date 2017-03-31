@@ -12,7 +12,6 @@ import java.util.List;
 
 public abstract class BaseDao<T> {
 
-
     protected SQLiteDatabase mDb;
     protected SQLiteStatement mInsertStatement;
     protected String[] mTableColumns;

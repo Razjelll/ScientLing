@@ -25,18 +25,19 @@ import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.LessonsProgressAdapter;
 import com.dyszlewskiR.edu.scientling.asyncTasks.MainInitializationValuesTask;
 import com.dyszlewskiR.edu.scientling.data.models.params.FlashcardParams;
-import com.dyszlewskiR.edu.scientling.data.models.params.LearningParams;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
+import com.dyszlewskiR.edu.scientling.dialogs.FlashcardListDialogFragment;
+import com.dyszlewskiR.edu.scientling.dialogs.LearningOptionsDialog;
 import com.dyszlewskiR.edu.scientling.preferences.Preferences;
 import com.dyszlewskiR.edu.scientling.preferences.Settings;
 import com.dyszlewskiR.edu.scientling.services.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 import com.dyszlewskiR.edu.scientling.utils.DateCalculator;
-import com.dyszlewskiR.edu.scientling.utils.DateHelper;
+import com.dyszlewskiR.edu.scientling.utils.DateUtils;
 
 import java.util.List;
-import java.util.Set;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -124,6 +125,12 @@ public class MainActivity extends AppCompatActivity
                 startLessonLearning(mLessons.get(position).getId());
             }
         });
+        mMoreLearningButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLearningDialog();
+            }
+        });
     }
 
     private void showNoRepetitionMessage(){
@@ -133,6 +140,14 @@ public class MainActivity extends AppCompatActivity
         }
         Snackbar snackbar = Snackbar.make(view,getString(R.string.no_repetitions_today),Snackbar.LENGTH_SHORT);
         snackbar.show();
+    }
+
+    private void showLearningDialog(){
+        VocabularySet set = new VocabularySet(Settings.getCurrentSetId(getBaseContext()));
+        List<Lesson> lessons = mDataManager.getLessons(set);
+        List<Category> categories = mDataManager.getCategories();
+        LearningOptionsDialog dialog = new LearningOptionsDialog(MainActivity.this,Settings.getCurrentSetId(getBaseContext()),lessons,categories);
+        dialog.show();
     }
 
     private void setInitialValues() {
@@ -169,7 +184,7 @@ public class MainActivity extends AppCompatActivity
     private void setRepetitionNumber() {
         long setId = Settings.getCurrentSetId(getBaseContext());
         //int date = 160404;
-        int date = DateCalculator.dateToInt(DateHelper.getTodayDate());
+        int date = DateCalculator.dateToInt(DateUtils.getTodayDate());
         int repetitionCount = mDataManager.getRepetitionsCount(setId, date);
         String repetitionButtonText = getString(R.string.repetitions);
         if (repetitionCount != 0) {
@@ -198,8 +213,8 @@ public class MainActivity extends AppCompatActivity
     private void startDefaultRepetition() {
         Intent intent = new Intent(getBaseContext(), ExerciseActivity.class);
         intent.putExtra("set", Settings.getCurrentSetId(getBaseContext()));
-        //intent.putExtra("repetitionDate", /*DateHelper.getCurrentMonth()*/160404);
-        intent.putExtra("repetitionDate", DateCalculator.dateToInt(DateHelper.getTodayDate()));
+        //intent.putExtra("repetitionDate", /*DateUtils.getCurrentMonth()*/160404);
+        intent.putExtra("repetitionDate", DateCalculator.dateToInt(DateUtils.getTodayDate()));
         intent.putExtra("questions", Preferences.getNumberWordsInRepetitions(getBaseContext()));
         intent.putExtra("answers", Preferences.getNumberAnswers(getBaseContext()));
         Preferences.AnswerConnection connection = Preferences.getAnswerConnection(getBaseContext());
@@ -256,19 +271,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -286,6 +296,18 @@ public class MainActivity extends AppCompatActivity
         }
         if (id == R.id.nav_flashcard) {
             startFlashcardActivity();
+
+        }
+        if(id==R.id.nav_more_flashcards){
+            FlashcardListDialogFragment dialogFragment = new FlashcardListDialogFragment();
+            Bundle bundle = new Bundle();
+            bundle.putLong("set", Settings.getCurrentSetId(getBaseContext()));
+            bundle.putInt("limit", Preferences.getNumberWordsInLearning(getBaseContext()));
+            dialogFragment.setArguments(bundle);
+            dialogFragment.show(getFragmentManager(),"TAG");
+        }
+        if(id ==R.id.nav_manage_words){
+            startManagerWordsActivity();
         }
         if (id == R.id.nav_settings) {
             startSettingsActivity();
@@ -306,7 +328,7 @@ public class MainActivity extends AppCompatActivity
     private void startFlashcardActivity() {
         Intent intent = new Intent(getBaseContext(), FlashcardActivity.class);
         intent.putExtra("set", Settings.getCurrentSetId(getBaseContext()));
-        intent.putExtra("type", FlashcardParams.ChoiceType.LAST_LEARNED);
+        intent.putExtra("type", FlashcardParams.ChoiceType.LAST_LEARNED.getValue());
         intent.putExtra("limit", Preferences.getNumberFlashcards(getBaseContext()));
         startActivity(intent);
     }
@@ -319,6 +341,11 @@ public class MainActivity extends AppCompatActivity
     private void startSetChangingActivity(){
         Intent intent = new Intent(getBaseContext(), CurrentSetSelectionActivity.class);
         startActivityForResult(intent,SET_CHANGING_REQUEST);
+    }
+
+    private void startManagerWordsActivity(){
+        Intent intent = new Intent(getBaseContext(), ManageWordsActivity.class);
+        startActivity(intent);
     }
 
     @Override

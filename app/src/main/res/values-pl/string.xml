@@ -4,6 +4,4 @@
     <string name="login_hint">Login</string>
     <string name="password_hint">Hasło</string>
     <string name="log_in">Zaloguj</string>
-    <string name="sign_in">Zarejestruj</string>
-    <string name="not_now">Nie teraz</string>
 </resources>

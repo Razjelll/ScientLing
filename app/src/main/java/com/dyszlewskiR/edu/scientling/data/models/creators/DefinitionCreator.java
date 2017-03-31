@@ -4,7 +4,7 @@ import android.database.Cursor;
 
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Definition;
 
-import static com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable.DefinitionsColumns;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable.DefinitionsColumns.*;
 
 /**
  * Created by Razjelll on 12.11.2016.
@@ -15,11 +15,19 @@ public class DefinitionCreator implements IModelCreator<Definition> {
     @Override
     public Definition createFromCursor(Cursor cursor) {
         Definition definition = null;
-        if (cursor != null) {
-            definition = new Definition();
-            definition.setId(cursor.getLong(DefinitionsColumns.ID_POSITION));
-            definition.setContent(cursor.getString(DefinitionsColumns.CONTENT_POSITION));
-            definition.setTranslation(cursor.getString(DefinitionsColumns.TRANSLATION_POSITION));
+        int columnsCount = cursor.getColumnCount();
+        for(int columnIndex = 0; columnIndex< columnsCount; columnIndex++){
+            switch (cursor.getColumnName(columnIndex)){
+                case ID:
+                    definition.setId(cursor.getLong(columnIndex)); break;
+                case CONTENT:
+                    definition.setContent(cursor.getString(columnIndex)); break;
+                case TRANSLATION:
+                    if(!cursor.isNull(columnIndex)){
+                        definition.setTranslation(cursor.getString(columnIndex));
+                    }
+                    break;
+            }
         }
         return definition;
     }

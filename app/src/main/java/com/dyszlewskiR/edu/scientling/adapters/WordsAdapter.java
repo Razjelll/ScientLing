@@ -10,9 +10,9 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Translation;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
-import com.dyszlewskiR.edu.scientling.utils.ResourceHelper;
+import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
+import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,27 +66,16 @@ public class WordsAdapter extends BaseAdapter implements Filterable {
             viewHolder = (ViewHolder) rowView.getTag();
         }
         viewHolder.wordTextView.setText(mFilteredItems.get(position).getContent());
-        List<Translation> translations = mFilteredItems.get(position).getTranslations();
-        viewHolder.translationTextView.setText(buildTranslationsFromList(translations));
+        String translations = TranslationListConverter.toString(mFilteredItems.get(position).getTranslations());
+        viewHolder.translationTextView.setText(translations);
         if (mFilteredItems.get(position).getCategory() != null)
             viewHolder.categoryTextView.setText(mFilteredItems.get(position).getCategory().getName());
         if (mFilteredItems.get(position).getPartsOfSpeech() != null) {
             String partOfSpeech = mFilteredItems.get(position).getPartsOfSpeech().getName();
-            String translatedPart = ResourceHelper.getString(partOfSpeech, mContext);
+            String translatedPart = ResourceUtils.getString(partOfSpeech, mContext);
             viewHolder.partOfSpeechTextView.setText(translatedPart);
         }
         return rowView;
-    }
-
-    private String buildTranslationsFromList(List<Translation> list) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < list.size(); i++) {
-            stringBuilder.append(list.get(i).getContent());
-            if (i != list.size() - 1) {
-                stringBuilder.append(", ");
-            }
-        }
-        return stringBuilder.toString();
     }
 
 

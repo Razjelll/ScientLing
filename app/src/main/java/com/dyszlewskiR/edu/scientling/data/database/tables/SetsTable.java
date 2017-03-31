@@ -15,6 +15,7 @@ public class SetsTable {
         columns[SetsColumns.NAME_POSITION] = SetsColumns.NAME;
         columns[SetsColumns.LANGUAGE_L2_FK_POSITION] = SetsColumns.LANGUAGE_L2_FK;
         columns[SetsColumns.LANGUAGE_L1_FK_POSITION] = SetsColumns.LANGUAGE_L1_FK;
+        columns[SetsColumns.CATALOG_POSITION] = SetsColumns.CATALOG;
         return columns;
     }
 
@@ -23,12 +24,14 @@ public class SetsTable {
         public static final String NAME = "name";
         public static final String LANGUAGE_L2_FK = "language_l2_fk";
         public static final String LANGUAGE_L1_FK = "language_l1_fk";
+        public static final String CATALOG = "catalog";
 
         public static final int ID_POSITION = 0;
         public static final int NAME_POSITION = 1;
         public static final int LANGUAGE_L2_FK_POSITION = 2;
         public static final int LANGUAGE_L1_FK_POSITION = 3;
+        public static final int CATALOG_POSITION = 4;
 
-        public static final int COLUMNS_COUNT = 4;
+        public static final int COLUMNS_COUNT = 5;
     }
 }

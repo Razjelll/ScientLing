@@ -87,3 +87,10 @@ CREATE TABLE Repetitions (
         day INTEGER NOT NULL CHECK(day >= 1 AND day <=31),
         FOREIGN KEY(word_fk) REFERENCES Words(id)
 );
+
+CREATE TABLE Images (
+      word_fk INTEGER PRIMARY KEY,
+      bitmap BLOB NULL,
+      path TEXT NULL,
+      FOREIGN KEY (word_fk) REFERENCES Words(id)
+  );
