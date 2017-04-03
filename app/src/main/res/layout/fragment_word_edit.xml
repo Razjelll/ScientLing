@@ -48,7 +48,9 @@
                             >
                                 <Button android:id="@+id/lesson_button"
                                     style="@style/SmallEditTextStyle"
-                                    android:hint="@string/lesson" />
+                                    android:hint="@string/lesson"
+                                    android:focusableInTouchMode="false"
+                                    />
                                 <Button android:id="@+id/definition_button"
                                     style="@style/SmallEditTextStyle"
                                     android:hint="@string/definition"

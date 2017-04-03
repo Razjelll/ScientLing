@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.SummaryLearningActivity;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.ArrayList;
@@ -54,13 +55,14 @@ public class LearningFragment extends Fragment {
     private ImageButton mDefinitionButton;
     private ImageButton mHintsButton;
     private Button mPreviousButton;
-    private Button mNextButon;
+    private Button mNextButton;
 
     private Fragment mFragment;
     private FragmentManager mFragmentManager;
     private int mCurrentFragment;
 
     private int mCurrentPosition;
+    private boolean mLearningMode;
 
     public LearningFragment() {
     }
@@ -71,6 +73,7 @@ public class LearningFragment extends Fragment {
 
         Intent intent = getActivity().getIntent();
         mWords = intent.getParcelableArrayListExtra("items");
+        mLearningMode = intent.getBooleanExtra("learning", true);
 
         mFragmentManager = getFragmentManager();
         mCurrentFragment = -1; //TODO wstawiona wartośćdomyślna
@@ -95,7 +98,7 @@ public class LearningFragment extends Fragment {
         mDefinitionButton = (ImageButton) view.findViewById(R.id.definition_button);
         mHintsButton = (ImageButton) view.findViewById(R.id.hints_button);
         mPreviousButton = (Button) view.findViewById(R.id.previous_button);
-        mNextButon = (Button) view.findViewById(R.id.next_button);
+        mNextButton = (Button) view.findViewById(R.id.next_button);
 
         return view;
     }
@@ -106,6 +109,14 @@ public class LearningFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         fillComponents(mCurrentPosition);
         setListeners();
+        if(!mLearningMode){
+            hideButtons();
+        }
+    }
+
+    private void hideButtons(){
+        mNextButton.setVisibility(View.GONE);
+        mPreviousButton.setVisibility(View.GONE);
     }
 
     /**
@@ -168,7 +179,7 @@ public class LearningFragment extends Fragment {
             }
         });
 
-        mNextButon.setOnClickListener(new View.OnClickListener() {
+        mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 nextWord();
@@ -290,7 +301,8 @@ public class LearningFragment extends Fragment {
             mPartOfSpeechTextView.setText(mWords.get(position).getPartsOfSpeech().getName());
         }
         if (mWords.get(position).getCategory() != null) {
-            mCategoryTextView.setText(mWords.get(position).getCategory().getName());
+            String category = ResourceUtils.getString(mWords.get(position).getCategory().getName(), getContext());
+            mCategoryTextView.setText(category);
         }
     }
 
@@ -318,17 +330,17 @@ public class LearningFragment extends Fragment {
         }
 
         //ustawianie przycisków nawigacji
-        //TODO można zrobić, że jeśli jest ustawione dobrze nie ustawiamy ponownie
+        //TODO można zrobić, że jeśli jest ustawione dobrze nie ustawiamy ponownieF
         if (mCurrentPosition == 0) {
             mPreviousButton.setVisibility(View.INVISIBLE);
         } else {
             mPreviousButton.setVisibility(View.VISIBLE);
         }
 
-        if (mCurrentPosition == mWords.size() - 1) {
-            mNextButon.setText(getResources().getString(R.string.finish));
+        if (mCurrentPosition == mWords.size() - 1 ) {
+            mNextButton.setText(getResources().getString(R.string.finish));
         } else {
-            mNextButon.setText(getResources().getString(R.string.next_item));
+            mNextButton.setText(getResources().getString(R.string.next_item));
         }
     }
 

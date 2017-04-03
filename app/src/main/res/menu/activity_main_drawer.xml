@@ -14,6 +14,8 @@
             android:title="@string/settings" />
         <item android:id="@+id/nav_change_set"
             android:title="@string/change_set" />
+        <item android:id="@+id/nav_manage_sets"
+            android:title="@string/manage_sets" />
     </group>
 
 </menu>

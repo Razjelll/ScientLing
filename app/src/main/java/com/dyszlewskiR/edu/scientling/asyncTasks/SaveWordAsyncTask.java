@@ -14,6 +14,7 @@ import com.dyszlewskiR.edu.scientling.data.models.params.SaveWordParams;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.dialogs.SaveWordDialog;
+import com.dyszlewskiR.edu.scientling.fragment.WordEditFragment;
 import com.dyszlewskiR.edu.scientling.services.DataManager;
 
 import java.io.IOException;
@@ -29,6 +30,16 @@ public class SaveWordAsyncTask extends AsyncTask<SaveWordParams, Void, Word>{
     private DataManager mDataManager;
     private Context mContext;
     private SaveWordDialog mDialog;
+    private Callback mCallback;
+
+
+    public interface Callback{
+        void onSaveCompleted();
+    }
+
+    public void setCallback(Callback callback){
+        mCallback = callback;
+    }
 
     public SaveWordAsyncTask(DataManager dataManager, Context context){
         mDataManager = dataManager;
@@ -52,7 +63,13 @@ public class SaveWordAsyncTask extends AsyncTask<SaveWordParams, Void, Word>{
         }*/
         Word word = params[0].getWord();
         VocabularySet set = params[0].getSet();
-        long wordId = saveWord(word);
+        long wordId;
+        if(params[0].isEdit()){
+            updateWord(word);
+            wordId = word.getId();
+        } else {
+            wordId = saveWord(word);
+        }
         if(params[0].getImageUri() != null){
             saveImage(word.getImageName(), set.getCatalog(), params[0].getImageUri());
         }
@@ -66,6 +83,9 @@ public class SaveWordAsyncTask extends AsyncTask<SaveWordParams, Void, Word>{
     @Override
     protected void onPostExecute(Word result){
         Log.d(TAG, "onPostExecute");
+        if(mCallback != null){
+            mCallback.onSaveCompleted();
+        }
         if(mDialog != null){
             mDialog.dismiss();
         }
@@ -76,6 +96,11 @@ public class SaveWordAsyncTask extends AsyncTask<SaveWordParams, Void, Word>{
         //zmiana informacji na dialogu
 
         return wordId;
+    }
+
+    private void updateWord(Word word)
+    {
+        mDataManager.updateWord(word);
     }
 
     private void saveImage(String fileName, String setCatalog ,Uri uri){

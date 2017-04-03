@@ -1,7 +1,5 @@
 package com.dyszlewskiR.edu.scientling.data.file;
 
-import android.content.Context;
-
 import com.dyszlewskiR.edu.scientling.utils.FileUtils;
 
 /**
@@ -13,7 +11,8 @@ public class FileNameCreator {
      * Wartość -1 oznacza, że żadne ograniczenie nie będzie zastosowane.
      * Ograniczenie długości ma na celu zmniejszenie rozmiaru bazy danych.
      */
-    private static final int ROOT_NAME_LENGHT = 4;
+    private static final int ROOT_FILE_NAME_LENGTH = 4;
+    private static final int ROOT_CATALOG_NAME_LENGTH = 20;
 
     /**
      * Metoda znajdująca pierwszą wolną nazwę utworzoną na podstawie rootName
@@ -25,18 +24,32 @@ public class FileNameCreator {
      * @param extension rozszerzenie jakie będize miał plik
      * @return
      */
-    public static String getName(String rootName, String catalog, String extension){
+    public static String getFileName(String rootName, String catalog, String extension){
         boolean find;
         int number = 0;
-        String shortRootname = rootName.substring(0, ROOT_NAME_LENGHT);
-        String fileName = shortRootname + "." + extension;
+        String shortRootName = rootName.substring(0, ROOT_FILE_NAME_LENGTH);
+        String fileName = shortRootName + "." + extension;
         do{
             if(number != 0){
-                fileName = shortRootname + number + "." + extension;
+                fileName = shortRootName + number + "." + extension;
              }
             find = FileUtils.checkFileExist(catalog, fileName);
             number++;
         } while(find);
         return fileName;
+    }
+
+    public static String getCatalogname(String rootName, String catalog){
+        boolean find;
+        int number = 0;
+        String catalogName = rootName;
+        do{
+            if(number != 0){
+                catalogName = rootName + number;
+            }
+            find = FileUtils.checkFileExist(catalog,catalogName);
+            number++;
+        } while(find);
+        return catalogName;
     }
 }

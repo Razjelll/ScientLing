@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -23,6 +24,7 @@ public class LearningActivity extends AppCompatActivity {
 
     private final String TAG = "LearningActivity";
 
+    private boolean mLearningMode;
     private ImageView mCloseButton;
 
     @Override
@@ -30,42 +32,67 @@ public class LearningActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_learning);
+        getData();
         setupToolbar();
         setupControls();
         setListeners();
     }
 
-    private void setupToolbar(){
+
+    private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
-        toolbar.setContentInsetsAbsolute(0,0);
+        toolbar.setContentInsetsAbsolute(0, 0);
         setSupportActionBar(toolbar);
+        if (!mLearningMode) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
-    private void setupControls(){
+    private void setupControls() {
         mCloseButton = (ImageView) findViewById(R.id.close_button);
+        if (!mLearningMode) {
+            mCloseButton.setVisibility(View.GONE);
+        }
     }
 
-    private void setListeners(){
+    private void setListeners() {
         mCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showExitAlertDialog();
+                if (mLearningMode) {
+                    showExitAlertDialog();
+                } else {
+                    finish();
+                }
             }
         });
     }
 
-    private void showExitAlertDialog()
-    {
+    private void showExitAlertDialog() {
         new ExitAlertDialog(LearningActivity.this).show();
     }
 
+    private void getData() {
+        Intent intent = getIntent();
+        mLearningMode = intent.getBooleanExtra("learning", true);
+    }
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private class ExitAlertDialog extends AlertDialog {

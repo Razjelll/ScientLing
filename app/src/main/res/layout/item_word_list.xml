@@ -33,7 +33,12 @@
             android:layout_marginTop="@dimen/margin"/>
     </LinearLayout>
 
-
+    <ImageView android:id="@+id/hard_image_view"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginTop="@dimen/margin"
+        android:src="@drawable/ic_menu"
+        android:visibility="invisible"/>
     <ImageView
         android:id="@+id/menu_button"
         style="@style/ActionButton"

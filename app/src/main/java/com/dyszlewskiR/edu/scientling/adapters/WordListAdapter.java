@@ -119,7 +119,7 @@ public class WordListAdapter extends ArrayAdapter implements Filterable{
                         if(item.getTitle().equals(mContext.getString(MENU_EDIT))){
                             Intent intent = new Intent(mContext, WordEditActivity.class);
                             //fWord word = mDataManager.getWord(mFilteredItems.get(position).getId());
-                            intent.putExtra("item", mFilteredItems.get(position).getId());
+                            intent.putExtra("item", mFilteredItems.get(position).getId()); //TODO zobaczyć czy lepiej przesłać id czy całe słówko
                             intent.putExtra("edit", true);
                             mLastEditedWord = position;
                             ((Activity)mContext).startActivityForResult(intent, EDIT_WORD_REQUEST);

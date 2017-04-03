@@ -17,6 +17,7 @@
     <string name="master_words">Przećwiczonych słowek: </string>
 
     <!--OGOLNE-->
+    <string name="any">Dowolny</string>
     <string name="lack">Brak</string>
     <string name="save">Zapisz</string>
     <string name="next_item">Następne</string>
@@ -28,10 +29,13 @@
     <string name="cancel">Anuluj</string>
     <string name="edit">Edytuj</string>
     <string name="delete">Usuń</string>
+    <string name="see">Zobacz</string>
     <string name="add_to_hard">Dodaj do trudnych</string>
     <string name="remove_from_hard">Usuń z trudnych</string>
     <string name="clear">Wyczyść</string>
     <string name="add">Dodaj</string>
+    <string name="filter">Filtruj</string>
+
     <!--TESTY-->
     <string name="bad">Źle</string>
     <string name="correct_answer">Poprawna odpowiedź</string>
@@ -60,14 +64,22 @@
     <string name="image">Obrazek</string>
     <string name="record">Nagranie</string>
     <string name="x">X</string>
+    <string name="mode">Rodzaj słówka</string>
+    <string name="loading_words">Trwa ładowanie słowek</string>
+
 
     <!--ZBIOR -->
     <string name="l2">Język którego chcesz sie nauczyć</string>
     <string name="l1">Język który znasz </string>
-
+    <string name="lessons">Lekcje</string>
+    <string name="choose">Wybierz</string>
+    <string name="set_name">Nazwa zestawu</string>
+    <string name="language">Język</string>
+    <string name="vocabulary_set">Zestaw</string>
     <!--LEKCJA -->
     <string name="lesson_number">Numer lekcji</string>
     <string name="lesson_name">Nazwa lekcji</string>
+    <string name="words">Słówka</string>
 
     <!--KATEGORIA-->
     <string name="category_name">Nazwa kategorii</string>
@@ -87,7 +99,10 @@
     <string name="new_words">Nowe słówka</string>
     <string name="repetitions">Powtórki</string>
     <!--JEZYKI -->
-
+    <string name="polish">Polski</string>
+    <string name="english">Angielski</string>
+    <string name="spanish">Hiszpański</string>
+    <string name="other_language">Inny</string>
 
     <string name="title_activity_sentences_list">SentencesListActivity</string>
     <string name="action_settings">Settings</string>
@@ -117,10 +132,14 @@
     <string name="sure_delete_word">Czy na pewno chcesz usunąć słówko</string>
     <string name="word_lesson_connection">Liczba słówek w usuwanej lekcji:</string>
     <string name="sure_delete_category">Czy na pewno chesz usunąć kategorię</string>
-    <string name="sure_delete_set">Czy na pewno chcesz usunąć kategorię</string>
+    <string name="sure_delete_set">Czy na pewno chcesz usunąć zestaw?</string>
+    <string name="sure_delte_lesson">Czy na pewno chcesz usunąć lekcje?</string>
     <string name="not_empty_field">To pole nie może być puste</string>
     <string name="not_zero_field">Wartość musi być większa od zera</string>
     <string name="category_exist">Ta kategoria już istnieje</string>
+
+    <string name="success_save_set">Pomyślnie zapisano zestaw</string>
+    <string name="success_update_set">Pomyślnie zaktualizowano zestaw</string>
 
     <string name="ok">OK</string>
     <string name="yes">Tak</string>
@@ -148,6 +167,7 @@
     <string name="flashcards">Fiszki</string>
     <string name="more_flashcards">Wiecej fiszek</string>
     <string name="change_set">Zmień zestaw</string>
+    <string name="manage_sets">Zarządzaj zestawami</string>
     <string name="settings">Ustawienia</string>
     <string name="title_activity_learning">LearningActivity</string>
     <string name="title_activity_summary_learning">SummaryLearningActivity</string>
@@ -179,7 +199,6 @@
     <string name="show_speech_button">Przycisk mówienia w ćwiczeniu Wpisywanie</string>
     <string name="reminder_sound">Dźwięk przypomnienia</string>
     <string name="reminder_vibration">Wibracja</string>
-
 
 
     <string name="random">Losowe</string>
@@ -263,6 +282,12 @@
     <string name="title_activity_hint_list">HintListActivity</string>
     <string name="title_activity_hint">HintActivity</string>
 
+    <string-array name="words_types">
+        <item>@string/all_words</item>
+        <item>@string/own_words</item>
+        <item>@string/selected_words</item>
+    </string-array>
+
     <!--KATEGORIE-->
     <string name="animals">Zwierzęta</string>
     <string name="activities">Czynności</string>
@@ -275,4 +300,7 @@
     <!--DIALOGI DODAWANIE SLOWKA-->
     <string name="own_record">Nagranie własne</string>
     <string name="recording">Nagrywanie</string>
+    <string name="title_activity_sets_manager">SetsManagerActivity</string>
+    <string name="title_activity_set_edit">SetEditActivity</string>
+    <string name="title_activity_words_manager">WordsManagerActivity</string>
 </resources>

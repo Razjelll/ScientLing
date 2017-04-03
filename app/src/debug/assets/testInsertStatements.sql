@@ -1,11 +1,11 @@
 INSERT INTO Languages (name, abbreviation, code)
-VALUES ('englishUS', 'ENG','en_US');
+VALUES ('english', 'ENG','en_US');
 INSERT INTO Languages (name, abbreviation, code)
 VALUES ('spanish', 'ESP', 'es_ES');
 INSERT INTO Languages (name, abbreviation, code)
 VALUES ('polish','POL','pl_PL');
 INSERT INTO Languages(name, abbreviation,code)
-VALUES ('japanese', 'JAP', 'ja_JP');
+VALUES ('other_language', 'JAP', 'ja_JP');
 
 
 INSERT INTO Categories(name)

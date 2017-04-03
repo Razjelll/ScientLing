@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity
         //TODO to zrobić w osobnym wątku
         VocabularySet set = mDataManager.getSetById(Settings.getCurrentSetId(getBaseContext()));
         mLessons = mDataManager.getLessonsWithProgress(set);
-        getSupportActionBar().setTitle(set.getName());
+        getSupportActionBar().setTitle(set.getFileName());
 
         setLessonListValues();
 
@@ -315,6 +315,9 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_change_set) {
             startSetChangingActivity();
         }
+        if(id == R.id.nav_manage_sets){
+            startSetsManagerActivity();
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -346,6 +349,11 @@ public class MainActivity extends AppCompatActivity
     private void startManagerWordsActivity(){
         Intent intent = new Intent(getBaseContext(), ManageWordsActivity.class);
         startActivity(intent);
+    }
+
+    private void startSetsManagerActivity(){
+        Intent intent = new Intent(getBaseContext(), SetsManagerActivity.class);
+        startActivityForResult(intent, SET_CHANGING_REQUEST);
     }
 
     @Override

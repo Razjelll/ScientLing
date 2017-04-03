@@ -181,6 +181,7 @@ public class SentencesListFragment extends Fragment implements SentenceDialog.Ca
         dialog.show(getFragmentManager(), "SentenceListFragment");
     }
 
+    //region SentencesAdapter
     private class SentencesAdapter extends ArrayAdapter {
         private List<Sentence> mItems;
         private Context mContext;
@@ -267,7 +268,7 @@ public class SentencesListFragment extends Fragment implements SentenceDialog.Ca
         }
     }
 
-    public static class ViewHolder {
+    private static class ViewHolder {
         public TextView contentTextView;
         public TextView translationTextView;
         public ImageView actionButton;
@@ -278,5 +279,5 @@ public class SentencesListFragment extends Fragment implements SentenceDialog.Ca
             actionButton = (ImageView) view.findViewById(R.id.action_button);
         }
     }
-
+    //endregion
 }

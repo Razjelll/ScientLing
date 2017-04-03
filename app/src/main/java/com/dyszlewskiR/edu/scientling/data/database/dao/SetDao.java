@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable;
+import com.dyszlewskiR.edu.scientling.data.models.creators.SetCreator;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Language;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 
@@ -24,7 +25,8 @@ public class SetDao extends BaseDao<VocabularySet> {
     private final String INSERT_STATEMENT =
             "INSERT INTO " + SetsTable.TABLE_NAME + "("
                     + SetsColumns.NAME + ", " + SetsColumns.LANGUAGE_L2_FK
-                    + ", " + SetsColumns.LANGUAGE_L1_FK + ") VALUES (?,?,?)";
+                    + ", " + SetsColumns.LANGUAGE_L1_FK
+                    + ", " + SetsColumns.CATALOG + ") VALUES (?,?,?,?)";
     private final String WHERE_ID = SetsColumns.ID + "= ?";
 
     public SetDao(SQLiteDatabase db) {
@@ -36,9 +38,10 @@ public class SetDao extends BaseDao<VocabularySet> {
     @Override
     public long save(VocabularySet entity) {
         mInsertStatement.clearBindings();
-        mInsertStatement.bindString(1, entity.getName());
-        mInsertStatement.bindLong(2, entity.getLanguageL2().getId());
-        mInsertStatement.bindLong(3, entity.getLanguageL1().getId());
+        mInsertStatement.bindString(SetsColumns.NAME_POSITION, entity.getName());
+        mInsertStatement.bindLong(SetsColumns.LANGUAGE_L2_FK_POSITION, entity.getLanguageL2().getId());
+        mInsertStatement.bindLong(SetsColumns.LANGUAGE_L1_FK_POSITION, entity.getLanguageL1().getId());
+        mInsertStatement.bindString(SetsColumns.CATALOG_POSITION, entity.getCatalog());
         return mInsertStatement.executeInsert();
     }
 
@@ -56,6 +59,7 @@ public class SetDao extends BaseDao<VocabularySet> {
         } else {
             values.putNull(SetsColumns.LANGUAGE_L1_FK);
         }
+        values.put(SetsColumns.CATALOG, entity.getCatalog());
 
         String[] whereArguments = new String[]{String.valueOf(entity.getId())};
         mDb.update(TABLE_NAME, values, WHERE_ID, whereArguments);
@@ -78,35 +82,13 @@ public class SetDao extends BaseDao<VocabularySet> {
         Cursor cursor = mDb.query(TABLE_NAME, mTableColumns, WHERE_ID, whereArguments,
                 null, null, null, null);
         if (cursor.moveToFirst()) {
-            set = buildSetFromCursor(cursor);
+            SetCreator creator = new SetCreator();
+            set = creator.createFromCursor(cursor);
         }
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
+        closeCursor(cursor);
         return set;
     }
 
-    private VocabularySet buildSetFromCursor(Cursor cursor) {
-        VocabularySet set = null;
-        if (cursor != null) {
-            set = new VocabularySet();
-            set.setId(cursor.getLong(SetsColumns.ID_POSITION));
-            set.setName(cursor.getString(SetsColumns.NAME_POSITION));
-            long languageL2Id = cursor.getLong(SetsColumns.LANGUAGE_L2_FK_POSITION);
-            if (languageL2Id > 0) {
-                Language language = new Language();
-                language.setId(languageL2Id);
-                set.setLanguageL2(language);
-            }
-            long languageL1Id = cursor.getLong(SetsColumns.LANGUAGE_L1_FK_POSITION);
-            if (languageL1Id > 0) {
-                Language language = new Language();
-                language.setId(languageL1Id);
-                set.setLanguageL1(language);
-            }
-        }
-        return set;
-    }
 
     @Override
     public List<VocabularySet> getAll(boolean distinct, String[] columns, String selection, String[] selectionArgs,
@@ -116,16 +98,15 @@ public class SetDao extends BaseDao<VocabularySet> {
                 groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
             VocabularySet set = null;
+            SetCreator creator = new SetCreator();
             do {
-                set = buildSetFromCursor(cursor);
+                set = creator.createFromCursor(cursor);
                 if (set != null) {
                     setsList.add(set);
                 }
             } while (cursor.moveToNext());
         }
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
+        closeCursor(cursor);
         return setsList;
     }
 }

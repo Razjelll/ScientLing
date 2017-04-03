@@ -47,7 +47,7 @@
 
     </style>
 
-    <style name="ToolbarButton" >
+    <style name="ToolbarButton">
         <item name="android:layout_width">?attr/actionBarSize</item>
         <item name="android:layout_height">?attr/actionBarSize</item>
         <item name="android:padding">20dp</item>
@@ -89,7 +89,7 @@
 
     <style name="SpinnerStyle" parent="Base.Widget.AppCompat.Spinner">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_height">48dp</item>
         <item name="android:background">@drawable/spinner_style</item>
         <item name="android:layout_margin">@dimen/margin</item>
         <item name="android:textSize">20sp</item>

@@ -63,11 +63,17 @@ public class WordFileSystem {
 
     public static Uri getImageUri(String fileName, String setCatalog, Context context ){
         //TODO pobierać z odpowiedniej pamięcia
-        return FileUtils.getInternalStorageUri(setCatalog, fileName, context);
+        if(fileName == null || setCatalog == null){
+            return null;
+        }
+        return FileUtils.getInternalStorageUri(fileName, setCatalog, context);
     }
 
     public static Uri getRecordUri(String fileName, String setCatalog, Context context){
-        return FileUtils.getInternalStorageUri(setCatalog, fileName, context);
+        if(fileName == null || setCatalog == null){
+            return null;
+        }
+        return FileUtils.getInternalStorageUri(fileName, setCatalog, context);
     }
 
 

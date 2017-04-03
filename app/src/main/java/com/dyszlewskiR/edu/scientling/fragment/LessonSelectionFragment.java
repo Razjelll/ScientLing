@@ -2,9 +2,13 @@ package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.CamcorderProfile;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,21 +16,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.activity.LessonActivity;
-import com.dyszlewskiR.edu.scientling.activity.SetSelectionActivity;
-import com.dyszlewskiR.edu.scientling.adapters.LessonsAdapter;
+import com.dyszlewskiR.edu.scientling.activity.WordsManagerActivity;
 import com.dyszlewskiR.edu.scientling.dialogs.LessonDialog;
-import com.dyszlewskiR.edu.scientling.preferences.Settings;
 import com.dyszlewskiR.edu.scientling.services.DataManager;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
@@ -51,6 +51,11 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
     private int mResource;
     private LessonAdapter mAdapter;
 
+    private int mLastEditedPosition;
+
+    /**Określa czy aktywność działa w trybie managera(true) czy w trybie wyboru lekcji(false)*/
+    private boolean mManager;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -62,6 +67,7 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
     private void getData(){
         Intent intent = getActivity().getIntent();
         mSetId = intent.getLongExtra("set", Constants.DEFAULT_SET_ID);
+        mManager = intent.getBooleanExtra("manager", false);
     }
 
     @Override
@@ -78,15 +84,17 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
     }
 
     private void setListeners(){
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent();
-                intent.putExtra("result", mItems.get(position));
-                getActivity().setResult(Activity.RESULT_OK, intent);
-                getActivity().finish();
-            }
-        });
+        if(!mManager){
+            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent intent = new Intent();
+                    intent.putExtra("result", mItems.get(position));
+                    getActivity().setResult(Activity.RESULT_OK, intent);
+                    getActivity().finish();
+                }
+            });
+        }
     }
 
     private void loadData(){
@@ -133,20 +141,41 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
     }
 
     @Override
-    public void onLessonOk(Lesson lesson) {
-        mItems.add(lesson);
+    public void onLessonOk(Lesson lesson,boolean edit) {
+        if(!edit){ //dodawanie nowej lekcji
+            mItems.add(lesson);
+        } else { //edycja
+            mItems.set(mLastEditedPosition, lesson);
+        }
         mAdapter.notifyDataSetChanged();
-        saveLessonInDb(lesson);
+        saveLessonInDb(lesson, edit);
     }
 
-    private void saveLessonInDb(Lesson lesson){
+    private void saveLessonInDb(Lesson lesson, boolean update){
         DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
         //TODO chyba można tak zrobić, przetestować czy będzie poprawnie zapisywać
         lesson.setSet(new VocabularySet(mSetId));
-        dataManager.saveLesson(lesson);
+        if(update){
+            dataManager.updateLesson(lesson);
+        } else {
+            dataManager.saveLesson(lesson);
+        }
     }
 
+    private void deleteLesson(Lesson lesson, boolean deleteWords){
+        DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
+
+    }
+
+
+
+    //region LessonAdapter
     private class LessonAdapter extends BaseAdapter {
+
+        private final int MENU_EDIT = R.string.edit;
+        private final int MENU_DELETE = R.string.delete;
+        private final int MENU_WORDS = R.string.words;
+        private final int WORDS_REQUEST = 9673;
 
         public LessonAdapter(Context context, int resource){
             mContext = context;
@@ -188,19 +217,110 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
                 viewHolder.lessonNameTextView.setText(mItems.get(position).getName());
                 viewHolder.lessonNumberTextView.setText(String.valueOf(mItems.get(position).getNumber()));
             }
+            //if(mItems.get(position).getNumber() != Constants.DEFAULT_LESSON_NUMBER){
+                setupMenu(position, viewHolder);
+            //} else {
+                //ukrywamy przycisk akcji, ponieważ nie chcemy aby ktoś modyfikował lekcję domyślną
+               // viewHolder.actionButton.setVisibility(View.GONE);
+            //}
+
             return rowView;
         }
+
+        private void setupMenu(final int position, final ViewHolder viewHolder){
+            viewHolder.actionButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PopupMenu popupMenu = new PopupMenu(mContext, viewHolder.actionButton);
+                    if(mItems.get(position).getNumber() != Constants.DEFAULT_LESSON_NUMBER){
+                        popupMenu.getMenu().add(getString(MENU_EDIT));
+                        popupMenu.getMenu().add(getString(MENU_DELETE));
+                    }
+
+                    if(mManager){
+                        popupMenu.getMenu().add(getString(MENU_WORDS));
+                    }
+
+                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                        @Override
+                        public boolean onMenuItemClick(MenuItem item) {
+                            if(item.getTitle().equals(getString(MENU_EDIT))){
+                                editItem(position);
+                                mLastEditedPosition = position;
+                            }
+                            if(item.getTitle().equals(getString(MENU_DELETE))){
+                                deleteItem(position);
+                            }
+                            if(item.getTitle().equals(getString(MENU_WORDS))){
+                                startWordsManagerActivity(position);
+                            }
+                            return true;
+                        }
+                    });
+                    popupMenu.show();
+                }
+            });
+        }
+
+        private void editItem(int itemPosition){
+            LessonDialog dialog = new LessonDialog();
+            dialog.setCallback(LessonSelectionFragment.this);
+            dialog.setLesson(mItems.get(itemPosition));
+            dialog.show(getFragmentManager(), "LessonDialog");
+        }
+
+        private void deleteItem(int itemPosition){
+            DeleteDialog dialog = new DeleteDialog(mContext, mItems.get(itemPosition));
+            dialog.show();
+        }
+
+        private void startWordsManagerActivity(int itemPosition){
+            Intent intent = new Intent(mContext, WordsManagerActivity.class);
+            intent.putExtra("set", mSetId);
+            intent.putExtra("lesson", mItems.get(itemPosition));
+            startActivity(intent);
+        }
+
     }
 
-    public static class ViewHolder{
+    private static class ViewHolder{
         public TextView lessonNameTextView;
         public TextView lessonNumberTextView;
-        //public ImageView actionHolder;
+        public ImageView actionButton;
 
         public ViewHolder(View view){
             lessonNameTextView = (TextView)view.findViewById(R.id.lesson_text_view);
             lessonNumberTextView = (TextView)view.findViewById(R.id.lesson_number_text_view);
-            //actionButton = (Button)view.findViewById(R.id.action_button);
+            actionButton = (ImageView)view.findViewById(R.id.action_button);
+        }
+    }
+    //endregion
+
+    private class DeleteDialog extends AlertDialog {
+
+        protected DeleteDialog(@NonNull Context context, final Lesson lesson) {
+            super(context);
+            this.setTitle(getString(R.string.deleting_lesson));
+            String message = getString(R.string.sure_delte_lesson) + "\n" + lesson.getName();
+            this.setMessage(message);
+            this.setButton(BUTTON_POSITIVE, getString(R.string.delete_with_words), new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    deleteLesson(lesson, true);
+                }
+            });
+            this.setButton(BUTTON_NEUTRAL, getString(R.string.delete_without_words), new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    deleteLesson(lesson, false);
+                }
+            });
+            this.setButton(BUTTON_NEGATIVE, getString(R.string.no), new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dismiss();
+                }
+            });
         }
     }
 }

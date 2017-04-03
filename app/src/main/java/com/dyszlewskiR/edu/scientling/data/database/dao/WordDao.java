@@ -41,8 +41,9 @@ public class WordDao extends BaseDao<Word> {
                     + WordsColumns.LESSON_FK + ", " + WordsColumns.PART_OF_SPEECH_FK + ", "
                     + WordsColumns.CATEGORY_FK + ", " + WordsColumns.DIFFICULT + ", "
                     + WordsColumns.MASTER_LEVEL + " , " + WordsColumns.SELECTED + " , "
-                    + WordsColumns.OWN + " , " + WordsColumns.LEARNING_DATE
-                    + ") VALUES (?,?,?,?,?,?,?,?,?,?,?)";
+                    + WordsColumns.OWN + " , " + WordsColumns.LEARNING_DATE + " , "
+                    + WordsColumns.IMAGE_NAME + " , " + WordsColumns.RECORD_NAME
+                    + ") VALUES (?,?,?,?,?,?,?,?,?,?,?, ?,?)";
 
     private final String SELECT_STATEMENT =
             " W." + WordsColumns.ID + ", W." + WordsColumns.CONTENT
@@ -50,6 +51,7 @@ public class WordDao extends BaseDao<Word> {
                     + ", W." + WordsColumns.LESSON_FK + ", W." + WordsColumns.PART_OF_SPEECH_FK
                     + ", W." + WordsColumns.CATEGORY_FK + ", W." + WordsColumns.DIFFICULT + ", W." + WordsColumns.MASTER_LEVEL
                     + ", W." + WordsColumns.SELECTED + ", W." + WordsColumns.OWN + ", W." + WordsColumns.LEARNING_DATE
+                    + ", W." + WordsColumns.IMAGE_NAME + ", W." + WordsColumns.RECORD_NAME
                     + ", D." + DefinitionsTable.DefinitionsColumns.CONTENT + " AS " + DefinitionsTable.DefinitionsColumns.CONTENT_ALIAS
                     + ", D." + DefinitionsTable.DefinitionsColumns.TRANSLATION + " AS " + DefinitionsTable.DefinitionsColumns.TRANSLATION_ALIAS
                     + ", P." + PartsOfSpeechTable.PartsOfSpeechColumns.NAME + " AS " + PartsOfSpeechTable.PartsOfSpeechColumns.NAME_ALIAS
@@ -106,9 +108,20 @@ public class WordDao extends BaseDao<Word> {
         mInsertStatement.bindLong(WordsColumns.SELECTED_POSITION, selected);
         long own = entity.isOwn() ? 1 : 0;
         mInsertStatement.bindLong(WordsColumns.OWN_POSITION, own);
-        if(entity.isLearningDate()){
-            long date = entity.getLearningDate();
-            mInsertStatement.bindLong(WordsColumns.LEARNING_DATE_POSITION, date);
+            if(entity.isLearningDate()){
+                long date = entity.getLearningDate();
+                mInsertStatement.bindLong(WordsColumns.LEARNING_DATE_POSITION, date);
+            }
+        if(entity.getImageName() != null){
+            mInsertStatement.bindString(WordsColumns.IMAGE_NAME_POSITION, entity.getImageName());
+        } else {
+            mInsertStatement.bindNull(WordsColumns.IMAGE_NAME_POSITION);
+        }
+
+        if(entity.getRecordName() != null){
+            mInsertStatement.bindString(WordsColumns.RECORD_NAME_POSITION, entity.getRecordName());
+        } else {
+            mInsertStatement.bindNull(WordsColumns.RECORD_NAME_POSITION);
         }
         return mInsertStatement.executeInsert();
     }
@@ -150,6 +163,19 @@ public class WordDao extends BaseDao<Word> {
 
         long date = entity.getLearningDate();
         values.put(WordsColumns.LEARNING_DATE, date);
+
+        //wstawinaie obrazka
+        if(entity.getImageName() != null){
+            values.put(WordsColumns.IMAGE_NAME, entity.getImageName());
+        } else {
+            values.putNull(WordsColumns.IMAGE_NAME);
+        }
+        //wstawianie nagrania
+        if(entity.getRecordName()!=null){
+            values.put(WordsColumns.RECORD_NAME, entity.getRecordName());
+        } else {
+            values.putNull(WordsColumns.RECORD_NAME);
+        }
 
         String[] whereArguments = new String[]{String.valueOf(entity.getId())};
         mDb.update(WordsTable.TABLE_NAME, values, WHERE_ID, whereArguments);

@@ -103,6 +103,11 @@ public class FileUtils {
         return file.exists();
     }
 
+    public static boolean checkDirectoryExist(String path){
+        File file = new File(path);
+        return file.exists();
+    }
+
     // INTERNAL STORAGE ----------------------------------------------------------------------------
 
     /**
@@ -115,7 +120,11 @@ public class FileUtils {
      */
     public static void saveFileInternalStorage(String catalog, String fileName,byte[] data,  Context context) throws  IOException
     {
-        FileOutputStream outputStream = context.openFileOutput(context.getFilesDir()+"/" + catalog+"/"+fileName, Context.MODE_PRIVATE);
+        /*File catalogDir = new File(context.getFilesDir(), catalog);
+        if(!catalogDir.exists()){
+            catalogDir.mkdir();
+        }*/
+        FileOutputStream outputStream = new FileOutputStream(new File(context.getFilesDir() + "/" + catalog, fileName));
         outputStream.write(data);
         outputStream.close();
     }
@@ -129,6 +138,10 @@ public class FileUtils {
     }
 
     public static Uri getInternalStorageUri(String filename, String catalog, Context context){
+        File file =new File(context.getFilesDir() + "/" +catalog, filename);
+        if(!file.exists()){
+            return null;
+        }
         return Uri.fromFile(new File(context.getFilesDir() + "/" +catalog, filename));
     }
 

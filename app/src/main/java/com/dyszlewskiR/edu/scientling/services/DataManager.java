@@ -136,11 +136,11 @@ public class DataManager {
         if (definitionId > 0) {
             word.getDefinition().setId(definitionId);
         }
-        //zapisywanie kategorii
-        long categoryId = saveCategory(word.getCategory());
+        //zapisywanie kategorii nie jest potrzebne, ponieważ kategoria jest ustalona odgórnie
+        /*long categoryId = saveCategory(word.getCategory());
         if (categoryId > 0) {
             word.getCategory().setId(categoryId);
-        }
+        }*/
 
         assert word.getTranslations() != null;
 
@@ -452,20 +452,32 @@ public class DataManager {
         }
         if (params.getCategoryId() > 0) {
             whereBuilder.append(" AND " + WordsColumns.CATEGORY_FK + " =?");
-            whereArgumentsList.add(String.valueOf(params.getLessonId()));
+            whereArgumentsList.add(String.valueOf(params.getCategoryId()));
         }
         if (params.getDifficult() > 0) {
             //słówka muszą mieć podany lub wyższy stopień trudności
             whereBuilder.append(" AND " + WordsColumns.MASTER_LEVEL + ">=?");
             whereArgumentsList.add(String.valueOf(params.getDifficult()));
         }
+        if(params.getType() == WordsParams.SELECTED_WORDS){
+            whereBuilder.append(" AND "  + WordsColumns.SELECTED + "=?");
+            whereArgumentsList.add("1");
+        }
+        if(params.getType() == WordsParams.OWN_WORDS){
+            whereBuilder.append(" AND " + WordsColumns.OWN + "=?");
+            whereArgumentsList.add("1");
+        }
         String where = whereBuilder.toString();
         String[] whereArguments = whereArgumentsList.toArray(new String[0]);
-        int limit = params.getLimit();
+        int limitValue = params.getLimit();
+        String limit = null;
+        if(limitValue != 0){
+            limit = String.valueOf(limitValue);
+        }
 
         String order = WordsColumns.LESSON_FK + ", " + WordsColumns.DIFFICULT;
 
-        List<Word> words = mWordDao.getAllWithJoins(true, where, whereArguments, null, null, order, String.valueOf(limit));
+        List<Word> words = mWordDao.getAllWithJoins(true, where, whereArguments, null, null, order, limit);
         for (Word word : words) {
             completeWord(word);
         }

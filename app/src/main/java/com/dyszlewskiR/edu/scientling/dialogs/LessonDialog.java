@@ -26,6 +26,13 @@ public class LessonDialog extends DialogFragment {
     private Lesson mLesson;
     private boolean mEdit;
 
+
+
+
+    public interface Callback{
+        void onLessonOk(Lesson lesson, boolean edit);
+    }
+
     public void setCallback(Callback callback){
         mCallback = callback;
     }
@@ -35,9 +42,7 @@ public class LessonDialog extends DialogFragment {
         mEdit = true;
     }
 
-    public interface Callback{
-        void onLessonOk(Lesson lesson);
-    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -63,7 +68,7 @@ public class LessonDialog extends DialogFragment {
                         Lesson lesson = new Lesson();
                         lesson.setName(mNameEditText.getText().toString());
                         lesson.setNumber(Long.parseLong(mNumberEditText.getText().toString()));
-                        mCallback.onLessonOk(lesson);
+                        mCallback.onLessonOk(lesson, mEdit);
                         dismiss();
                     }
                 }
@@ -89,6 +94,18 @@ public class LessonDialog extends DialogFragment {
         }
         return correct;
 
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState){
+        if(mLesson != null){
+            setData();
+        }
+    }
+
+    private void setData(){
+        mNameEditText.setText(mLesson.getName());
+        mNumberEditText.setText(String.valueOf(mLesson.getNumber()));
     }
 
     @Override
