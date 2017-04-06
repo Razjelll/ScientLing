@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.preferences.PreferenceInitializer;
 import com.dyszlewskiR.edu.scientling.preferences.Settings;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 /**

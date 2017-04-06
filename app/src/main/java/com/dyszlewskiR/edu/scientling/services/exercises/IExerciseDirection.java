@@ -1,6 +1,5 @@
 package com.dyszlewskiR.edu.scientling.services.exercises;
 
-import com.dyszlewskiR.edu.scientling.services.DataManager;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 
 import java.util.List;

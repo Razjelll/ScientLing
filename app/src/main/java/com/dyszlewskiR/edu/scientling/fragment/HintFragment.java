@@ -2,7 +2,6 @@ package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,7 +12,7 @@ import android.widget.EditText;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Hint;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 /**
  * A placeholder fragment containing a simple view.

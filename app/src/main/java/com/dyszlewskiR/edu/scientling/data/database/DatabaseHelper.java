@@ -3,6 +3,7 @@ package com.dyszlewskiR.edu.scientling.data.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.data.database.utils.QueryReader;
 import com.dyszlewskiR.edu.scientling.utils.AndroidFileOpener;
@@ -163,6 +164,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         db.setTransactionSuccessful();
         db.endTransaction();
+    }
+
+    @Override
+    public void onOpen(SQLiteDatabase db){
+        super.onOpen(db);
+        if(!db.isReadOnly()){
+            Log.d("DatabaseHelper", "foreign_keys = ON");
+            db.execSQL("PRAGMA foreign_keys=ON;");
+        }
     }
 
 

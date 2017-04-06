@@ -6,7 +6,7 @@ import com.dyszlewskiR.edu.scientling.activity.MainActivity;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 import com.dyszlewskiR.edu.scientling.preferences.Settings;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 import java.util.List;
 

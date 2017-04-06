@@ -80,6 +80,8 @@
     <string name="lesson_number">Numer lekcji</string>
     <string name="lesson_name">Nazwa lekcji</string>
     <string name="words">Słówka</string>
+    <string name="change_lesson">Do której lekcji przenieść słówka</string>
+    <string name="deleting_lesson_message">Czekaj, trwa usuwanie lekcji</string>
 
     <!--KATEGORIA-->
     <string name="category_name">Nazwa kategorii</string>

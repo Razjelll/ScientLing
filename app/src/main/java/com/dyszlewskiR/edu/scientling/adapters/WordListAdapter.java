@@ -20,7 +20,7 @@ import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.ManageWordsActivity;
 import com.dyszlewskiR.edu.scientling.activity.WordEditActivity;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 

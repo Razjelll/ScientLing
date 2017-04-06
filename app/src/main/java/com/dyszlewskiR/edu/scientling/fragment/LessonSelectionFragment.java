@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.CamcorderProfile;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -16,8 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
@@ -27,9 +26,10 @@ import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.WordsManagerActivity;
 import com.dyszlewskiR.edu.scientling.dialogs.LessonDialog;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
+import com.dyszlewskiR.edu.scientling.services.data.DeletingLessonService;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import java.util.List;
@@ -142,32 +142,43 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
 
     @Override
     public void onLessonOk(Lesson lesson,boolean edit) {
+        long lessonId = saveLessonInDb(lesson, edit);
+        lesson.setId(lessonId);
         if(!edit){ //dodawanie nowej lekcji
             mItems.add(lesson);
         } else { //edycja
             mItems.set(mLastEditedPosition, lesson);
         }
         mAdapter.notifyDataSetChanged();
-        saveLessonInDb(lesson, edit);
     }
 
-    private void saveLessonInDb(Lesson lesson, boolean update){
+    /**
+     * Zapisuje lub aktualizuje lekcje w bazie danych.
+     * @param lesson model lekcji który ma zostać zapisany
+     * @param update określa czy lekcja ma zostać zaktualizowana lub zapisana
+     * @return numer identyfikacyjny zapisanej lekcji
+     */
+    private long saveLessonInDb(Lesson lesson, boolean update){
         DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
         //TODO chyba można tak zrobić, przetestować czy będzie poprawnie zapisywać
         lesson.setSet(new VocabularySet(mSetId));
+        long id;
         if(update){
             dataManager.updateLesson(lesson);
+            id = lesson.getId();
         } else {
-            dataManager.saveLesson(lesson);
+            id = dataManager.saveLesson(lesson);
+
         }
+        return id;
     }
 
-    private void deleteLesson(Lesson lesson, boolean deleteWords){
+    private void deleteLesson(Lesson lesson, long newLessonId){
         DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
-
+        //TODO pobranie listy obrazków i nagrań
+        dataManager.deleteLesson(lesson, newLessonId);
+        //TODO jeśli wszystko poszło ok usunięcie obrazków i nagrań
     }
-
-
 
     //region LessonAdapter
     private class LessonAdapter extends BaseAdapter {
@@ -296,7 +307,8 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
     }
     //endregion
 
-    private class DeleteDialog extends AlertDialog {
+    //region DeleteDialog
+    private class DeleteDialog extends AlertDialog implements LessonDialog.Callback{
 
         protected DeleteDialog(@NonNull Context context, final Lesson lesson) {
             super(context);
@@ -306,21 +318,67 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
             this.setButton(BUTTON_POSITIVE, getString(R.string.delete_with_words), new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    deleteLesson(lesson, true);
+                    //deleteLesson(lesson, -1);
+                    startDeletingService(lesson, -1, mSetId);
+                    mItems.remove(lesson);
+                    mAdapter.notifyDataSetChanged();
                 }
             });
-            this.setButton(BUTTON_NEUTRAL, getString(R.string.delete_without_words), new OnClickListener() {
+            /*this.setButton(BUTTON_NEUTRAL, getString(R.string.delete_without_words), new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    deleteLesson(lesson, false);
+                    LessonDialog lessonDialog = new LessonDialog();
+
+                    lessonDialog.setTitle(getString(R.string.change_lesson));
+                    lessonDialog.setCallback(DeleteDialog.this);
+                    lessonDialog.show(getFragmentManager(), "LessonDialog");
+
                 }
-            });
+            });*/
             this.setButton(BUTTON_NEGATIVE, getString(R.string.no), new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dismiss();
                 }
             });
+        }
+
+        private void startDeletingService(Lesson lesson, long newLessonId, long setId){
+            Intent intent = new Intent(getContext(), DeletingLessonService.class);
+            intent.putExtra("lesson", lesson.getId());
+            intent.putExtra("newLessonId", newLessonId);
+            intent.putExtra("set", setId);
+            getActivity().startService(intent);
+        }
+
+        @Override
+        public void onLessonOk(Lesson lesson, boolean edit) {
+            //TODO zobaczyć gdzie to jest wywoływane
+            //deleteLesson(lesson, lesson.getId());
+            startDeletingService(lesson, lesson.getId(), mSetId);
+        }
+    }
+    //endregion
+
+    //TODO to dokończyć kiedyć w przyszłości
+    private class LessonSelectionAdapter extends ArrayAdapter {
+
+        private List<Lesson> mItems;
+        private Context mContext;
+        private int mResource;
+
+        public LessonSelectionAdapter(Context context, int resource, List<Lesson> data){
+            super(context, resource, data);
+            mContext = context;
+            mResource = resource;
+            mItems = data;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent){
+            View rowView = convertView;
+
+            return rowView;
         }
     }
 }

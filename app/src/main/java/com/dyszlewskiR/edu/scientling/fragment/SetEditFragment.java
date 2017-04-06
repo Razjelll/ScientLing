@@ -2,14 +2,9 @@ package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,14 +12,13 @@ import android.widget.EditText;
 
 import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.activity.SetEditActivity;
 import com.dyszlewskiR.edu.scientling.data.file.FileNameCreator;
-import com.dyszlewskiR.edu.scientling.data.file.WordFileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Language;
+import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 import com.dyszlewskiR.edu.scientling.dialogs.LanguageDialog;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
-import com.dyszlewskiR.edu.scientling.utils.FileUtils;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
+import com.dyszlewskiR.edu.scientling.utils.Constants;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 
 /**
@@ -143,10 +137,19 @@ public class SetEditFragment extends Fragment implements LanguageDialog.Callback
             return set.getId();
         } else { //!mEdit
             //TODO utworzenie katalogu lub zrobienie żeby katalog tworzył się sam w przypadku zapisywanie  obrazka
-            return dataManager.saveSet(set);
+            long setId = dataManager.saveSet(set);
+            set.setId(setId);
+            saveDefaultLesson(set, dataManager);
+            return setId;
         }
+    }
 
-
+    private void saveDefaultLesson(VocabularySet set, DataManager dataManager){
+        Lesson defaultLesson = new Lesson();
+        defaultLesson.setName("");
+        defaultLesson.setNumber(Constants.DEFAULT_LESSON_NUMBER);
+        defaultLesson.setSet(set);
+        long lessonId =dataManager.saveLesson(defaultLesson);
     }
 
     private void setResultAndFinish(VocabularySet set){

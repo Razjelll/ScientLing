@@ -86,5 +86,8 @@ public class WordFileSystem {
         FileUtils.deleteFileInternalStorage(fileName, setCatalog, context);
     }
 
+    public static void deleteCatalog(String catalogName, Context context){
+        FileUtils.deleteDirectory(catalogName,  context);
+    }
 
 }

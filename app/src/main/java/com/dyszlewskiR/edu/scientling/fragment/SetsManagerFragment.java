@@ -2,11 +2,9 @@ package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,9 +25,10 @@ import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.LessonSelectionActivity;
 import com.dyszlewskiR.edu.scientling.activity.SetEditActivity;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DeletingLessonService;
+import com.dyszlewskiR.edu.scientling.services.data.DeletingSetService;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -129,11 +128,18 @@ public class SetsManagerFragment extends Fragment {
     private void deleteSet(VocabularySet set){
         if(mDeletedPosition >= 0){
             //TODO usunięcie katalogóów
-            DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
-            dataManager.deleteSet(set);
+            /*DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
+            dataManager.deleteSet(set);*/
+            startDeletingSetService(set);
             mAdapter.remove(set);
 
         }
+    }
+
+    private void startDeletingSetService(VocabularySet set){
+        Intent intent = new Intent(getContext(), DeletingSetService.class);
+        intent.putExtra("set", set);
+        getActivity().startService(intent);
     }
 
     //region SetsManagerAdapter

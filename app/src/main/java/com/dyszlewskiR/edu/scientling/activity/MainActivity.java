@@ -32,7 +32,7 @@ import com.dyszlewskiR.edu.scientling.dialogs.FlashcardListDialogFragment;
 import com.dyszlewskiR.edu.scientling.dialogs.LearningOptionsDialog;
 import com.dyszlewskiR.edu.scientling.preferences.Preferences;
 import com.dyszlewskiR.edu.scientling.preferences.Settings;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 import com.dyszlewskiR.edu.scientling.utils.DateCalculator;
 import com.dyszlewskiR.edu.scientling.utils.DateUtils;

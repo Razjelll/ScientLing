@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.data.models.params.AnswersParams;
 import com.dyszlewskiR.edu.scientling.data.models.params.QuestionsParams;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.RepetitionItem;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;

@@ -19,8 +19,7 @@ import android.widget.TextView;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.CategoryActivity;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
-import com.dyszlewskiR.edu.scientling.utils.Constants;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 import java.util.ArrayList;
 import java.util.List;

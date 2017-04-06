@@ -61,13 +61,14 @@ public class SentenceDao extends BaseDao<Sentence> {
     }
 
     @Override
-    public void delete(Sentence entity) {
+    public int delete(Sentence entity) {
         long id = entity.getId();
         if (id > 0) {
             String where = SentencesColumns.ID + "= ?";
             String[] whereArguments = new String[]{String.valueOf(id)};
-            mDb.delete(TABLE_NAME, where, whereArguments);
+            return mDb.delete(TABLE_NAME, where, whereArguments);
         }
+        return 0;
     }
 
     @Override
@@ -161,12 +162,19 @@ public class SentenceDao extends BaseDao<Sentence> {
      *      SELECT sentence_fk
      *      FROM EampleSentences )
      */
-    public void deleteUnlinked(){
+    public int deleteUnlinked(){
         String statement = new StringBuilder()
-                .append("DELETE FROM ").append(SentencesTable.TABLE_NAME)
-                .append(" WHERE ").append(SentencesColumns.ID).append(" NOT IN ")
+                //.append("DELETE FROM ").append(SentencesTable.TABLE_NAME)
+                //.append(" WHERE ")
+                .append(SentencesColumns.ID).append(" NOT IN ")
                 .append("(SELECT ").append(ExampleSentences.ExampleSentencesColumns.SENTENCE_FK)
                 .append(" FROM ").append(ExampleSentences.TABLE_NAME).append(")").toString();
-        mDb.execSQL(statement);
+        /*mDb.execSQL(statement);
+        String where = SentencesColumns.ID + " NOT IN ?";
+        String whereArg = "( SELECT " + ExampleSentences.ExampleSentencesColumns.SENTENCE_FK
+                + " FROM " + ExampleSentences.TABLE_NAME + ")";*/
+
+        return mDb.delete(SentencesTable.TABLE_NAME, statement, null);
+
     }
 }

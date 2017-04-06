@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 
 import com.dyszlewskiR.edu.scientling.data.models.params.LearningParams;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 import java.util.List;
 

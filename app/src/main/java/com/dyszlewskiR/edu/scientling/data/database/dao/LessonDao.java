@@ -56,12 +56,13 @@ public class LessonDao extends BaseDao<Lesson> {
     }
 
     @Override
-    public void delete(Lesson entity) {
+    public int delete(Lesson entity) {
         long id = entity.getId();
         if (id > 0) {
             String[] whereArguments = new String[]{String.valueOf(id)};
-            mDb.delete(LessonsTable.TABLE_NAME, WHERE_ID, whereArguments);
+            return mDb.delete(LessonsTable.TABLE_NAME, WHERE_ID, whereArguments);
         }
+        return 0;
     }
 
     @Override

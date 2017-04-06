@@ -1,9 +1,7 @@
 package com.dyszlewskiR.edu.scientling.dialogs;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.icu.text.MessagePattern;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -11,18 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.adapters.PartOfSpeechAdapter;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.PartOfSpeech;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**

@@ -25,7 +25,7 @@ public abstract class BaseDao<T> {
 
     public abstract void update(T entity);
 
-    public abstract void delete(T entity);
+    public abstract int delete(T entity);
 
     public abstract T get(long id);
 

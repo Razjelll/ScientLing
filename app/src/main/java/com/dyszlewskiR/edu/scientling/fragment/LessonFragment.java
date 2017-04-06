@@ -14,7 +14,7 @@ import android.widget.EditText;
 
 import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 

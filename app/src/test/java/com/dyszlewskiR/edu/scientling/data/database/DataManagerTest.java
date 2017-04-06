@@ -11,7 +11,7 @@ import com.dyszlewskiR.edu.scientling.data.models.tableModels.PartOfSpeech;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Translation;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.ResourcesFileOpener;
 
 import org.junit.Test;
@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

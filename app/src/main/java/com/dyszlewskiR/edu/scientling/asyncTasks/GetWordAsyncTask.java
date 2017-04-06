@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.fragment.WordAdvancedEditFragment;
 import com.dyszlewskiR.edu.scientling.fragment.WordEditFragment;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 /**
  * Created by Razjelll on 20.01.2017.

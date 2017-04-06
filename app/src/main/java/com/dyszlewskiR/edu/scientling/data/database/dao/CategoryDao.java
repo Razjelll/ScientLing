@@ -54,11 +54,12 @@ public class    CategoryDao extends BaseDao<Category> {
     }
 
     @Override
-    public void delete(Category entity) {
+    public int delete(Category entity) {
         long id = entity.getId();
         if (id > 0) {
-            mDb.delete(CategoriesTable.TABLE_NAME, getWhereStatement(), getWhereArguments(entity));
+            return mDb.delete(CategoriesTable.TABLE_NAME, getWhereStatement(), getWhereArguments(entity));
         }
+        return 0;
     }
 
     @Override

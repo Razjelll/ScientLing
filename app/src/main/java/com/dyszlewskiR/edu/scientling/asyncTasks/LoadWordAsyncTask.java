@@ -3,12 +3,11 @@ package com.dyszlewskiR.edu.scientling.asyncTasks;
 import android.os.AsyncTask;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.activity.ManageWordsActivity;
 import com.dyszlewskiR.edu.scientling.adapters.WordListAdapter;
 import com.dyszlewskiR.edu.scientling.data.models.params.WordsListParams;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.fragment.ManageWordsFragment;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 import java.io.IOException;
 import java.util.List;

@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.TranslationsTable;
+import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTranslationsTable;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Translation;
 
@@ -54,14 +55,15 @@ public class TranslationDao extends BaseDao<Translation> {
     }
 
     @Override
-    public void delete(Translation entity) {
+    public int delete(Translation entity) {
         if (entity != null) {
             long id = entity.getId();
             if (id > 0) {
                 String[] whereAttributes = new String[]{String.valueOf(id)};
-                mDb.delete(TranslationsTable.TABLE_NAME, WHERE_ID, whereAttributes);
+                return mDb.delete(TranslationsTable.TABLE_NAME, WHERE_ID, whereAttributes);
             }
         }
+        return 0;
     }
 
     @Override
@@ -185,13 +187,36 @@ public class TranslationDao extends BaseDao<Translation> {
         return translationsList;
     }
 
-    public void deleteUnlinked() {
+    public int deleteUnlinked() {
         String statement = new StringBuilder()
-                .append("DELETE FROM ").append(TranslationsTable.TABLE_NAME)
-                .append(" WHERE ").append(TranslationsColumns.ID).append(" NOT IN")
+                //.append("DELETE FROM ").append(TranslationsTable.TABLE_NAME)
+                //.append(" WHERE ")
+                .append(TranslationsColumns.ID).append(" NOT IN")
                 .append(" (SELECT ").append(WordsTranslationsColumns.TRANSLATION_FK)
                 .append(" FROM ").append(WordsTranslationsTable.TABLE_NAME).append(")").toString();
-        mDb.execSQL(statement);
+        String statement2 = new StringBuilder()
+                .append("SELECT* FROM ").append(TranslationsTable.TABLE_NAME)
+                .append(" WHERE ").append(TranslationsColumns.CONTENT).append("=?").toString();
+                /*.append(" WHERE ")
+                .append(TranslationsColumns.ID).append(" NOT IN")
+                .append(" (SELECT ").append(WordsTranslationsColumns.TRANSLATION_FK)
+                .append(" FROM ").append(WordsTranslationsTable.TABLE_NAME).append(")").toString();*/
+        /*mDb.execSQL(statement);
+        String where = TranslationsColumns.ID + " NOT IN ";
+        String whereArg = " (SELECT " + WordsTranslationsColumns.TRANSLATION_FK
+                + " FROM " + WordsTranslationsTable.TABLE_NAME + ")";
+        where = where + whereArg;
+        String[] whereArguments = {};*/
+        return mDb.delete(TranslationsTable.TABLE_NAME,statement, null);
+        //return mDb.delete(TranslationsTable.TABLE_NAME,statement, );
+        /*Cursor cursor1 = mDb.rawQuery(statement2, new String[]{"tl"});
+        int count1 = cursor1.getCount();
+        Cursor cursor = mDb.rawQuery(statement, new String[]{});
+        int count = cursor.getCount();
+        Cursor cursor2 = mDb.rawQuery(statement2, new String[]{});
+        int count2 = cursor1.getCount();
+        return count;*/
+
     }
 
 }

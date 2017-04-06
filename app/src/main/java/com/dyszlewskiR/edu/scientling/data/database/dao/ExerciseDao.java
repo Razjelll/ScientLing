@@ -49,12 +49,13 @@ public class ExerciseDao extends BaseDao<Exercise> {
     }
 
     @Override
-    public void delete(Exercise entity) {
+    public int delete(Exercise entity) {
         long id = entity.getId();
         if (id > 0) {
             String[] whereArguments = new String[]{String.valueOf(id)};
-            mDb.delete(ExercisesTable.TABLE_NAME, WHERE_ID, whereArguments);
+           return mDb.delete(ExercisesTable.TABLE_NAME, WHERE_ID, whereArguments);
         }
+        return 0;
     }
 
     @Override

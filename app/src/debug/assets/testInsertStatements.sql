@@ -28,11 +28,11 @@ VALUES ('This is devil Tomek', 'To jest diabeł Tomek');
 INSERT INTO Sets(name, language_l2_fk, language_l1_fk, catalog)
 VALUES ('Angielski 1', 1, 3, "Angielski");
 INSERT INTO Sets(name, language_l2_fk, language_l1_fk, catalog)
-VALUES ('English for cgildren', 1,3, "Angielski");
+VALUES ('English for cgildren', 1,3, "English");
 INSERT INTO Sets(name, language_l2_fk, language_l1_fk, catalog)
-VALUES ('Espanol', 2,3, "Angielski");
+VALUES ('Espanol', 2,3, "Espanol");
 INSERT INTO Sets(name, language_l2_fk, language_l1_fk, catalog)
-VALUES ('Polski dla obcych', 3,1, "Angielski");
+VALUES ('Polski dla obcych', 3,1, "Polski");
 
 INSERT INTO Lessons(name, number, set_fk)
 VALUES ('', 0, 1);

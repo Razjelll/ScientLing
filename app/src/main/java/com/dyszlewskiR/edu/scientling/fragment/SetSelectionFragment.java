@@ -14,7 +14,7 @@ import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.SetSelectionActivity;
 import com.dyszlewskiR.edu.scientling.adapters.SetsSelectionAdapter;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 
 import java.util.List;

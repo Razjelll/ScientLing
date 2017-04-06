@@ -14,7 +14,7 @@ import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.WordsAdapter;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 import java.util.List;
 

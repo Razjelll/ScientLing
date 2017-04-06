@@ -9,7 +9,7 @@ import android.widget.Toast;
 import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Repetition;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.DateCalculator;
 import com.dyszlewskiR.edu.scientling.utils.DateUtils;
 

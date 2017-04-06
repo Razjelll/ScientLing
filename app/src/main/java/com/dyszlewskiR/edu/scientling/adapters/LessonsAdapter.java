@@ -5,13 +5,10 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.provider.ContactsContract;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
@@ -19,12 +16,9 @@ import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.LessonActivity;
-import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
-import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.List;
 
@@ -190,7 +184,7 @@ public class LessonsAdapter extends BaseAdapter {
                 setButton(BUTTON_NEUTRAL, context.getString(R.string.delete_without_words), new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dataManager.deleteLesson(lesson, false);
+                        dataManager.deleteLesson(lesson, -1);
                         mItems.remove(lesson);
                         notifyDataSetChanged();
                     }
@@ -201,7 +195,7 @@ public class LessonsAdapter extends BaseAdapter {
             setButton(BUTTON_POSITIVE, positiveButtonText, new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    dataManager.deleteLesson(lesson,true);
+                    dataManager.deleteLesson(lesson,-1);
                     mItems.remove(lesson);
                     notifyDataSetChanged();
                 }

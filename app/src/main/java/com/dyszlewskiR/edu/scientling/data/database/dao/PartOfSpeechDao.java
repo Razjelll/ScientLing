@@ -49,12 +49,13 @@ public class PartOfSpeechDao extends BaseDao<PartOfSpeech> {
     }
 
     @Override
-    public void delete(PartOfSpeech entity) {
+    public int delete(PartOfSpeech entity) {
         long id = entity.getId();
         if (id > 0) {
             String[] whereArguments = new String[]{String.valueOf(id)};
-            mDb.delete(PartsOfSpeechTable.TABLE_NAME, WHERE_ID, whereArguments);
+            return mDb.delete(PartsOfSpeechTable.TABLE_NAME, WHERE_ID, whereArguments);
         }
+        return 0;
     }
 
     @Override

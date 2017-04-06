@@ -41,7 +41,7 @@ CREATE TABLE Lessons (
         name TEXT NOT NULL,
         number INTEGER NOT NULL CHECK(number >= 0) DEFAULT 1,
         set_fk INTEGER NOT NULL,
-        FOREIGN KEY (set_fk) REFERENCES Sets(id)
+        FOREIGN KEY (set_fk) REFERENCES Sets(id) ON DELETE CASCADE
 );
 CREATE TABLE PartsOfSpeech (
         id INTEGER PRIMARY KEY,
@@ -67,7 +67,7 @@ CREATE TABLE Words (
         learning_date INTEGER NULL,
         image_name TEXT NULL,
         record_name TEXT NULL,
-        FOREIGN KEY (definition_fk) REFERENCES Definitions(id),
+        FOREIGN KEY (definition_fk) REFERENCES Definitions(id) ON DELETE CASCADE,
         FOREIGN KEY (lesson_fk) REFERENCES Lessons(id),
         FOREIGN KEY (part_of_speech_fk) REFERENCES PartsOfSpeech(id),
         FOREIGN KEY (category_fk) REFERENCES Categories(id)
@@ -76,25 +76,25 @@ CREATE TABLE WordsTranslations (
        word_fk INTEGER NOT NULL,
        translation_fk INTEGER NOT NULL,
        PRIMARY KEY(word_fk, translation_fk),
-       FOREIGN KEY(word_fk) REFERENCES Words(id),
-       FOREIGN KEY (translation_fk) REFERENCES Translations(id)
+       FOREIGN KEY(word_fk) REFERENCES Words(id) ON DELETE CASCADE,
+       FOREIGN KEY (translation_fk) REFERENCES Translations(id) ON DELETE CASCADE
 );
 CREATE TABLE ExampleSentences (
         word_fk INTEGER NOT NULL,
         sentence_fk INTEGER NOT NULL,
-        FOREIGN KEY (word_fk) REFERENCES Words(id),
-        FOREIGN KEY (sentence_fk) REFERENCES Sentences(id)
+        FOREIGN KEY (word_fk) REFERENCES Words(id) ON DELETE CASCADE,
+        FOREIGN KEY (sentence_fk) REFERENCES Sentences(id) ON DELETE CASCADE
 );
 
 CREATE TABLE WordsHints(
         word_fk INTEGER NOT NULL,
         hint_fk INTEGER NOT NULL,
-        FOREIGN KEY (word_fk) REFERENCES Words(id),
-        FOREIGN KEY (hint_fk) REFERENCES Hints(id)
+        FOREIGN KEY (word_fk) REFERENCES Words(id) ON DELETE CASCADE,
+        FOREIGN KEY (hint_fk) REFERENCES Hints(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Repetitions (
         word_fk INTEGER PRIMARY KEY,
         date INTEGER NOT NULL,
-        FOREIGN KEY(word_fk) REFERENCES Words(id)
+        FOREIGN KEY(word_fk) REFERENCES Words(id) ON DELETE CASCADE
 );

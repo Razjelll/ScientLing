@@ -1,21 +1,16 @@
 package com.dyszlewskiR.edu.scientling.asyncTasks;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentManagerNonConfig;
 import android.util.Log;
 
-import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.data.file.WordFileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.params.SaveWordParams;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.dialogs.SaveWordDialog;
-import com.dyszlewskiR.edu.scientling.fragment.WordEditFragment;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 import java.io.IOException;
 
@@ -34,7 +29,7 @@ public class SaveWordAsyncTask extends AsyncTask<SaveWordParams, Void, Word>{
 
 
     public interface Callback{
-        void onSaveCompleted();
+        void onSaveCompleted(Word word);
     }
 
     public void setCallback(Callback callback){
@@ -84,7 +79,7 @@ public class SaveWordAsyncTask extends AsyncTask<SaveWordParams, Void, Word>{
     protected void onPostExecute(Word result){
         Log.d(TAG, "onPostExecute");
         if(mCallback != null){
-            mCallback.onSaveCompleted();
+            mCallback.onSaveCompleted(result);
         }
         if(mDialog != null){
             mDialog.dismiss();

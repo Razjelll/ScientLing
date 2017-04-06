@@ -1,7 +1,10 @@
-package com.dyszlewskiR.edu.scientling.services;
+package com.dyszlewskiR.edu.scientling.services.data;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.SyncStateContract;
+import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.data.database.DatabaseHelper;
 import com.dyszlewskiR.edu.scientling.data.database.dao.CategoryDao;
@@ -18,6 +21,7 @@ import com.dyszlewskiR.edu.scientling.data.database.dao.WordDao;
 import com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.HintsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable;
+import com.dyszlewskiR.edu.scientling.data.database.tables.WordsHintsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable;
 import com.dyszlewskiR.edu.scientling.data.database.utils.QueryReader;
 import com.dyszlewskiR.edu.scientling.data.models.params.FlashcardParams;
@@ -58,6 +62,8 @@ import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable.Wor
  */
 
 public class DataManager {
+
+    private final String TAG = "DataManager";
 
     private final String QUERIES_FOLDER = "sql/queries/";
     private final String SELECT_LIST_WORDS_QUERY = "selectListWords.sql";
@@ -631,21 +637,13 @@ public class DataManager {
         return lessonDao.get(lessonId);
     }
 
-    public void deleteLesson(Lesson lesson, boolean deleteWords){
+    public void deleteLesson(Lesson lesson, long newLessonId){
         if(lesson != null){
-
-            WordDao wordDao = new WordDao(mDb);
-
             mDb.beginTransaction();
-            String where = WordsColumns.LESSON_FK + "=?";
-            String[] whereArguments = {String.valueOf(lesson.getId())};
-            if(deleteWords){ //usuwanie słówek
-                wordDao.delete(where, whereArguments);
+            if(newLessonId == -1){ //usuwanie słówek
+                deleteWordsFromLesson(lesson);
             } else { //zmiana lekcji słówek na domyślną
-                SetDao setDao = new SetDao(mDb);
-                assert lesson.getSet() != null;
-                Lesson defaultLesson = getDefaultLesson(lesson.getSet().getId());
-                wordDao.update(WordsColumns.LESSON_FK, String.valueOf(defaultLesson.getId()),where,whereArguments);
+                changeWordsLesson(lesson, newLessonId);
             }
             LessonDao lessonDao = new LessonDao(mDb);
             lessonDao.delete(lesson);
@@ -655,26 +653,92 @@ public class DataManager {
         }
     }
 
+    private void deleteWordsFromLesson(Lesson lesson){
+        WordDao wordDao = new WordDao(mDb);
+        TranslationDao translationDao = new TranslationDao(mDb);
+        SentenceDao sentenceDao = new SentenceDao(mDb);
+        HintDao hintDao = new HintDao(mDb);
+        DefinitionDao definitionDao = new DefinitionDao(mDb);
+        deleteWordsFromLesson(lesson, wordDao, translationDao, sentenceDao, hintDao, definitionDao);
+    }
+
+    private void changeWordsLesson(Lesson lesson, long newLessonId){
+        WordDao wordDao = new WordDao(mDb);
+        String where = WordsColumns.LESSON_FK + "=?";
+        String[] whereArguments = {String.valueOf(lesson.getId())};
+        wordDao.update(WordsColumns.LESSON_FK, String.valueOf(newLessonId),where,whereArguments);
+    }
+
+    /**
+     * Usuwa cały zestaw z bazy danych.
+     * Najpierw usuwa wszystkie lekcje które wchodziły w skład zestawu, oraz wszystkie słowka
+     * które były przypisane do usuwanych lekcji.
+     * Później następuje usunięcie zestawu
+     * @param set zestaw który chcemy usunąć
+     */
     public void deleteSet(VocabularySet set){
         if(set!=null){
 
-            WordDao wordDao = new WordDao(mDb);
-            LessonDao lessonDao = new LessonDao(mDb);
-            List<Lesson> lessons = getLessons(set);
             mDb.beginTransaction();
-            String where = WordsColumns.LESSON_FK + "=?";
-            String[] whereArguments = new String[1];
-            for(Lesson lesson : lessons){
-                whereArguments[0] = String.valueOf(lesson.getId());
-                wordDao.delete(where, whereArguments);
-                lessonDao.delete(lesson);
-            }
+            deleteLessonsFromSet(set);
             SetDao setDao = new SetDao(mDb);
             setDao.delete(set);
 
             mDb.setTransactionSuccessful();
             mDb.endTransaction();
         }
+    }
+
+    /**
+     * MMetoda pomocnicza, która zajmuje się usuwanie wszystkich lekcji w zestawie.
+     * Wraz z zestawami usuwane są także wszystkie słówka które wchodza w skład tej lekcji,
+     * oraz wszystkie powiązane z nimi informacje(takie jak tłumaczenia, zdania, podpowiedzi)
+     * @param set
+     */
+    private void deleteLessonsFromSet(VocabularySet set){
+        LessonDao lessonDao = new LessonDao(mDb);
+        WordDao wordDao = new WordDao(mDb);
+        TranslationDao translationDao = new TranslationDao(mDb);
+        SentenceDao sentenceDao = new SentenceDao(mDb);
+        HintDao hintDao = new HintDao(mDb);
+        DefinitionDao definitionDao = new DefinitionDao(mDb);
+        List<Lesson> lessons = getLessons(set);
+        for(Lesson lesson : lessons){
+            //najpierw usuwamy wszystkie słówka znajdujące się w danej lekcji
+            deleteWordsFromLesson(lesson, wordDao, translationDao, sentenceDao, hintDao, definitionDao);
+            //później usuwamy lekcję
+            lessonDao.delete(lesson);
+        }
+    }
+
+    /**
+     * Usuwa wszystkie słowka z podanej lekcji.
+     * Na początku usuwane jest słówko. Podczas tego procesu zostaną usunięte słówka i rekordy łączące
+     * słówko z innymi tabelami. Dzieje się tak dzięki ustawienion ON DELETE CASCADE.
+     * Następnie usuwamy wszystkie zdania, tłumaczenia i pomoce które były powiązane z tymi słowkami.
+     * Robimy to za pomocą metod deleteUnlinked, które usuwają wartości, które nie zostaną odnalezione
+     * w tabelach łączących. Dzięki temu nie usunięmy wartości która jest wykorzystywana przez inne słówko.
+     * Dodatkowo możemy usunąć wszystkie niepotrzebne wartośći za pomocą jednego zapytania.
+     * W parametrze otrzymujemy potrzebne obiekty dao, ponieważ ta metoda będzie zapewne wykonywana
+     * kilkokrotnie podczas usuwania zestawu. Zapobiega to kilkukrotnemu tworzeniu nowych obiektó dao.
+     * @param lesson
+     */
+    private void deleteWordsFromLesson(Lesson lesson, WordDao wordDao, TranslationDao translationDao,
+                                      SentenceDao sentenceDao, HintDao hintDao, DefinitionDao definitionDao){
+
+
+        String selection = WordsColumns.LESSON_FK + "=?";
+        String[] selectionArgs = {String.valueOf(lesson.getId())};
+        int deletedWords = wordDao.delete(selection, selectionArgs);
+        int deletedTranslations = translationDao.deleteUnlinked();
+        int deletedSentences = sentenceDao.deleteUnlinked();
+        int deletedHints = hintDao.deleteUnlinked();
+        int deletedDefinitions = definitionDao.deleteUnlinked();
+        Log.d(TAG, "DeletedWords : " + deletedWords);
+        Log.d(TAG, "DeletedTranslations: " + deletedTranslations);
+        Log.d(TAG, "DeletedSentences: " + deletedSentences);
+        Log.d(TAG, "DeletedHints: " + deletedHints);
+        Log.d(TAG, "DeletedDefinitions: " + deletedDefinitions);
     }
 
     /**
@@ -753,5 +817,25 @@ public class DataManager {
     public List<PartOfSpeech> getPartsOfSpeech(){
         PartOfSpeechDao partOfSpeechDao = new PartOfSpeechDao(mDb);
         return partOfSpeechDao.getAll();
+    }
+
+    public List<String> getImagesNamesFromLesson(long lessonId){
+        WordDao wordDao = new WordDao(mDb);
+        String query = "SELECT " + WordsColumns.IMAGE_NAME
+                + " FROM " + WordsTable.TABLE_NAME
+                + " WHERE " + WordsColumns.LESSON_FK + "=?";
+        String[] arguments = {String.valueOf(lessonId)};
+        List<String> imageNames = wordDao.getNamesList(query, arguments);
+        return imageNames;
+    }
+
+    public List<String> getRecordsNamesFromLesson(long lessonId){
+        WordDao wordDao = new WordDao(mDb);
+        String query = "SELECT " + WordsColumns.RECORD_NAME
+                + " FROM " + WordsTable.TABLE_NAME
+                + " WHERE " + WordsColumns.LESSON_FK + "=?";
+        String[] arguments = {String.valueOf(lessonId)};
+        List<String> recordsNames = wordDao.getNamesList(query, arguments);
+        return recordsNames;
     }
 }

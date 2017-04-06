@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable;
+import com.dyszlewskiR.edu.scientling.data.database.tables.WordsHintsTable;
+import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Definition;
 import com.dyszlewskiR.edu.scientling.data.models.creators.DefinitionCreator;
 
@@ -66,12 +68,12 @@ public class DefinitionDao extends BaseDao<Definition> {
     }
 
     @Override
-    public void delete(Definition entity) {
+    public int delete(Definition entity) {
         long id = entity.getId();
         if (id > 0) {
-            String[] whereArguments = new String[]{String.valueOf(id)};
-            mDb.delete(TABLE_NAME, getWhereStatement(), getWhereArguments(entity));
+            return mDb.delete(TABLE_NAME, getWhereStatement(), getWhereArguments(entity));
         }
+        return 0;
     }
 
     @Override
@@ -123,5 +125,22 @@ public class DefinitionDao extends BaseDao<Definition> {
             return cursor.getLong(0);
         }
         return -1;
+    }
+
+    public int deleteUnlinked(){
+        String statement = new StringBuilder()
+                //.append("DELETE FROM ").append(DefinitionsTable.TABLE_NAME)
+                //.append(" WHERE ")
+                .append(DefinitionsColumns.ID).append(" NOT IN ")
+                .append(" (SELECT ").append(WordsTable.WordsColumns.DEFINITION_FK)
+                .append(" FROM ").append(WordsTable.TABLE_NAME)
+                .append(" WHERE ").append(WordsTable.WordsColumns.DEFINITION_FK).append(" IS NOT NULL)").toString();
+        /*mDb.execSQL(statement);
+        String where = DefinitionsColumns.ID + " NOT IN ?";
+        String whereArg = " (SELECT " + WordsTable.WordsColumns.DEFINITION_FK
+                + " FROM " + WordsTable.TABLE_NAME
+                + " WHERE " + WordsTable.WordsColumns.DEFINITION_FK + " IS NOT NULL)";
+        String[] whereArguments = {whereArg};*/
+        return mDb.delete(DefinitionsTable.TABLE_NAME, statement, null);
     }
 }

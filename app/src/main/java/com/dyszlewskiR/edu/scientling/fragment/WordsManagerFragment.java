@@ -1,5 +1,6 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -7,7 +8,7 @@ import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.Filter;
 import android.widget.Filterable;
@@ -32,32 +32,33 @@ import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.LearningActivity;
 import com.dyszlewskiR.edu.scientling.activity.WordEditActivity;
-import com.dyszlewskiR.edu.scientling.data.models.params.WordsListParams;
 import com.dyszlewskiR.edu.scientling.data.models.params.WordsParams;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * A placeholder fragment containing a simple view.
  */
 public class WordsManagerFragment extends Fragment {
 
+    private final String LOG_TAG = "WordsManagerFaragment";
+
     private final int SET_ADAPTER_RESOURCE = R.layout.item_simple;
     private final int LESSON_ADAPTER_RESOURCE = R.layout.item_simple;
     private final int CATEGORY_ADAPTER_RESOURCE = R.layout.item_simple;
     private final int TYPES_ADAPTER_RESOURCE = R.layout.item_simple;
     private final int WORD_ADAPTER_RESOURCE = R.layout.item_word_list;
+
+    private final int ADD_REQUEST = 2239;
 
     private final int ANY_LESSON_ID = -1;
     private final int ANY_CATEGORY_ID = -1;
@@ -361,7 +362,9 @@ public class WordsManagerFragment extends Fragment {
 
     private void startAddWordActivity() {
         Intent intent = new Intent(getContext(), WordEditActivity.class);
-        startActivity(intent);
+        intent.putExtra("exit", true);
+        intent.putExtra("set", mSet);
+        startActivityForResult(intent, ADD_REQUEST);
     }
 
     private void changeFiltersVisibility() {
@@ -377,6 +380,19 @@ public class WordsManagerFragment extends Fragment {
             mSearchContainer.setVisibility(View.GONE);
         } else {
             mSearchContainer.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        if(requestCode == ADD_REQUEST){
+            if(resultCode == Activity.RESULT_OK){
+                Log.d(LOG_TAG, "onActivityResult ADD_REQUEST");
+                //TODO na początku wybrano taką nieelegancką metodę
+                //można to jeszcze zrobić, że zwracamy to jedno słówko a następnie sprawdzamy czy
+                //ma taką samą kategorię, lekcje i typ jak aktualnie wyświetlany
+                setWordList(mSet, mLesson, mCategory, mType);
+            }
         }
     }
 
@@ -430,6 +446,7 @@ public class WordsManagerFragment extends Fragment {
         public View getDropDownView(int position, View convertView, ViewGroup parent) {
             return getRowView(position, convertView);
         }
+
     }
     //endregion
 

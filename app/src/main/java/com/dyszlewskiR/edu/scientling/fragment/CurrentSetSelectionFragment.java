@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +14,9 @@ import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.CurrentSetAdapter;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
-import com.dyszlewskiR.edu.scientling.preferences.Settings;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * A placeholder fragment containing a simple view.

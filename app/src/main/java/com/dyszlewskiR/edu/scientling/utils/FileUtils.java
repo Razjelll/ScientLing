@@ -120,10 +120,10 @@ public class FileUtils {
      */
     public static void saveFileInternalStorage(String catalog, String fileName,byte[] data,  Context context) throws  IOException
     {
-        /*File catalogDir = new File(context.getFilesDir(), catalog);
+        File catalogDir = new File(context.getFilesDir(), catalog);
         if(!catalogDir.exists()){
             catalogDir.mkdir();
-        }*/
+        }
         FileOutputStream outputStream = new FileOutputStream(new File(context.getFilesDir() + "/" + catalog, fileName));
         outputStream.write(data);
         outputStream.close();
@@ -135,6 +135,19 @@ public class FileUtils {
             return file.delete();
         }
         return true;
+    }
+
+    public static boolean deleteDirectory(String dirName, Context context){
+        //TODO zamiast boolean można zwracać kody
+        File directory = new File(context.getFilesDir() + "/" + dirName);
+        if(directory!=null && directory.isDirectory()){
+            for(File child : directory.listFiles()){
+                //TODO w tym przypdaku raczej nie trzeba usuwać tego rekurencyjnie
+                child.delete();
+            }
+            return directory.delete();
+        }
+        return false;
     }
 
     public static Uri getInternalStorageUri(String filename, String catalog, Context context){

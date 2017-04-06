@@ -15,7 +15,7 @@ import android.widget.RelativeLayout;
 import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 /**
  * A placeholder fragment containing a simple view.

@@ -4,9 +4,7 @@ import android.os.AsyncTask;
 
 import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.activity.ExerciseActivity;
-import com.dyszlewskiR.edu.scientling.data.models.params.QuestionsParams;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Exercise;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 /**
  * Created by Razjelll on 16.11.2016.

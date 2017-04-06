@@ -35,6 +35,9 @@
             android:name=".services.notification.NotificationService"
             android:process=":reminder_process" />
 
+        <service android:name=".services.data.DeletingLessonService"/>
+        <service android:name=".services.data.DeletingSetService" />
+
         <activity android:name=".activity.LoginActivity" />
         <activity
             android:name=".activity.ExerciseActivity"

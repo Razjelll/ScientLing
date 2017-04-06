@@ -1,25 +1,19 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v4.view.ViewPager;
-import android.support.v7.text.AllCapsTransformationMethod;
-import android.support.v7.widget.ActionMenuView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
@@ -29,10 +23,9 @@ import com.dyszlewskiR.edu.scientling.asyncTasks.LoadWordAsyncTask;
 import com.dyszlewskiR.edu.scientling.data.models.params.WordsListParams;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * A placeholder fragment containing a simple view.

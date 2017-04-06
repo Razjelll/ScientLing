@@ -15,12 +15,9 @@ import android.widget.ListView;
 
 import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.activity.CategoryActivity;
-import com.dyszlewskiR.edu.scientling.activity.CategorySelectionActivity;
 import com.dyszlewskiR.edu.scientling.adapters.CategoriesAdapter;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 
 import java.util.List;
 

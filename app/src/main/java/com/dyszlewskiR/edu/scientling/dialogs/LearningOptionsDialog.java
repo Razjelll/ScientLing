@@ -1,6 +1,5 @@
 package com.dyszlewskiR.edu.scientling.dialogs;
 
-import android.app.ActionBar;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,26 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.NumberPicker;
-import android.widget.RadioButton;
-import android.widget.RatingBar;
 import android.widget.Spinner;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.activity.LearningActivity;
 import com.dyszlewskiR.edu.scientling.activity.LearningListActivity;
-import com.dyszlewskiR.edu.scientling.activity.PreferenceActivity;
 import com.dyszlewskiR.edu.scientling.adapters.CategoriesAdapter;
 import com.dyszlewskiR.edu.scientling.adapters.LessonsAdapter;
-import com.dyszlewskiR.edu.scientling.data.models.params.LearningParams;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
 import com.dyszlewskiR.edu.scientling.preferences.Preferences;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
-import com.dyszlewskiR.edu.scientling.widgets.NumberPreference;
 
 import java.util.List;
 

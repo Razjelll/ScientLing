@@ -197,12 +197,13 @@ public class WordDao extends BaseDao<Word> {
     }
 
     @Override
-    public void delete(Word entity) {
+    public int delete(Word entity) {
         long id = entity.getId();
         if (id > 0) {
             String[] whereArguments = new String[]{String.valueOf(id)};
-            mDb.delete(WordsTable.TABLE_NAME, WHERE_ID, whereArguments);
+            return mDb.delete(WordsTable.TABLE_NAME, WHERE_ID, whereArguments);
         }
+        return 0;
     }
 
     /**
@@ -210,8 +211,8 @@ public class WordDao extends BaseDao<Word> {
      * @param selection warunek, który muszą spełnić usuwane słówka
      * @param selectionArguments argumenty warunku
      */
-    public void delete(String selection, String[] selectionArguments){
-        mDb.delete(WordsTable.TABLE_NAME, selection, selectionArguments);
+    public int delete(String selection, String[] selectionArguments){
+        return mDb.delete(WordsTable.TABLE_NAME, selection, selectionArguments);
     }
 
     @Override
@@ -345,5 +346,23 @@ public class WordDao extends BaseDao<Word> {
             return cursor.getInt(0);
         }
         return 0;
+    }
+
+    /**
+     * Metoda służąca zarówno do pobierania listy nagrań jak i obrazów.
+     * @param query zapytanie sql
+     * @param arguments parametry zapytania
+     * @return lista nazw
+     */
+    public List<String> getNamesList(String query, String[] arguments){
+        List<String> resultList = new ArrayList<>();
+        Cursor cursor = mDb.rawQuery(query, arguments);
+        if(cursor.moveToFirst()){
+            do{
+                String imageName = cursor.getString(0);
+                resultList.add(imageName);
+            }while(cursor.moveToNext());
+        }
+        return resultList;
     }
 }

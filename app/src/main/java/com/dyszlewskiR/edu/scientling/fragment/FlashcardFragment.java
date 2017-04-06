@@ -16,7 +16,7 @@ import com.dyszlewskiR.edu.scientling.asyncTasks.LoadFlashcardsAsyncTask;
 import com.dyszlewskiR.edu.scientling.data.models.params.FlashcardParams;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.dialogs.OKFinishAlertDialog;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import java.util.List;

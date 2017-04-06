@@ -120,11 +120,12 @@ public class LanguageDao extends BaseDao<Language> {
      * @param entity obiekt modelu Language
      */
     @Override
-    public void delete(Language entity) {
+    public int delete(Language entity) {
         long id = entity.getId();
         if (id > 0) {
-            mDb.delete(TABLE_NAME, getWhereStatement(), getWhereArguments(entity));
+           return mDb.delete(TABLE_NAME, getWhereStatement(), getWhereArguments(entity));
         }
+        return 0;
     }
 
     /**

@@ -59,12 +59,13 @@ public class HintDao extends BaseDao<Hint> {
     }
 
     @Override
-    public void delete(Hint entity) {
+    public int delete(Hint entity) {
         long id = entity.getId();
         if (id > 0) {
             String[] whereArguments = new String[]{String.valueOf(id)};
-            mDb.delete(TABLE_NAME, WHERE_ID, whereArguments);
+            return mDb.delete(TABLE_NAME, WHERE_ID, whereArguments);
         }
+        return 0;
     }
 
     @Override
@@ -166,13 +167,19 @@ public class HintDao extends BaseDao<Hint> {
      *      SELECT hint_fk
      *      FROM WordsHints )
      */
-    public void deleteUnlinked(){
+    public int deleteUnlinked(){
         String statement = new StringBuilder()
-                .append("DELETE FROM ").append(HintsTable.TABLE_NAME)
-                .append(" WHERE ").append(HintsColumns.ID).append(" NOT IN")
+                //.append("DELETE FROM ").append(HintsTable.TABLE_NAME)
+                //.append(" WHERE ")
+                .append(HintsColumns.ID).append(" NOT IN")
                 .append(" (SELECT ").append(WordsHintsTable.WordsHintsColumns.HINT_FK)
                 .append(" FROM ").append(WordsHintsTable.TABLE_NAME).append(")").toString();
-        mDb.execSQL(statement);
+        /*mDb.execSQL(statement);
+        String where = HintsColumns.ID + " NOT IN ?";
+        String whereArg = " (SELECT " + WordsHintsTable.WordsHintsColumns.HINT_FK
+                + " FROM "+WordsHintsTable.TABLE_NAME + ")";
+        String[] whereArguments = {whereArg};*/
+        return mDb.delete(HintsTable.TABLE_NAME, statement, null);
     }
 
 

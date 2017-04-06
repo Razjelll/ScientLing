@@ -1,11 +1,10 @@
 package com.dyszlewskiR.edu.scientling.asyncTasks;
 
 import android.os.AsyncTask;
-import android.provider.ContactsContract;
 
 import com.dyszlewskiR.edu.scientling.data.models.params.FlashcardParams;
 import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 import java.util.List;
 

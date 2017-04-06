@@ -40,7 +40,7 @@ import com.dyszlewskiR.edu.scientling.dialogs.DifficultDialog;
 import com.dyszlewskiR.edu.scientling.dialogs.ImageDialog;
 import com.dyszlewskiR.edu.scientling.dialogs.PartOfSpeechDialog;
 import com.dyszlewskiR.edu.scientling.dialogs.RecordDialog;
-import com.dyszlewskiR.edu.scientling.services.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
@@ -143,15 +143,18 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
      * Zestaw do którego będziemy dodawać słówko
      */
     private VocabularySet mSet;
-    private long mCurrentSetId;
+
     private Word mWord;
     private Uri mImageUri;
     private Uri mRecordUri;
     private boolean mEdit;
+    /**Określa czy po dodaniu lub aktualizacji nowego słówka aktywność ma zostać zamknięta*/
+    private boolean mExitAfter;
     private View mFragmentView;
 
     /**Zmienna określająca czy zakończenie aktywności nastąpiło ze względu zmiany konfiguracji(np obrotu ekranu)*/
     private boolean mIsStateChange;
+    private DataManager mDataManager;
 
     //endregion
 
@@ -160,18 +163,27 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mWord = new Word();
-        mCurrentSetId = ((LingApplication)getActivity().getApplication()).getCurrentSetId();
+
+        mDataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
         loadData();
     }
 
     private void loadData(){
         Intent intent = getActivity().getIntent();
         mEdit = intent.getBooleanExtra("edit", false);
+        mExitAfter = intent.getBooleanExtra("exit",false);
+
         if(mEdit){
             /*long wordId  = intent.getLongExtra("item", 0);
             DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
             mWord = dataManager.getWord(wordId);*/
             mWord = intent.getParcelableExtra("item");
+            mExitAfter = true; //przy edycji nie ma sensu czyścić aktywności, laeży ją zamknąć
+        }
+        mSet = intent.getParcelableExtra("set");
+        if(mSet == null){
+            long setId = ((LingApplication)getActivity().getApplication()).getCurrentSetId();
+            mSet = mDataManager.getSetById(setId);
         }
     }
 
@@ -240,8 +252,7 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
             mWordEditText.setText(mWord.getContent());
             String translations = TranslationListConverter.toString(mWord.getTranslations());
             mTranslationEditText.setText(translations);
-            DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
-            Lesson lesson = dataManager.getLessonById(mWord.getLessonId());
+            Lesson lesson = mDataManager.getLessonById(mWord.getLessonId());
             setLessonButton(lesson);
             setDefinitionButton(mWord.getDefinition());
             setPartOfSpeechButton(mWord.getPartsOfSpeech());
@@ -251,10 +262,9 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
                 setSentenceButton(mWord.getSentences().size());
             if(mWord.getHints() != null)
                 setHintButton(mWord.getHints().size());
-            VocabularySet set = dataManager.getSetById(mCurrentSetId);
-            mImageUri = WordFileSystem.getImageUri(mWord.getImageName(), set.getCatalog(), getContext());
+            mImageUri = WordFileSystem.getImageUri(mWord.getImageName(), mSet.getCatalog(), getContext());
             setImageButton(mImageUri);
-            mRecordUri = WordFileSystem.getRecordUri(mWord.getRecordName(), set.getCatalog(), getContext());
+            mRecordUri = WordFileSystem.getRecordUri(mWord.getRecordName(), mSet.getCatalog(), getContext());
             setRecordButton(mRecordUri);
         }
 
@@ -367,17 +377,13 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
     //region SaveWord
     private void saveWord(){
         if(validate()){
-            DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
-            //TODO zobaczyć czy da radęw inny sposób pobrać zestaw
-            long currentSetId = ((LingApplication)getActivity().getApplication()).getCurrentSetId();
-            VocabularySet currentSet = dataManager.getSetById(currentSetId);
-            SaveWordAsyncTask task = new SaveWordAsyncTask(dataManager, getActivity());
+            SaveWordAsyncTask task = new SaveWordAsyncTask(mDataManager, getActivity());
             SaveWordParams params = new SaveWordParams();
             params.setEdit(mEdit);
-            params.setWord(getWord(currentSet.getCatalog()));
+            params.setWord(getWord(mSet.getCatalog()));
             params.setImageUri(mImageUri);
             params.setRecordUri(mRecordUri);
-            params.setSet(currentSet);
+            params.setSet(mSet);
             task.setCallback(this);
             task.execute(params);
         }
@@ -467,7 +473,7 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
 
     private void startLessonActivity(){
         Intent intent = new Intent(getContext(), LessonSelectionActivity.class);
-        intent.putExtra("set", mCurrentSetId);
+        intent.putExtra("set", mSet.getId());
         startActivityForResult(intent, LESSON_REQUEST);
     }
 
@@ -652,8 +658,16 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
     }
 
     @Override
-    public void onSaveCompleted() {
-        clear();
+    public void onSaveCompleted(Word result) {
+
+        if(mExitAfter){
+            Intent intent = new Intent();
+            intent.putExtra("result", result);
+            getActivity().setResult(Activity.RESULT_OK, intent);
+            getActivity().finish();
+        } else {
+            clear();
+        }
         Snackbar snackbar  = Snackbar.make(mFragmentView, getString(R.string.save_word_success), Snackbar.LENGTH_SHORT);
         snackbar.show();
     }

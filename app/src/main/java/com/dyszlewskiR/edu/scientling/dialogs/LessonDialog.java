@@ -26,6 +26,7 @@ public class LessonDialog extends DialogFragment {
     private Lesson mLesson;
     private boolean mEdit;
 
+    private String mTitle;
 
 
 
@@ -42,14 +43,20 @@ public class LessonDialog extends DialogFragment {
         mEdit = true;
     }
 
-
+    public void setTitle(String title){
+        mTitle = title;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
         View view = inflater.inflate(LAYOUT_RESOURCE, container, false);
         setupControls(view);
         setListeners();
-        getDialog().setTitle(getString(R.string.lesson));
+        if(mTitle != null){
+            getDialog().setTitle(mTitle);
+        } else {
+            getDialog().setTitle(getString(R.string.lesson));
+        }
         return view;
     }
 
