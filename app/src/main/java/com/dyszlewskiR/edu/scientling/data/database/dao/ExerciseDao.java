@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.ExercisesTable;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Exercise;
+import com.dyszlewskiR.edu.scientling.data.models.models.Exercise;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +53,7 @@ public class ExerciseDao extends BaseDao<Exercise> {
         long id = entity.getId();
         if (id > 0) {
             String[] whereArguments = new String[]{String.valueOf(id)};
-           return mDb.delete(ExercisesTable.TABLE_NAME, WHERE_ID, whereArguments);
+            return mDb.delete(ExercisesTable.TABLE_NAME, WHERE_ID, whereArguments);
         }
         return 0;
     }

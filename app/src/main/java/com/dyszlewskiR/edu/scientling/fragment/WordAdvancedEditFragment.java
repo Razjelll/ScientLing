@@ -26,18 +26,18 @@ import android.widget.RatingBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.CategorySelectionActivity;
 import com.dyszlewskiR.edu.scientling.activity.HintsListActivity;
 import com.dyszlewskiR.edu.scientling.activity.SentencesListActivity;
 import com.dyszlewskiR.edu.scientling.adapters.PartOfSpeechAdapter;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Definition;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Hint;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.PartOfSpeech;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
+import com.dyszlewskiR.edu.scientling.data.models.models.Category;
+import com.dyszlewskiR.edu.scientling.data.models.models.Definition;
+import com.dyszlewskiR.edu.scientling.data.models.models.Hint;
+import com.dyszlewskiR.edu.scientling.data.models.models.PartOfSpeech;
+import com.dyszlewskiR.edu.scientling.data.models.models.Sentence;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.resources.GalleryUtils;
 
@@ -82,19 +82,19 @@ public class WordAdvancedEditFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //getData();
-        if(mWord == null){
+        if (mWord == null) {
             mWord = new Word();
         }
     }
 
-    private void getData(){
+    private void getData() {
         Intent intent = getActivity().getIntent();
         mWord = intent.getParcelableExtra("item");
     }
 
-    public void setWord(Word word){
+    public void setWord(Word word) {
         mWord = word;
-        if(mViewCreated){
+        if (mViewCreated) {
             setValues();
         }
     }
@@ -112,14 +112,14 @@ public class WordAdvancedEditFragment extends Fragment {
         mPartsOfSpeechSpinner = (Spinner) view.findViewById(R.id.part_of_speech_spinner);
         mDefinitionEditText = (EditText) view.findViewById(R.id.definition_edit_text);
         mTranslationDefinitionEditText = (EditText) view.findViewById(R.id.definition_translation_edit_text);
-        mTranslationDefinitionLabel = (TextView)view.findViewById(R.id.definition_translation_label);
-        mDifficultRatingbar = (RatingBar)view.findViewById(R.id.difficult_ratingbar);
+        mTranslationDefinitionLabel = (TextView) view.findViewById(R.id.definition_translation_label);
+        mDifficultRatingbar = (RatingBar) view.findViewById(R.id.difficult_ratingbar);
         mCategoryButton = (Button) view.findViewById(R.id.category_button);
         mSentencesButton = (Button) view.findViewById(R.id.sentencesButton);
         mHintsButton = (Button) view.findViewById(R.id.hints_button);
-        mImageButton = (Button)view.findViewById(R.id.image_button);
-        mImageView = (ImageView)view.findViewById(R.id.image_image_view);
-        mRemoveImageButton = (Button)view.findViewById(R.id.remove_image_button);
+        mImageButton = (Button) view.findViewById(R.id.image_button);
+        mImageView = (ImageView) view.findViewById(R.id.image_image_view);
+        mRemoveImageButton = (Button) view.findViewById(R.id.remove_image_button);
     }
 
     private void setListeners(View view) {
@@ -156,7 +156,7 @@ public class WordAdvancedEditFragment extends Fragment {
         });
     }
 
-    private void startSentencesList(){
+    private void startSentencesList() {
         Fragment fragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.sentence_list_fragment);
         if (fragment == null || !fragment.isVisible()) {
             Intent intent = new Intent(getActivity(), SentencesListActivity.class);
@@ -167,9 +167,9 @@ public class WordAdvancedEditFragment extends Fragment {
         }
     }
 
-    private void startHintsList(){
+    private void startHintsList() {
         Fragment fragment = getActivity().getSupportFragmentManager().findFragmentById(R.id.hints_list_fragment);
-        if(fragment == null){
+        if (fragment == null) {
             Intent intent = new Intent(getActivity(), HintsListActivity.class);
             intent.putParcelableArrayListExtra("list", mWord.getHints());
             getActivity().startActivityForResult(intent, ADD_HINTS_REQUEST);
@@ -178,44 +178,44 @@ public class WordAdvancedEditFragment extends Fragment {
         }
     }
 
-    private void startGalleryIntent(){
+    private void startGalleryIntent() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         getActivity().startActivityForResult(intent, LOAD_IMAGE_REQUEST);
     }
 
-    private void removeImage(){
+    private void removeImage() {
         mImageView.setImageResource(0);
-        if(mImageView.getVisibility()==View.VISIBLE){
+        if (mImageView.getVisibility() == View.VISIBLE) {
             mImageView.setVisibility(View.GONE);
         }
         //TODO usuwanie obrazka i nagrania
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         mViewCreated = true;
         setAdapters();
         setValues();
         checkDefinitionField();
     }
 
-    private void setAdapters(){
-        DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
+    private void setAdapters() {
+        DataManager dataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
         List<PartOfSpeech> parts = dataManager.getPartsOfSpeech();
         mPartOfSpeechAdapter = new PartOfSpeechAdapter(getActivity(), R.layout.item_simple, parts);
         mPartsOfSpeechSpinner.setAdapter(mPartOfSpeechAdapter);
     }
 
-    private void setValues(){
-        if(mWord != null){
-            if(mWord.getPartsOfSpeech()!=null){
+    private void setValues() {
+        if (mWord != null) {
+            if (mWord.getPartsOfSpeech() != null) {
                 int partPosition = mPartOfSpeechAdapter.getPosition(mWord.getPartsOfSpeech());
                 mPartsOfSpeechSpinner.setSelection(partPosition);
             }
-            if(mWord.getCategory()!=null){
+            if (mWord.getCategory() != null) {
                 mCategoryButton.setText(mWord.getCategory().getName());
             }
-            if(mWord.getDefinition()!=null){
+            if (mWord.getDefinition() != null) {
                 mDefinitionEditText.setText(mWord.getDefinition().getContent());
                 mTranslationDefinitionEditText.setText(mWord.getDefinition().getTranslation());
                 mTranslationDefinitionEditText.setVisibility(View.VISIBLE);
@@ -227,18 +227,18 @@ public class WordAdvancedEditFragment extends Fragment {
         }
     }
 
-    private void setSentencesButtonText(){
+    private void setSentencesButtonText() {
         String buttonText = getString(R.string.sentences_example);
-        if(mWord.getSentences()!=null && mWord.getSentences().size() !=0){
-            buttonText += "("+mWord.getSentences().size()+")";
+        if (mWord.getSentences() != null && mWord.getSentences().size() != 0) {
+            buttonText += "(" + mWord.getSentences().size() + ")";
         }
         mSentencesButton.setText(buttonText);
     }
 
-    private void setHintsButtonText(){
+    private void setHintsButtonText() {
         String buttonText = getString(R.string.hints);
-        if(mWord.getHints()!=null && mWord.getHints().size() != 0){
-            buttonText += "("+mWord.getHints().size()+")";
+        if (mWord.getHints() != null && mWord.getHints().size() != 0) {
+            buttonText += "(" + mWord.getHints().size() + ")";
         }
         mHintsButton.setText(buttonText);
     }
@@ -252,24 +252,24 @@ public class WordAdvancedEditFragment extends Fragment {
         getActivity().startActivityForResult(intent, ADD_CATEGORY_REQUEST);
     }
 
-    private void checkDefinitionField(){
-        if(mDefinitionEditText.getText().toString().trim().isEmpty()){ //jest puste
-            if(mTranslationDefinitionEditText.getVisibility()==View.VISIBLE){
+    private void checkDefinitionField() {
+        if (mDefinitionEditText.getText().toString().trim().isEmpty()) { //jest puste
+            if (mTranslationDefinitionEditText.getVisibility() == View.VISIBLE) {
                 mTranslationDefinitionLabel.setVisibility(View.GONE);
                 mTranslationDefinitionEditText.setVisibility(View.GONE);
             }
         } else {
-            if(mTranslationDefinitionEditText.getVisibility()!=View.VISIBLE){
+            if (mTranslationDefinitionEditText.getVisibility() != View.VISIBLE) {
                 mTranslationDefinitionLabel.setVisibility(View.VISIBLE);
                 mTranslationDefinitionEditText.setVisibility(View.VISIBLE);
             }
         }
     }
 
-    private void setImage(Bitmap bitmap){
-        if(bitmap != null){
+    private void setImage(Bitmap bitmap) {
+        if (bitmap != null) {
             mImageView.setImageBitmap(bitmap);
-            if(mImageView.getVisibility()==View.GONE){
+            if (mImageView.getVisibility() == View.GONE) {
                 mImageView.setVisibility(View.VISIBLE);
             }
 
@@ -278,7 +278,7 @@ public class WordAdvancedEditFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == ADD_SENTENCES_REQUEST && resultCode == Activity.RESULT_OK && data !=null) {
+        if (requestCode == ADD_SENTENCES_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
             ArrayList<Sentence> sentences = data.getParcelableArrayListExtra("result");
             mWord.setSentences(sentences);
             setSentencesButtonText();
@@ -291,25 +291,25 @@ public class WordAdvancedEditFragment extends Fragment {
             mCategoryButton.requestFocus();
         }
 
-        if(requestCode == ADD_HINTS_REQUEST && resultCode == Activity.RESULT_OK && data != null){
+        if (requestCode == ADD_HINTS_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
             ArrayList<Hint> hints = data.getParcelableArrayListExtra("result");
             mWord.setHints(hints);
             setHintsButtonText();
         }
 
-        if(requestCode == LOAD_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data !=null){
+        if (requestCode == LOAD_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null) {
             mImageUri = data.getData();
             Bitmap bitmap = getImageFromIntent(mImageUri);
-            if(bitmap!=null){
+            if (bitmap != null) {
                 setImage(bitmap);
             }
         }
     }
 
-    private Bitmap getImageFromIntent(Uri imageUri){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_DENIED){
+    private Bitmap getImageFromIntent(Uri imageUri) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_DENIED) {
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                         PERMISSION_REQUEST);
             } else {
@@ -318,16 +318,16 @@ public class WordAdvancedEditFragment extends Fragment {
         } else {
             return GalleryUtils.getBitmap(imageUri, getActivity());
         }
-       return null;
+        return null;
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permission[], int[] grantResults){
+    public void onRequestPermissionsResult(int requestCode, String permission[], int[] grantResults) {
         Log.d(getClass().getSimpleName(), "onRequestPermissionsResult");
-        switch (requestCode){
+        switch (requestCode) {
             case PERMISSION_REQUEST:
                 Bitmap bitmap = getImageFromIntent(mImageUri);
-                if(bitmap != null){
+                if (bitmap != null) {
                     setImage(bitmap);
                 }
         }
@@ -336,9 +336,9 @@ public class WordAdvancedEditFragment extends Fragment {
     public Word getWord() {
         PartOfSpeech partOfSpeech = mPartOfSpeechAdapter.getItem(mPartsOfSpeechSpinner.getSelectedItemPosition());
         mWord.setPartsOfSpeech(partOfSpeech);
-        mWord.setDifficult((byte)mDifficultRatingbar.getRating());
+        mWord.setDifficult((byte) mDifficultRatingbar.getRating());
 
-        if(mDefinitionEditText.getText().toString().trim().length()!=0){
+        if (mDefinitionEditText.getText().toString().trim().length() != 0) {
             Definition definition = new Definition();
             definition.setTranslation(String.valueOf(mTranslationDefinitionEditText.getText()));
             definition.setContent(String.valueOf(mDefinitionEditText.getText()));
@@ -348,8 +348,7 @@ public class WordAdvancedEditFragment extends Fragment {
         return mWord;
     }
 
-    public void clear()
-    {
+    public void clear() {
         mPartsOfSpeechSpinner.setSelection(0);
         mDefinitionEditText.setText("");
         mTranslationDefinitionEditText.setText("");
@@ -357,8 +356,7 @@ public class WordAdvancedEditFragment extends Fragment {
         removeImage();
     }
 
-    public boolean validate()
-    {
+    public boolean validate() {
         return true;
     }
 

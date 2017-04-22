@@ -3,13 +3,11 @@ package com.dyszlewskiR.edu.scientling.widgets;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
@@ -32,13 +30,13 @@ public class NumberPreference extends Preference {
 
     private TextView mValueTextView;
 
-    public NumberPreference(Context context){
+    public NumberPreference(Context context) {
         super(context);
         init(context);
     }
 
-    public NumberPreference(Context context, AttributeSet attrs){
-        super(context,attrs);
+    public NumberPreference(Context context, AttributeSet attrs) {
+        super(context, attrs);
         init(context);
     }
 
@@ -47,7 +45,7 @@ public class NumberPreference extends Preference {
         init(context);
     }
 
-    private void init(Context context){
+    private void init(Context context) {
         mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
         String stringValue = mSharedPreferences.getString(getKey(), String.valueOf(mMinValue));
         mCurrentValue = Integer.valueOf(stringValue);
@@ -58,36 +56,35 @@ public class NumberPreference extends Preference {
         setLayoutResource(LAYOUT);
     }
 
-    public void setMinValue(int min){
-        if(mCurrentValue < min){
+    public void setMinValue(int min) {
+        if (mCurrentValue < min) {
             mCurrentValue = min;
         }
         mMinValue = min;
     }
 
     @Override
-    public void onBindView(View view){
+    public void onBindView(View view) {
         super.onBindView(view);
-        mValueTextView = (TextView)view.findViewById(R.id.preference_value);
-        if(mValueTextView != null){
+        mValueTextView = (TextView) view.findViewById(R.id.preference_value);
+        if (mValueTextView != null) {
             mValueTextView.setText(String.valueOf(mCurrentValue));
         }
     }
 
     @Override
-    public void onClick(){
+    public void onClick() {
         new NumberPickerDialog(getContext()).show();
     }
 
 
-
-    private void savePreference(int value){
+    private void savePreference(int value) {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putString(getKey(),String.valueOf(value));
+        editor.putString(getKey(), String.valueOf(value));
         editor.apply();
     }
 
-    private class NumberPickerDialog extends Dialog{
+    private class NumberPickerDialog extends Dialog {
 
         private LinearLayout mLayout;
         private NumberPicker mNumberPicker;
@@ -96,9 +93,10 @@ public class NumberPreference extends Preference {
         public NumberPickerDialog(Context context) {
             super(context);
             setContentView(createDialogView(context));
-            setListners();        }
+            setListners();
+        }
 
-        public View createDialogView(Context context){
+        public View createDialogView(Context context) {
             mLayout = new LinearLayout(context);
             mLayout.setOrientation(LinearLayout.VERTICAL);
 
@@ -118,7 +116,7 @@ public class NumberPreference extends Preference {
             return mLayout;
         }
 
-        private void setListners(){
+        private void setListners() {
             mDoneButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

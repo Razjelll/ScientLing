@@ -18,21 +18,29 @@ import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.ExerciseActivity;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
+import com.dyszlewskiR.edu.scientling.preferences.Settings;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.services.exercises.ChooseExercise;
 import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
 import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseDirection;
-import com.dyszlewskiR.edu.scientling.services.speech.TextToSpeech;
+import com.dyszlewskiR.edu.scientling.services.speech.ISpeechCallback;
+import com.dyszlewskiR.edu.scientling.services.speech.SpeechPlayer;
 import com.dyszlewskiR.edu.scientling.utils.resources.Colors;
+import com.dyszlewskiR.edu.scientling.widgets.SpeechButton;
+
+import java.io.IOException;
 
 
-public class ChooseExerciseFragment extends Fragment {
+public class ChooseExerciseFragment extends Fragment implements ISpeechCallback {
 
     private final static String TAG = "ChooseExerciseFragment";
     private static ExerciseManager mExerciseManager;
     FragmentTransaction fragmentTransaction;
     private TextView mWordTextView;
     private TextView mTranscriptionTextView;
-    private Button mSpeechButton;
+    private SpeechButton mSpeechButton;
     private Button mAnswerButton1;
     private Button mAnswerButton2;
     private Button mAnswerButton3;
@@ -45,6 +53,8 @@ public class ChooseExerciseFragment extends Fragment {
     private Button[] mAnswersButtons;
     private boolean mCanAnswer;
     private View mFragmentView;
+
+    private SpeechPlayer mSpeechPlayer;
 
     public ChooseExerciseFragment() {
 
@@ -68,6 +78,17 @@ public class ChooseExerciseFragment extends Fragment {
         FragmentManager fragmentManager = getFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         mCanAnswer = true;
+
+        initSpeechPlayer();
+    }
+
+    private void initSpeechPlayer() {
+        mSpeechPlayer = new SpeechPlayer(getContext());
+        mSpeechPlayer.setCallback(this);
+        long setId = Settings.getCurrentSetId(getContext());
+        DataManager dataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
+        VocabularySet currentSet = dataManager.getSetById(setId);
+        mSpeechPlayer.setSet(currentSet);
     }
 
     private void createAnswersButtonArray() {
@@ -110,12 +131,21 @@ public class ChooseExerciseFragment extends Fragment {
         String question = mExerciseManager.getQuestion();
         if (question != null) {
             mWordTextView.setText(question);
-            String transcription = mExerciseManager.getTranscription();
-            mTranscriptionTextView.setText(transcription);
+            //String transcription = mExerciseManager.getTranscription();
+            //mTranscriptionTextView.setText(transcription);
 
+            setSpeechPlayer(question);
             Animation animation = AnimationUtils.makeInAnimation(getActivity(), false);
             mFragmentView.startAnimation(animation);
         }
+    }
+
+    private void setSpeechPlayer(String wordContent) {
+        String recordName = mExerciseManager.getRecordName();
+        mSpeechPlayer.setWord(wordContent, recordName);
+        String languageCode = mExerciseManager.getLanguageCode();
+        Log.d(TAG, "setSpeechPlayer " + languageCode);
+        mSpeechPlayer.setTextToSpeechLanguage(mExerciseManager.getLanguageCode());
     }
 
     private void toAnswer(int button) {
@@ -164,10 +194,10 @@ public class ChooseExerciseFragment extends Fragment {
         return view;
     }
 
-    private void setupControls(View view){
+    private void setupControls(View view) {
         mWordTextView = (TextView) view.findViewById(R.id.wordTextView);
         mTranscriptionTextView = (TextView) view.findViewById(R.id.transcriptionTextView);
-        mSpeechButton = (Button) view.findViewById(R.id.speechButton);
+        mSpeechButton = (SpeechButton) view.findViewById(R.id.speechButton);
         mAnswerButton1 = (Button) view.findViewById(R.id.answer1);
         mAnswerButton2 = (Button) view.findViewById(R.id.answer2);
         mAnswerButton3 = (Button) view.findViewById(R.id.answer3);
@@ -177,12 +207,17 @@ public class ChooseExerciseFragment extends Fragment {
         mNextButton = (Button) view.findViewById(R.id.nextButton);
     }
 
-    private void setListeners(){
+    private void setListeners() {
         mSpeechButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextToSpeech textToSpeech = new TextToSpeech(getActivity().getApplicationContext(), "en-US");
-                textToSpeech.notifyNewMessage(mExerciseManager.getQuestion());
+                /*TextToSpeech textToSpeech = new TextToSpeech(getActivity().getApplicationContext(), "en-US");
+                textToSpeech.notifyNewMessage(mExerciseManager.getQuestion());*/
+                try {
+                    mSpeechPlayer.speech();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -242,7 +277,30 @@ public class ChooseExerciseFragment extends Fragment {
     public void onDetach() {
         Log.d(TAG, "onDetach");
         resetButtons();
+        mSpeechPlayer.release();
         super.onDetach();
+    }
+
+    @Override
+    public void onSpeechStart() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mSpeechButton.setLoading(false);
+                mSpeechButton.setPauseImage();
+            }
+        });
+    }
+
+    @Override
+    public void onSpeechCompleted() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mSpeechButton.setPlayImage();
+            }
+        });
+
     }
 
 

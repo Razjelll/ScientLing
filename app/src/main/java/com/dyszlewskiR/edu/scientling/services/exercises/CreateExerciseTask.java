@@ -2,8 +2,8 @@ package com.dyszlewskiR.edu.scientling.services.exercises;
 
 import android.os.AsyncTask;
 
-import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.activity.ExerciseActivity;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 /**
@@ -27,7 +27,7 @@ public class CreateExerciseTask extends AsyncTask<ExerciseParams, Void, Exercise
     @Override
     protected ExerciseManager doInBackground(ExerciseParams... params) {
         mParams = params[0];
-        DataManager dataManager = ((LingApplication)mActivity.getApplication()).getDataManager();
+        DataManager dataManager = ((LingApplication) mActivity.getApplication()).getDataManager();
         return new ExerciseManager(mParams, dataManager);
     }
 

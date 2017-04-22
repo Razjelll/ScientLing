@@ -10,16 +10,14 @@ import com.dyszlewskiR.edu.scientling.R;
 public class WordEditActivity extends AppCompatActivity {
 
     @Override
-    protected void onCreate(Bundle saveInstanceState)
-    {
+    protected void onCreate(Bundle saveInstanceState) {
         super.onCreate(saveInstanceState);
         setContentView(R.layout.activity_word_edit);
         setupToolbar();
     }
 
-    private void setupToolbar()
-    {
-        Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+    private void setupToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

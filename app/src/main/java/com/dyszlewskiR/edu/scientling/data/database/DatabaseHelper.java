@@ -30,7 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String CREATE_FILE_NAME = "createDb";
     private static final String UPDATE_FILE_NAME = "updateDb_";
     private static final String SQL_FILE_EXTENSION = ".sql";
-    private static final String SQL_FOLDER ="sql/";
+    private static final String SQL_FOLDER = "sql/";
 
     private Context mContext;
     private AndroidFileOpener mFileOpener;
@@ -101,7 +101,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     private void createDbStructure(SQLiteDatabase db) throws IOException { //TODO wyrzucenie własnego wyjątku
         //ArrayList<String> statements = getSQLStatements(SQL_FOLDER+CREATE_FILE_NAME + SQL_FILE_EXTENSION);
-        List<String> statements = QueryReader.getQueries(SQL_FOLDER+CREATE_FILE_NAME + SQL_FILE_EXTENSION,mContext);
+        List<String> statements = QueryReader.getQueries(SQL_FOLDER + CREATE_FILE_NAME + SQL_FILE_EXTENSION, mContext);
         db.beginTransaction();
         String query = null;
         for (int i = 0; i < statements.size(); ++i) {
@@ -167,9 +167,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onOpen(SQLiteDatabase db){
+    public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
-        if(!db.isReadOnly()){
+        if (!db.isReadOnly()) {
             Log.d("DatabaseHelper", "foreign_keys = ON");
             db.execSQL("PRAGMA foreign_keys=ON;");
         }

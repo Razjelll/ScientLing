@@ -2,11 +2,13 @@ package com.dyszlewskiR.edu.scientling.services.exercises;
 
 import android.util.Log;
 
+import com.dyszlewskiR.edu.scientling.data.models.models.Language;
+import com.dyszlewskiR.edu.scientling.data.models.models.RepetitionItem;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.data.models.params.AnswersParams;
 import com.dyszlewskiR.edu.scientling.data.models.params.QuestionsParams;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.RepetitionItem;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.ArrayList;
@@ -73,6 +75,7 @@ public class ExerciseManager {
     private IExercise mExerciseType;
     private IExerciseDirection mExerciseDirection;
     private DataManager mDataManager;
+    private VocabularySet mSet;
 
     private ExerciseParams mExerciseParams;
 
@@ -80,6 +83,11 @@ public class ExerciseManager {
         setupParams(exerciseParams);
         prepareFields();
         mDataManager = dataManager;
+        mSet = dataManager.getSetById(exerciseParams.getSetId());
+        Language l1 = mDataManager.getLanguageById(mSet.getLanguageL1().getId());
+        Language l2 = mDataManager.getLanguageById(mSet.getLanguageL2().getId());
+        mSet.setLanguageL1(l1);
+        mSet.setLanguageL2(l2);
 
         QuestionsParams questionsParams = ExerciseParamsHelper.getQuestionParams(exerciseParams);
         mQuestions = mDataManager.getQuestions(questionsParams);
@@ -89,12 +97,12 @@ public class ExerciseManager {
         //od razu pobieramy pierwszy element z kolejki, ponieważ pierwsze pytanie zostaje wyświetlane
         //po załadowaniu się obiektu. Jesli wartość 0 zostałaby w kolejce, słówko pojawiłoby się
         //na liście 2 razy
-        if(!mQuestionsQueue.isEmpty()) {
+        if (!mQuestionsQueue.isEmpty()) {
             mCurrentQuestion = mQuestionsQueue.poll();
         }
     }
 
-    private void setupParams(ExerciseParams params){
+    private void setupParams(ExerciseParams params) {
         mExerciseParams = params;
     }
 
@@ -125,9 +133,13 @@ public class ExerciseManager {
         return mCurrentQuestion;
     }
 
-    public List<Word> getQuestions(){return mQuestions;}
+    public List<Word> getQuestions() {
+        return mQuestions;
+    }
 
-    public int getNumAnswers(){return mExerciseParams.getNumberAnswers();}
+    public int getNumAnswers() {
+        return mExerciseParams.getNumberAnswers();
+    }
 
     public void setExerciseType(IExercise exerciseType) {
         mExerciseType = exerciseType;
@@ -147,6 +159,15 @@ public class ExerciseManager {
 
     public String getTranscription() {
         return mExerciseDirection.getTranscription(getCurrentQuestionWord());
+    }
+
+    public String getRecordName() {
+        //TODO przejżeć czy będzie to odpowiednie
+        return mQuestions.get(mCurrentQuestion).getRecordName();
+    }
+
+    public String getLanguageCode() {
+        return mExerciseDirection.getCode(mSet);
     }
 
     public int getRemainingQuestion() {
@@ -252,8 +273,7 @@ public class ExerciseManager {
         public static QuestionsParams getQuestionParams(ExerciseParams exerciseParams) {
             QuestionsParams questionsParams = new QuestionsParams();
             questionsParams.setSetId(exerciseParams.getSetId());
-            if(exerciseParams.isRepetitionDate())
-            {
+            if (exerciseParams.isRepetitionDate()) {
                 questionsParams.setDate(exerciseParams.getRepetitionDate());
             }
             questionsParams.setLimit(exerciseParams.getNumberQuestion());
@@ -264,18 +284,18 @@ public class ExerciseManager {
         public static AnswersParams getAnswerParams(ExerciseParams exerciseParams, Word word) {
             AnswersParams answersParams = new AnswersParams();
             answersParams.setSetId(exerciseParams.getSetId());
-            if(exerciseParams.isAnswerFromLesson()) {
+            if (exerciseParams.isAnswerFromLesson()) {
                 answersParams.setLessonId(word.getLessonId());
             }
-            if(exerciseParams.isAnswerFromCategory()){
-                if(word.getCategory() != null){
+            if (exerciseParams.isAnswerFromCategory()) {
+                if (word.getCategory() != null) {
                     answersParams.setCategoryId(word.getCategory().getId());
                 }
             }
             answersParams.setUsedContent(word.getContent());
             String[] usedTranslations = TranslationListConverter.toStringArray(word.getTranslations());
             answersParams.setUsedTranslations(usedTranslations);
-            answersParams.setLimit(exerciseParams.getNumberAnswers()-1);
+            answersParams.setLimit(exerciseParams.getNumberAnswers() - 1);
             return answersParams;
         }
     }

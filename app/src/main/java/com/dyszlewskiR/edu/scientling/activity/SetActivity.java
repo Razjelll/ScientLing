@@ -20,7 +20,7 @@ public class SetActivity extends AppCompatActivity {
 
     }
 
-    private void setupToolbar(){
+    private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);

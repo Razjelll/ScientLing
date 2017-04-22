@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,16 +28,19 @@ import android.widget.PopupMenu;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.LearningActivity;
 import com.dyszlewskiR.edu.scientling.activity.WordEditActivity;
+import com.dyszlewskiR.edu.scientling.adapters.CategorySpinnerAdapter;
+import com.dyszlewskiR.edu.scientling.adapters.LessonSpinnerAdapter;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
+import com.dyszlewskiR.edu.scientling.data.models.models.Category;
+import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.data.models.params.WordsParams;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
+import com.dyszlewskiR.edu.scientling.services.data.DeletingWordService;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
@@ -58,7 +61,8 @@ public class WordsManagerFragment extends Fragment {
     private final int TYPES_ADAPTER_RESOURCE = R.layout.item_simple;
     private final int WORD_ADAPTER_RESOURCE = R.layout.item_word_list;
 
-    private final int ADD_REQUEST = 2239;
+    private final int ADD_WORD_REQUEST = 2239;
+    private int EDIT_WORD_REQUEST = 9334;
 
     private final int ANY_LESSON_ID = -1;
     private final int ANY_CATEGORY_ID = -1;
@@ -364,7 +368,7 @@ public class WordsManagerFragment extends Fragment {
         Intent intent = new Intent(getContext(), WordEditActivity.class);
         intent.putExtra("exit", true);
         intent.putExtra("set", mSet);
-        startActivityForResult(intent, ADD_REQUEST);
+        startActivityForResult(intent, ADD_WORD_REQUEST);
     }
 
     private void changeFiltersVisibility() {
@@ -384,16 +388,28 @@ public class WordsManagerFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        if(requestCode == ADD_REQUEST){
-            if(resultCode == Activity.RESULT_OK){
-                Log.d(LOG_TAG, "onActivityResult ADD_REQUEST");
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == ADD_WORD_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                Log.d(LOG_TAG, "onActivityResult ADD_WORD_REQUEST");
                 //TODO na początku wybrano taką nieelegancką metodę
                 //można to jeszcze zrobić, że zwracamy to jedno słówko a następnie sprawdzamy czy
                 //ma taką samą kategorię, lekcje i typ jak aktualnie wyświetlany
                 setWordList(mSet, mLesson, mCategory, mType);
             }
         }
+        if (requestCode == EDIT_WORD_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                setWordList(mSet, mLesson, mCategory, mType);
+            }
+        }
+    }
+
+    private void startDeletingService(Word word, String setCatalog) {
+        Intent intent = new Intent(getContext(), DeletingWordService.class);
+        intent.putExtra("word", word);
+        intent.putExtra("catalog", setCatalog);
+        getActivity().startService(intent);
     }
 
     //region SetSpinnerAdapter
@@ -450,129 +466,15 @@ public class WordsManagerFragment extends Fragment {
     }
     //endregion
 
-    //region LessonSpinnerAdapter
-    private class LessonSpinnerAdapter extends ArrayAdapter {
-
-        private List<Lesson> mItems;
-        private Context mContext;
-        private int mResource;
-
-        public LessonSpinnerAdapter(Context context, int resource, List<Lesson> data) {
-            super(context, resource, data);
-            mContext = context;
-            mResource = resource;
-            mItems = data;
-        }
-
-        public void setData(List<Lesson> data) {
-            mItems = data;
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public int getPosition(Object object) {
-            Lesson lesson = (Lesson) object;
-            for (int i = 0; i < mItems.size(); ++i) {
-                if (lesson.getId() == mItems.get(i).getId()) {
-                    return i;
-                }
-            }
-            return -1;
-        }
-
-        @Override
-        public Lesson getItem(int position) {
-            return mItems.get(position);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            return getRowView(position, convertView);
-        }
-
-        private View getRowView(int position, View convertView) {
-            View rowView = convertView;
-            if (rowView == null) {
-                LayoutInflater inflater = LayoutInflater.from(mContext);
-                rowView = inflater.inflate(mResource, null);
-            }
-
-            TextView textView = (TextView) rowView.findViewById(R.id.text_view);
-            if (mItems.get(position).getId() != ANY_LESSON_ID) {
-                if (mItems.get(position).getNumber() != Constants.DEFAULT_LESSON_NUMBER) {
-                    textView.setText(mItems.get(position).getName());
-                } else {
-                    textView.setText(getString(R.string.lack));
-                }
-            } else {
-                textView.setText(getString(R.string.any));
-            }
-            return rowView;
-        }
-
-        @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            return getRowView(position, convertView);
-        }
-    }
-    //endregion
-
-    //region CategoryAdapter
-    private class CategorySpinnerAdapter extends ArrayAdapter {
-        private List<Category> mItems;
-        private Context mContext;
-        private int mResource;
-
-        public CategorySpinnerAdapter(Context context, int resource, List<Category> data) {
-            super(context, resource, data);
-            mContext = context;
-            mResource = resource;
-            mItems = data;
-        }
-
-        @Override
-        public Category getItem(int position) {
-            return mItems.get(position);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            return getRowView(position, convertView);
-        }
-
-        private View getRowView(int position, View convertView) {
-            View rowView = convertView;
-            if (rowView == null) {
-                LayoutInflater inflater = LayoutInflater.from(mContext);
-                rowView = inflater.inflate(mResource, null);
-            }
-            TextView textView = (TextView) rowView.findViewById(R.id.text_view);
-            if (mItems.get(position).getId() == ANY_CATEGORY_ID) {
-                textView.setText(getString(R.string.any));
-            } else {
-                String categoryName = ResourceUtils.getString(mItems.get(position).getName(), mContext);
-                textView.setText(categoryName);
-            }
-
-            return rowView;
-        }
-
-        @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
-            return getRowView(position, convertView);
-        }
-    }
-    //endregion
 
     //region WordAdapter
     private class WordAdapter extends ArrayAdapter implements Filterable {
-        private final int MENU_SEE= R.string.see;
+        private final int MENU_SEE = R.string.see;
         private final int MENU_EDIT = R.string.edit;
         private final int MENU_ADD_TO_HARD = R.string.add_to_hard;
         private final int MENU_REMOVE_FROM_HARD = R.string.remove_from_hard;
         private final int MENU_DELETE = R.string.delete;
 
-        private int EDIT_WORD_REQUEST = 9334;
 
         private List<Word> mItems;
         private List<Word> mFilteredItems;
@@ -643,7 +545,7 @@ public class WordsManagerFragment extends Fragment {
                 String translatePart = ResourceUtils.getString(partOfSpeech, mContext);
                 viewHolder.partOfSpeechTextView.setText(translatePart);
             }
-            if(mFilteredItems.get(position).isSelected()){
+            if (mFilteredItems.get(position).isSelected()) {
                 viewHolder.hardImageView.setVisibility(View.VISIBLE);
             }
             setupMenu(position, viewHolder);
@@ -667,10 +569,10 @@ public class WordsManagerFragment extends Fragment {
                     popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
-                            if(item.getTitle().equals(getString(MENU_SEE))){
+                            if (item.getTitle().equals(getString(MENU_SEE))) {
                                 seeItem(position);
                             }
-                             if (item.getTitle().equals(getString(MENU_EDIT))) {
+                            if (item.getTitle().equals(getString(MENU_EDIT))) {
                                 editItem(position);
                             }
                             if (item.getTitle().equals(getString(MENU_ADD_TO_HARD))) {
@@ -690,7 +592,7 @@ public class WordsManagerFragment extends Fragment {
             });
         }
 
-        private void seeItem(int itemPosition){
+        private void seeItem(int itemPosition) {
             Intent intent = new Intent(mContext, LearningActivity.class);
             //przekazujemy do intencji listę z jednym słowkiem, ponieważ otwierana aktywność
             //oczekuje właśnie takiej formy danych, ponieważ korzystamy z aktywności
@@ -698,13 +600,15 @@ public class WordsManagerFragment extends Fragment {
             ArrayList<Word> word = new ArrayList<>();
             word.add(mFilteredItems.get(itemPosition));
             intent.putParcelableArrayListExtra("items", word);
-            intent.putExtra("learning",false);
+            intent.putExtra("set", mSet);
+            intent.putExtra("learning", false);
             startActivity(intent);
         }
 
         private void editItem(int itemPosition) {
             Intent intent = new Intent(mContext, WordEditActivity.class);
             intent.putExtra("item", mFilteredItems.get(itemPosition));
+            intent.putExtra("set", mSet);
             intent.putExtra("edit", true);
             mLastEditedPosition = itemPosition;
             startActivityForResult(intent, EDIT_WORD_REQUEST);
@@ -741,7 +645,10 @@ public class WordsManagerFragment extends Fragment {
                 setButton(BUTTON_POSITIVE, context.getString(R.string.yes), new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        dataManager.deleteWord(word);
+                       /* WordFileSystem.deleteImage(word.getImageName(), mSet.getCatalog(), getContext());
+                        WordFileSystem.deleteRecord(word.getRecordName(), mSet.getCatalog(), getContext());
+                        dataManager.deleteWord(word);*/
+                        startDeletingService(word, mSet.getCatalog());
                         mFilteredItems.remove(word);
                         notifyDataSetChanged();
                     }
@@ -754,6 +661,8 @@ public class WordsManagerFragment extends Fragment {
                 });
             }
         }
+
+
         //endregion
 
         //region ValueFilter
@@ -773,7 +682,7 @@ public class WordsManagerFragment extends Fragment {
                     itemContent = list.get(word).getContent();
                     for (int translation = 0; translation < list.get(word).getTranslations().size(); translation++) {
                         itemTranslation = list.get(word).getTranslations().get(translation).getContent();
-                        if (itemContent.toLowerCase().contains(filterString)) {
+                        if (itemTranslation.toLowerCase().contains(filterString)) {
                             contain = true;
                         }
                     }
@@ -798,6 +707,7 @@ public class WordsManagerFragment extends Fragment {
         //endregion
     }
 
+
     private static class ViewHolder {
         public TextView contentTextView;
         public TextView translationTextView;
@@ -811,7 +721,7 @@ public class WordsManagerFragment extends Fragment {
             translationTextView = (TextView) view.findViewById(R.id.word_translation_text_view);
             categoryTextView = (TextView) view.findViewById(R.id.category_text_view);
             partOfSpeechTextView = (TextView) view.findViewById(R.id.part_of_speech_text_view);
-            hardImageView = (ImageView)view.findViewById(R.id.hard_image_view);
+            hardImageView = (ImageView) view.findViewById(R.id.hard_image_view);
             actionButton = (ImageView) view.findViewById(R.id.menu_button);
         }
     }
@@ -839,7 +749,7 @@ public class WordsManagerFragment extends Fragment {
 
         @Override
         protected List<Word> doInBackground(WordsParams... params) {
-            return mDataManager.getWords(params[0]);
+            return mDataManager.getWords(params[0], true);
         }
 
         @Override
@@ -855,5 +765,4 @@ public class WordsManagerFragment extends Fragment {
         }
     }
     //endregion
-
 }

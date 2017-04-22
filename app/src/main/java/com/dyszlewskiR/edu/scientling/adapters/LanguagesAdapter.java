@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Language;
+import com.dyszlewskiR.edu.scientling.data.models.models.Language;
 
 import java.util.List;
 
@@ -33,9 +33,9 @@ public class LanguagesAdapter extends ArrayAdapter {
         mItems = data;
     }
 
-    public int getPosition(String name){
-        for(int i=0;i<mItems.size(); i++){
-            if(mItems.get(i).getName().equals(name)){
+    public int getPosition(String name) {
+        for (int i = 0; i < mItems.size(); i++) {
+            if (mItems.get(i).getName().equals(name)) {
                 return i;
             }
         }

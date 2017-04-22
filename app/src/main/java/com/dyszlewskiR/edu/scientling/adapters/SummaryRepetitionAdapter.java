@@ -1,20 +1,16 @@
 package com.dyszlewskiR.edu.scientling.adapters;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.ToggleButton;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.List;
@@ -43,13 +39,13 @@ public class SummaryRepetitionAdapter extends ArrayAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         final ViewHolder viewHolder;
         View rowView = convertView;
-        if(rowView == null) {
+        if (rowView == null) {
             LayoutInflater inflater = LayoutInflater.from(mContext);
             rowView = inflater.inflate(mResource, null);
             viewHolder = new ViewHolder(rowView);
             rowView.setTag(viewHolder);
         } else {
-            viewHolder = (ViewHolder)rowView.getTag();
+            viewHolder = (ViewHolder) rowView.getTag();
         }
         viewHolder.contentTextView.setText(mItems.get(position).getContent());
         String translations = TranslationListConverter.toString(mItems.get(position).getTranslations());
@@ -61,7 +57,7 @@ public class SummaryRepetitionAdapter extends ArrayAdapter {
         } else {
             viewHolder.selectedButton.setBackgroundResource(UNSELECTED_ICON);
         }*/
-        setSelectedButton(position,viewHolder);
+        setSelectedButton(position, viewHolder);
         viewHolder.selectedButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,16 +70,16 @@ public class SummaryRepetitionAdapter extends ArrayAdapter {
                 viewHolder.selectedButton.setActivated(!isSelected);
                 viewHolder.selectedButton.invalidate();
                 Log.d(getClass().getSimpleName(), "selected" + viewHolder.selectedButton.isActivated());
-                setSelectedButton(position,viewHolder);
+                setSelectedButton(position, viewHolder);
             }
         });
         return rowView;
     }
 
-    private void setSelectedButton(int position, ViewHolder viewHolder){
+    private void setSelectedButton(int position, ViewHolder viewHolder) {
         final boolean isSelected = mItems.get(position).isSelected();
 
-        if(isSelected){
+        if (isSelected) {
             //viewHolder.selectedButton.setImageDrawable(ContextCompat.getDrawable(mContext,SELECTED_ICON));
             //viewHolder.selectedButton.setBackgroundResource(SELECTED_ICON);
             viewHolder.selectedButton.setImageResource(SELECTED_ICON);
@@ -99,9 +95,9 @@ public class SummaryRepetitionAdapter extends ArrayAdapter {
         public TextView translationTextView;
         public ImageView selectedButton;
 
-        public ViewHolder(View view){
+        public ViewHolder(View view) {
             contentTextView = (TextView) view.findViewById(R.id.word_content_text_view);
-            translationTextView = (TextView)view.findViewById(R.id.word_translation_text_view);
+            translationTextView = (TextView) view.findViewById(R.id.word_translation_text_view);
             selectedButton = (ImageView) view.findViewById(R.id.selected_button);
         }
     }

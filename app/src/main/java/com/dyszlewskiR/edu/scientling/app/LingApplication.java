@@ -1,4 +1,4 @@
-package com.dyszlewskiR.edu.scientling;
+package com.dyszlewskiR.edu.scientling.app;
 
 import android.app.Application;
 import android.util.Log;
@@ -38,7 +38,7 @@ public class LingApplication extends Application {
         super.onCreate();
         mDataManager = new DataManager(getBaseContext());
         mCurrentSetId = Settings.getCurrentSetId(getBaseContext());
-        if(!PreferenceInitializer.isInitialize(getBaseContext())) {
+        if (!PreferenceInitializer.isInitialize(getBaseContext())) {
             PreferenceInitializer.initialize(getBaseContext());
             Settings.setCurrentSetId(Constants.DEFAULT_SET_ID, getBaseContext());
         }

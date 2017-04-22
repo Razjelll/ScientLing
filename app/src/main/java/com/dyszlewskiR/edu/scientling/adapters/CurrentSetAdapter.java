@@ -8,7 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.List;
  * Created by Razjelll on 08.01.2017.
  */
 
-public class CurrentSetAdapter extends ArrayAdapter<VocabularySet>{
+public class CurrentSetAdapter extends ArrayAdapter<VocabularySet> {
     private List<VocabularySet> mItems;
     private Context mContext;
     private int mResource;
@@ -26,37 +26,43 @@ public class CurrentSetAdapter extends ArrayAdapter<VocabularySet>{
     public CurrentSetAdapter(Context context, int resource, List<VocabularySet> data) {
         super(context, resource, data);
         mContext = context;
-        mResource =resource;
+        mResource = resource;
         mItems = data;
         mInflater = LayoutInflater.from(mContext);
     }
 
     @Override
-    public int getCount(){return mItems.size();}
+    public int getCount() {
+        return mItems.size();
+    }
 
-    public VocabularySet getItem(int position) {return mItems.get(position);}
+    public VocabularySet getItem(int position) {
+        return mItems.get(position);
+    }
 
     @Override
-    public long getItemId(int position) {return mItems.get(position).getId();}
+    public long getItemId(int position) {
+        return mItems.get(position).getId();
+    }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent){
+    public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
         View rowView = convertView;
-        if(rowView == null){
+        if (rowView == null) {
             rowView = mInflater.inflate(mResource, null);
             viewHolder = new ViewHolder(rowView);
             rowView.setTag(viewHolder);
         } else {
-            viewHolder = (ViewHolder)rowView.getTag();
+            viewHolder = (ViewHolder) rowView.getTag();
         }
 
         viewHolder.nameTextView.setText(mItems.get(position).getName());
-        if(mItems.get(position).getLanguageL1()!=null && mItems.get(position).getLanguageL2()!=null){
+        if (mItems.get(position).getLanguageL1() != null && mItems.get(position).getLanguageL2() != null) {
             viewHolder.languagesTextView.setText(
-                    ResourceUtils.getString(mItems.get(position).getLanguageL1().getName(),mContext)
-                    + " - " +
-                    ResourceUtils.getString(mItems.get(position).getLanguageL2().getName(), mContext)
+                    ResourceUtils.getString(mItems.get(position).getLanguageL1().getName(), mContext)
+                            + " - " +
+                            ResourceUtils.getString(mItems.get(position).getLanguageL2().getName(), mContext)
             );
         }
         return rowView;
@@ -66,9 +72,9 @@ public class CurrentSetAdapter extends ArrayAdapter<VocabularySet>{
         public TextView nameTextView;
         public TextView languagesTextView;
 
-        public ViewHolder(View view){
+        public ViewHolder(View view) {
             nameTextView = (TextView) view.findViewById(R.id.set_name_text_view);
-            languagesTextView = (TextView)view.findViewById(R.id.set_languages_text_view);
+            languagesTextView = (TextView) view.findViewById(R.id.set_languages_text_view);
         }
     }
 

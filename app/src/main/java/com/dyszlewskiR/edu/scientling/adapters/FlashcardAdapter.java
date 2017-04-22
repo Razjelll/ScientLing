@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.ArrayList;
@@ -57,9 +57,9 @@ public class FlashcardAdapter extends PagerAdapter {
     }
 
     public void changeSide(final int position) {
-        final AnimatorSet animatorIn = (AnimatorSet)AnimatorInflater.loadAnimator(mContext, R.animator.flashcard_flip_left_in);
+        final AnimatorSet animatorIn = (AnimatorSet) AnimatorInflater.loadAnimator(mContext, R.animator.flashcard_flip_left_in);
         animatorIn.setTarget(mViews.get(position));
-        AnimatorSet animatorOut = (AnimatorSet)AnimatorInflater.loadAnimator(mContext, R.animator.flashcard_flip_right_out);
+        AnimatorSet animatorOut = (AnimatorSet) AnimatorInflater.loadAnimator(mContext, R.animator.flashcard_flip_right_out);
         animatorOut.setTarget(mViews.get(position));
 
         animatorOut.addListener(new Animator.AnimatorListener() {

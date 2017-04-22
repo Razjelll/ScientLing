@@ -9,7 +9,9 @@ import android.content.Context;
 public class ResourceUtils {
     public static String getString(String resourceName, Context context) {
         int resource = context.getResources().getIdentifier(resourceName, "string", context.getPackageName());
-        if(resource==0){return null;}
+        if (resource == 0) {
+            return null;
+        }
         return context.getResources().getString(resource);
     }
 

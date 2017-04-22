@@ -2,9 +2,9 @@ package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
-import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
+import com.dyszlewskiR.edu.scientling.data.models.models.Category;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 /**
@@ -34,13 +34,13 @@ public class CategoryFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
+        mDataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
         getData();
     }
 
-    private void getData(){
+    private void getData() {
         Intent data = getActivity().getIntent();
         mCategory = data.getParcelableExtra("item");
         mEdit = data.getBooleanExtra("edit", false);
@@ -55,12 +55,12 @@ public class CategoryFragment extends Fragment {
         return view;
     }
 
-    private void setupControls(View view){
-        mNameEditText = (EditText)view.findViewById(R.id.category_name_edit_text);
-        mSaveButton = (Button)view.findViewById(R.id.save_button);
+    private void setupControls(View view) {
+        mNameEditText = (EditText) view.findViewById(R.id.category_name_edit_text);
+        mSaveButton = (Button) view.findViewById(R.id.save_button);
     }
 
-    private void setListeners(){
+    private void setListeners() {
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,10 +69,10 @@ public class CategoryFragment extends Fragment {
         });
     }
 
-    private void saveCategory(){
-        if(validate()){
+    private void saveCategory() {
+        if (validate()) {
             Category category = getCategory();
-            if(mEdit){
+            if (mEdit) {
                 mDataManager.updateCategory(category);
             } else {
                 long categoryId = mDataManager.saveCategory(category);
@@ -82,18 +82,18 @@ public class CategoryFragment extends Fragment {
         }
     }
 
-    private Category getCategory(){
-        if(mCategory == null){
-            mCategory  = new Category();
+    private Category getCategory() {
+        if (mCategory == null) {
+            mCategory = new Category();
         }
         mCategory.setName(mNameEditText.getText().toString());
         return mCategory;
     }
 
-    private boolean validate(){
-        if(mNameEditText.getText().toString().trim().length()>0){ //sprawdzamy czy stawiona wartość nie składa się tylko ze znaków białych
+    private boolean validate() {
+        if (mNameEditText.getText().toString().trim().length() > 0) { //sprawdzamy czy stawiona wartość nie składa się tylko ze znaków białych
             Category category = mDataManager.getCategoryByName(mNameEditText.getText().toString()); //sprawdzamy czy podana kategoria istnieje już w bazie
-            if(category == null){
+            if (category == null) {
                 return true;
             } else {
                 Snackbar.make(mNameEditText, getString(R.string.category_exist), Snackbar.LENGTH_SHORT).show();
@@ -104,7 +104,7 @@ public class CategoryFragment extends Fragment {
         return false;
     }
 
-    private void setResultAndFinish(Category resultCategory){
+    private void setResultAndFinish(Category resultCategory) {
         Intent data = new Intent();
         data.putExtra("result", resultCategory);
         getActivity().setResult(Activity.RESULT_OK, data);
@@ -112,8 +112,8 @@ public class CategoryFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
-        if(mCategory != null && mEdit){
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        if (mCategory != null && mEdit) {
             mNameEditText.setText(mCategory.getName());
         }
     }

@@ -4,8 +4,8 @@ import android.os.AsyncTask;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.WordListAdapter;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.data.models.params.WordsListParams;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.fragment.ManageWordsFragment;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
@@ -21,26 +21,26 @@ public class LoadWordAsyncTask extends AsyncTask<WordsListParams, Void, WordList
     private DataManager mDataManager;
     private ManageWordsFragment mFragment;
 
-    public LoadWordAsyncTask(DataManager dataManager, ManageWordsFragment fragment){
+    public LoadWordAsyncTask(DataManager dataManager, ManageWordsFragment fragment) {
         mDataManager = dataManager;
         mFragment = fragment;
     }
 
     @Override
     protected WordListAdapter doInBackground(WordsListParams... params) {
-        List<Word> words= null;
+        List<Word> words = null;
         try {
             words = mDataManager.getWords(params[0]);
         } catch (IOException e) {
             e.printStackTrace();
         }
         WordListAdapter adapter = new WordListAdapter(mFragment.getActivity(), R.layout.item_word_list,
-                words,mDataManager);
+                words, mDataManager);
         return adapter;
     }
 
     @Override
-    protected void onPostExecute(WordListAdapter result){
+    protected void onPostExecute(WordListAdapter result) {
         mFragment.onPostAsyncTask(result);
     }
 

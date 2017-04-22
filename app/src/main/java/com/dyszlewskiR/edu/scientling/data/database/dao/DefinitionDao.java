@@ -5,10 +5,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable;
-import com.dyszlewskiR.edu.scientling.data.database.tables.WordsHintsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Definition;
 import com.dyszlewskiR.edu.scientling.data.models.creators.DefinitionCreator;
+import com.dyszlewskiR.edu.scientling.data.models.models.Definition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,19 +114,19 @@ public class DefinitionDao extends BaseDao<Definition> {
         return definitionsList;
     }
 
-    public long getIdByContentAndTranslation(String content, String translation){
-        String where = DefinitionsColumns.CONTENT +"=?"
-                + " AND " + DefinitionsColumns.TRANSLATION  + "=?";
+    public long getIdByContentAndTranslation(String content, String translation) {
+        String where = DefinitionsColumns.CONTENT + "=?"
+                + " AND " + DefinitionsColumns.TRANSLATION + "=?";
         String[] whereArguments = {content, translation};
-        Cursor cursor = mDb.query(false, DefinitionsTable.TABLE_NAME,new String[]{DefinitionsColumns.ID}, where, whereArguments,
-                null,null,null,"1");
-        if(cursor.moveToFirst()){
+        Cursor cursor = mDb.query(false, DefinitionsTable.TABLE_NAME, new String[]{DefinitionsColumns.ID}, where, whereArguments,
+                null, null, null, "1");
+        if (cursor.moveToFirst()) {
             return cursor.getLong(0);
         }
         return -1;
     }
 
-    public int deleteUnlinked(){
+    public int deleteUnlinked() {
         String statement = new StringBuilder()
                 //.append("DELETE FROM ").append(DefinitionsTable.TABLE_NAME)
                 //.append(" WHERE ")

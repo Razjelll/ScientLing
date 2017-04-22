@@ -5,16 +5,18 @@ package com.dyszlewskiR.edu.scientling.data.models.params;
  */
 
 public class WordsListParams {
-    public enum Tabs{
+    public enum Tabs {
         ALL(0),
         OWN(1),
         HARD(2);
 
         private final int id;
-        Tabs(int id){
+
+        Tabs(int id) {
             this.id = id;
         }
-        public final int getValue(){
+
+        public final int getValue() {
             return id;
         }
     }
@@ -22,21 +24,33 @@ public class WordsListParams {
     private long mSetId;
     private Tabs mTab;
 
-    public long getSetId(){
+    public long getSetId() {
         return mSetId;
     }
-    public void setSetId(long setId){mSetId = setId;}
 
-    public Tabs getTab(){return mTab;}
-    public void setTab(Tabs tab){mTab = tab;}
-    public void setTab(int tab){
-        switch (tab){
+    public void setSetId(long setId) {
+        mSetId = setId;
+    }
+
+    public Tabs getTab() {
+        return mTab;
+    }
+
+    public void setTab(Tabs tab) {
+        mTab = tab;
+    }
+
+    public void setTab(int tab) {
+        switch (tab) {
             case 0:
-                mTab = Tabs.ALL; break;
+                mTab = Tabs.ALL;
+                break;
             case 1:
-                mTab = Tabs.OWN; break;
+                mTab = Tabs.OWN;
+                break;
             case 2:
-                mTab = Tabs.HARD; break;
+                mTab = Tabs.HARD;
+                break;
         }
     }
 }

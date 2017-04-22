@@ -2,19 +2,14 @@ package com.dyszlewskiR.edu.scientling.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.fragment.LearningFragment;
-import com.dyszlewskiR.edu.scientling.fragment.LearningListFragment;
 
 public class LearningListActivity extends AppCompatActivity {
 
@@ -48,8 +43,7 @@ public class LearningListActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onDestroy()
-    {
+    public void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy");
     }

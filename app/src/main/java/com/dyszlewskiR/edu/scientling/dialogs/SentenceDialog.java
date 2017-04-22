@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
+import com.dyszlewskiR.edu.scientling.data.models.models.Sentence;
 
 /**
  * Created by Razjelll on 21.03.2017.
@@ -90,8 +90,7 @@ public class SentenceDialog extends DialogFragment {
         });
     }
 
-    private void returnSentenceAndDismiss(String sentenceText, String translationText)
-    {
+    private void returnSentenceAndDismiss(String sentenceText, String translationText) {
         Sentence sentence = new Sentence();
         sentence.setContent(sentenceText);
         sentence.setTranslation(translationText);

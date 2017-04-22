@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -22,6 +22,7 @@ public class FirstSideFlashcardFragment extends SideFlashcardFragment {
     public FirstSideFlashcardFragment() {
         // Required empty public constructor
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

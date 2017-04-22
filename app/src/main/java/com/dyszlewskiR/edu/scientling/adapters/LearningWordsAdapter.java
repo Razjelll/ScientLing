@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
@@ -31,8 +31,7 @@ public class LearningWordsAdapter extends BaseAdapter {
         mItems = data;
     }
 
-    public void setData(List<Word> data)
-    {
+    public void setData(List<Word> data) {
         mItems = data;
     }
 

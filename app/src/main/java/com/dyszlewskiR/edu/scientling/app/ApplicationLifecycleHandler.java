@@ -1,4 +1,4 @@
-package com.dyszlewskiR.edu.scientling;
+package com.dyszlewskiR.edu.scientling.app;
 
 import android.app.Activity;
 import android.app.Application;
@@ -23,7 +23,7 @@ public class ApplicationLifecycleHandler implements Application.ActivityLifecycl
     @Override
     public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
         Log.d(TAG, "onActivityCreated" + activity.getComponentName());
-        if(mContext == null){
+        if (mContext == null) {
             mContext = activity.getApplicationContext();
         }
     }
@@ -35,7 +35,7 @@ public class ApplicationLifecycleHandler implements Application.ActivityLifecycl
 
     @Override
     public void onActivityResumed(Activity activity) {
-        if(mIsInBackground){
+        if (mIsInBackground) {
             Log.d(TAG, "stopAlarm");
             ReminderAlarmManager.stopAlarm(activity.getBaseContext());
             mIsInBackground = false;
@@ -64,9 +64,9 @@ public class ApplicationLifecycleHandler implements Application.ActivityLifecycl
 
     @Override
     public void onTrimMemory(int level) {
-        if(level==ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN){
+        if (level == ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN) {
             Log.d(TAG, "onTrimMemory");
-            if(mContext != null){
+            if (mContext != null) {
                 Log.d(TAG, "startAlarm");
                 ReminderAlarmManager.startAlarm(mContext);
             }

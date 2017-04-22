@@ -110,73 +110,75 @@ public class QueryReader {
         return query;
     }
 
-    public static String getQuery(InputStream inputStream){
+    public static String getQuery(InputStream inputStream) {
         Scanner scanner = new Scanner(inputStream);
         String query = getQueryFromScanner(scanner);
         return query;
     }
 
-    public static List<String> getQueries(String queryPath, Context context) throws IOException{
+    public static List<String> getQueries(String queryPath, Context context) throws IOException {
         AssetsFileOpener opener = new AssetsFileOpener(context);
         InputStream inputStream = opener.getStream(queryPath);
         Scanner scanner = new Scanner(inputStream);
         List<String> queriesList = new ArrayList<>();
         String query = null;
-        while(scanner.hasNext()){
+        while (scanner.hasNext()) {
             query = getQueryFromScanner(scanner);
-            if(query!= null){
+            if (query != null) {
                 queriesList.add(query);
             }
         }
         return queriesList;
     }
 
-    public static List<String> getQueries(InputStream inputStream){
+    public static List<String> getQueries(InputStream inputStream) {
         Scanner scanner = new Scanner(inputStream);
         List<String> queriesList = new ArrayList<>();
         String query = null;
-        while(scanner.hasNext()){
+        while (scanner.hasNext()) {
             query = getQueryFromScanner(scanner);
-            if(query!=null){
+            if (query != null) {
                 queriesList.add(query);
             }
         }
         return queriesList;
     }
 
-    private static String getQueryFromScanner(Scanner scanner){
+    private static String getQueryFromScanner(Scanner scanner) {
         StringBuilder queryBuilder = new StringBuilder();
         String word = null;
-        if(!scanner.hasNext()){return word;}
-        do{ //wykonujemy do końca pliku lub do napotkania znaku końca zapytania
+        if (!scanner.hasNext()) {
+            return word;
+        }
+        do { //wykonujemy do końca pliku lub do napotkania znaku końca zapytania
             word = scanner.next();
-            if(word.contains(COMMENT)){
+            if (word.contains(COMMENT)) {
                 word = parseComment(word);
                 scanner.nextLine();
-            } else if(word.contains(START_COMMENT)){
+            } else if (word.contains(START_COMMENT)) {
                 word = parseStartComment(word);
-            } else if(word.contains(END_COMMENT)){
+            } else if (word.contains(END_COMMENT)) {
                 word = parseStartComment(word);
             }
-            if(!word.equals("")){
+            if (!word.equals("")) {
                 queryBuilder.append(word).append(" ");
             }
             /*if(word.contains(STATEMENTS_SEP)){
-                return queryBuilder.toString();
+                return queryBuilder.getUri();
             }*/
-        }while(scanner.hasNext() && !word.contains(STATEMENTS_SEP));
+        } while (scanner.hasNext() && !word.contains(STATEMENTS_SEP));
         return queryBuilder.toString();
     }
 
-    private static String parseComment(String word){
+    private static String parseComment(String word) {
         int commentBeginIndex = word.indexOf(COMMENT);
         word = word.substring(0, commentBeginIndex);
         return word;
     }
 
-    private static String parseStartComment(String word){
+    private static String parseStartComment(String word) {
         int commentBeginIndex = word.indexOf(START_COMMENT);
-        if(word.contains(END_COMMENT)){
+        if (word.contains(END_COMMENT)) {
             String secondPartWord = parseEndComment(word);
             word = word.substring(0, commentBeginIndex) + " " + secondPartWord;
         } else {
@@ -185,7 +187,7 @@ public class QueryReader {
         return word;
     }
 
-    private static String parseEndComment(String word){
+    private static String parseEndComment(String word) {
         int commentEndIndex = word.indexOf(END_COMMENT);
         word = word.substring(commentEndIndex + 2, word.length());
         return word;

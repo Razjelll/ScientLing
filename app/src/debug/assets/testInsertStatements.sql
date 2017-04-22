@@ -4,8 +4,7 @@ INSERT INTO Languages (name, abbreviation, code)
 VALUES ('spanish', 'ESP', 'es_ES');
 INSERT INTO Languages (name, abbreviation, code)
 VALUES ('polish','POL','pl_PL');
-INSERT INTO Languages(name, abbreviation,code)
-VALUES ('other_language', 'JAP', 'ja_JP');
+
 
 
 INSERT INTO Categories(name)

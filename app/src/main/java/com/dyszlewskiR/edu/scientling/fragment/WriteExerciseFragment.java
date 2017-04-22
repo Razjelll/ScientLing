@@ -2,7 +2,6 @@ package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.InputType;
@@ -20,12 +19,21 @@ import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.ExerciseActivity;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
+import com.dyszlewskiR.edu.scientling.preferences.Settings;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseManager;
 import com.dyszlewskiR.edu.scientling.services.exercises.IExerciseDirection;
 import com.dyszlewskiR.edu.scientling.services.exercises.WriteExercise;
+import com.dyszlewskiR.edu.scientling.services.speech.ISpeechCallback;
 import com.dyszlewskiR.edu.scientling.services.speech.ISpeechRecognitionResult;
+import com.dyszlewskiR.edu.scientling.services.speech.SpeechPlayer;
 import com.dyszlewskiR.edu.scientling.services.speech.SpeechToText;
 import com.dyszlewskiR.edu.scientling.utils.StringSimilarityCalculator;
+import com.dyszlewskiR.edu.scientling.widgets.SpeechButton;
+
+import java.io.IOException;
 
 
 /**
@@ -36,15 +44,18 @@ import com.dyszlewskiR.edu.scientling.utils.StringSimilarityCalculator;
  * Use the {@link WriteExerciseFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class WriteExerciseFragment extends Fragment implements ISpeechRecognitionResult {
+public class WriteExerciseFragment extends Fragment implements ISpeechRecognitionResult, ISpeechCallback {
 
 
     private static ExerciseManager mExerciseManager; //TODO dlaczego to jest stałe
     private TextView mWordTextView;
     private TextView mTranscriptionTextView;
-    private Button mSpeechButton;
+    private SpeechButton mSpeechButton;
+    private Button mSayButton;
     private EditText mAnswerEditText;
     private Button mCheckAnswerButton;
+
+    private SpeechPlayer mSpeechPlayer;
 
     public WriteExerciseFragment() {
     }
@@ -60,12 +71,25 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initSpeechPlayer();
+    }
+
+    private void initSpeechPlayer() {
+        mSpeechPlayer = new SpeechPlayer(getContext());
+        mSpeechPlayer.setCallback(this);
+        long setId = Settings.getCurrentSetId(getContext());
+        DataManager dataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
+        VocabularySet currentSet = dataManager.getSetById(setId);
+        mSpeechPlayer.setSet(currentSet);
     }
 
     private void showQuestion() {
         mAnswerEditText.setText("");
 
-        mWordTextView.setText(mExerciseManager.getQuestion());
+        String question = mExerciseManager.getQuestion();
+        String recordFile = mExerciseManager.getRecordName();
+        mSpeechPlayer.setWord(question, recordFile);
+        mWordTextView.setText(question);
         mTranscriptionTextView.setText(mExerciseManager.getTranscription());
     }
 
@@ -88,25 +112,47 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_write_exercise, container, false);
+        setupControls(view);
+        setListeners();
+
+
+        return view;
+    }
+
+    private void setupControls(View view) {
         mWordTextView = (TextView) view.findViewById(R.id.wordTextView);
         mTranscriptionTextView = (TextView) view.findViewById(R.id.transcriptionTextView);
-        mSpeechButton = (Button) view.findViewById(R.id.speechButton);
+        mSpeechButton = (SpeechButton) view.findViewById(R.id.speechButton);
+        mSayButton = (Button) view.findViewById(R.id.say_button);
+        mAnswerEditText = (EditText) view.findViewById(R.id.wordEditText);
+        mAnswerEditText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        mCheckAnswerButton = (Button) view.findViewById(R.id.checkAnswer);
+    }
+
+    private void setListeners() {
         mSpeechButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSpeechButton.setLoading(true);
+                try {
+                    mSpeechPlayer.speech();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        mSayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SpeechToText speechToText = new SpeechToText(getActivity().getBaseContext(), "en-US", WriteExerciseFragment.this);
                 speechToText.startListening();
             }
         });
-        mAnswerEditText = (EditText) view.findViewById(R.id.wordEditText);
-        mAnswerEditText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+
         mAnswerEditText.setOnEditorActionListener(new OnEditorEnterListener());
-        mCheckAnswerButton = (Button) view.findViewById(R.id.checkAnswer);
         mCheckAnswerButton.setOnClickListener(new AcceptAnswerOnClickListener());
-
         mAnswerEditText.requestFocus();
-
-        return view;
     }
 
     @Override
@@ -128,6 +174,7 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
     @Override
     public void onDetach() {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        mSpeechPlayer.release();
         super.onDetach();
     }
 
@@ -138,6 +185,28 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
             String mostSimilar = StringSimilarityCalculator.getMostSimilarLevenshtein(answer, result);
             mAnswerEditText.setText(mostSimilar);
         }
+    }
+
+    @Override
+    public void onSpeechStart() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mSpeechButton.setLoading(false);
+                mSpeechButton.setPauseImage();
+            }
+        });
+    }
+
+    @Override
+    public void onSpeechCompleted() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mSpeechButton.setPlayImage();
+            }
+        });
+
     }
 
     protected class AcceptAnswerOnClickListener implements View.OnClickListener {
@@ -181,21 +250,21 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
             setDialogSize();
         }
 
-        private void setupDialog(){
+        private void setupDialog() {
             this.requestWindowFeature(Window.FEATURE_NO_TITLE);
             this.setContentView(R.layout.correct_dialog);
             this.setCancelable(false);
         }
 
-        private void setDialogSize(){
+        private void setDialogSize() {
             new DialogSizeHelper().setDialogWidthMatchParent(this);
         }
 
-        private void setupControls(){
+        private void setupControls() {
             mNextButton = (Button) this.findViewById(R.id.correctDialogNextButton);
         }
 
-        private void setListeners(){
+        private void setListeners() {
             mNextButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -213,7 +282,7 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
         private TextView mCorrectAnswer;
         private Button mNextButton;
 
-        public IncorrectDialog(Context context, String userAnswer, String correctAnswer){
+        public IncorrectDialog(Context context, String userAnswer, String correctAnswer) {
             super(context);
             setupDialog();
             setupControls();
@@ -222,28 +291,28 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
             setDialogSize();
         }
 
-        private void setupDialog(){
+        private void setupDialog() {
             this.requestWindowFeature(Window.FEATURE_NO_TITLE);
             this.setContentView(R.layout.incorrect_dialog);
             this.setCancelable(false);
         }
 
-        private void setDialogSize(){
+        private void setDialogSize() {
             new DialogSizeHelper().setDialogWidthMatchParent(this);
         }
 
-        private void setupControls(){
+        private void setupControls() {
             mUserAnswer = (TextView) this.findViewById(R.id.yourAnswerTextView);
             mCorrectAnswer = (TextView) this.findViewById(R.id.correctAnswerTextView);
             mNextButton = (Button) this.findViewById(R.id.nextButton);
         }
 
-        private void setControlsValue(String userAnswer, String correctAnswer){
+        private void setControlsValue(String userAnswer, String correctAnswer) {
             mUserAnswer.setText(userAnswer);
             mCorrectAnswer.setText(correctAnswer);
         }
 
-        private void setListeners(){
+        private void setListeners() {
             mNextButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -254,7 +323,7 @@ public class WriteExerciseFragment extends Fragment implements ISpeechRecognitio
         }
     }
 
-    private class DialogSizeHelper{
+    private class DialogSizeHelper {
         public void setDialogWidthMatchParent(Dialog dialog) {
             WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
             Window window = dialog.getWindow();

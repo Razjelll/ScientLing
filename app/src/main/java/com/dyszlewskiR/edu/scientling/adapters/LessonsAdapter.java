@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.LessonActivity;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 
@@ -44,7 +44,7 @@ public class LessonsAdapter extends BaseAdapter {
         mDataManager = dataManager;
     }
 
-    public LessonsAdapter(Context context, int resource, List<Lesson> data, boolean spinner){
+    public LessonsAdapter(Context context, int resource, List<Lesson> data, boolean spinner) {
         mItems = data;
         mContext = context;
         mResource = resource;
@@ -83,27 +83,27 @@ public class LessonsAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) rowView.getTag();
         }
 
-        if(!mItems.get(position).getName().equals(Constants.DEFAULT_LESSON_NAME)){
+        if (!mItems.get(position).getName().equals(Constants.DEFAULT_LESSON_NAME)) {
             viewHolder.lessonNameTextView.setText(mItems.get(position).getName());
         } else {
             viewHolder.lessonNameTextView.setText(mContext.getString(R.string.lack));
         }
 
-        if(mItems.get(position).getNumber() != Constants.DEFAULT_LESSON_NUMBER){
+        if (mItems.get(position).getNumber() != Constants.DEFAULT_LESSON_NUMBER) {
             viewHolder.lessonNumberTextView.setText(String.valueOf(mItems.get(position).getNumber()));
         } else {
             viewHolder.lessonNumberTextView.setText("");
         }
-        if(!mIsSpinner && viewHolder.actionButton != null){
+        if (!mIsSpinner && viewHolder.actionButton != null) {
             setupMenu(position, viewHolder);
-            if(mItems.get(position).getNumber() == Constants.DEFAULT_LESSON_NUMBER){
+            if (mItems.get(position).getNumber() == Constants.DEFAULT_LESSON_NUMBER) {
                 viewHolder.actionButton.setVisibility(View.GONE);
             } else {
                 //jest to potrzebne w przypadku, kiedy dodajemy nową lekcję
                 //Bez tego menu jest niewidoczne
                 viewHolder.actionButton.setVisibility(View.VISIBLE);
             }
-        } else if(viewHolder.actionButton != null){
+        } else if (viewHolder.actionButton != null) {
             viewHolder.actionButton.setVisibility(View.GONE);
         }
 
@@ -111,7 +111,7 @@ public class LessonsAdapter extends BaseAdapter {
     }
 
 
-    private void setupMenu(final int position, final ViewHolder viewHolder){
+    private void setupMenu(final int position, final ViewHolder viewHolder) {
         viewHolder.actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,12 +122,12 @@ public class LessonsAdapter extends BaseAdapter {
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        if(item.getTitle().equals(mContext.getString(Constants.MENU_EDIT))){
+                        if (item.getTitle().equals(mContext.getString(Constants.MENU_EDIT))) {
                             startEditLesson(position);
                         }
-                        if(item.getTitle().equals(mContext.getString(Constants.MENU_DELETE))){
+                        if (item.getTitle().equals(mContext.getString(Constants.MENU_DELETE))) {
                             assert mDataManager != null;
-                            new DeleteLessonAlertDialog(mContext,mItems.get(position),mDataManager).show();
+                            new DeleteLessonAlertDialog(mContext, mItems.get(position), mDataManager).show();
                         }
 
                         return true;
@@ -138,19 +138,19 @@ public class LessonsAdapter extends BaseAdapter {
         });
     }
 
-    private void startEditLesson(int position){
+    private void startEditLesson(int position) {
         mLastEdited = position;
         Intent intent = new Intent(mContext, LessonActivity.class);
         intent.putExtra("item", mItems.get(position));
-        intent.putExtra("edit",true);
-        ((Activity)mContext).startActivityForResult(intent,EDIT_REQUEST);
+        intent.putExtra("edit", true);
+        ((Activity) mContext).startActivityForResult(intent, EDIT_REQUEST);
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        if(requestCode == EDIT_REQUEST){
-            if(resultCode == Activity.RESULT_OK){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == EDIT_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
                 Lesson lesson = data.getParcelableExtra("result");
-                mItems.set(mLastEdited,lesson);
+                mItems.set(mLastEdited, lesson);
                 notifyDataSetChanged();
             }
         }
@@ -160,8 +160,8 @@ public class LessonsAdapter extends BaseAdapter {
         public TextView lessonNameTextView;
         public TextView lessonNumberTextView;
         public ImageView actionButton;
-        public ViewHolder (View view)
-        {
+
+        public ViewHolder(View view) {
             lessonNameTextView = (TextView) view.findViewById(R.id.lesson_text_view);
             lessonNumberTextView = (TextView) view.findViewById(R.id.lesson_number_text_view);
             actionButton = (ImageView) view.findViewById(R.id.action_button);
@@ -176,11 +176,11 @@ public class LessonsAdapter extends BaseAdapter {
             setTitle(context.getString(R.string.deleting_lesson));
             int wordCount = dataManager.getWordsCountInLesson(lesson.getId());
             String message = context.getString(R.string.sure_delete_category) + "\n"
-                    + lesson.getNumber() +" " +  lesson.getName();
+                    + lesson.getNumber() + " " + lesson.getName();
             String positiveButtonText = null;
-            if(wordCount != 0){
+            if (wordCount != 0) {
                 positiveButtonText = mContext.getString(R.string.delete_with_words);
-                message+="\n" + mContext.getString(R.string.word_lesson_connection) + " " + wordCount;
+                message += "\n" + mContext.getString(R.string.word_lesson_connection) + " " + wordCount;
                 setButton(BUTTON_NEUTRAL, context.getString(R.string.delete_without_words), new OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -195,7 +195,7 @@ public class LessonsAdapter extends BaseAdapter {
             setButton(BUTTON_POSITIVE, positiveButtonText, new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    dataManager.deleteLesson(lesson,-1);
+                    dataManager.deleteLesson(lesson, -1);
                     mItems.remove(lesson);
                     notifyDataSetChanged();
                 }

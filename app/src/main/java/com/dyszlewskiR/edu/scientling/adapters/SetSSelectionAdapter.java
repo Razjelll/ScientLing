@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.SetActivity;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
@@ -42,7 +42,7 @@ public class SetsSelectionAdapter extends ArrayAdapter<VocabularySet> {
     private int mLastEdited;
 
     public SetsSelectionAdapter(Context context, int resource, List<VocabularySet> data, DataManager dataManager) {
-        super(context, resource,data);
+        super(context, resource, data);
 
         mItems = data;
         mContext = context;
@@ -75,43 +75,41 @@ public class SetsSelectionAdapter extends ArrayAdapter<VocabularySet> {
             rowView = inflater.inflate(mResource, null);
             viewHolder = new ViewHolder(rowView);
             rowView.setTag(viewHolder);
-        }
-        else
-        {
-            viewHolder = (ViewHolder)rowView.getTag();
+        } else {
+            viewHolder = (ViewHolder) rowView.getTag();
         }
 
         viewHolder.nameTextView.setText(mItems.get(position).getName());
         String language = ResourceUtils.getString(mItems.get(position).getLanguageL2().getName(), mContext);
         viewHolder.languageTextView.setText(language);
 
-        if(mItems.get(position).getId()==Constants.DEFAULT_SET_ID){
+        if (mItems.get(position).getId() == Constants.DEFAULT_SET_ID) {
             viewHolder.actionButton.setVisibility(View.GONE);
         }
-        setupMenu(position,viewHolder);
+        setupMenu(position, viewHolder);
         return rowView;
     }
 
-    private void setupMenu(final int position, final ViewHolder viewHolder){
+    private void setupMenu(final int position, final ViewHolder viewHolder) {
         viewHolder.actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(mContext,viewHolder.actionButton);
+                PopupMenu popupMenu = new PopupMenu(mContext, viewHolder.actionButton);
                 popupMenu.getMenu().add(mContext.getString(MENU_EDIT));
                 popupMenu.getMenu().add(mContext.getString(MENU_DELETE));
 
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        if(item.getTitle().equals(mContext.getString(MENU_EDIT))){
+                        if (item.getTitle().equals(mContext.getString(MENU_EDIT))) {
                             mLastEdited = position;
                             Intent intent = new Intent(mContext, SetActivity.class);
-                            intent.putExtra("item",mItems.get(position));
+                            intent.putExtra("item", mItems.get(position));
                             intent.putExtra("edit", true);
-                            ((Activity)mContext).startActivityForResult(intent, EDIT_REQUEST);
+                            ((Activity) mContext).startActivityForResult(intent, EDIT_REQUEST);
 
                         }
-                        if(item.getTitle().equals(mContext.getString(MENU_DELETE))){
+                        if (item.getTitle().equals(mContext.getString(MENU_DELETE))) {
                             new DeleteSetAlertDialog(mContext, mItems.get(position)).show();
                         }
                         return true;
@@ -122,9 +120,9 @@ public class SetsSelectionAdapter extends ArrayAdapter<VocabularySet> {
         });
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        if(requestCode == EDIT_REQUEST){
-            if(resultCode == Activity.RESULT_OK){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == EDIT_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
                 VocabularySet set = data.getParcelableExtra("result");
                 mItems.set(mLastEdited, set);
                 notifyDataSetChanged();
@@ -132,21 +130,19 @@ public class SetsSelectionAdapter extends ArrayAdapter<VocabularySet> {
         }
     }
 
-    private class ViewHolder
-    {
+    private class ViewHolder {
         public TextView nameTextView;
         public TextView languageTextView;
         public ImageView actionButton;
 
-        public ViewHolder(View view)
-        {
+        public ViewHolder(View view) {
             nameTextView = (TextView) view.findViewById(R.id.set_list_name);
             languageTextView = (TextView) view.findViewById(R.id.set_list_language);
             actionButton = (ImageView) view.findViewById(R.id.action_button);
         }
     }
 
-    private class DeleteSetAlertDialog  extends AlertDialog{
+    private class DeleteSetAlertDialog extends AlertDialog {
 
         protected DeleteSetAlertDialog(Context context, final VocabularySet set) {
             super(context);

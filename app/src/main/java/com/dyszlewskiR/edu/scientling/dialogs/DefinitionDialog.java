@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Definition;
+import com.dyszlewskiR.edu.scientling.data.models.models.Definition;
 
 /**
  * Created by Razjelll on 21.03.2017.
@@ -34,8 +34,7 @@ public class DefinitionDialog extends DialogFragment {
         mCallback = callback;
     }
 
-    public void setDefinition(Definition definition)
-    {
+    public void setDefinition(Definition definition) {
         mDefinition = definition;
     }
 
@@ -52,14 +51,12 @@ public class DefinitionDialog extends DialogFragment {
     private void setupControls(View view) {
         mDefinitionEditText = (EditText) view.findViewById(R.id.definition_edit_text);
         mDefinitionTranslationEditText = (EditText) view.findViewById(R.id.translation_edit_text);
-        mClearButton = (Button)view.findViewById(R.id.clear_button);
+        mClearButton = (Button) view.findViewById(R.id.clear_button);
         mOkButton = (Button) view.findViewById(R.id.ok_button);
     }
 
-    private void setValues()
-    {
-        if(mDefinition!=null)
-        {
+    private void setValues() {
+        if (mDefinition != null) {
             mDefinitionEditText.setText(mDefinition.getContent());
             mDefinitionTranslationEditText.setText(mDefinition.getTranslation());
         }
@@ -73,10 +70,9 @@ public class DefinitionDialog extends DialogFragment {
                 if (mCallback != null) {
                     String definitionText = mDefinitionEditText.getText().toString();
                     String translationText = mDefinitionTranslationEditText.getText().toString();
-                    if(definitionText.isEmpty() && translationText.isEmpty())
-                    {
+                    if (definitionText.isEmpty() && translationText.isEmpty()) {
                         mCallback.onDefinitionDialogOk(null);
-                    } else{
+                    } else {
                         Definition definition = new Definition();
                         definition.setContent(definitionText);
                         definition.setTranslation(translationText);
@@ -97,8 +93,7 @@ public class DefinitionDialog extends DialogFragment {
     }
 
     @Override
-    public void onDismiss(DialogInterface dialogInterface)
-    {
+    public void onDismiss(DialogInterface dialogInterface) {
         Log.d("DefinitionDialog", "onDismiss");
         mCallback = null;
         getFragmentManager().beginTransaction().remove(this).commit();

@@ -3,9 +3,8 @@ package com.dyszlewskiR.edu.scientling.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,9 +19,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.activity.HintsListActivity;
-import com.dyszlewskiR.edu.scientling.adapters.HintsAdapter;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Hint;
+import com.dyszlewskiR.edu.scientling.data.models.models.Hint;
 import com.dyszlewskiR.edu.scientling.dialogs.HintDialog;
 
 import java.util.ArrayList;
@@ -47,16 +44,16 @@ public class HintsListFragment extends Fragment implements HintDialog.Callback {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getData();
-        if(mItems == null){
+        if (mItems == null) {
             mItems = new ArrayList<>();
         }
         setHasOptionsMenu(true);
     }
 
-    private void getData(){
+    private void getData() {
         Intent intent = getActivity().getIntent();
         mItems = intent.getParcelableArrayListExtra("list");
     }
@@ -70,12 +67,12 @@ public class HintsListFragment extends Fragment implements HintDialog.Callback {
         return view;
     }
 
-    private void setupControls(View view){
+    private void setupControls(View view) {
         mListView = (ListView) view.findViewById(R.id.list);
-        mOkButton = (Button)view.findViewById(R.id.ok_button);
+        mOkButton = (Button) view.findViewById(R.id.ok_button);
     }
 
-    private void setListeners(){
+    private void setListeners() {
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,30 +81,29 @@ public class HintsListFragment extends Fragment implements HintDialog.Callback {
         });
     }
 
-    private void setResultAndFinish(){
+    private void setResultAndFinish() {
         Intent intent = new Intent();
-        intent.putParcelableArrayListExtra("result",(ArrayList<Hint>)mItems);
+        intent.putParcelableArrayListExtra("result", (ArrayList<Hint>) mItems);
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         setAdapter();
     }
 
-    private void setAdapter(){
+    private void setAdapter() {
         mAdapter = new HintsAdapter(getContext(), ADAPTER_ITEM_RESOURCE);
         mListView.setAdapter(mAdapter);
     }
 
-    public void onBackPressed(){
+    public void onBackPressed() {
         setResultAndFinish();
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
-    {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.hints_list_menu, menu);
     }
 
@@ -127,15 +123,15 @@ public class HintsListFragment extends Fragment implements HintDialog.Callback {
         }
     }
 
-    private void openHintDialog(){
+    private void openHintDialog() {
         HintDialog dialog = new HintDialog();
         dialog.setCallback(HintsListFragment.this);
-        dialog.show(getFragmentManager(),"HintDialog");
+        dialog.show(getFragmentManager(), "HintDialog");
     }
 
     @Override
     public void onAddHintOk(Hint hint) {
-        if(hint != null){
+        if (hint != null) {
             mItems.add(hint);
             mAdapter.notifyDataSetChanged();
         }
@@ -143,28 +139,30 @@ public class HintsListFragment extends Fragment implements HintDialog.Callback {
 
     @Override
     public void onEditHintOk(Hint hint) {
-        if(hint != null){
+        if (hint != null) {
             mItems.set(mLastEdited, hint);
             mAdapter.notifyDataSetChanged();
         }
     }
 
-    private class HintsAdapter extends BaseAdapter{
+    private class HintsAdapter extends BaseAdapter {
         private Context mContext;
         private int mResource;
         private LayoutInflater mInflater;
-        
-        public HintsAdapter(Context context, int resource){
+
+        public HintsAdapter(Context context, int resource) {
             mContext = context;
             mResource = resource;
             mInflater = LayoutInflater.from(context);
         }
 
         @Override
-        public int getCount(){return mItems.size();}
+        public int getCount() {
+            return mItems.size();
+        }
 
         @Override
-        public Hint getItem(int position){
+        public Hint getItem(int position) {
             return mItems.get(position);
         }
 
@@ -174,23 +172,22 @@ public class HintsListFragment extends Fragment implements HintDialog.Callback {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent)
-        {
+        public View getView(int position, View convertView, ViewGroup parent) {
             View rowView = convertView;
             ViewHolder viewHolder;
-            if(rowView == null){
+            if (rowView == null) {
                 rowView = mInflater.inflate(mResource, null);
                 viewHolder = new ViewHolder(rowView);
                 rowView.setTag(viewHolder);
             } else {
-                viewHolder = (ViewHolder)rowView.getTag();
+                viewHolder = (ViewHolder) rowView.getTag();
             }
             viewHolder.contentTextView.setText(mItems.get(position).getContent());
             setupMenu(position, viewHolder);
             return rowView;
         }
 
-        private void setupMenu(final int position, final ViewHolder viewHolder){
+        private void setupMenu(final int position, final ViewHolder viewHolder) {
             viewHolder.actionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -214,28 +211,28 @@ public class HintsListFragment extends Fragment implements HintDialog.Callback {
             });
         }
 
-        private void startEditHint(int position){
-            mLastEdited= position;
+        private void startEditHint(int position) {
+            mLastEdited = position;
             HintDialog dialog = new HintDialog();
             dialog.setCallback(HintsListFragment.this);
             dialog.setHint(mItems.get(position));
-            dialog.show(getFragmentManager(),"HintDialog");
+            dialog.show(getFragmentManager(), "HintDialog");
         }
 
-        private void deleteHint(int position){
+        private void deleteHint(int position) {
             mItems.remove(position);
             notifyDataSetChanged();
         }
 
     }
 
-    private static class ViewHolder{
+    private static class ViewHolder {
         public TextView contentTextView;
         public ImageView actionButton;
 
-        public ViewHolder(View view){
-            contentTextView = (TextView)view.findViewById(R.id.content_text_view);
-            actionButton = (ImageView)view.findViewById(R.id.action_button);
+        public ViewHolder(View view) {
+            contentTextView = (TextView) view.findViewById(R.id.content_text_view);
+            actionButton = (ImageView) view.findViewById(R.id.action_button);
         }
     }
 }

@@ -24,10 +24,10 @@
         android:layout_centerHorizontal="true"
         android:visibility="invisible"/>
 
-    <Button
+    <com.dyszlewskiR.edu.scientling.widgets.SpeechButton
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:id="@+id/knowSpeechButton"
+        android:id="@+id/speech_button"
         android:background="@drawable/round_button"
         android:layout_marginTop="39dp"
         android:layout_below="@+id/knowTranslation"

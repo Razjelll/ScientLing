@@ -4,17 +4,15 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.dyszlewskiR.edu.scientling.data.database.tables.ExampleSentences;
 import com.dyszlewskiR.edu.scientling.data.database.tables.HintsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsHintsTable;
-import com.dyszlewskiR.edu.scientling.data.models.creators.SentenceCreator;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Hint;
 import com.dyszlewskiR.edu.scientling.data.models.creators.HintCreator;
+import com.dyszlewskiR.edu.scientling.data.models.models.Hint;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.dyszlewskiR.edu.scientling.data.database.tables.HintsTable.*;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.HintsTable.HintsColumns;
 
 /**
  * Created by Razjelll on 08.11.2016.
@@ -27,13 +25,13 @@ public class HintDao extends BaseDao<Hint> {
             "INSERT INTO " + TABLE_NAME + "("
                     + HintsColumns.CONTENT + ") VALUES (?)";
     private final String SELECT_LINK_STATEMENT =
-            "SELECT "+ HintsTable.ALIAS_DOT + "* FROM "
-            + WordsHintsTable.TABLE_NAME + " " + WordsHintsTable.ALIAS
-            + " LEFT OUTER JOIN " + HintsTable.TABLE_NAME + " " + HintsTable.ALIAS
-            +" ON " + WordsHintsTable.ALIAS_DOT + WordsHintsTable.WordsHintsColumns.HINT_FK
-            +" = " + HintsTable.ALIAS_DOT + HintsColumns.ID
-            + " WHERE " + WordsHintsTable.ALIAS_DOT + WordsHintsTable.WordsHintsColumns.WORD_FK
-            + " =?";
+            "SELECT " + HintsTable.ALIAS_DOT + "* FROM "
+                    + WordsHintsTable.TABLE_NAME + " " + WordsHintsTable.ALIAS
+                    + " LEFT OUTER JOIN " + HintsTable.TABLE_NAME + " " + HintsTable.ALIAS
+                    + " ON " + WordsHintsTable.ALIAS_DOT + WordsHintsTable.WordsHintsColumns.HINT_FK
+                    + " = " + HintsTable.ALIAS_DOT + HintsColumns.ID
+                    + " WHERE " + WordsHintsTable.ALIAS_DOT + WordsHintsTable.WordsHintsColumns.WORD_FK
+                    + " =?";
     private final String WHERE_ID = HintsColumns.ID + " = ?";
 
     public HintDao(SQLiteDatabase db) {
@@ -106,16 +104,14 @@ public class HintDao extends BaseDao<Hint> {
         return tipsList;
     }
 
-    public void link(long hintId, long wordId)
-    {
+    public void link(long hintId, long wordId) {
         final ContentValues values = new ContentValues();
         values.put(WordsHintsTable.WordsHintsColumns.WORD_FK, wordId);
         values.put(WordsHintsTable.WordsHintsColumns.HINT_FK, hintId);
         mDb.insert(WordsHintsTable.TABLE_NAME, null, values);
     }
 
-    public void unLink(long wordId)
-    {
+    public void unLink(long wordId) {
         String where = WordsHintsTable.WordsHintsColumns.WORD_FK + "=?";
         String[] whereArguments = {String.valueOf(wordId)};
         mDb.delete(WordsHintsTable.TABLE_NAME, where, whereArguments);
@@ -125,32 +121,29 @@ public class HintDao extends BaseDao<Hint> {
         List<Hint> hintsList = new ArrayList<>();
         String[] whereArguments = {String.valueOf(wordId)};
         Cursor cursor = mDb.rawQuery(SELECT_LINK_STATEMENT, whereArguments);
-        if(cursor.moveToFirst())
-        {
+        if (cursor.moveToFirst()) {
             Hint hint = null;
             HintCreator creator = new HintCreator();
-            do{
+            do {
                 hint = creator.createFromCursor(cursor);
-                if(hint != null)
-                {
+                if (hint != null) {
                     hintsList.add(hint);
                 }
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
-        if(!cursor.isClosed())
-        {
+        if (!cursor.isClosed()) {
             cursor.close();
         }
         return hintsList;
     }
 
-    public Hint getByContent(String content){
-        Hint hint=null;
-        String where = HintsColumns.CONTENT+"=?";
+    public Hint getByContent(String content) {
+        Hint hint = null;
+        String where = HintsColumns.CONTENT + "=?";
         String[] whereArguments = {content};
         Cursor cursor = mDb.query(HintsTable.TABLE_NAME, HintsTable.getColumns(), where, whereArguments,
-                null,null,null,"1");
-        if(cursor.moveToFirst()){
+                null, null, null, "1");
+        if (cursor.moveToFirst()) {
             HintCreator hintCreator = new HintCreator();
             hint = hintCreator.createFromCursor(cursor);
         }
@@ -161,13 +154,13 @@ public class HintDao extends BaseDao<Hint> {
     /**
      * Metoda usuwająca wszystkie niepowiązane podpowiedzi. Metoda usuwa takie podpowiedzi, których
      * klucze nie znajdują się w tabeli WordsHints
-     *
+     * <p>
      * DELETE FROM Hints
      * WHERE id IS NOT IN (
-     *      SELECT hint_fk
-     *      FROM WordsHints )
+     * SELECT hint_fk
+     * FROM WordsHints )
      */
-    public int deleteUnlinked(){
+    public int deleteUnlinked() {
         String statement = new StringBuilder()
                 //.append("DELETE FROM ").append(HintsTable.TABLE_NAME)
                 //.append(" WHERE ")

@@ -10,7 +10,7 @@ public class FlashcardSelectionBuilder {
     public static String getStatement(FlashcardParams params) {
         WordSelectionBuilder builder = new WordSelectionBuilder();
         builder.append(WordSelectionBuilder.Parts.SET_PART);
-        switch(params.getChoiceType()){
+        switch (params.getChoiceType()) {
             case LAST_LEARNED:
                 builder.append(WordSelectionBuilder.Parts.AND).append(WordSelectionBuilder.Parts.LEARNING_DATE_PART_NULL);
                 break;

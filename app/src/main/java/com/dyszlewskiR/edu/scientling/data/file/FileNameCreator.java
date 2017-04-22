@@ -1,5 +1,7 @@
 package com.dyszlewskiR.edu.scientling.data.file;
 
+import android.content.Context;
+
 import com.dyszlewskiR.edu.scientling.utils.FileUtils;
 
 /**
@@ -7,7 +9,8 @@ import com.dyszlewskiR.edu.scientling.utils.FileUtils;
  */
 
 public class FileNameCreator {
-    /**Liczba określająca ile pierwszych liter rootname ma posłużyć do utworzenia nazwy pliku.
+    /**
+     * Liczba określająca ile pierwszych liter rootname ma posłużyć do utworzenia nazwy pliku.
      * Wartość -1 oznacza, że żadne ograniczenie nie będzie zastosowane.
      * Ograniczenie długości ma na celu zmniejszenie rozmiaru bazy danych.
      */
@@ -19,37 +22,40 @@ public class FileNameCreator {
      * Jeżeli rootName już istnieje na dysku, wtedy do nazwy zostanie dodana liczba a następnie
      * nastąpi ponowne sprawdzenie. W przypadku znalezienia podanej nazwy numer zostanie zwiększony
      * i nazwa zostanie sprawdzona jeszcze raz
-     * @param rootName nazwa na podstawie której będzie tworzona nazwa dla pliku
-     * @param catalog katalog w którym bedzie sprawdzane istnienie pliku
+     *
+     * @param rootName  nazwa na podstawie której będzie tworzona nazwa dla pliku
+     * @param catalog   katalog w którym bedzie sprawdzane istnienie pliku
      * @param extension rozszerzenie jakie będize miał plik
      * @return
      */
-    public static String getFileName(String rootName, String catalog, String extension){
-        boolean find;
+    public static String getFileName(String rootName, String catalog, String extension, Context context) {
+        boolean found;
         int number = 0;
-        String shortRootName = rootName.substring(0, ROOT_FILE_NAME_LENGTH);
+        int name_length = rootName.length() < ROOT_CATALOG_NAME_LENGTH ? rootName.length() : ROOT_CATALOG_NAME_LENGTH;
+        String shortRootName = rootName.substring(0, name_length);
         String fileName = shortRootName + "." + extension;
-        do{
-            if(number != 0){
+        do {
+            if (number != 0) {
                 fileName = shortRootName + number + "." + extension;
-             }
-            find = FileUtils.checkFileExist(catalog, fileName);
+            }
+            //find = FileUtils.checkFileExist(catalog, fileName);
+            found = WordFileSystem.checkFileExist(fileName, catalog, context);
             number++;
-        } while(find);
+        } while (found);
         return fileName;
     }
 
-    public static String getCatalogname(String rootName, String catalog){
+    public static String getCatalogName(String rootName, String catalog) {
         boolean find;
         int number = 0;
         String catalogName = rootName;
-        do{
-            if(number != 0){
+        do {
+            if (number != 0) {
                 catalogName = rootName + number;
             }
-            find = FileUtils.checkFileExist(catalog,catalogName);
+            find = FileUtils.checkFileExist(catalog, catalogName);
             number++;
-        } while(find);
+        } while (find);
         return catalogName;
     }
 }

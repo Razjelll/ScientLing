@@ -5,13 +5,13 @@
     <item android:id="@+id/filter_button"
         android:icon="@drawable/ic_sentence"
         android:title="@string/filter"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
     <item android:id="@+id/search_button"
         android:icon="@drawable/ic_definition"
         android:title="@string/search"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="always"/>
     <item android:id="@+id/add_button"
         android:icon="@drawable/ic_add"
         android:title="@string/add"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 </menu>

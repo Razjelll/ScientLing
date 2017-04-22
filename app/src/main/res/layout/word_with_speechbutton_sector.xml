@@ -6,12 +6,11 @@
     android:background="@drawable/shadow_border"
     >
 
-    <Button
+    <com.dyszlewskiR.edu.scientling.widgets.SpeechButton
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:id="@+id/speechButton"
         android:layout_margin="7dp"
-        android:background="@drawable/round_button"
         android:layout_gravity="center_vertical"
         />
 
@@ -24,6 +23,12 @@
         android:layout_marginLeft = "10dp"
         />
 
+    <Button android:id="@+id/say_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/round_button"
+        android:layout_gravity="center_vertical"
+        />
 
 
 </LinearLayout>

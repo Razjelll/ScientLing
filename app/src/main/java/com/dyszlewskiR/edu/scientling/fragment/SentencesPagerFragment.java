@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.SentencesPagerAdapter;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
+import com.dyszlewskiR.edu.scientling.data.models.models.Sentence;
 
 import java.util.List;
 
@@ -27,8 +27,7 @@ public class SentencesPagerFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public void setList(List<Sentence> list)
-    {
+    public void setList(List<Sentence> list) {
         //mAdapter.setItems(list);
         mSentences = list;
         mAdapter = createAdapter();
@@ -36,14 +35,12 @@ public class SentencesPagerFragment extends Fragment {
         //TODO zobaczyć jak można to zrobić inaczej
     }
 
-    private SentencesPagerAdapter createAdapter()
-    {
+    private SentencesPagerAdapter createAdapter() {
         return new SentencesPagerAdapter(getActivity(), R.layout.item_sentence_viewpager, mSentences);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
         mSentences = bundle.getParcelableArrayList("items");
@@ -58,12 +55,10 @@ public class SentencesPagerFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState)
-    {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         mAdapter = createAdapter();
         mViewPager.setAdapter(mAdapter);
     }
-
 
 
 }

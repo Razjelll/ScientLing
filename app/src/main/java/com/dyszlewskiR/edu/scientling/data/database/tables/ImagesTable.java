@@ -9,7 +9,7 @@ public class ImagesTable {
     public static final String ALIAS = "I";
     public static final String ALIAS_DOT = ALIAS + ".";
 
-    public static class ImagesColumns{
+    public static class ImagesColumns {
         public static final String WORD_FK = "word_fk";
         public static final String BITMAP = "bitmap";
         public static final String PATH = "path";
@@ -21,7 +21,7 @@ public class ImagesTable {
         public static final int COLUMNS_COUNT = 3;
     }
 
-    public static String[] getColumns(){
+    public static String[] getColumns() {
         String[] columns = new String[ImagesColumns.COLUMNS_COUNT];
         columns[ImagesColumns.WORD_FK_POSITION] = ImagesColumns.WORD_FK;
         columns[ImagesColumns.BITMAP_POSITION] = ImagesColumns.BITMAP;

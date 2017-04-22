@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -17,11 +17,21 @@ public class SideFlashcardFragment extends Fragment {
     private Word mWord;
     private int mPosition;
 
-    public Word getWord() {return mWord;}
-    public void setWord(Word word) {mWord= word;}
+    public Word getWord() {
+        return mWord;
+    }
 
-    public int getPosition() {return mPosition;}
-    public void setPosition(int position) {mPosition = position;}
+    public void setWord(Word word) {
+        mWord = word;
+    }
+
+    public int getPosition() {
+        return mPosition;
+    }
+
+    public void setPosition(int position) {
+        mPosition = position;
+    }
 
 
     public SideFlashcardFragment() {

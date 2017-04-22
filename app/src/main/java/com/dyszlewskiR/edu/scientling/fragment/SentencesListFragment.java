@@ -21,8 +21,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.activity.SentenceDetailActivity;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
+import com.dyszlewskiR.edu.scientling.data.models.models.Sentence;
 import com.dyszlewskiR.edu.scientling.dialogs.SentenceDialog;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 
@@ -59,7 +58,7 @@ public class SentencesListFragment extends Fragment implements SentenceDialog.Ca
         setHasOptionsMenu(true);
     }
 
-    private void getData(){
+    private void getData() {
         Intent data = getActivity().getIntent();
         mItems = data.getParcelableArrayListExtra("list");
     }
@@ -75,12 +74,12 @@ public class SentencesListFragment extends Fragment implements SentenceDialog.Ca
         return view;
     }
 
-    private void setupControls(View view){
+    private void setupControls(View view) {
         mListView = (ListView) view.findViewById(R.id.list);
         mOkButton = (Button) view.findViewById(R.id.ok_button);
     }
 
-    private void setListeners(){
+    private void setListeners() {
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,7 +95,7 @@ public class SentencesListFragment extends Fragment implements SentenceDialog.Ca
         });
     }
 
-    private void setResultAndFinish(){
+    private void setResultAndFinish() {
         Intent intent = new Intent();
         intent.putParcelableArrayListExtra("result", (ArrayList<Sentence>) mItems);
         getActivity().setResult(Activity.RESULT_OK, intent);
@@ -109,7 +108,7 @@ public class SentencesListFragment extends Fragment implements SentenceDialog.Ca
         setAdapter();
     }
 
-    private void setAdapter(){
+    private void setAdapter() {
         mAdapter = new SentencesAdapter(getActivity(), R.layout.item_sentences, mItems);
         mListView.setAdapter(mAdapter);
     }
@@ -118,34 +117,34 @@ public class SentencesListFragment extends Fragment implements SentenceDialog.Ca
         mItems.add(sentence);
     }
 
-    public void onBackPressed(){
+    public void onBackPressed() {
         setResultAndFinish();
     }
 
     @Override
     public void onSentenceCreateOk(Sentence sentence) {
-        if(sentence != null){
+        if (sentence != null) {
             mItems.add(sentence);
             mAdapter.notifyDataSetChanged();
         }
     }
 
-    /**Metoda wywołująca po zakończeniu edytowania przykładowego zdania. W przypadku jeśli
+    /**
+     * Metoda wywołująca po zakończeniu edytowania przykładowego zdania. W przypadku jeśli
      * dane są poprawnie wypełnione następuje podmiana zdania na liście.
+     *
      * @param sentence
      */
     @Override
-    public void onSentenceEditOk(Sentence sentence)
-    {
-        if(sentence != null){
+    public void onSentenceEditOk(Sentence sentence) {
+        if (sentence != null) {
             mItems.set(mLastEdited, sentence);
             mAdapter.notifyDataSetChanged();
         }
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
-    {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.sentences_list_menu, menu);
     }
 
@@ -167,15 +166,14 @@ public class SentencesListFragment extends Fragment implements SentenceDialog.Ca
     /**
      * Metoda tworząca i pokazująca okno dialogowe do wprowadzania danych. Podczas tworzenia nastepuje
      * ustawienie metody zwrotenej.
+     *
      * @param editedPosition określa która pozycja będzie edytowana. W przypadku tworzenia nowego zdania
      *                       należy przekazać wartosć -1
      */
-    private void openSentenceDialog(int editedPosition)
-    {
+    private void openSentenceDialog(int editedPosition) {
         SentenceDialog dialog = new SentenceDialog();
         dialog.setCallback(this);
-        if(editedPosition>=0)
-        {
+        if (editedPosition >= 0) {
             dialog.setSentence(mItems.get(editedPosition));
         }
         dialog.show(getFragmentManager(), "SentenceListFragment");

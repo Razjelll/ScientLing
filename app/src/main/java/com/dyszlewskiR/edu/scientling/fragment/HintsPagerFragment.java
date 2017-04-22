@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.HintsPagerAdapter;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Hint;
+import com.dyszlewskiR.edu.scientling.data.models.models.Hint;
 
 import java.util.List;
 
@@ -27,22 +27,19 @@ public class HintsPagerFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public void setList(List<Hint> list)
-    {
+    public void setList(List<Hint> list) {
         mHints = list;
         mAdapter = createAdapter();
         mViewPager.setAdapter(mAdapter);
 
     }
 
-    private HintsPagerAdapter createAdapter()
-    {
+    private HintsPagerAdapter createAdapter() {
         return new HintsPagerAdapter(getActivity(), R.layout.item_hints_viewpager, mHints);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
         mHints = bundle.getParcelableArrayList("items");
@@ -58,8 +55,7 @@ public class HintsPagerFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState)
-    {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         mAdapter = createAdapter();
         mViewPager.setAdapter(mAdapter);
     }

@@ -5,12 +5,12 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.BuildConfig;
 import com.dyszlewskiR.edu.scientling.data.database.utils.QueryReader;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Definition;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.PartOfSpeech;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Translation;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.data.models.models.Category;
+import com.dyszlewskiR.edu.scientling.data.models.models.Definition;
+import com.dyszlewskiR.edu.scientling.data.models.models.PartOfSpeech;
+import com.dyszlewskiR.edu.scientling.data.models.models.Sentence;
+import com.dyszlewskiR.edu.scientling.data.models.models.Translation;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.ResourcesFileOpener;
 

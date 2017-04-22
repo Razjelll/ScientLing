@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.PartOfSpeech;
+import com.dyszlewskiR.edu.scientling.data.models.models.PartOfSpeech;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 
 import java.util.List;
@@ -21,8 +21,8 @@ public class PartOfSpeechAdapter extends ArrayAdapter<PartOfSpeech> {
     private Context mContext;
     private int mResource;
 
-    public PartOfSpeechAdapter(Context context, int resource, List<PartOfSpeech> data){
-        super(context,resource,data);
+    public PartOfSpeechAdapter(Context context, int resource, List<PartOfSpeech> data) {
+        super(context, resource, data);
         mContext = context;
         mResource = resource;
         mItems = data;
@@ -44,13 +44,13 @@ public class PartOfSpeechAdapter extends ArrayAdapter<PartOfSpeech> {
     }
 
     @Override
-    public int getPosition(PartOfSpeech item){
+    public int getPosition(PartOfSpeech item) {
         return mItems.indexOf(item);
     }
 
-    public int getPosition(String name){
-        for(int i = 0; i< mItems.size(); i++){
-            if(mItems.get(i).getName().equals(name)){
+    public int getPosition(String name) {
+        for (int i = 0; i < mItems.size(); i++) {
+            if (mItems.get(i).getName().equals(name)) {
                 return i;
             }
         }
@@ -59,15 +59,15 @@ public class PartOfSpeechAdapter extends ArrayAdapter<PartOfSpeech> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        TextView view = (TextView)super.getView(position,convertView,parent);
-        view.setText(ResourceUtils.getString(mItems.get(position).getName(),mContext));
+        TextView view = (TextView) super.getView(position, convertView, parent);
+        view.setText(ResourceUtils.getString(mItems.get(position).getName(), mContext));
         return view;
     }
 
     @Override
-    public TextView getDropDownView(int position, View convertView, ViewGroup parent){
-        TextView view = (TextView)super.getView(position, convertView, parent);
-        view.setText(ResourceUtils.getString(mItems.get(position).getName(),mContext));
+    public TextView getDropDownView(int position, View convertView, ViewGroup parent) {
+        TextView view = (TextView) super.getView(position, convertView, parent);
+        view.setText(ResourceUtils.getString(mItems.get(position).getName(), mContext));
         return view;
     }
 

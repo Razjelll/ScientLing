@@ -6,9 +6,9 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.dyszlewskiR.edu.scientling.LingApplication;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Repetition;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
+import com.dyszlewskiR.edu.scientling.data.models.models.Repetition;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.DateCalculator;
 import com.dyszlewskiR.edu.scientling.utils.DateUtils;
@@ -33,7 +33,7 @@ public class SaveExerciseService extends IntentService {
         super(name);
     }
 
-    public SaveExerciseService(){
+    public SaveExerciseService() {
         super("SaveExerciseService");
 
     }
@@ -41,30 +41,30 @@ public class SaveExerciseService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(getClass().getSimpleName(),"Usługa rozpoczęta");
+        Log.d(getClass().getSimpleName(), "Usługa rozpoczęta");
         final List<Word> wordsList = intent.getParcelableArrayListExtra("list");
         final List<Word> incorrectWord = intent.getParcelableArrayListExtra("incrrect");
-        final DataManager dataManager = ((LingApplication)getApplication()).getDataManager();
+        final DataManager dataManager = ((LingApplication) getApplication()).getDataManager();
         final List<Repetition> repetitionsList = new ArrayList<>();
         handler.post(new Runnable() {
             @Override
             public void run() {
-                for(Word word : wordsList){
-                    word.setMasterLevel((byte)getMasterLevel(word, incorrectWord));
+                for (Word word : wordsList) {
+                    word.setMasterLevel((byte) getMasterLevel(word, incorrectWord));
                     word.setLearningDate(getLearningDate());
                     repetitionsList.add(getRepetition(word));
                 }
-                dataManager.saveRepetitionAndUpdateWords(repetitionsList,wordsList);
+                dataManager.saveRepetitionAndUpdateWords(repetitionsList, wordsList);
                 Toast.makeText(getBaseContext(), "Zakończono tentegować", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private int getMasterLevel(Word word, List<Word> incorrectWords){
+    private int getMasterLevel(Word word, List<Word> incorrectWords) {
         int masterLevel = word.getMasterLevel();
-        if(incorrectWords != null){
-            for(Word incorrect: incorrectWords){
-                if(word.getId() == incorrect.getId()){
+        if (incorrectWords != null) {
+            for (Word incorrect : incorrectWords) {
+                if (word.getId() == incorrect.getId()) {
                     return masterLevel;
                 }
             }
@@ -72,13 +72,13 @@ public class SaveExerciseService extends IntentService {
         return Interval.getNextMasterLevel(masterLevel);
     }
 
-    private int getLearningDate(){
+    private int getLearningDate() {
         return DateCalculator.dateToInt(DateUtils.getTodayDate());
     }
 
-    private Repetition getRepetition(Word word){
+    private Repetition getRepetition(Word word) {
         Repetition repetition = prepareRepetition(word);
-        switch (Interval.getLearningState(word.getMasterLevel())){
+        switch (Interval.getLearningState(word.getMasterLevel())) {
             case START:
                 repetition.setActions(Repetition.Action.SAVE);
                 break;
@@ -92,11 +92,11 @@ public class SaveExerciseService extends IntentService {
         return repetition;
     }
 
-    private Repetition prepareRepetition(Word word){
+    private Repetition prepareRepetition(Word word) {
         Repetition repetition = new Repetition();
         repetition.setWordId(word.getId());
         int interval = Interval.getInterval(word.getMasterLevel());
-        Date repetitionDate = DateUtils.addDays(DateUtils.getTodayDate(),interval);
+        Date repetitionDate = DateUtils.addDays(DateUtils.getTodayDate(), interval);
         int date = DateCalculator.dateToInt(repetitionDate);
         repetition.setDate(date);
         return repetition;

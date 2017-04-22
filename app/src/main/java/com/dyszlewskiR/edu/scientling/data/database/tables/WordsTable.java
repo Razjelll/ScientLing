@@ -1,7 +1,5 @@
 package com.dyszlewskiR.edu.scientling.data.database.tables;
 
-import com.dyszlewskiR.edu.scientling.data.models.creators.WordCreator;
-
 /**
  * Created by Razjelll on 11.11.2016.
  */

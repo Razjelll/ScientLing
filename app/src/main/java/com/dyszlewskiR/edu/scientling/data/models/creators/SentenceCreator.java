@@ -2,9 +2,11 @@ package com.dyszlewskiR.edu.scientling.data.models.creators;
 
 import android.database.Cursor;
 
-import com.dyszlewskiR.edu.scientling.data.database.tables.SentencesTable;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
-import static com.dyszlewskiR.edu.scientling.data.database.tables.SentencesTable.SentencesColumns.*;
+import com.dyszlewskiR.edu.scientling.data.models.models.Sentence;
+
+import static com.dyszlewskiR.edu.scientling.data.database.tables.SentencesTable.SentencesColumns.CONTENT;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.SentencesTable.SentencesColumns.ID;
+import static com.dyszlewskiR.edu.scientling.data.database.tables.SentencesTable.SentencesColumns.TRANSLATION;
 
 /**
  * Created by Razjelll on 12.11.2016.
@@ -16,13 +18,16 @@ public class SentenceCreator implements IModelCreator<Sentence> {
         Sentence sentence = new Sentence();
         int columnsCount = cursor.getColumnCount();
         for (int columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
-            switch (cursor.getColumnName(columnIndex)){
+            switch (cursor.getColumnName(columnIndex)) {
                 case ID:
-                    sentence.setId(cursor.getLong(columnIndex)); break;
+                    sentence.setId(cursor.getLong(columnIndex));
+                    break;
                 case CONTENT:
-                    sentence.setContent(cursor.getString(columnIndex)); break;
+                    sentence.setContent(cursor.getString(columnIndex));
+                    break;
                 case TRANSLATION:
-                    sentence.setTranslation(cursor.getString(columnIndex)); break;
+                    sentence.setTranslation(cursor.getString(columnIndex));
+                    break;
             }
         }
         return sentence;

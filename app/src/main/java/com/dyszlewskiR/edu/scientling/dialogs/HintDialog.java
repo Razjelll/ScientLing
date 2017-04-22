@@ -10,13 +10,13 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Hint;
+import com.dyszlewskiR.edu.scientling.data.models.models.Hint;
 
 /**
  * Created by Razjelll on 23.03.2017.
  */
 
-public class HintDialog extends DialogFragment{
+public class HintDialog extends DialogFragment {
     private final int LAYOUT_RESOURCE = R.layout.dialog_hint;
 
     private EditText mHintEditText;
@@ -26,22 +26,23 @@ public class HintDialog extends DialogFragment{
 
     private Callback mCallback;
 
-    public void setCallback(Callback callback){
+    public void setCallback(Callback callback) {
         mCallback = callback;
     }
 
-    public void setHint(Hint hint){
+    public void setHint(Hint hint) {
         mHint = hint;
-        mEdit =true;
+        mEdit = true;
     }
 
-    public interface Callback{
+    public interface Callback {
         void onAddHintOk(Hint hint);
+
         void onEditHintOk(Hint hint);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(LAYOUT_RESOURCE, container, false);
         setupControls(view);
         setListeners();
@@ -52,20 +53,20 @@ public class HintDialog extends DialogFragment{
         return view;
     }
 
-    private void setupControls(View view){
-        mHintEditText = (EditText)view.findViewById(R.id.hint_edit_text);
-        mOkButton = (Button)view.findViewById(R.id.ok_button);
+    private void setupControls(View view) {
+        mHintEditText = (EditText) view.findViewById(R.id.hint_edit_text);
+        mOkButton = (Button) view.findViewById(R.id.ok_button);
     }
 
-    private void setListeners(){
+    private void setListeners() {
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validate()){
-                    if(mCallback != null){
+                if (validate()) {
+                    if (mCallback != null) {
                         Hint hint = new Hint();
                         hint.setContent(mHintEditText.getText().toString());
-                        if(mEdit){
+                        if (mEdit) {
                             mCallback.onEditHintOk(hint);
                         } else {
                             mCallback.onAddHintOk(hint);
@@ -80,8 +81,8 @@ public class HintDialog extends DialogFragment{
         });
     }
 
-    private void setValues(){
-        if(mHint != null){
+    private void setValues() {
+        if (mHint != null) {
             mHintEditText.setText(mHint.getContent());
         }
     }
@@ -89,14 +90,15 @@ public class HintDialog extends DialogFragment{
     /**
      * Metoda sprawdzająca czy wprowadzone dane są poprawne.
      * -- pole nie może być puste
+     *
      * @return
      */
-    private boolean validate(){
+    private boolean validate() {
         return !mHintEditText.getText().toString().isEmpty();
     }
 
     @Override
-    public void onDismiss(DialogInterface dialogInterface){
+    public void onDismiss(DialogInterface dialogInterface) {
         mCallback = null;
         getFragmentManager().beginTransaction().remove(this).commit();
     }

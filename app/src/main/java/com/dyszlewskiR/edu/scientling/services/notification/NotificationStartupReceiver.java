@@ -1,15 +1,11 @@
 package com.dyszlewskiR.edu.scientling.services.notification;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.preferences.Preferences;
-
-import java.util.Calendar;
 
 
 /**
@@ -22,12 +18,12 @@ import java.util.Calendar;
  * Do alarmmanagera podpięta jest intencja, która zostaje uruchomiona
  */
 
-public class NotificationStartupReceiver extends BroadcastReceiver{
+public class NotificationStartupReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         //na początku sprawdzamy czy przypomnienia sąwłączone. Jeżeli nie są nie robimy nic, ponieważ nie ma sensu sprawdzania
         // czy istnieją jakieś powtórki, jeśli i tak o tym nie poinformujemy użytkownika
-        if(Preferences.getReminderEnabled(context)){
+        if (Preferences.getReminderEnabled(context)) {
             Log.d(getClass().getName(), "onReceive");
             ReminderAlarmManager.startAlarm(context);
         }

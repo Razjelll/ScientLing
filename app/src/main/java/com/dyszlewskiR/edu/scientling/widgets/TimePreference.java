@@ -1,27 +1,17 @@
 package com.dyszlewskiR.edu.scientling.widgets;
 
-import android.app.Dialog;
-import android.app.TimePickerDialog;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.os.Bundle;
 import android.support.v7.preference.DialogPreference;
-import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.TimePicker;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.activity.AppCompatPreferenceActivity;
-
-import java.sql.Time;
 
 /**
  * Created by Razjelll on 28.12.2016.
  */
 
-public class TimePreference  extends DialogPreference{
+public class TimePreference extends DialogPreference {
 
     private final int POSITIVE_BUTTON_TEXT = R.string.set;
     private final int NEGATIVE_BUTTON_TEXT = R.string.cancel;
@@ -36,13 +26,12 @@ public class TimePreference  extends DialogPreference{
 
     }
 
-    public TimePreference(Context context, AttributeSet attrs)
-    {
+    public TimePreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         setupButtonsText();
     }
 
-    public TimePreference(Context context, AttributeSet attrs, int defStyleAttr){
+    public TimePreference(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setupButtonsText();
     }
@@ -64,16 +53,9 @@ public class TimePreference  extends DialogPreference{
     }
 
     @Override
-    public int getDialogLayoutResource()
-    {
+    public int getDialogLayoutResource() {
         return 0;
     }
-
-
-
-
-
-
 
 
 }

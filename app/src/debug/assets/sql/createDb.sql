@@ -23,15 +23,12 @@ CREATE TABLE Hints(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         content TEXT NOT NULL UNIQUE
 );
-CREATE TABLE Exercises (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL UNIQUE
-);
 CREATE TABLE Sets (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         language_l2_fk INTEGER,
         language_l1_fk INTEGER,
+        global_id INTEGER,
         catalog TEXT NOT NULL,
         FOREIGN KEY (language_l2_fk) REFERENCES Languages(id),
         FOREIGN KEY (language_l1_fk) REFERENCES Languages(id)
@@ -41,6 +38,7 @@ CREATE TABLE Lessons (
         name TEXT NOT NULL,
         number INTEGER NOT NULL CHECK(number >= 0) DEFAULT 1,
         set_fk INTEGER NOT NULL,
+        global_id INTEGER,
         FOREIGN KEY (set_fk) REFERENCES Sets(id) ON DELETE CASCADE
 );
 CREATE TABLE PartsOfSpeech (

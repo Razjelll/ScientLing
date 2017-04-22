@@ -1,21 +1,17 @@
 package com.dyszlewskiR.edu.scientling.data.database.dao;
 
 import android.content.ContentValues;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.dyszlewskiR.edu.scientling.BuildConfig;
-import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.PartsOfSpeechTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable;
 import com.dyszlewskiR.edu.scientling.data.database.utils.QueryReader;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.data.models.creators.WordCreator;
-import com.dyszlewskiR.edu.scientling.utils.DateCalculator;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.utils.QueryBuilder;
 
 import java.io.IOException;
@@ -108,17 +104,17 @@ public class WordDao extends BaseDao<Word> {
         mInsertStatement.bindLong(WordsColumns.SELECTED_POSITION, selected);
         long own = entity.isOwn() ? 1 : 0;
         mInsertStatement.bindLong(WordsColumns.OWN_POSITION, own);
-            if(entity.isLearningDate()){
-                long date = entity.getLearningDate();
-                mInsertStatement.bindLong(WordsColumns.LEARNING_DATE_POSITION, date);
-            }
-        if(entity.getImageName() != null){
+        if (entity.isLearningDate()) {
+            long date = entity.getLearningDate();
+            mInsertStatement.bindLong(WordsColumns.LEARNING_DATE_POSITION, date);
+        }
+        if (entity.getImageName() != null) {
             mInsertStatement.bindString(WordsColumns.IMAGE_NAME_POSITION, entity.getImageName());
         } else {
             mInsertStatement.bindNull(WordsColumns.IMAGE_NAME_POSITION);
         }
 
-        if(entity.getRecordName() != null){
+        if (entity.getRecordName() != null) {
             mInsertStatement.bindString(WordsColumns.RECORD_NAME_POSITION, entity.getRecordName());
         } else {
             mInsertStatement.bindNull(WordsColumns.RECORD_NAME_POSITION);
@@ -165,13 +161,13 @@ public class WordDao extends BaseDao<Word> {
         values.put(WordsColumns.LEARNING_DATE, date);
 
         //wstawinaie obrazka
-        if(entity.getImageName() != null){
+        if (entity.getImageName() != null) {
             values.put(WordsColumns.IMAGE_NAME, entity.getImageName());
         } else {
             values.putNull(WordsColumns.IMAGE_NAME);
         }
         //wstawianie nagrania
-        if(entity.getRecordName()!=null){
+        if (entity.getRecordName() != null) {
             values.put(WordsColumns.RECORD_NAME, entity.getRecordName());
         } else {
             values.putNull(WordsColumns.RECORD_NAME);
@@ -183,17 +179,18 @@ public class WordDao extends BaseDao<Word> {
 
     /**
      * Metoda uaktualniająca słówka które spełniają podany warunek o nową wartośc w podanej kolumnie
-     * @param column kolumna która ma zostać zmodyfikowana
-     * @param value wartość która ma zostać wstawiona do wybranej kolumny
-     * @param selection warunek okreslający które wiersze zostaną zmodyfikowane
+     *
+     * @param column             kolumna która ma zostać zmodyfikowana
+     * @param value              wartość która ma zostać wstawiona do wybranej kolumny
+     * @param selection          warunek okreslający które wiersze zostaną zmodyfikowane
      * @param selectionArguments argumenty warunku
      */
-    public void update(String column, String value, String selection, String[] selectionArguments){
+    public void update(String column, String value, String selection, String[] selectionArguments) {
         StringBuffer sqlBuilder = new StringBuffer();
         sqlBuilder.append("UPDATE ").append(WordsTable.TABLE_NAME)
                 .append(" SET ").append(column).append(" = ").append(value)
                 .append(" WHERE ").append(selection);
-        mDb.execSQL(sqlBuilder.toString(),selectionArguments);
+        mDb.execSQL(sqlBuilder.toString(), selectionArguments);
     }
 
     @Override
@@ -208,10 +205,11 @@ public class WordDao extends BaseDao<Word> {
 
     /**
      * Metoda usuwająca wszystkie słówka spełniające podany warunek
-     * @param selection warunek, który muszą spełnić usuwane słówka
+     *
+     * @param selection          warunek, który muszą spełnić usuwane słówka
      * @param selectionArguments argumenty warunku
      */
-    public int delete(String selection, String[] selectionArguments){
+    public int delete(String selection, String[] selectionArguments) {
         return mDb.delete(WordsTable.TABLE_NAME, selection, selectionArguments);
     }
 
@@ -223,7 +221,7 @@ public class WordDao extends BaseDao<Word> {
 
         InputStream inputStream = null;
         try {
-            String query = QueryReader.getQuery(QUERIES_FOLDER+SELECT_QUERY_NAME);
+            String query = QueryReader.getQuery(QUERIES_FOLDER + SELECT_QUERY_NAME);
             queryBuilder = new StringBuilder(query);
         } catch (IOException e) {
             e.printStackTrace();
@@ -251,7 +249,7 @@ public class WordDao extends BaseDao<Word> {
     }
 
     public List<Word> getAll(boolean distinct, String table, String[] columns, String selection, String[] selectionArgs,
-                             String groupBy, String having, String orderBy, String limit){
+                             String groupBy, String having, String orderBy, String limit) {
         Cursor cursor = mDb.query(distinct, table, columns, selection, selectionArgs,
                 groupBy, having, orderBy, limit);
         List<Word> wordsList = getWordsListFromCursor(cursor);
@@ -275,8 +273,8 @@ public class WordDao extends BaseDao<Word> {
     }
 
     public List<Word> getAll(String statement, String selection, String[] selectionArgs,
-                             String groupBy, String having, String orderBy, String limit){
-        String query = QueryBuilder.build(statement,selection,groupBy,having,orderBy,limit);
+                             String groupBy, String having, String orderBy, String limit) {
+        String query = QueryBuilder.build(statement, selection, groupBy, having, orderBy, limit);
         Cursor cursor = mDb.rawQuery(query, selectionArgs);
         List<Word> words = getWordsListFromCursor(cursor);
         closeCursor(cursor);
@@ -340,9 +338,9 @@ public class WordDao extends BaseDao<Word> {
     }
 
     public int getCount(String selection, String[] selectionArgs) {
-        Cursor cursor = mDb.query(false, WordsTable.TABLE_NAME + " " + WordsTable.ALIAS, new String[]{"COUNT(1)"},selection, selectionArgs,
-                null,null,null,null);
-        if(cursor.moveToFirst()){
+        Cursor cursor = mDb.query(false, WordsTable.TABLE_NAME + " " + WordsTable.ALIAS, new String[]{"COUNT(1)"}, selection, selectionArgs,
+                null, null, null, null);
+        if (cursor.moveToFirst()) {
             return cursor.getInt(0);
         }
         return 0;
@@ -350,18 +348,19 @@ public class WordDao extends BaseDao<Word> {
 
     /**
      * Metoda służąca zarówno do pobierania listy nagrań jak i obrazów.
-     * @param query zapytanie sql
+     *
+     * @param query     zapytanie sql
      * @param arguments parametry zapytania
      * @return lista nazw
      */
-    public List<String> getNamesList(String query, String[] arguments){
+    public List<String> getNamesList(String query, String[] arguments) {
         List<String> resultList = new ArrayList<>();
         Cursor cursor = mDb.rawQuery(query, arguments);
-        if(cursor.moveToFirst()){
-            do{
+        if (cursor.moveToFirst()) {
+            do {
                 String imageName = cursor.getString(0);
                 resultList.add(imageName);
-            }while(cursor.moveToNext());
+            } while (cursor.moveToNext());
         }
         return resultList;
     }

@@ -2,17 +2,21 @@ package com.dyszlewskiR.edu.scientling.data.models.creators;
 
 import android.database.Cursor;
 
-import static com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable.*;
+import com.dyszlewskiR.edu.scientling.data.models.models.Language;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
+import com.fasterxml.jackson.databind.JsonNode;
 
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Language;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
+import org.json.JSONException;
+import org.json.simple.JSONObject;
+
+import static com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable.SetsColumns;
 
 
 /**
  * Created by Razjelll on 31.03.2017.
  */
 
-public class SetCreator implements IModelCreator<VocabularySet>{
+public class SetCreator implements IModelCreator<VocabularySet> {
 
     @Override
     public VocabularySet createFromCursor(Cursor cursor) {
@@ -35,6 +39,25 @@ public class SetCreator implements IModelCreator<VocabularySet>{
             }
             set.setCatalog(cursor.getString(SetsColumns.CATALOG_POSITION));
         }
+        return set;
+    }
+
+    private final String ID = "id";
+    private final String NAME = "name";
+    private final String L1 = "l1";
+    private final String L2 = "l2";
+
+    public VocabularySet createFromJson(JsonNode object) throws JSONException {
+        long id = object.path(ID).asLong();
+        String name = object.path(NAME).asText();
+        long l1 = object.path(L1).asLong();
+        long l2 = object.path(L2).asLong();
+
+        VocabularySet set = new VocabularySet();
+        set.setName(name);
+        set.setLanguageL1(new Language(l1));
+        set.setLanguageL2(new Language(l2));
+
         return set;
     }
 }

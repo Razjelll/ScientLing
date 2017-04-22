@@ -5,15 +5,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.TranslationsTable;
-import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTranslationsTable;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Translation;
+import com.dyszlewskiR.edu.scientling.data.models.models.Translation;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.TranslationsTable.TranslationsColumns;
-import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTranslationsTable.TABLE_NAME;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTranslationsTable.WordsTranslationsColumns;
 
 /**
@@ -112,8 +110,7 @@ public class TranslationDao extends BaseDao<Translation> {
         return translationsList;
     }
 
-    public Translation getByContent(String content)
-    {
+    public Translation getByContent(String content) {
         Translation translation = null;
         String where = TranslationsColumns.CONTENT + " =?";
         String[] whereArguments = new String[]{content};
@@ -200,14 +197,14 @@ public class TranslationDao extends BaseDao<Translation> {
                 /*.append(" WHERE ")
                 .append(TranslationsColumns.ID).append(" NOT IN")
                 .append(" (SELECT ").append(WordsTranslationsColumns.TRANSLATION_FK)
-                .append(" FROM ").append(WordsTranslationsTable.TABLE_NAME).append(")").toString();*/
+                .append(" FROM ").append(WordsTranslationsTable.TABLE_NAME).append(")").getUri();*/
         /*mDb.execSQL(statement);
         String where = TranslationsColumns.ID + " NOT IN ";
         String whereArg = " (SELECT " + WordsTranslationsColumns.TRANSLATION_FK
                 + " FROM " + WordsTranslationsTable.TABLE_NAME + ")";
         where = where + whereArg;
         String[] whereArguments = {};*/
-        return mDb.delete(TranslationsTable.TABLE_NAME,statement, null);
+        return mDb.delete(TranslationsTable.TABLE_NAME, statement, null);
         //return mDb.delete(TranslationsTable.TABLE_NAME,statement, );
         /*Cursor cursor1 = mDb.rawQuery(statement2, new String[]{"tl"});
         int count1 = cursor1.getCount();

@@ -2,8 +2,8 @@ package com.dyszlewskiR.edu.scientling.asyncTasks;
 
 import android.os.AsyncTask;
 
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.data.models.params.FlashcardParams;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
 public class LoadFlashcardsAsyncTask extends AsyncTask<FlashcardParams, Void, List<Word>> {
     private DataManager mDataManager;
 
-    public LoadFlashcardsAsyncTask(DataManager dataManager){
+    public LoadFlashcardsAsyncTask(DataManager dataManager) {
         mDataManager = dataManager;
     }
 

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 /**
@@ -30,7 +30,7 @@ public class SecondSideFlashcardFragment extends SideFlashcardFragment {
         super.onCreate(savedInstanceState);
     }
 
-    public void setWord(Word word){
+    public void setWord(Word word) {
         mWord = word;
         setTexts();
     }

@@ -9,18 +9,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.SentenceDetailActivity;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
+import com.dyszlewskiR.edu.scientling.data.models.models.Sentence;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import java.util.List;
-import java.util.zip.CheckedOutputStream;
 
 /**
  * Created by Razjelll on 27.11.2016.
@@ -69,10 +67,8 @@ public class SentencesAdapter extends ArrayAdapter {
             viewHolder = new ViewHolder(rowView);
 
             rowView.setTag(viewHolder);
-        }
-        else
-        {
-            viewHolder = (ViewHolder)rowView.getTag();
+        } else {
+            viewHolder = (ViewHolder) rowView.getTag();
         }
 
         viewHolder.contentTextView.setText(mItems.get(position).getContent());
@@ -81,7 +77,7 @@ public class SentencesAdapter extends ArrayAdapter {
         return rowView;
     }
 
-    private void setupMenu(final int position, final ViewHolder viewHolder){
+    private void setupMenu(final int position, final ViewHolder viewHolder) {
         viewHolder.actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,13 +87,13 @@ public class SentencesAdapter extends ArrayAdapter {
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        if(item.getItemId() == Constants.MENU_EDIT){
+                        if (item.getItemId() == Constants.MENU_EDIT) {
                             Log.d(getClass().getSimpleName(), "Udało się");
                         }
-                        if(item.getTitle().equals(mContext.getString(Constants.MENU_EDIT))){
+                        if (item.getTitle().equals(mContext.getString(Constants.MENU_EDIT))) {
                             startEditSentence(position);
                         }
-                        if(item.getTitle().equals(mContext.getString(Constants.MENU_DELETE))){
+                        if (item.getTitle().equals(mContext.getString(Constants.MENU_DELETE))) {
                             deleteSentence(position);
                         }
                         return true;
@@ -108,22 +104,22 @@ public class SentencesAdapter extends ArrayAdapter {
         });
     }
 
-    public void startEditSentence(int position){
+    public void startEditSentence(int position) {
         mLastEdited = position;
         Intent intent = new Intent(mContext, SentenceDetailActivity.class);
-        intent.putExtra("item",mItems.get(position));
-        intent.putExtra("edit",true);
-        ((Activity)mContext).startActivityForResult(intent, EDIT_REQUEST);
+        intent.putExtra("item", mItems.get(position));
+        intent.putExtra("edit", true);
+        ((Activity) mContext).startActivityForResult(intent, EDIT_REQUEST);
     }
 
-    private void deleteSentence(int position){
+    private void deleteSentence(int position) {
         mItems.remove(position);
         notifyDataSetChanged();
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        if(requestCode == EDIT_REQUEST){
-            if(resultCode == Activity.RESULT_OK){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == EDIT_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
                 Sentence sentence = data.getParcelableExtra("result");
                 mItems.set(mLastEdited, sentence);
                 notifyDataSetChanged();
@@ -136,8 +132,7 @@ public class SentencesAdapter extends ArrayAdapter {
         public TextView translationTextView;
         public ImageView actionButton;
 
-        public ViewHolder(View view)
-        {
+        public ViewHolder(View view) {
             contentTextView = (TextView) view.findViewById(R.id.sentence_content_text_view);
             translationTextView = (TextView) view.findViewById(R.id.sentence_translation_text_view);
             actionButton = (ImageView) view.findViewById(R.id.action_button);

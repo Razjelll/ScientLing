@@ -13,11 +13,11 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.CategoriesAdapter;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
+import com.dyszlewskiR.edu.scientling.data.models.models.Category;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
 
 import java.util.List;
 
@@ -65,7 +65,7 @@ public class CategorySelectionFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
+        DataManager dataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
         mAdapter = new CategoriesAdapter(getActivity(), R.layout.item_category_selection, mItems, dataManager);
         mListView.setAdapter(mAdapter);
     }
@@ -73,6 +73,7 @@ public class CategorySelectionFragment extends Fragment {
     /**
      * Meotoda ustawiająca wynik aktywności i zwracająca go do aktywności przez którą została wywołana.
      * Nastepnie obecna aktywność jest zamykana
+     *
      * @param position
      */
     private void setResultAndFinish(int position) {
@@ -81,7 +82,6 @@ public class CategorySelectionFragment extends Fragment {
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
     }
-
 
 
     private class SearchWatcher implements TextWatcher {

@@ -13,12 +13,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.LanguagesAdapter;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
+import com.dyszlewskiR.edu.scientling.data.models.models.Language;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Language;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 
 import java.util.List;
 
@@ -42,18 +42,18 @@ public class SetFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getData();
         mDataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
         mLanguages = mDataManager.getLanguages();
     }
 
-    private void getData(){
+    private void getData() {
         Intent intent = getActivity().getIntent();
         mSet = intent.getParcelableExtra("item");
         mEdit = intent.getBooleanExtra("edit", false);
-        if(mSet == null){
+        if (mSet == null) {
             mSet = new VocabularySet();
         }
     }
@@ -67,14 +67,14 @@ public class SetFragment extends Fragment {
         return view;
     }
 
-    private void setupControls(View view){
+    private void setupControls(View view) {
         mNameEditText = (EditText) view.findViewById(R.id.set_name_edit_text);
         mL2Spinner = (Spinner) view.findViewById(R.id.l2_spinner);
         mL1Spinner = (Spinner) view.findViewById(R.id.l1_spinner);
         mSaveButton = (Button) view.findViewById(R.id.save_button);
     }
 
-    private void setListeners(){
+    private void setListeners() {
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -95,13 +95,13 @@ public class SetFragment extends Fragment {
         mL1Spinner.setAdapter(adapter);
         mL2Spinner.setAdapter(adapter);
 
-        if(mSet != null){
+        if (mSet != null) {
             mNameEditText.setText(mSet.getName());
-            if(mSet.getLanguageL1()!=null){
+            if (mSet.getLanguageL1() != null) {
                 int positionL1 = adapter.getPosition(mSet.getLanguageL1().getName());
                 mL1Spinner.setSelection(positionL1);
             }
-            if(mSet.getLanguageL2()!=null){
+            if (mSet.getLanguageL2() != null) {
                 int positionL2 = adapter.getPosition(mSet.getLanguageL2().getName());
                 mL2Spinner.setSelection(positionL2);
             }
@@ -116,7 +116,7 @@ public class SetFragment extends Fragment {
     }
 
     private boolean saveSet(VocabularySet set) {
-        if(mEdit){
+        if (mEdit) {
             mDataManager.updateSet(set);
             return true;
         } else {
@@ -148,8 +148,6 @@ public class SetFragment extends Fragment {
         AlertDialog alertDialog = alertBuilder.create();
         alertDialog.show();
     }
-
-
 
 
 }

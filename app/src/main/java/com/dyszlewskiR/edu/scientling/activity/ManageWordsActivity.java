@@ -3,13 +3,8 @@ package com.dyszlewskiR.edu.scientling.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -17,9 +12,6 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.dyszlewskiR.edu.scientling.R;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ManageWordsActivity extends AppCompatActivity {
 
@@ -36,23 +28,23 @@ public class ManageWordsActivity extends AppCompatActivity {
         setListeners();
     }
 
-    private void setupToolbar(){
+    private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void setupControls(){
+    private void setupControls() {
         mAddButton = (ImageView) findViewById(R.id.add_button);
     }
 
-    private void setListeners(){
+    private void setListeners() {
         mAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getBaseContext(), WordEditActivity.class);
-                intent.putExtra("add_result",true);
+                intent.putExtra("add_result", true);
                 startActivityForResult(intent, ADD_WORD_REQUEST);
             }
         });
@@ -71,8 +63,8 @@ public class ManageWordsActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent){
-        if(resultCode != Activity.RESULT_CANCELED){
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        if (resultCode != Activity.RESULT_CANCELED) {
             FragmentManager fragmentManager = getSupportFragmentManager();
             Fragment fragment = fragmentManager.findFragmentById(R.id.fragment);
             fragment.onActivityResult(requestCode, resultCode, intent);

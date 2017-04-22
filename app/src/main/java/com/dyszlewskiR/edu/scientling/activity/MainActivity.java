@@ -1,35 +1,41 @@
 package com.dyszlewskiR.edu.scientling.activity;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
-import android.view.View;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
-import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.LessonsProgressAdapter;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.asyncTasks.MainInitializationValuesTask;
+import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.params.FlashcardParams;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 import com.dyszlewskiR.edu.scientling.dialogs.FlashcardListDialogFragment;
 import com.dyszlewskiR.edu.scientling.dialogs.LearningOptionsDialog;
+import com.dyszlewskiR.edu.scientling.preferences.LogPref;
 import com.dyszlewskiR.edu.scientling.preferences.Preferences;
 import com.dyszlewskiR.edu.scientling.preferences.Settings;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
@@ -44,9 +50,14 @@ public class MainActivity extends AppCompatActivity
 
 
     private final int SET_CHANGING_REQUEST = 875;
+    private final int LOGIN_REQUEST = 7998;
 
     private ListView mLessonListView;
     private Button mRepetitionButton;
+
+    private NavigationView mNavigationDrawer;
+    private TextView mLoginTextView;
+
     private Button mLearningButton;
     private ImageButton mMoreRepetitionsButton;
     private ImageButton mMoreLearningButton;
@@ -57,10 +68,12 @@ public class MainActivity extends AppCompatActivity
 
     private int mRepetitionCount;
 
+    private boolean mIsLogged;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(getClass().getSimpleName(),"onCreate");
+        Log.d(getClass().getSimpleName(), "onCreate");
         setContentView(R.layout.activity_main);
         setupToolbar();
         setupControls();
@@ -68,11 +81,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onResume(){
-        Log.d(getClass().getSimpleName(),"onResume");
+    protected void onResume() {
+        Log.d(getClass().getSimpleName(), "onResume");
         setInitialValues();
-        setRepetitionNumber();//przenieśc do onResume
+        setRepetitionNumber();
+        setIsLogged();
+        setLoggedNavigationItems(mIsLogged);
         super.onResume();
+    }
+
+    private void setIsLogged() {
+        if (LogPref.isLogged(getBaseContext())) {
+            mIsLogged = true;
+        } else {
+            mIsLogged = false;
+        }
     }
 
     private void setupToolbar() {
@@ -88,6 +111,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setupControls() {
+        mNavigationDrawer = (NavigationView) findViewById(R.id.nav_view);
+        View drawerHeader = mNavigationDrawer.getHeaderView(0);
+        mLoginTextView = (TextView) drawerHeader.findViewById(R.id.drawer_text_view);
         mLessonListView = (ListView) findViewById(R.id.list);
         mRepetitionButton = (Button) findViewById(R.id.repetition_button);
         mLearningButton = (Button) findViewById(R.id.learning_button);
@@ -100,7 +126,7 @@ public class MainActivity extends AppCompatActivity
         mRepetitionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mRepetitionCount != 0){
+                if (mRepetitionCount != 0) {
                     startDefaultRepetition();
                 } else {
                     showNoRepetitionMessage();
@@ -133,49 +159,132 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void showNoRepetitionMessage(){
+    private void showNoRepetitionMessage() {
         View view = this.getCurrentFocus();
-        if(view == null){
+        if (view == null) {
             view = new View(this);
         }
-        Snackbar snackbar = Snackbar.make(view,getString(R.string.no_repetitions_today),Snackbar.LENGTH_SHORT);
+        Snackbar snackbar = Snackbar.make(view, getString(R.string.no_repetitions_today), Snackbar.LENGTH_SHORT);
         snackbar.show();
     }
 
-    private void showLearningDialog(){
+    private void showLearningDialog() {
         VocabularySet set = new VocabularySet(Settings.getCurrentSetId(getBaseContext()));
-        List<Lesson> lessons = mDataManager.getLessons(set);
-        List<Category> categories = mDataManager.getCategories();
-        LearningOptionsDialog dialog = new LearningOptionsDialog(MainActivity.this,Settings.getCurrentSetId(getBaseContext()),lessons,categories);
-        dialog.show();
+        LearningOptionsDialog dialog = new LearningOptionsDialog();
+        dialog.setSetId(set.getId());
+        dialog.show(getFragmentManager(), "LearningOptionsDialog");
     }
 
     private void setInitialValues() {
         mDataManager = ((LingApplication) getApplication()).getDataManager();
         new MainInitializationValuesTask(this).execute(mDataManager);
-        /*mDataManager = ((LingApplication) getApplication()).getDataManager();
-        //TODO to zrobić w osobnym wątku
-        VocabularySet set = mDataManager.getSetById(Settings.getCurrentSetId(getBaseContext()));
-        mLessons = mDataManager.getLessonsWithProgress(set);
-        getSupportActionBar().setTitle(set.getFileName());
-
-        setLessonListValues();
-
-        //ustawianie postępu dla całego zestawu
-        int setProgress = calculateSetProgress();
-        mSetProgressBar.setProgress(setProgress);*/
     }
 
-    public void onPostGetDataTask(VocabularySet set, List<Lesson> lessons){
-        getSupportActionBar().setTitle(set.getName());
-        mLessons = lessons;
-        setLessonListValues();
+    public void onPostGetDataTask(VocabularySet set, List<Lesson> lessons) {
+        if (set != null) {
+            getSupportActionBar().setTitle(set.getName());
+            //sprawdzamy czy progressbar jest widoczny. Jeżeli jest niewidoczy oznacza to że wcześniej
+            //nie było ustawionego zestawu i kontrolki są ukryte
+            //należy w takim więc pokazać te kontrolki i ukryć dodatkowe
+            if (mSetProgressBar.getVisibility() == View.GONE) {
+                setupVisibilityControls(false);
+            }
+        } else {
+            getSupportActionBar().setTitle(getString(R.string.lack));
+            setupVisibilityControls(true);
+        }
+
+        setLessonListValues(lessons);
         int setProgress = calculateSetProgress();
         mSetProgressBar.setProgress(setProgress);
     }
 
-    public void onPreGetDataTask()
-    {
+    /**
+     * Metoda ustawiająca widoczność elementów związaych z ustawionym zestawem. Tymi elementami są
+     * progres postepu zestawu, list lekcji zestawu i przyciski powtórek i nauki.
+     * W przypadku braku ustawionego zestawu(co może mieć miejsce po instalacji aplikacji lub
+     * po usunięciu obecnego zestawu) zostają wyświetlkowe przyciski pozwalające wybrać zestaw
+     * lub stworzyć nowy. Metoda będize wykonywana w przypadku braku ustawionego zstawu o raz
+     * po zmianie zestawu po stanie w którym nie było zestawu.
+     */
+    private void setupVisibilityControls(boolean isNoSet) {
+        int noSetControlsVisibility;
+        int standardControlsVisibility;
+        if (isNoSet) {
+            noSetControlsVisibility = View.VISIBLE;
+            standardControlsVisibility = View.GONE;
+        } else {
+            noSetControlsVisibility = View.GONE;
+            standardControlsVisibility = View.VISIBLE;
+        }
+
+        LinearLayout noSetContainer = (LinearLayout) findViewById(R.id.no_set_container);
+        LinearLayout repetitionContainer = (LinearLayout) findViewById(R.id.repetitions_buttons);
+        LinearLayout learningContainer = (LinearLayout) findViewById(R.id.learning_buttons);
+
+        //ukrywanie widocznych elementów
+        mSetProgressBar.setVisibility(standardControlsVisibility);
+        mLessonListView.setVisibility(standardControlsVisibility);
+        learningContainer.setVisibility(standardControlsVisibility);
+        repetitionContainer.setVisibility(standardControlsVisibility);
+        //pokazanie kontrolek informujących o braku zestawu
+        noSetContainer.setVisibility(noSetControlsVisibility);
+        //ustawienie kontrolek menu bocznego
+        setVisibleSetNavigationItems(!isNoSet);
+
+        if (isNoSet) {
+            Button chooseSetButton = (Button) findViewById(R.id.choose_set_button);
+            Button createSetButton = (Button) findViewById(R.id.create_set_button);
+            //ustawienie listenerów
+            chooseSetButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startSetChangingActivity();
+                }
+            });
+            createSetButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startSetsManagerActivity();
+                }
+            });
+        }
+    }
+
+    /**
+     * Metoda ustawiająca widoczność elementów związanych z ustawionym zestawem znajdujących się w menu bocznych. Metoda wyłącza tylko
+     * elementy dla tkórych trzeba mieć wybrany aktywny zestaw. Elementy zostaną ukryte w przypadku
+     * nieustawienia aktywnego zestawu
+     *
+     * @param enableItems
+     */
+    private void setVisibleSetNavigationItems(boolean enableItems) {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.getMenu().findItem(R.id.nav_add_word).setEnabled(enableItems);
+        navigationView.getMenu().findItem(R.id.nav_flashcard).setEnabled(enableItems);
+        navigationView.getMenu().findItem(R.id.nav_more_flashcards).setEnabled(enableItems);
+        navigationView.getMenu().findItem(R.id.nav_manage_words).setEnabled(enableItems);
+    }
+
+    /**
+     * Metoda ustawiająca widoczność elementów powiązanych z zalogowanym użytkownikiem znajdujących się w menu bocznym.
+     *
+     * @param isLogged określa czy użytkownnik jest zalogowany i czy należy pokazać odpowiednie elementy
+     */
+    private void setLoggedNavigationItems(boolean isLogged) {
+        mNavigationDrawer.getMenu().findItem(R.id.nav_login).setVisible(!isLogged);
+        mNavigationDrawer.getMenu().findItem(R.id.nav_download_sets).setVisible(isLogged);
+        mNavigationDrawer.getMenu().findItem(R.id.nav_log_out).setVisible(isLogged);
+
+        if (isLogged) {
+            mLoginTextView.setText(LogPref.getLogin(this));
+        } else {
+            mLoginTextView.setText("");
+        }
+    }
+
+
+    public void onPreGetDataTask() {
         mLessonListView.setAdapter(null);
         mLessonListView.deferNotifyDataSetChanged();
         getSupportActionBar().setTitle("");
@@ -194,7 +303,8 @@ public class MainActivity extends AppCompatActivity
         mRepetitionCount = repetitionCount;
     }
 
-    private void setLessonListValues() {
+    private void setLessonListValues(List<Lesson> lessons) {
+        mLessons = lessons;
         LessonsProgressAdapter adapter = new LessonsProgressAdapter(getBaseContext(), R.layout.item_lesson_progress, mLessons);
         mLessonListView.setAdapter(adapter);
     }
@@ -282,45 +392,70 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
+
+    private final int NAV_LOGIN = R.id.nav_login;
+    private final int NAV_ADD_WORDS = R.id.nav_add_word;
+    private final int NAV_FLASHCARD = R.id.nav_flashcard;
+    private final int NAV_MORE_FLASHCARD = R.id.nav_more_flashcards;
+    private final int NAV_MANAGE_WORDS = R.id.nav_manage_words;
+    private final int NAV_SETTINGS = R.id.nav_settings;
+    private final int NAV_CHANGE_SET = R.id.nav_change_set;
+    private final int NAV_MANAGE_SET = R.id.nav_manage_sets;
+    private final int NAV_DOWNLOAD_SET = R.id.nav_download_sets;
+    private final int NAV_LOGOUT = R.id.nav_log_out;
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
+        switch (id) {
+            case NAV_LOGIN:
+                startLoginActivity();
+                break;
+            case NAV_ADD_WORDS:
+                startAddWordActivity();
+                break;
+            case NAV_FLASHCARD:
+                startFlashcardActivity();
+                break;
+            case NAV_MORE_FLASHCARD:
+                FlashcardListDialogFragment dialogFragment = new FlashcardListDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putLong("set", Settings.getCurrentSetId(getBaseContext()));
+                bundle.putInt("limit", Preferences.getNumberWordsInLearning(getBaseContext()));
+                dialogFragment.setArguments(bundle);
+                dialogFragment.show(getFragmentManager(), "TAG");
+                break;
+            case NAV_MANAGE_WORDS:
+                startManagerWordsActivity();
+                break;
+            case NAV_SETTINGS:
+                startSettingsActivity();
+                break;
+            case NAV_CHANGE_SET:
+                startSetChangingActivity();
+                break;
+            case NAV_MANAGE_SET:
+                startSetsManagerActivity();
+                break;
+            case NAV_DOWNLOAD_SET:
+                startDownloadSetsActivity();
+                break;
+            case NAV_LOGOUT:
+                logout();
+                break;
 
-        if (id == R.id.nav_add_word) {
-            startAddWordActivity();
-        }
-        if (id == R.id.nav_flashcard) {
-            startFlashcardActivity();
-
-        }
-        if(id==R.id.nav_more_flashcards){
-            FlashcardListDialogFragment dialogFragment = new FlashcardListDialogFragment();
-            Bundle bundle = new Bundle();
-            bundle.putLong("set", Settings.getCurrentSetId(getBaseContext()));
-            bundle.putInt("limit", Preferences.getNumberWordsInLearning(getBaseContext()));
-            dialogFragment.setArguments(bundle);
-            dialogFragment.show(getFragmentManager(),"TAG");
-        }
-        if(id ==R.id.nav_manage_words){
-            startManagerWordsActivity();
-        }
-        if (id == R.id.nav_settings) {
-            startSettingsActivity();
-        }
-        if (id == R.id.nav_change_set) {
-            startSetChangingActivity();
-        }
-        if(id == R.id.nav_manage_sets){
-            startSetsManagerActivity();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void startLoginActivity() {
+        Intent intent = new Intent(getBaseContext(), LoginActivity.class);
+        startActivityForResult(intent, LOGIN_REQUEST);
     }
 
     private void startAddWordActivity() {
@@ -341,33 +476,84 @@ public class MainActivity extends AppCompatActivity
         startActivity(intent);
     }
 
-    private void startSetChangingActivity(){
+    private void startSetChangingActivity() {
         Intent intent = new Intent(getBaseContext(), CurrentSetSelectionActivity.class);
-        startActivityForResult(intent,SET_CHANGING_REQUEST);
+        startActivityForResult(intent, SET_CHANGING_REQUEST);
     }
 
-    private void startManagerWordsActivity(){
+    private void startManagerWordsActivity() {
         Intent intent = new Intent(getBaseContext(), ManageWordsActivity.class);
         startActivity(intent);
     }
 
-    private void startSetsManagerActivity(){
+    private void startSetsManagerActivity() {
         Intent intent = new Intent(getBaseContext(), SetsManagerActivity.class);
         startActivityForResult(intent, SET_CHANGING_REQUEST);
     }
 
+    private void startDownloadSetsActivity() {
+        Intent intent = new Intent(getBaseContext(), DownloadSetsActivity.class);
+        startActivity(intent);
+    }
+
+    private void logout() {
+        LogoutAlertDialog dialog = new LogoutAlertDialog(this);
+        dialog.show();
+    }
+
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        if(requestCode == SET_CHANGING_REQUEST){
-            if(resultCode == Activity.RESULT_OK){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SET_CHANGING_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
                 Log.d(getClass().getSimpleName(), "onActivityResult");
                 long newSetId = data.getLongExtra("result", Constants.DEFAULT_SET_ID);
                 changeSet(newSetId);
             }
         }
+
+        if (requestCode == LOGIN_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                //tutaj jest to raczej niepotrzebne
+                /*String login = data.getStringExtra("login");
+                NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
+                TextView textView = (TextView)navigationView.findViewById(R.id.drawer_text_view);
+                textView.setText(login);*/
+            }
+        }
     }
 
-    private void changeSet(long newSetId){
+    private void changeSet(long newSetId) {
         Settings.setCurrentSetId(newSetId, getBaseContext());
+
+    }
+
+    private class LogoutAlertDialog extends AlertDialog {
+
+        private Context mContext;
+
+        protected LogoutAlertDialog(@NonNull Context context) {
+            super(context);
+            mContext = context;
+            setTitle(getString(R.string.log_outing));
+            setMessage(getString(R.string.sure_logout));
+            setButton(BUTTON_NEGATIVE, getString(R.string.cancel), new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dismiss();
+                }
+            });
+            setButton(BUTTON_POSITIVE, getString(R.string.yes), new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    LogPref.setLogged(false, getBaseContext());
+                    LogPref.setLogin(null, getBaseContext());
+                    LogPref.setPassword(null, getBaseContext());
+                    setLoggedNavigationItems(false);
+                    dismiss();
+                }
+            });
+        }
+
+
     }
 }

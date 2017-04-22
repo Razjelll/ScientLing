@@ -29,18 +29,16 @@ public class DifficultDialog extends DialogFragment {
     private int[] mDifficults;
     private Callback mCallback;
 
-    public void setCallback(Callback callback)
-    {
+    public void setCallback(Callback callback) {
         mCallback = callback;
     }
 
-    public interface Callback{
+    public interface Callback {
         void onDifficultOk(int difficult);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(LAYOUT_RESOURCE, container, false);
         fillDifficultsData();
         setupControls(view);
@@ -50,29 +48,25 @@ public class DifficultDialog extends DialogFragment {
         return view;
     }
 
-    private void fillDifficultsData()
-    {
+    private void fillDifficultsData() {
         //wartośc określająca jak wielka będzie tablica. Tablica będzie o 1 większa niż liczba poziomów trudności
         //poniważ na początku tablicy będzie znajdowała się wartość oznaczająca brak wybranego poziomu trudności
-        int difficultsCount = Constants.MAX_DIFFICULT_LEVEL +1;
+        int difficultsCount = Constants.MAX_DIFFICULT_LEVEL + 1;
         mDifficults = new int[difficultsCount];
-        for(int i=0; i< difficultsCount; i++)
-        {
+        for (int i = 0; i < difficultsCount; i++) {
             mDifficults[i] = i;
         }
     }
 
-    private void setupControls(View view)
-    {
-        mListView = (ListView)view.findViewById(R.id.list);
+    private void setupControls(View view) {
+        mListView = (ListView) view.findViewById(R.id.list);
     }
 
-    private void setListeners(){
+    private void setListeners() {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(mCallback!=null)
-                {
+                if (mCallback != null) {
                     //można zastosować po porsu (position) poziomy trudności w tablicy odpowiadają
                     //numerom ineksów, ale z racji możliwości zmiany w przyszłości rozmieszczenia
                     //poziomów trudności w tablicy zastosowano poniżesze rozwiązanie
@@ -83,24 +77,22 @@ public class DifficultDialog extends DialogFragment {
         });
     }
 
-    private void setListAdapter()
-    {
-        PartOfSpeechAdapter adapter = new PartOfSpeechAdapter(getContext(),ADAPTER_ITEM_RESOURCE);
+    private void setListAdapter() {
+        PartOfSpeechAdapter adapter = new PartOfSpeechAdapter(getContext(), ADAPTER_ITEM_RESOURCE);
         mListView.setAdapter(adapter);
     }
 
     @Override
-    public void onDismiss(DialogInterface dialogInterface){
+    public void onDismiss(DialogInterface dialogInterface) {
         mCallback = null;
         getFragmentManager().beginTransaction().remove(this).commit();
     }
 
-    private class PartOfSpeechAdapter extends BaseAdapter
-    {
+    private class PartOfSpeechAdapter extends BaseAdapter {
         private int mResource;
         private LayoutInflater mInflater;
 
-        public PartOfSpeechAdapter(Context context, int resource ) {
+        public PartOfSpeechAdapter(Context context, int resource) {
 
             mResource = resource;
             mInflater = LayoutInflater.from(context);
@@ -108,14 +100,12 @@ public class DifficultDialog extends DialogFragment {
         }
 
         @Override
-        public int getCount()
-        {
+        public int getCount() {
             return mDifficults.length;
         }
 
         @Override
-        public Integer getItem(int position)
-        {
+        public Integer getItem(int position) {
             return mDifficults[position];
         }
 
@@ -125,14 +115,12 @@ public class DifficultDialog extends DialogFragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent)
-        {
-            if(convertView == null)
-            {
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
                 convertView = mInflater.inflate(mResource, null);
             }
-            TextView view = (TextView)convertView;
-            if(mDifficults[position] != 0){
+            TextView view = (TextView) convertView;
+            if (mDifficults[position] != 0) {
                 view.setText(String.valueOf(mDifficults[position]));
             } else {
                 view.setText(getString(R.string.lack));

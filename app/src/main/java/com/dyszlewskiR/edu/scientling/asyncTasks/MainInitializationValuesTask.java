@@ -3,8 +3,8 @@ package com.dyszlewskiR.edu.scientling.asyncTasks;
 import android.os.AsyncTask;
 
 import com.dyszlewskiR.edu.scientling.activity.MainActivity;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.preferences.Settings;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
@@ -20,13 +20,12 @@ public class MainInitializationValuesTask extends AsyncTask<DataManager, Void, V
     private VocabularySet mSet;
     private List<Lesson> mLessons;
 
-    public MainInitializationValuesTask(MainActivity activity){
+    public MainInitializationValuesTask(MainActivity activity) {
         mActivity = activity;
     }
 
     @Override
-    protected void onPreExecute()
-    {
+    protected void onPreExecute() {
         mActivity.onPreGetDataTask();
     }
 
@@ -39,7 +38,7 @@ public class MainInitializationValuesTask extends AsyncTask<DataManager, Void, V
     }
 
     @Override
-    protected void onPostExecute(Void result){
+    protected void onPostExecute(Void result) {
         mActivity.onPostGetDataTask(mSet, mLessons);
     }
 }

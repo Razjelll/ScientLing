@@ -5,8 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
 import com.dyszlewskiR.edu.scientling.data.models.creators.CategoryCreator;
+import com.dyszlewskiR.edu.scientling.data.models.models.Category;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ import static com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTabl
  * Created by Razjelll on 07.11.2016.
  */
 
-public class    CategoryDao extends BaseDao<Category> {
+public class CategoryDao extends BaseDao<Category> {
 
     private final String INSERT_STATEMENT =
             "INSERT INTO " + CategoriesTable.TABLE_NAME + "("

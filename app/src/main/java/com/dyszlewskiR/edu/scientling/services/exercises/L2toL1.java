@@ -1,6 +1,7 @@
 package com.dyszlewskiR.edu.scientling.services.exercises;
 
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.List;
@@ -18,8 +19,8 @@ public class L2toL1 implements IExerciseDirection {
 
     @Override
     public String getAnswer(Word word) {
-        assert word!=null && word.getTranslations() != null;
-       return TranslationListConverter.toString(word.getTranslations());
+        assert word != null && word.getTranslations() != null;
+        return TranslationListConverter.toString(word.getTranslations());
     }
 
     @Override
@@ -32,10 +33,15 @@ public class L2toL1 implements IExerciseDirection {
         assert words != null && words.size() != 0;
         int length = words.size();
         String[] answers = new String[length];
-        for(int i =0; i <length; i++) {
-            assert  words.get(i).getTranslations() != null;
+        for (int i = 0; i < length; i++) {
+            assert words.get(i).getTranslations() != null;
             answers[i] = TranslationListConverter.toString(words.get(i).getTranslations());
         }
         return answers;
+    }
+
+    @Override
+    public String getCode(VocabularySet set) {
+        return set.getLanguageL2().getCode();
     }
 }

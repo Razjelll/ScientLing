@@ -3,13 +3,8 @@ package com.dyszlewskiR.edu.scientling.activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.v4.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -18,7 +13,6 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.fragment.LearningFragment;
 
 public class LearningActivity extends AppCompatActivity {
 
@@ -93,6 +87,11 @@ public class LearningActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        showExitAlertDialog();
     }
 
     private class ExitAlertDialog extends AlertDialog {

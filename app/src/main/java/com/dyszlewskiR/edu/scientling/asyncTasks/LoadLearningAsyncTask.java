@@ -2,8 +2,8 @@ package com.dyszlewskiR.edu.scientling.asyncTasks;
 
 import android.os.AsyncTask;
 
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.data.models.params.LearningParams;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 import java.util.List;
@@ -17,8 +17,7 @@ public class LoadLearningAsyncTask extends AsyncTask<LearningParams, Void, List<
 
     private DataManager mDataManager;
 
-    public LoadLearningAsyncTask(DataManager dataManager)
-    {
+    public LoadLearningAsyncTask(DataManager dataManager) {
         mDataManager = dataManager;
     }
 

@@ -12,9 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Language;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
+import com.dyszlewskiR.edu.scientling.data.models.models.Language;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 
@@ -24,7 +24,7 @@ import java.util.List;
  * Created by Razjelll on 01.04.2017.
  */
 
-public class LanguageDialog extends DialogFragment{
+public class LanguageDialog extends DialogFragment {
     private final int LAYOUT_RESOURCE = R.layout.dialog_language;
     private final int ADAPTER_ITEM_RESOURCE = R.layout.item_language;
 
@@ -33,16 +33,16 @@ public class LanguageDialog extends DialogFragment{
     private List<Language> mItems;
     private LanguageAdapter mAdapter;
 
-    public interface Callback{
+    public interface Callback {
         void onLanguageOk(Language language);
     }
 
-    public void setCallback(Callback callback){
+    public void setCallback(Callback callback) {
         mCallback = callback;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(LAYOUT_RESOURCE, container, false);
         setupControls(view);
         setListeners();
@@ -52,15 +52,15 @@ public class LanguageDialog extends DialogFragment{
         return view;
     }
 
-    private void setupControls(View view){
-        mListView = (ListView)view.findViewById(R.id.list);
+    private void setupControls(View view) {
+        mListView = (ListView) view.findViewById(R.id.list);
     }
 
-    private void setListeners(){
+    private void setListeners() {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(mCallback != null){
+                if (mCallback != null) {
                     mCallback.onLanguageOk(mItems.get(position));
                 }
                 dismiss();
@@ -68,24 +68,24 @@ public class LanguageDialog extends DialogFragment{
         });
     }
 
-    private void loadData(){
-        DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
+    private void loadData() {
+        DataManager dataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
         mItems = dataManager.getLanguages();
     }
 
-    private void setLanguageAdapter(){
+    private void setLanguageAdapter() {
         mAdapter = new LanguageAdapter(getContext(), ADAPTER_ITEM_RESOURCE, mItems);
         mListView.setAdapter(mAdapter);
     }
 
     @Override
-    public void onDismiss(DialogInterface dialogInterface){
+    public void onDismiss(DialogInterface dialogInterface) {
         mCallback = null;
         getFragmentManager().beginTransaction().remove(this).commit();
     }
 
     //region LanguageAdapter
-    private class LanguageAdapter extends ArrayAdapter{
+    private class LanguageAdapter extends ArrayAdapter {
 
         private final String NAME_RESOURCE_TYPE = "string";
 
@@ -93,7 +93,7 @@ public class LanguageDialog extends DialogFragment{
         private Context mContext;
         private int mResource;
 
-        public LanguageAdapter(Context context, int resource, List<Language> data){
+        public LanguageAdapter(Context context, int resource, List<Language> data) {
             super(context, resource, data);
             mContext = context;
             mResource = resource;
@@ -101,16 +101,16 @@ public class LanguageDialog extends DialogFragment{
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent){
+        public View getView(int position, View convertView, ViewGroup parent) {
             View rowView = convertView;
             ViewHolder viewHolder;
-            if(rowView == null){
-                LayoutInflater inflater  = LayoutInflater.from(mContext);
+            if (rowView == null) {
+                LayoutInflater inflater = LayoutInflater.from(mContext);
                 rowView = inflater.inflate(mResource, null);
                 viewHolder = new ViewHolder(rowView);
                 rowView.setTag(viewHolder);
             } else {
-                viewHolder = (ViewHolder)rowView.getTag();
+                viewHolder = (ViewHolder) rowView.getTag();
             }
             //TODO przemyśleć czy da radę zrobić to inaczej
             //int stringIdentyfier = mContext.getResources().getIdentifier(mLanguages.get(position).getFileName(), NAME_RESOURCE_TYPE, mContext.getPackageName());
@@ -121,11 +121,11 @@ public class LanguageDialog extends DialogFragment{
         }
     }
 
-    private static class ViewHolder{
+    private static class ViewHolder {
         public TextView nameTextView;
 
-        public ViewHolder(View view){
-            nameTextView = (TextView)view.findViewById(R.id.language_name);
+        public ViewHolder(View view) {
+            nameTextView = (TextView) view.findViewById(R.id.language_name);
         }
     }
 

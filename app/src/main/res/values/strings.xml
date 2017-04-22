@@ -3,6 +3,12 @@
     <string name="login_hint">Login</string>
     <string name="password_hint">Hasło</string>
     <string name="log_in">Zaloguj</string>
+    <string name="log_out">Wyloguj</string>
+    <string name="log_outing">Wylogowywanie</string>
+    <string name="sure_logout">Czy na pewno wylogować</string>
+    <string name="login">Login</string>
+    <string name="login_or_email">Login lub email</string>
+    <string name="password">Hasło</string>
     <string name="show_answers">Pokaż odpowiedzi</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="know">Wiem</string>
@@ -15,6 +21,8 @@
     <string name="title_activity_repetition_list">RepetitionListActivity</string>
     <string name="title_activity_word_edit">WordEditActivity</string>
     <string name="master_words">Przećwiczonych słowek: </string>
+    <string name="not_remember">Nie pamiętam hasła</string>
+    <string name="register">Utwórz konto</string>
 
     <!--OGOLNE-->
     <string name="any">Dowolny</string>
@@ -35,6 +43,10 @@
     <string name="clear">Wyczyść</string>
     <string name="add">Dodaj</string>
     <string name="filter">Filtruj</string>
+    <string name="sort">Sortuj</string>
+    <string name="loading">Czekaj, trwa ładowanie</string>
+    <string name="sets_not_found">Nie znaleziono pasujących zestawów</string>
+    <string name="connection_error">Wystąpił błąd połączenia</string>
 
     <!--TESTY-->
     <string name="bad">Źle</string>
@@ -66,8 +78,13 @@
     <string name="x">X</string>
     <string name="mode">Rodzaj słówka</string>
     <string name="loading_words">Trwa ładowanie słowek</string>
+    <string name="words_num">Liczba słówek</string>
+    <string name="size">Rozmiar</string>
+    <string name="rating">Ocena</string>
+    <string name="download_count">Liczba pobrań</string>
 
-
+    <!--POWTORKI-->
+    <string name="start_repetition">Rozpocznij powtórkę</string>
     <!--ZBIOR -->
     <string name="l2">Język którego chcesz sie nauczyć</string>
     <string name="l1">Język który znasz </string>
@@ -76,10 +93,14 @@
     <string name="set_name">Nazwa zestawu</string>
     <string name="language">Język</string>
     <string name="vocabulary_set">Zestaw</string>
+    <string name="no_set">Nie ustawiono zbioru</string>
+    <string name="choose_set">Wybierz zestaw</string>
+    <string name="create_set">Utwórz zestaw</string>
     <!--LEKCJA -->
     <string name="lesson_number">Numer lekcji</string>
     <string name="lesson_name">Nazwa lekcji</string>
     <string name="words">Słówka</string>
+    <string name="unallocated">Nieprzypisane</string>
     <string name="change_lesson">Do której lekcji przenieść słówka</string>
     <string name="deleting_lesson_message">Czekaj, trwa usuwanie lekcji</string>
 
@@ -174,6 +195,7 @@
     <string name="title_activity_learning">LearningActivity</string>
     <string name="title_activity_summary_learning">SummaryLearningActivity</string>
     <string name="title_activity_flashcard">FlashcardActivity</string>
+    <string name="download_sets">Pobierz zestawy</string>
 
     <!--MENU CWICZENIA-->
     <string name="change_exercise">Zmień ćwiczenie</string>
@@ -305,4 +327,31 @@
     <string name="title_activity_sets_manager">SetsManagerActivity</string>
     <string name="title_activity_set_edit">SetEditActivity</string>
     <string name="title_activity_words_manager">WordsManagerActivity</string>
+    <string name="title_activity_download_sets">DownloadSetsActivity</string>
+
+    <!--POBIERANIE ZESTAWÓW-->
+    <string name="added_date">Data dodania</string>
+    <string-array name="sorting_downloaded_set">
+        <item>@string/lack</item>
+        <item>@string/download_count</item>
+        <item>@string/rating</item>
+        <item>@string/added_date</item>
+    </string-array>
+    <string name="load_more">Załaduj więcej</string>
+
+    <!--LOGOWANIE I REJESTRACJA-->
+    <string name="bad_login">Login lub hasło jest niepoprawne</string>
+    <string name="title_activity_registration">RegistrationActivity</string>
+    <string name="email">Email</string>
+    <string name="repeat_password">Powtórz hasło</string>
+    <string name="login_exist">Ten login juz istnieje w bazie</string>
+    <string name="email_exist">Ten email już istnieje w bazie</string>
+    <string name="password_different">Hasła nie są takie same</string>
+    <string name="email_incorrect">Email jest niepoprawny</string>
+    <string name="short_password">Hasło za krótkie. Musi mieć przynajmniej </string>
+    <string name="signs"> znaków</string>
+    <string name="must_contain_number">Hasło musi zawierać przynajmniej jedną liczbę</string>
+    <string name="not_contain_element">Hasło nie może zawierać znaków : </string>
+    <string name="registration">Rejestracja</string>
+    <string name="registration_success">Rejestracja przebiegła pomyślnie</string>
 </resources>

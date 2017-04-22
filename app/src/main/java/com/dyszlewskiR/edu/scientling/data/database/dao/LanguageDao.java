@@ -5,8 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.LanguagesTable;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Language;
 import com.dyszlewskiR.edu.scientling.data.models.creators.LanguageCreator;
+import com.dyszlewskiR.edu.scientling.data.models.models.Language;
 import com.dyszlewskiR.edu.scientling.utils.BitmapUtils;
 
 import java.util.ArrayList;
@@ -63,13 +63,13 @@ public class LanguageDao extends BaseDao<Language> {
     public long save(Language entity) {
         mInsertStatement.clearBindings();
         mInsertStatement.bindString(LanguagesColumns.NAME_POSITION, entity.getName());
-        if(entity.getAbbreviation() != null){
+        if (entity.getAbbreviation() != null) {
             mInsertStatement.bindString(LanguagesColumns.ABBREVIATION_POSITION, entity.getAbbreviation());
         } else {
             mInsertStatement.bindNull(LanguagesColumns.ABBREVIATION_POSITION);
         }
         mInsertStatement.bindString(LanguagesColumns.CODE_POSITION, entity.getCode());
-        if(entity.getFlag() !=null ) {
+        if (entity.getFlag() != null) {
             mInsertStatement.bindBlob(LanguagesColumns.FLAG_POSITION, BitmapUtils.toByteArray(entity.getFlag()));
         } else {
             mInsertStatement.bindNull(LanguagesColumns.FLAG_POSITION);
@@ -99,13 +99,11 @@ public class LanguageDao extends BaseDao<Language> {
         mDb.update(TABLE_NAME, values, getWhereStatement(), getWhereArguments(entity));
     }
 
-    private String getWhereStatement()
-    {
-        return  LanguagesColumns.ID +"=?";
+    private String getWhereStatement() {
+        return LanguagesColumns.ID + "=?";
     }
 
-    private String[] getWhereArguments(Language entity)
-    {
+    private String[] getWhereArguments(Language entity) {
         return new String[]{String.valueOf(entity.getId())};
     }
 
@@ -123,7 +121,7 @@ public class LanguageDao extends BaseDao<Language> {
     public int delete(Language entity) {
         long id = entity.getId();
         if (id > 0) {
-           return mDb.delete(TABLE_NAME, getWhereStatement(), getWhereArguments(entity));
+            return mDb.delete(TABLE_NAME, getWhereStatement(), getWhereArguments(entity));
         }
         return 0;
     }
@@ -150,8 +148,7 @@ public class LanguageDao extends BaseDao<Language> {
         return language;
     }
 
-    private String[] getWhereArguments(long id)
-    {
+    private String[] getWhereArguments(long id) {
         return new String[]{String.valueOf(id)};
     }
 

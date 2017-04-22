@@ -20,20 +20,18 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Record;
+import com.dyszlewskiR.edu.scientling.data.models.models.Record;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 import com.dyszlewskiR.edu.scientling.utils.FileUtils;
 import com.dyszlewskiR.edu.scientling.utils.UriUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
  * Created by Razjelll on 22.03.2017.
  */
 
-public class RecordDialog extends DialogFragment{
+public class RecordDialog extends DialogFragment {
     private final int LAYOUT_RESOURCE = R.layout.dialog_record;
     private static final String RECORD_FILENAME = "Record";
     private final int OPEN_REQUEST = 6736;
@@ -53,29 +51,31 @@ public class RecordDialog extends DialogFragment{
     private MediaRecorder mMediaRecorder;
     private boolean mPlaying;
     private boolean mRecording;
-    /**Zmienna określająca czy zostało ustawione nagranie*/
+    /**
+     * Zmienna określająca czy zostało ustawione nagranie
+     */
     private boolean mIsRecord;
 
     private Uri mRecordUri;
     private Record mRecord;
     private Callback mCallback;
 
-    public void setCallback(Callback callback){
+    public void setCallback(Callback callback) {
         mCallback = callback;
     }
 
-    public interface Callback{
+    public interface Callback {
         void onRecordOk(Uri recordUri);
     }
 
-    public void setRecordUri(Uri recordUri){
+    public void setRecordUri(Uri recordUri) {
         mIsRecord = true;
         mRecordUri = recordUri;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        Log.d("RecordDialog","onCreateView");
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d("RecordDialog", "onCreateView");
         View view = inflater.inflate(LAYOUT_RESOURCE, container, false);
         init();
         setupControls(view);
@@ -86,13 +86,13 @@ public class RecordDialog extends DialogFragment{
         return view;
     }
 
-    private void init(){
+    private void init() {
         mRecording = false;
         initMediaPlayer();
         initMediaRecorder();
     }
 
-    private void initMediaPlayer(){
+    private void initMediaPlayer() {
         mMediaPlayer = new MediaPlayer();
         mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
@@ -102,44 +102,44 @@ public class RecordDialog extends DialogFragment{
         });
     }
 
-    private void initMediaRecorder(){
+    private void initMediaRecorder() {
         mMediaRecorder = new MediaRecorder();
         mMediaRecorder.setMaxDuration(Constants.RECORD_MAX_DURATION);
         mMediaRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
             @Override
             public void onInfo(MediaRecorder mr, int what, int extra) {
-                if(what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
+                if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED) {
                     onFinishRecord();
                 }
-                if(what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED){
+                if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED) {
                     onFinishRecord();
                 }
             }
         });
     }
 
-    private void setupControls(View view){
-        mTitleTextView = (TextView)view.findViewById(R.id.title_text_view);
+    private void setupControls(View view) {
+        mTitleTextView = (TextView) view.findViewById(R.id.title_text_view);
         mDeleteButton = (ImageButton) view.findViewById(R.id.delete_button);
-        mPlayButton = (ImageButton)view.findViewById(R.id.play_button);
-        mRecorderButton = (ImageButton)view.findViewById(R.id.recorder_button);
-        mOpenButton = (ImageButton)view.findViewById(R.id.open_button);
-        mCancelButton = (Button)view.findViewById(R.id.cancel_button);
-        mOkButton = (Button)view.findViewById(R.id.ok_button);
+        mPlayButton = (ImageButton) view.findViewById(R.id.play_button);
+        mRecorderButton = (ImageButton) view.findViewById(R.id.recorder_button);
+        mOpenButton = (ImageButton) view.findViewById(R.id.open_button);
+        mCancelButton = (Button) view.findViewById(R.id.cancel_button);
+        mOkButton = (Button) view.findViewById(R.id.ok_button);
     }
 
-    private void setVisibilityButtons(int visibility){
+    private void setVisibilityButtons(int visibility) {
         mDeleteButton.setVisibility(visibility);
         mPlayButton.setVisibility(visibility);
     }
 
-    private void setValues(){
-        if(mRecordUri != null){
+    private void setValues() {
+        if (mRecordUri != null) {
             updateRecordUI();
         }
     }
 
-    private void setListeners(){
+    private void setListeners() {
         setDeleteButtonListener();
         setPlayButtonListener();
         setRecorderButtonListener();
@@ -148,7 +148,7 @@ public class RecordDialog extends DialogFragment{
         setOkButtonListener();
     }
 
-    private void setDeleteButtonListener(){
+    private void setDeleteButtonListener() {
         mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,26 +157,27 @@ public class RecordDialog extends DialogFragment{
         });
 
     }
-    private void onFinishRecord(){
+
+    private void onFinishRecord() {
         mRecordUri = FileUtils.getUriFromCache(RECORD_FILENAME, getContext());
         updateRecordUI();
     }
 
-    private void setPlayButtonListener(){
+    private void setPlayButtonListener() {
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!mMediaPlayer.isPlaying()){
+                if (!mMediaPlayer.isPlaying()) {
                     mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
                     try {
-                        mMediaPlayer.setDataSource(getContext(),mRecordUri);
+                        mMediaPlayer.setDataSource(getContext(), mRecordUri);
                         mMediaPlayer.prepare();
                         mMediaPlayer.start();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
-                } else{
+                } else {
                     mMediaPlayer.stop();
                     mMediaPlayer.reset();
                     mIsRecord = true;
@@ -186,16 +187,16 @@ public class RecordDialog extends DialogFragment{
 
     }
 
-    private void setRecorderButtonListener(){
+    private void setRecorderButtonListener() {
         mRecorderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!mRecording){
+                if (!mRecording) {
                     Log.d("RecordDialog", "StartRecord");
                     mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
                     mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT);
                     mMediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
-                    String outputFilePath = getContext().getCacheDir()+"/"+ RECORD_FILENAME;
+                    String outputFilePath = getContext().getCacheDir() + "/" + RECORD_FILENAME;
                     mMediaRecorder.setOutputFile(outputFilePath);
                     try {
                         mMediaRecorder.prepare();
@@ -206,7 +207,7 @@ public class RecordDialog extends DialogFragment{
                     }
                     mRecording = true;
                 } else {
-                    Log.d("RecordDialog","StopDialog");
+                    Log.d("RecordDialog", "StopDialog");
                     mMediaRecorder.stop();
                     mMediaRecorder.reset();
                     mRecording = false;
@@ -220,24 +221,24 @@ public class RecordDialog extends DialogFragment{
     /**
      * Metoda aktaulizująca interfej użytkownika po ustawieniu nowego uri.
      */
-    private void updateRecordUI(){
+    private void updateRecordUI() {
         setVisibilityButtons(View.VISIBLE);
         String filename = UriUtils.getFileName(mRecordUri, getContext());
-        if(filename.equals(RECORD_FILENAME)){
+        if (filename.equals(RECORD_FILENAME)) {
             mTitleTextView.setText(getString(R.string.own_record));
         } else {
             mTitleTextView.setText(UriUtils.getFileName(mRecordUri, getContext()));
         }
     }
 
-    private void deleteRecord(){
+    private void deleteRecord() {
         mRecordUri = null;
         setVisibilityButtons(View.INVISIBLE);
         mTitleTextView.setText(getString(R.string.lack));
         FileUtils.deleteFileFromCache(RECORD_FILENAME, getContext());
     }
 
-    private void setOpenButtonListener(){
+    private void setOpenButtonListener() {
         mOpenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -251,7 +252,7 @@ public class RecordDialog extends DialogFragment{
         });
     }
 
-    private void setCancelButtonListener(){
+    private void setCancelButtonListener() {
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -262,11 +263,11 @@ public class RecordDialog extends DialogFragment{
         });
     }
 
-    private void setOkButtonListener(){
+    private void setOkButtonListener() {
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mCallback != null){
+                if (mCallback != null) {
                     mCallback.onRecordOk(mRecordUri);
                 }
                 dismiss();
@@ -275,7 +276,7 @@ public class RecordDialog extends DialogFragment{
     }
 
     @Override
-    public void onDismiss(DialogInterface dialogInterface){
+    public void onDismiss(DialogInterface dialogInterface) {
         Log.d("RecordDialog", "onDismiss");
         mCallback = null;
         mMediaPlayer.release();
@@ -284,9 +285,9 @@ public class RecordDialog extends DialogFragment{
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        if(requestCode == OPEN_REQUEST){
-            if(resultCode == Activity.RESULT_OK){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == OPEN_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
                 Uri uri = data.getData();
                 mRecordUri = uri;
                 updateRecordUI();
@@ -295,7 +296,7 @@ public class RecordDialog extends DialogFragment{
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public static void clearCache(Context context){
+    public static void clearCache(Context context) {
         FileUtils.deleteFileFromCache(RECORD_FILENAME, context);
     }
 }

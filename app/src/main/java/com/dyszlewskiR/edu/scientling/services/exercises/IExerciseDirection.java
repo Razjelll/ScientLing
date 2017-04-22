@@ -1,6 +1,7 @@
 package com.dyszlewskiR.edu.scientling.services.exercises;
 
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 
 import java.util.List;
 
@@ -16,5 +17,7 @@ public interface IExerciseDirection {
 
     String getTranscription(Word word); //TODO prawdopodobnie będzie to można obsłużyć we fragmencie
 
-   String[] getAnswers(List<Word> words);
+    String[] getAnswers(List<Word> words);
+
+    String getCode(VocabularySet set);
 }

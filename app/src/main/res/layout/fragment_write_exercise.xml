@@ -10,8 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:id="@+id/wordSector"
+        android:layout_toLeftOf="@+id/say_button"
         />
-
     <include
         layout="@layout/write_answer_sector"
         android:layout_height="wrap_content"

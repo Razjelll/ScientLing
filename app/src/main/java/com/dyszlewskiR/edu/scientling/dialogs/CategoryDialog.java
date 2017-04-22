@@ -1,9 +1,9 @@
 package com.dyszlewskiR.edu.scientling.dialogs;
 
-import android.support.v4.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -17,9 +17,9 @@ import android.widget.Filterable;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
+import com.dyszlewskiR.edu.scientling.data.models.models.Category;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
@@ -43,23 +43,20 @@ public class CategoryDialog extends DialogFragment {
     private List<Category> mItems;
     private CategoryAdapter mAdapter;
 
-    public void setCallback(Callback callback)
-    {
+    public void setCallback(Callback callback) {
         mCallback = callback;
     }
 
-    public void setCurrentCategory(Category category)
-    {
+    public void setCurrentCategory(Category category) {
         mCurrentCategory = category;
     }
 
-    public interface Callback{
+    public interface Callback {
         void onCategoryOk(Category category);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(LAYOUT_RESOURCE, container, false);
         setupControls(view);
         setListeners();
@@ -69,19 +66,16 @@ public class CategoryDialog extends DialogFragment {
         return view;
     }
 
-    private void setupControls(View view)
-    {
-        mSearchEditText = (EditText)view.findViewById(R.id.search_edit_text);
-        mListView = (ListView)view.findViewById(R.id.list);
+    private void setupControls(View view) {
+        mSearchEditText = (EditText) view.findViewById(R.id.search_edit_text);
+        mListView = (ListView) view.findViewById(R.id.list);
     }
 
-    private void setListeners()
-    {
+    private void setListeners() {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(mCallback != null)
-                {
+                if (mCallback != null) {
                     mCallback.onCategoryOk(mAdapter.getItem(position));
                 }
                 dismiss();
@@ -91,8 +85,8 @@ public class CategoryDialog extends DialogFragment {
         mSearchEditText.addTextChangedListener(new CategorySearchWatcher());
     }
 
-    private void loadData(){
-        DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
+    private void loadData() {
+        DataManager dataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
         mItems = dataManager.getCategories();
         Category emptyCategory = new Category(-1);
         //wstawiamy nazwę taką jak w pliku string oznaczony jest wyraz brak
@@ -102,19 +96,18 @@ public class CategoryDialog extends DialogFragment {
         //tutaj nie dodajemy pustego elementu na początek, ponieważ w bazie danych istnieje kategoria brak
     }
 
-    private void setCategoryAdapter(){
+    private void setCategoryAdapter() {
         mAdapter = new CategoryAdapter(getContext(), ADAPTER_ITEM_RESOURCE, mItems);
         mListView.setAdapter(mAdapter);
     }
 
     @Override
-    public void onDismiss(DialogInterface dialogInterface)
-    {
+    public void onDismiss(DialogInterface dialogInterface) {
         mCallback = null;
         getFragmentManager().beginTransaction().remove(this).commit();
     }
 
-    private class CategoryAdapter extends BaseAdapter implements Filterable{
+    private class CategoryAdapter extends BaseAdapter implements Filterable {
 
         private Context mContext;
         private int mResource;
@@ -143,21 +136,20 @@ public class CategoryDialog extends DialogFragment {
 
         @Override
         public long getItemId(int position) {
-            if(mFilteredItems.get(position)!=null){
+            if (mFilteredItems.get(position) != null) {
                 return mFilteredItems.get(position).getId();
             }
             return -1;
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent)
-        {
-            if(convertView == null){
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
                 convertView = mInflater.inflate(mResource, null);
             }
-            TextView view = (TextView)convertView;
-            if(mFilteredItems.get(position)!=null){ //TODO zastanowić się czy taki przypadek może wystąpić
-                String text = ResourceUtils.getString(mFilteredItems.get(position).getName(),getContext());
+            TextView view = (TextView) convertView;
+            if (mFilteredItems.get(position) != null) { //TODO zastanowić się czy taki przypadek może wystąpić
+                String text = ResourceUtils.getString(mFilteredItems.get(position).getName(), getContext());
                 view.setText(text);
             }
             return view;
@@ -165,7 +157,7 @@ public class CategoryDialog extends DialogFragment {
 
         @Override
         public Filter getFilter() {
-            if(mFilter == null){
+            if (mFilter == null) {
                 mFilter = new ValueFilter();
             }
             return mFilter;
@@ -173,16 +165,16 @@ public class CategoryDialog extends DialogFragment {
 
         private class ValueFilter extends Filter {
             @Override
-            protected FilterResults performFiltering(CharSequence constraint){
+            protected FilterResults performFiltering(CharSequence constraint) {
                 String fileterString = constraint.toString().toLowerCase();
                 FilterResults results = new FilterResults();
                 final List<Category> list = mItems;
                 int count = list.size();
-                final List<Category> nList  = new ArrayList<Category>(count);
+                final List<Category> nList = new ArrayList<Category>(count);
                 String itemString;
-                for(int i=0; i<count; i++){
-                    itemString = ResourceUtils.getString(list.get(i).getName(),getContext());
-                    if(itemString.toLowerCase().contains(fileterString)){
+                for (int i = 0; i < count; i++) {
+                    itemString = ResourceUtils.getString(list.get(i).getName(), getContext());
+                    if (itemString.toLowerCase().contains(fileterString)) {
                         nList.add(mItems.get(i));
                     }
                 }
@@ -192,8 +184,8 @@ public class CategoryDialog extends DialogFragment {
             }
 
             @Override
-            protected void publishResults(CharSequence constraint, FilterResults results){
-                mFilteredItems = (ArrayList<Category>)results.values;
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+                mFilteredItems = (ArrayList<Category>) results.values;
                 notifyDataSetChanged();
             }
         }
@@ -201,18 +193,18 @@ public class CategoryDialog extends DialogFragment {
 
     private class CategorySearchWatcher implements TextWatcher {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after){
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
         }
 
         @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count){
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
             String text = s.toString();
             mAdapter.getFilter().filter(text.toLowerCase());
         }
 
         @Override
-        public void afterTextChanged(Editable s){
+        public void afterTextChanged(Editable s) {
 
         }
     }

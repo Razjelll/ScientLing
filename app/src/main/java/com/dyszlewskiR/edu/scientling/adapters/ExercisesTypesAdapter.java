@@ -16,13 +16,14 @@ import java.util.List;
  * Created by Razjelll on 06.01.2017.
  */
 
-public class ExercisesTypesAdapter extends ArrayAdapter{
+public class ExercisesTypesAdapter extends ArrayAdapter {
     private List<String> mItems;
     private int mSelectedItem;
     private Context mContext;
     private int mResource;
     private LayoutInflater mInflater;
-    public ExercisesTypesAdapter(Context context, int resource, List<String> data, int selected){
+
+    public ExercisesTypesAdapter(Context context, int resource, List<String> data, int selected) {
         super(context, resource, data);
         mContext = context;
         mResource = resource;
@@ -33,20 +34,22 @@ public class ExercisesTypesAdapter extends ArrayAdapter{
     }
 
     @Override
-    public int getCount(){return mItems.size();}
+    public int getCount() {
+        return mItems.size();
+    }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent){
+    public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
         View rowView = convertView;
-        if(rowView == null){
+        if (rowView == null) {
             rowView = mInflater.inflate(mResource, null);
             viewHolder = new ViewHolder(rowView);
             rowView.setTag(viewHolder);
         } else {
-            viewHolder = (ViewHolder)rowView.getTag();
+            viewHolder = (ViewHolder) rowView.getTag();
         }
-        if(mSelectedItem == position +1) {
+        if (mSelectedItem == position + 1) {
             viewHolder.radioButton.setSelected(true);
         }
         viewHolder.exerciseNameTextView.setText(mItems.get(position));
@@ -58,9 +61,9 @@ public class ExercisesTypesAdapter extends ArrayAdapter{
         public RadioButton radioButton;
         public TextView exerciseNameTextView;
 
-        public ViewHolder(View view){
+        public ViewHolder(View view) {
             //radioButton = (RadioButton) view.findViewById(R.id.radio_button);
-            exerciseNameTextView = (TextView)view.findViewById(R.id.exercise_name_text_view);
+            exerciseNameTextView = (TextView) view.findViewById(R.id.exercise_name_text_view);
         }
     }
 }

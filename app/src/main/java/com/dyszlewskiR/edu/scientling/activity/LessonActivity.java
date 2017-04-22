@@ -16,7 +16,7 @@ public class LessonActivity extends AppCompatActivity {
         setupToolbar();
     }
 
-    private void setupToolbar(){
+    private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);

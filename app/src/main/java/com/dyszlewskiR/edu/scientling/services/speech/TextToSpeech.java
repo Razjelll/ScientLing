@@ -2,6 +2,8 @@ package com.dyszlewskiR.edu.scientling.services.speech;
 
 import android.content.Context;
 import android.os.Build;
+import android.speech.tts.UtteranceProgressListener;
+import android.util.Log;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -19,16 +21,24 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * obiektu klasy TextToSpeech
  */
 
-public class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListener {
+public class TextToSpeech extends UtteranceProgressListener implements android.speech.tts.TextToSpeech.OnInitListener {
 
 
-    private final String TAG = "TextToSpeech";
+    private final String LOG_TAG = "TextToSpeech";
     //do kolejkowania wiadomości zanim nastąpi inicjacja silnika TTS
     private final ConcurrentLinkedQueue<String> mBufferedMessages;
     private android.speech.tts.TextToSpeech mTextToSpeech;
     private Context mContext;
     private String mLanguageCode;
     private boolean mIsReady;
+    private boolean mFirstEnd;
+    private String mMessage;
+
+    private ISpeechCallback mCallback;
+
+    private float mPitch;
+    private float mRate;
+
 
     /**
      * Konstruktor klasy TextToSpeech. Konstruktor inicjalizuje obiekt klasy TextToSpeech systemu Android.
@@ -51,16 +61,28 @@ public class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListe
         mBufferedMessages = new ConcurrentLinkedQueue<>();
     }
 
+    public void setCallback(ISpeechCallback callback) {
+        mCallback = callback;
+    }
+
     @Override
     public void onInit(int status) {
+
         if (status == android.speech.tts.TextToSpeech.SUCCESS) {
             mTextToSpeech.setLanguage(Locale.ENGLISH);
             synchronized (this) {
+                Log.d(LOG_TAG, "onInit");
                 mIsReady = true;
-                for (String bufferedMessage : mBufferedMessages) {
+                mTextToSpeech.setOnUtteranceProgressListener(this);
+                /*for (String bufferedMessage : mBufferedMessages) {
                     speak(bufferedMessage);
                 }
-                mBufferedMessages.clear();
+                mBufferedMessages.clear();*/
+                if (mMessage != null) {
+                    speak(mMessage);
+                }
+                mMessage = null;
+
             }
         }
     }
@@ -78,27 +100,68 @@ public class TextToSpeech implements android.speech.tts.TextToSpeech.OnInitListe
                 if (mIsReady) {
                     speak(message);
                 } else {
-                    mBufferedMessages.add(message);
+                    mMessage = message;
                 }
             }
 
         }
     }
 
-    private void speak(String message) {
-
-        HashMap<String, String> params = new HashMap<>();
-        // params.put(android.speech.tts.TextToSpeech.Engine.KEY_PARAM_STREAM, "STREAM_NOTIFICATION");
-        params.put(android.speech.tts.TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //LILLIPOP, nie można użyć stałej gdy nie ma zainstalowanych nowszych wersji
-            String utteranceId = this.hashCode() + "";
-            mTextToSpeech.speak(message, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, utteranceId);
-        } else {
-            mTextToSpeech.speak(message, android.speech.tts.TextToSpeech.QUEUE_FLUSH, params);
+    public void speak(final String message) {
+        if (mIsReady) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        String utteranceId = this.hashCode() + "";
+                        mTextToSpeech.speak(message, android.speech.tts.TextToSpeech.QUEUE_FLUSH, null, utteranceId);
+                    } else {
+                        Log.d(LOG_TAG, message);
+                        HashMap<String, String> params = new HashMap<>();
+                        //params.put(android.speech.tts.TextToSpeech.Engine.KEY_PARAM_STREAM, "STREAM_NOTIFICATION");
+                        params.put(android.speech.tts.TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
+                        mTextToSpeech.speak(message, android.speech.tts.TextToSpeech.QUEUE_FLUSH, params);
+                    }
+                }
+            }).start();
         }
         //mTextToSpeech.speak(message, android.speech.tts.TextToSpeech.QUEUE_ADD, params);
         //mTextToSpeech.playSilence(100, android.speech.tts.TextToSpeech.QUEUE_ADD, params);
     }
 
+    public void setLanguage(String code) {
+        Locale[] locales = Locale.getAvailableLocales();
+        Locale locale = new Locale(code);
+        if (mTextToSpeech.isLanguageAvailable(locale) == android.speech.tts.TextToSpeech.LANG_AVAILABLE) {
+            Log.d(LOG_TAG, "Language Available");
+            mTextToSpeech.setLanguage(new Locale(code));
+        } else {
+            Log.d(LOG_TAG, "Language Inavailable");
+            mTextToSpeech.setLanguage(null);
+        }
 
+
+    }
+
+
+    @Override
+    public void onStart(String utteranceId) {
+        Log.d(LOG_TAG, "onStart");
+        if (mCallback != null) {
+            mCallback.onSpeechStart();
+        }
+    }
+
+    @Override
+    public void onDone(String utteranceId) {
+        Log.d(LOG_TAG, " onDone");
+        if (mCallback != null) {
+            mCallback.onSpeechCompleted();
+        }
+    }
+
+    @Override
+    public void onError(String utteranceId) {
+        Log.d(LOG_TAG, "onError");
+    }
 }

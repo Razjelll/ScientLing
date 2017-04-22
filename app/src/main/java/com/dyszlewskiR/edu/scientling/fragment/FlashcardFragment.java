@@ -1,20 +1,20 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.FlashcardAdapter;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.asyncTasks.LoadFlashcardsAsyncTask;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.data.models.params.FlashcardParams;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
 import com.dyszlewskiR.edu.scientling.dialogs.OKFinishAlertDialog;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
@@ -39,13 +39,14 @@ public class FlashcardFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
+        mDataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_flashcard, container, false);
-        mViewPager = (ViewPager)view.findViewById(R.id.viewpager);
+        mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
         return view;
     }
 
@@ -60,7 +61,7 @@ public class FlashcardFragment extends Fragment {
         } catch (ExecutionException e) {
             e.printStackTrace();
         } // TODO zrobić komunikaty
-        if(mWords.size() == 0){
+        if (mWords.size() == 0) {
             closeActivity();
         }
         final FlashcardAdapter adapter = new FlashcardAdapter(getActivity(), R.layout.item_flashcard, mWords);
@@ -68,19 +69,19 @@ public class FlashcardFragment extends Fragment {
 
         mViewPager.setOnTouchListener(new View.OnTouchListener() {
             private boolean moved;
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 /*if(event.getAction() == MotionEvent.ACTION_DOWN) {
                     moved = false;
                 }*/
-                if(event.getAction() == MotionEvent.ACTION_MOVE) {
-                    moved= true;
-                }
-                else if(event.getAction() == MotionEvent.ACTION_DOWN){
+                if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                    moved = true;
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     moved = false;
                 }
-                if(event.getAction() == MotionEvent.ACTION_UP){
-                    if(!moved){
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if (!moved) {
                         v.performClick();
                     }
                 }
@@ -100,11 +101,12 @@ public class FlashcardFragment extends Fragment {
             }
         });*/
     }
-    private FlashcardParams getFlashcardParams(){
+
+    private FlashcardParams getFlashcardParams() {
         Intent intent = getActivity().getIntent();
         long setId = intent.getLongExtra("set", Constants.DEFAULT_SET_ID);
-        int type = intent.getIntExtra("type",0);
-        int limit = intent.getIntExtra("limit",0);
+        int type = intent.getIntExtra("type", 0);
+        int limit = intent.getIntExtra("limit", 0);
 
         FlashcardParams params = new FlashcardParams();
         params.setSetId(setId);
@@ -113,11 +115,12 @@ public class FlashcardFragment extends Fragment {
         return params;
     }
 
-    /**Metoda wyświetlana w przypadku braku posujących słowek*/
-    private void closeActivity(){
+    /**
+     * Metoda wyświetlana w przypadku braku posujących słowek
+     */
+    private void closeActivity() {
         new OKFinishAlertDialog(getActivity(), getString(R.string.no_words), getString(R.string.not_found_words)).show();
     }
-
 
 
 }

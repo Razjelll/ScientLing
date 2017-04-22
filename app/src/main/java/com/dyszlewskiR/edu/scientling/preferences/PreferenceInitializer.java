@@ -3,7 +3,6 @@ package com.dyszlewskiR.edu.scientling.preferences;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.support.v7.preference.Preference;
 import android.util.Log;
 
 /**
@@ -33,13 +32,13 @@ public class PreferenceInitializer {
         return prefs.getBoolean(INITIALIZE_PREF, false);
     }
 
-    public static void initialize(Context context){
-        Log.d("PreferenceInitialize","initialize");
+    public static void initialize(Context context) {
+        Log.d("PreferenceInitialize", "initialize");
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(Preferences.WORDS_IN_LEARNING_PREF, String.valueOf(DEFAULT_WORDS_IN_LEARNING));
-        editor.putString(Preferences.WORDS_IN_REPETITION_PREF,String.valueOf(DEFAULT_WORDS_IN_REPETITION));
-        editor.putString(Preferences.NUMBER_ANSWER_PREF,String.valueOf(DEFAULT_NUMBER_ANSWERS));
+        editor.putString(Preferences.WORDS_IN_REPETITION_PREF, String.valueOf(DEFAULT_WORDS_IN_REPETITION));
+        editor.putString(Preferences.NUMBER_ANSWER_PREF, String.valueOf(DEFAULT_NUMBER_ANSWERS));
         editor.putString(Preferences.ANSWER_CONNECTION_PREF, String.valueOf(DEFAULT_ANSWER_CONNECTION));
         editor.putString(Preferences.DEFAULT_EXERCISE_PREF, String.valueOf(DEFAULT_EXERCISE));
         editor.putString(Preferences.DEFAULT_DIRECTION_PREF, String.valueOf(DEFAULT_DIRECTION));

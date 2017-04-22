@@ -70,4 +70,24 @@
             android:id="@+id/more_learning_button"
             android:layout_weight="0.8"/>
     </LinearLayout>
+    <LinearLayout android:id="@+id/no_set_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone">
+        <TextView android:id="@+id/no_set_text_view"
+            style="@style/TextViewStyle"
+            android:text="@string/no_set"
+            android:gravity="center"/>
+        <Button android:id="@+id/choose_set_button"
+            style="@style/ButtonStyle"
+            android:text="@string/choose_set"
+            android:layout_margin="@dimen/margin"/>
+        <Button android:id="@+id/create_set_button"
+            style="@style/ButtonStyle"
+            android:text="@string/create_set"
+            android:layout_margin="@dimen/margin"/>
+
+    </LinearLayout>
 </RelativeLayout>

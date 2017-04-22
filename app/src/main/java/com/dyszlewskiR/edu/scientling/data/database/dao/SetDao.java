@@ -6,8 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable;
 import com.dyszlewskiR.edu.scientling.data.models.creators.SetCreator;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Language;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 
 import java.util.ArrayList;
 import java.util.List;

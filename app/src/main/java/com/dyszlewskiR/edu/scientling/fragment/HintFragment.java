@@ -2,8 +2,8 @@ package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Hint;
+import com.dyszlewskiR.edu.scientling.data.models.models.Hint;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 /**
@@ -31,15 +31,15 @@ public class HintFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getData();
     }
 
-    private void getData(){
+    private void getData() {
         Intent intent = getActivity().getIntent();
         mHint = intent.getParcelableExtra("item");
-        mEdit = intent.getBooleanExtra("edit",false);
+        mEdit = intent.getBooleanExtra("edit", false);
     }
 
     @Override
@@ -48,15 +48,15 @@ public class HintFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_hint, container, false);
         setupControls(view);
         setListeners();
-        return  view;
+        return view;
     }
 
-    private void setupControls(View view){
-        mContentEditText = (EditText)view.findViewById(R.id.content_edit_text);
-        mOkButton = (Button)view.findViewById(R.id.ok_button);
+    private void setupControls(View view) {
+        mContentEditText = (EditText) view.findViewById(R.id.content_edit_text);
+        mOkButton = (Button) view.findViewById(R.id.ok_button);
     }
 
-    private void setListeners(){
+    private void setListeners() {
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,18 +65,18 @@ public class HintFragment extends Fragment {
         });
     }
 
-    private void setResultAndFinish(){
-        if(validate()){
+    private void setResultAndFinish() {
+        if (validate()) {
             Hint hint = getHint();
             Intent intent = new Intent();
-            intent.putExtra("result",hint);
+            intent.putExtra("result", hint);
             getActivity().setResult(Activity.RESULT_OK, intent);
             getActivity().finish();
         }
     }
 
-    private boolean validate(){
-        if(mContentEditText.getText().toString().trim().length()>0){
+    private boolean validate() {
+        if (mContentEditText.getText().toString().trim().length() > 0) {
             return true;
         } else {
             mContentEditText.setError(getContext().getString(R.string.not_empty_field));
@@ -84,9 +84,9 @@ public class HintFragment extends Fragment {
         return false;
     }
 
-    private Hint getHint(){
+    private Hint getHint() {
         Hint hint = null;
-        if(mHint == null){
+        if (mHint == null) {
             hint = new Hint();
         } else {
             hint = mHint;
@@ -96,12 +96,12 @@ public class HintFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         setValues();
     }
 
-    private void setValues(){
-        if(mEdit && mHint!=null){
+    private void setValues() {
+        if (mEdit && mHint != null) {
             mContentEditText.setText(mHint.getContent());
         }
     }

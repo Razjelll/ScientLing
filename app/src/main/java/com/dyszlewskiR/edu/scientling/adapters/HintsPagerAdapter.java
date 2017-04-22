@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Hint;
+import com.dyszlewskiR.edu.scientling.data.models.models.Hint;
 
 import java.util.List;
 
@@ -18,14 +18,13 @@ import java.util.List;
  * Created by Razjelll on 22.12.2016.
  */
 
-public class HintsPagerAdapter extends PagerAdapter{
+public class HintsPagerAdapter extends PagerAdapter {
     private List<Hint> mItems;
     private Context mContext;
     private int mResource;
     private LayoutInflater mInflater;
 
-    public HintsPagerAdapter(Context context, int resource, List<Hint> data)
-    {
+    public HintsPagerAdapter(Context context, int resource, List<Hint> data) {
         mContext = context;
         mResource = resource;
         mItems = data;
@@ -34,24 +33,20 @@ public class HintsPagerAdapter extends PagerAdapter{
     }
 
     @Override
-    public Object instantiateItem(ViewGroup container, int position)
-    {
+    public Object instantiateItem(ViewGroup container, int position) {
         View view = mInflater.inflate(mResource, null);
         TextView contentTextView = (TextView) view.findViewById(R.id.hint_content_text_view);
         contentTextView.setText(mItems.get(position).getContent());
 
-        ((ViewPager)container).addView(view);
+        ((ViewPager) container).addView(view);
         return view;
 
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object)
-    {
-        ((ViewPager)container).removeView((View) object);
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        ((ViewPager) container).removeView((View) object);
     }
-
-
 
 
     @Override

@@ -1,8 +1,8 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +12,7 @@ import android.widget.ListView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.adapters.SummaryRepetitionAdapter;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Word;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.services.repetitions.SaveExerciseService;
 
 import java.util.ArrayList;
@@ -46,11 +46,10 @@ public class SummaryLearningFragment extends Fragment {
         return view;
     }
 
-    private void setupControls(View view){
+    private void setupControls(View view) {
         mListView = (ListView) view.findViewById(R.id.list);
-        mSaveButton = (Button)view.findViewById(R.id.save_button);
+        mSaveButton = (Button) view.findViewById(R.id.save_button);
     }
-
 
 
     @Override
@@ -63,7 +62,7 @@ public class SummaryLearningFragment extends Fragment {
             public void onClick(View v) {
                 Log.d(getClass().getSimpleName(), "onClick service");
                 Intent intent = new Intent(getActivity().getBaseContext(), SaveExerciseService.class);
-                intent.putParcelableArrayListExtra("list",(ArrayList<Word>)mWords);
+                intent.putParcelableArrayListExtra("list", (ArrayList<Word>) mWords);
                 getActivity().startService(intent);
                 getActivity().finish();
             }

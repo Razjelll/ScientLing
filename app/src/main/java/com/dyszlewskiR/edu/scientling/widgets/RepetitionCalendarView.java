@@ -24,7 +24,7 @@ import java.util.Locale;
  * Created by Razjelll on 29.12.2016.
  */
 
-public class RepetitionCalendarView extends LinearLayout{
+public class RepetitionCalendarView extends LinearLayout {
 
     private final int MAX_CALENDAR_COLUMNS = 42;
 
@@ -47,7 +47,7 @@ public class RepetitionCalendarView extends LinearLayout{
         setupLayout(context);
     }
 
-    public RepetitionCalendarView(Context context, AttributeSet attrs, int defStyleAttr){
+    public RepetitionCalendarView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setupLayout(context);
     }
@@ -63,21 +63,21 @@ public class RepetitionCalendarView extends LinearLayout{
     }
 
 
-    private void setupComponents(Context context){
+    private void setupComponents(Context context) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.repetitions_calendar_view, this);
-        mHeader = (LinearLayout)findViewById(R.id.calendar_header);
-        mPrevButton = (ImageView)findViewById(R.id.calendar_prev_button);
-        mNextButton = (ImageView)findViewById(R.id.calendar_next_button);
-        mDateTextView = (TextView)findViewById(R.id.calendar_month_text_view);
-        mCalendarGrid = (GridView)findViewById(R.id.calendar_grid_view);
+        mHeader = (LinearLayout) findViewById(R.id.calendar_header);
+        mPrevButton = (ImageView) findViewById(R.id.calendar_prev_button);
+        mNextButton = (ImageView) findViewById(R.id.calendar_next_button);
+        mDateTextView = (TextView) findViewById(R.id.calendar_month_text_view);
+        mCalendarGrid = (GridView) findViewById(R.id.calendar_grid_view);
     }
 
-    private void setButtonsListeners(){
+    private void setButtonsListeners() {
         mPrevButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCalendar.add((Calendar.MONTH),-1);
+                mCalendar.add((Calendar.MONTH), -1);
                 setupCalendarAdapter();
             }
         });
@@ -85,14 +85,13 @@ public class RepetitionCalendarView extends LinearLayout{
         mNextButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCalendar.add(Calendar.MONTH,1);
+                mCalendar.add(Calendar.MONTH, 1);
                 setupCalendarAdapter();
             }
         });
     }
 
-    private void setGridCellClickListener()
-    {
+    private void setGridCellClickListener() {
         mCalendarGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -102,23 +101,23 @@ public class RepetitionCalendarView extends LinearLayout{
     }
 
 
-    private void setupCalendarAdapter(){
+    private void setupCalendarAdapter() {
 
         List<Date> dayValueInCells = new ArrayList<>();
         //TODO pobranie z bazy powtórki
-        Calendar calendar = (Calendar)mCalendar.clone();
-        calendar.set(Calendar.DAY_OF_MONTH,1);
+        Calendar calendar = (Calendar) mCalendar.clone();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
         int firstDayOfTheMonth = calendar.get(Calendar.DAY_OF_WEEK) - 1;
         calendar.add(Calendar.DAY_OF_MONTH, -firstDayOfTheMonth);
-        while(dayValueInCells.size() < MAX_CALENDAR_COLUMNS) {
+        while (dayValueInCells.size() < MAX_CALENDAR_COLUMNS) {
             dayValueInCells.add(calendar.getTime());
             calendar.add(Calendar.DAY_OF_MONTH, 1);
         }
 
-        String date =mFormatter.format(calendar.getTime());
+        String date = mFormatter.format(calendar.getTime());
         mDateTextView.setText(date);
         //TODO adapter
-        
+
 
     }
 

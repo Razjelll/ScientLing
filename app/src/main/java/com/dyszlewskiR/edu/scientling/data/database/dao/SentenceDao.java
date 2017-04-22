@@ -6,9 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.ExampleSentences;
 import com.dyszlewskiR.edu.scientling.data.database.tables.SentencesTable;
-import com.dyszlewskiR.edu.scientling.data.database.tables.WordsHintsTable;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Sentence;
 import com.dyszlewskiR.edu.scientling.data.models.creators.SentenceCreator;
+import com.dyszlewskiR.edu.scientling.data.models.models.Sentence;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +114,7 @@ public class SentenceDao extends BaseDao<Sentence> {
         mDb.insert(ExampleSentences.TABLE_NAME, null, values);
     }
 
-    public void unlink(long wordId){
+    public void unlink(long wordId) {
         String where = ExampleSentences.ExampleSentencesColumns.WORD_FK + " =?";
         String[] whereArguments = new String[]{String.valueOf(wordId)};
         mDb.delete(ExampleSentences.TABLE_NAME, where, whereArguments);
@@ -156,13 +155,13 @@ public class SentenceDao extends BaseDao<Sentence> {
     /**
      * Metoda usuwająca wszystkie niepowiązane zdania. Metoda usuwa takie zdanie, których klucze nie
      * znajdują sie w tabeli ExampleSentences
-     *
+     * <p>
      * DELETE FROM Sentences
      * WHERE id IS NOT IN(
-     *      SELECT sentence_fk
-     *      FROM EampleSentences )
+     * SELECT sentence_fk
+     * FROM EampleSentences )
      */
-    public int deleteUnlinked(){
+    public int deleteUnlinked() {
         String statement = new StringBuilder()
                 //.append("DELETE FROM ").append(SentencesTable.TABLE_NAME)
                 //.append(" WHERE ")

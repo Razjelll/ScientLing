@@ -12,11 +12,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
+import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -43,12 +43,12 @@ public class LessonFragment extends Fragment {
         mDataManager = ((LingApplication) getActivity().getApplication()).getDataManager(); //TODO sprawdzić czy nie zrobić tego w innym miejscu
     }
 
-    private void getData(){
+    private void getData() {
         Intent intent = getActivity().getIntent();
         mSet = intent.getParcelableExtra("set");
         mLesson = intent.getParcelableExtra("item");
         mEdit = intent.getBooleanExtra("edit", false);
-        if(mSet==null && mLesson!=null){
+        if (mSet == null && mLesson != null) {
             mSet = mLesson.getSet();
         }
     }
@@ -62,13 +62,13 @@ public class LessonFragment extends Fragment {
         return view;
     }
 
-    private void setupControls(View view){
+    private void setupControls(View view) {
         mNumberTextView = (EditText) view.findViewById(R.id.lesson_number_edit_text);
         mNameTextView = (EditText) view.findViewById(R.id.lesson_name_edit_text);
         mSaveButton = (Button) view.findViewById(R.id.save_button);
     }
 
-    private void setListeners(){
+    private void setListeners() {
         mNumberTextView.addTextChangedListener(new CheckNumber());
 
         mSaveButton.setOnClickListener(new View.OnClickListener() {
@@ -81,8 +81,8 @@ public class LessonFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
-        if(mLesson != null){
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        if (mLesson != null) {
             mNameTextView.setText(mLesson.getName());
             mNumberTextView.setText(String.valueOf(mLesson.getNumber()));
 
@@ -90,13 +90,13 @@ public class LessonFragment extends Fragment {
     }
 
     private Lesson saveAndReturnLesson() {
-        if(mLesson == null){
+        if (mLesson == null) {
             mLesson = new Lesson();
         }
         mLesson.setName(String.valueOf(mNameTextView.getText()));
         mLesson.setNumber(Long.parseLong(String.valueOf(mNumberTextView.getText())));
         mLesson.setSet(mSet);
-        if(mEdit){
+        if (mEdit) {
             mDataManager.updateLesson(mLesson);
         } else {
             long id = mDataManager.saveLesson(mLesson);

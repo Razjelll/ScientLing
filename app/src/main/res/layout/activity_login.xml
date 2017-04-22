@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_login"
     android:layout_width="match_parent"
@@ -9,54 +8,35 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.dyszlewskiR.edu.scientling.activity.LoginActivity">
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
-        android:id="@+id/scientLogo"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginTop="50dp"
-
-         />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:id="@+id/loginEditText"
-        android:layout_below="@+id/scientLogo"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginBottom="1dp"
-        android:paddingLeft="5dp"
-        android:background="@drawable/top_rounded_edittext_style"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:id="@+id/passwordEditText"
-        android:layout_below="@+id/loginEditText"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:paddingLeft="5dp"
-        android:background="@drawable/bottom_rounded_edittext_style"
+    tools:context="com.dyszlewskiR.edu.scientling.activity.LoginActivity"
+    android:orientation="vertical"
+    android:gravity="center">
+    <TextView android:id="@+id/error_text_view"
+        style="@style/TextViewStyle"
+        android:textColor="@color/incorrectColor"
+        android:gravity="center"
         />
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:id="@+id/loginButton"
-        android:layout_below="@id/passwordEditText"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:background="@drawable/button_style"
-        />
-</RelativeLayout>
+    <EditText android:id="@+id/login_edit_text"
+        style="@style/EditTextStyle"
+        android:hint="@string/login_or_email"/>
+    <EditText android:id="@+id/password_edit_text"
+        style="@style/EditTextStyle"
+        android:hint="@string/password"
+        android:layout_marginTop="@dimen/margin"
+        android:inputType="textPassword"/>
+    <Button android:id="@+id/login_button"
+        style="@style/ButtonStyle"
+        android:text="@string/log_in"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="30dp"/>
+    <TextView android:id="@+id/not_remember_button"
+        style="@style/TextViewStyle"
+        android:text="@string/not_remember"
+        android:gravity="center"
+        android:layout_marginTop="30dp"/>
+    <TextView android:id="@+id/register_button"
+        style="@style/TextViewStyle"
+        android:text="@string/register"
+        android:gravity="center"/>
+
+</LinearLayout>

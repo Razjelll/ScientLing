@@ -2,20 +2,20 @@ package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.data.file.FileNameCreator;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Language;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.models.Language;
+import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.dialogs.LanguageDialog;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
@@ -58,14 +58,14 @@ public class SetEditFragment extends Fragment implements LanguageDialog.Callback
         return view;
     }
 
-    private void setupControls(View view){
-        mNameEditText = (EditText)view.findViewById(R.id.name_edit_text);
-        mL2Button = (Button)view.findViewById(R.id.l2_button);
-        mL1Button = (Button)view.findViewById(R.id.l1_button);
-        mOkButton = (Button)view.findViewById(R.id.ok_button);
+    private void setupControls(View view) {
+        mNameEditText = (EditText) view.findViewById(R.id.name_edit_text);
+        mL2Button = (Button) view.findViewById(R.id.l2_button);
+        mL1Button = (Button) view.findViewById(R.id.l1_button);
+        mOkButton = (Button) view.findViewById(R.id.ok_button);
     }
 
-    private void setListeners(){
+    private void setListeners() {
         mL2Button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,7 +81,7 @@ public class SetEditFragment extends Fragment implements LanguageDialog.Callback
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validate()){
+                if (validate()) {
                     VocabularySet set = getSet();
                     long setId = saveSet(set);
                     //ustawiamy id ponieważ , na liscie SetManagerFragment nie pobieramy zestawów po utworzeniu
@@ -94,28 +94,28 @@ public class SetEditFragment extends Fragment implements LanguageDialog.Callback
         });
     }
 
-    private void openLanguageDialog(int language){
+    private void openLanguageDialog(int language) {
         LanguageDialog dialog = new LanguageDialog();
         dialog.setCallback(this);
         dialog.show(getFragmentManager(), "LanguageDialog");
         mOpenedDialog = language;
     }
 
-    private boolean validate(){
+    private boolean validate() {
         boolean correct = true;
-        if(mNameEditText.getText().toString().equals("")){
+        if (mNameEditText.getText().toString().equals("")) {
             mNameEditText.setError(getString(R.string.not_empty_field));
             correct = false;
         } else {
             mNameEditText.setError(null);
         }
-        if(mL1Button.getText().toString().equals("")){
+        if (mL1Button.getText().toString().equals("")) {
             mL1Button.setError(getString(R.string.not_empty_field));
             correct = false;
         } else {
             mL1Button.setError(null);
         }
-        if(mL2Button.getText().toString().equals("")){
+        if (mL2Button.getText().toString().equals("")) {
             mL2Button.setError(getString(R.string.not_empty_field));
             correct = false;
         } else {
@@ -127,12 +127,13 @@ public class SetEditFragment extends Fragment implements LanguageDialog.Callback
     /**
      * Zapisuje nowy zestaw lub aktualizuje już istniejący
      * TODO można przenieść zapisywanie do AsyncTask
+     *
      * @param set zestaw który ma być zapisany lub zaktualizowany
      * @return numer identyfikacyjny zapisanego zestawu
      */
-    private long saveSet(VocabularySet set){
-        DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
-        if(mEdit){
+    private long saveSet(VocabularySet set) {
+        DataManager dataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
+        if (mEdit) {
             dataManager.updateSet(set);
             return set.getId();
         } else { //!mEdit
@@ -144,65 +145,65 @@ public class SetEditFragment extends Fragment implements LanguageDialog.Callback
         }
     }
 
-    private void saveDefaultLesson(VocabularySet set, DataManager dataManager){
+    private void saveDefaultLesson(VocabularySet set, DataManager dataManager) {
         Lesson defaultLesson = new Lesson();
         defaultLesson.setName("");
         defaultLesson.setNumber(Constants.DEFAULT_LESSON_NUMBER);
         defaultLesson.setSet(set);
-        long lessonId =dataManager.saveLesson(defaultLesson);
+        long lessonId = dataManager.saveLesson(defaultLesson);
     }
 
-    private void setResultAndFinish(VocabularySet set){
+    private void setResultAndFinish(VocabularySet set) {
         Intent intent = new Intent();
         intent.putExtra("result", set);
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
     }
 
-    private VocabularySet getSet(){
+    private VocabularySet getSet() {
         VocabularySet set = mSet;
         set.setName(mNameEditText.getText().toString());
         //języków nie trzeba pobierać, ponieważ są ustawiana podczas wybierania
-        set.setCatalog(FileNameCreator.getCatalogname(set.getName(), getContext().getFilesDir().getAbsolutePath()));
+        set.setCatalog(FileNameCreator.getCatalogName(set.getName(), getContext().getFilesDir().getAbsolutePath()));
         return set;
     }
 
-    private void loadData(){
+    private void loadData() {
         Intent intent = getActivity().getIntent();
         VocabularySet set = intent.getParcelableExtra("item");
-        if(set != null){
+        if (set != null) {
             mSet = set;
             mEdit = true;
         }
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
-        if(mEdit){
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        if (mEdit) {
             setData();
         }
     }
 
-    private void setData(){
+    private void setData() {
         mNameEditText.setText(mSet.getName());
         setL2ButtonText(mSet.getLanguageL2().getName());
         setL1ButtonText(mSet.getLanguageL1().getName());
     }
 
-    private void setL2ButtonText(String text){
+    private void setL2ButtonText(String text) {
         mL2Button.setText(ResourceUtils.getString(text, getContext()));
     }
 
-    private void setL1ButtonText(String text){
+    private void setL1ButtonText(String text) {
         mL1Button.setText(ResourceUtils.getString(text, getContext()));
     }
 
     @Override
     public void onLanguageOk(Language language) {
-        if(mOpenedDialog == L1){
+        if (mOpenedDialog == L1) {
             setL1ButtonText(language.getName());
             mSet.setLanguageL1(language);
-        } else if(mOpenedDialog == L2){
+        } else if (mOpenedDialog == L2) {
             setL2ButtonText(language.getName());
             mSet.setLanguageL2(language);
         }

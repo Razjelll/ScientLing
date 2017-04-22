@@ -5,8 +5,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,14 +20,15 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.LessonSelectionActivity;
 import com.dyszlewskiR.edu.scientling.activity.SetEditActivity;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
+import com.dyszlewskiR.edu.scientling.preferences.Settings;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
-import com.dyszlewskiR.edu.scientling.services.data.DeletingLessonService;
 import com.dyszlewskiR.edu.scientling.services.data.DeletingSetService;
+import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import java.util.List;
 
@@ -52,14 +53,14 @@ public class SetsManagerFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadData();
         setHasOptionsMenu(true);
     }
 
-    private void loadData(){
-        DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
+    private void loadData() {
+        DataManager dataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
         mItems = dataManager.getSets();
     }
 
@@ -71,24 +72,23 @@ public class SetsManagerFragment extends Fragment {
         return view;
     }
 
-    private void setupControls(View view){
-        mListView = (ListView)view.findViewById(R.id.list);
+    private void setupControls(View view) {
+        mListView = (ListView) view.findViewById(R.id.list);
     }
 
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         setSetsAdapter();
     }
 
-    private void setSetsAdapter(){
+    private void setSetsAdapter() {
         mAdapter = new SetsManagerAdapter(getContext(), ADAPTER_ITEM_RESOURCE, mItems);
         mListView.setAdapter(mAdapter);
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
-    {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_sets_manager, menu);
     }
 
@@ -104,39 +104,48 @@ public class SetsManagerFragment extends Fragment {
         }
     }
 
-    private void startSetEditActivity(){
+    private void startSetEditActivity() {
         Intent intent = new Intent(getActivity(), SetEditActivity.class);
-        startActivityForResult(intent,ADD_REQUEST);
+        startActivityForResult(intent, ADD_REQUEST);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        if(requestCode == ADD_REQUEST){
-            if(resultCode == Activity.RESULT_OK){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == ADD_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
                 VocabularySet set = data.getParcelableExtra("result");
                 mAdapter.add(set);
             }
         }
-        if(requestCode == EDIT_REQUEST){
-            if(resultCode == Activity.RESULT_OK){
+        if (requestCode == EDIT_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
                 VocabularySet set = data.getParcelableExtra("result");
                 mAdapter.set(mLastEditedPosition, set);
             }
         }
     }
 
-    private void deleteSet(VocabularySet set){
-        if(mDeletedPosition >= 0){
+    private void deleteSet(VocabularySet set) {
+        if (mDeletedPosition >= 0) {
             //TODO usunięcie katalogóów
             /*DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
             dataManager.deleteSet(set);*/
+
+            checkAndSetCurrentSet(set.getId());
             startDeletingSetService(set);
             mAdapter.remove(set);
 
         }
     }
 
-    private void startDeletingSetService(VocabularySet set){
+    private void checkAndSetCurrentSet(long setId) {
+        long currentSetId = ((LingApplication) getActivity().getApplication()).getCurrentSetId();
+        if (setId == currentSetId) {
+            Settings.setCurrentSetId(Constants.NO_SET_ID, getContext());
+        }
+    }
+
+    private void startDeletingSetService(VocabularySet set) {
         Intent intent = new Intent(getContext(), DeletingSetService.class);
         intent.putExtra("set", set);
         getActivity().startService(intent);
@@ -153,28 +162,28 @@ public class SetsManagerFragment extends Fragment {
         private Context mContext;
         private int mResource;
 
-        public SetsManagerAdapter(Context context, int resource, List<VocabularySet> data){
+        public SetsManagerAdapter(Context context, int resource, List<VocabularySet> data) {
             super(context, resource, data);
             mContext = context;
             mResource = resource;
         }
 
-        public void set(int position, VocabularySet set){
+        public void set(int position, VocabularySet set) {
             mItems.set(position, set);
             notifyDataSetChanged();
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent){
+        public View getView(int position, View convertView, ViewGroup parent) {
             View rowView = convertView;
             ViewHolder viewHolder;
-            if(rowView == null){
+            if (rowView == null) {
                 LayoutInflater inflater = LayoutInflater.from(mContext);
                 rowView = inflater.inflate(mResource, null);
                 viewHolder = new ViewHolder(rowView);
                 rowView.setTag(viewHolder);
             } else {
-                viewHolder = (ViewHolder)rowView.getTag();
+                viewHolder = (ViewHolder) rowView.getTag();
             }
 
             viewHolder.nameTextView.setText(mItems.get(position).getName());
@@ -182,7 +191,7 @@ public class SetsManagerFragment extends Fragment {
             return rowView;
         }
 
-        private void setupMenu(final int position, final ViewHolder viewHolder){
+        private void setupMenu(final int position, final ViewHolder viewHolder) {
             viewHolder.actionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -195,17 +204,17 @@ public class SetsManagerFragment extends Fragment {
                     popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
-                            if(item.getTitle().equals(mContext.getString(MENU_LESSONS))){
+                            if (item.getTitle().equals(mContext.getString(MENU_LESSONS))) {
                                 startLessonActivity(position);
                             }
-                            if(item.getTitle().equals(mContext.getString(MENU_EDIT))){
+                            if (item.getTitle().equals(mContext.getString(MENU_EDIT))) {
                                 mLastEditedPosition = position;
                                 editItem(position);
                             }
-                            if(item.getTitle().equals(mContext.getString(MENU_DELETE))){
+                            if (item.getTitle().equals(mContext.getString(MENU_DELETE))) {
                                 deleteItem(position);
                             }
-                            if(item.getTitle().equals(mContext.getString(MENU_CHOOSE))){
+                            if (item.getTitle().equals(mContext.getString(MENU_CHOOSE))) {
                                 chooseItem(position);
                             }
                             return true;
@@ -216,26 +225,26 @@ public class SetsManagerFragment extends Fragment {
             });
         }
 
-        private void editItem(int itemPosition){
+        private void editItem(int itemPosition) {
             Intent intent = new Intent(mContext, SetEditActivity.class);
             intent.putExtra("item", mItems.get(itemPosition));
             startActivityForResult(intent, EDIT_REQUEST);
         }
 
-        private void deleteItem(int itemPosition){
+        private void deleteItem(int itemPosition) {
             DeleteDialog dialog = new DeleteDialog(mContext, mItems.get(itemPosition));
             dialog.show();
         }
 
-        private void chooseItem(int itemPosition){
+        private void chooseItem(int itemPosition) {
             VocabularySet set = mItems.get(itemPosition);
             Intent intent = new Intent();
-            intent.putExtra("result",set.getId());
+            intent.putExtra("result", set.getId());
             getActivity().setResult(Activity.RESULT_OK, intent);
             getActivity().finish();
         }
 
-        private void startLessonActivity(int itemPosition){
+        private void startLessonActivity(int itemPosition) {
             Intent intent = new Intent(getContext(), LessonSelectionActivity.class);
             intent.putExtra("set", mItems.get(itemPosition).getId());
             intent.putExtra("manager", true);
@@ -243,13 +252,13 @@ public class SetsManagerFragment extends Fragment {
         }
     }
 
-    public static class ViewHolder{
+    public static class ViewHolder {
         public TextView nameTextView;
         public ImageView actionButton;
 
-        public ViewHolder(View view){
-            nameTextView = (TextView)view.findViewById(R.id.name_text_view);
-            actionButton = (ImageView)view.findViewById(R.id.action_button);
+        public ViewHolder(View view) {
+            nameTextView = (TextView) view.findViewById(R.id.name_text_view);
+            actionButton = (ImageView) view.findViewById(R.id.action_button);
         }
     }
     //endregion
@@ -258,7 +267,7 @@ public class SetsManagerFragment extends Fragment {
     private class DeleteDialog extends AlertDialog {
 
 
-        protected DeleteDialog(Context context,final VocabularySet set) {
+        protected DeleteDialog(Context context, final VocabularySet set) {
             super(context);
             this.setTitle(getString(R.string.delete));
             String message = getString(R.string.sure_delete_set) + "\n" + set.getName();

@@ -1,8 +1,8 @@
 package com.dyszlewskiR.edu.scientling.dialogs;
 
-import android.support.v4.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
 
 /**
  * Created by Razjelll on 31.03.2017.
@@ -29,30 +29,29 @@ public class LessonDialog extends DialogFragment {
     private String mTitle;
 
 
-
-    public interface Callback{
+    public interface Callback {
         void onLessonOk(Lesson lesson, boolean edit);
     }
 
-    public void setCallback(Callback callback){
+    public void setCallback(Callback callback) {
         mCallback = callback;
     }
 
-    public void setLesson(Lesson lesson){
+    public void setLesson(Lesson lesson) {
         mLesson = lesson;
         mEdit = true;
     }
 
-    public void setTitle(String title){
+    public void setTitle(String title) {
         mTitle = title;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(LAYOUT_RESOURCE, container, false);
         setupControls(view);
         setListeners();
-        if(mTitle != null){
+        if (mTitle != null) {
             getDialog().setTitle(mTitle);
         } else {
             getDialog().setTitle(getString(R.string.lesson));
@@ -60,18 +59,18 @@ public class LessonDialog extends DialogFragment {
         return view;
     }
 
-    private void setupControls(View view){
-        mNameEditText = (EditText)view.findViewById(R.id.name_edit_text);
-        mNumberEditText = (EditText)view.findViewById(R.id.number_edit_text);
-        mOkButton = (Button)view.findViewById(R.id.ok_button);
+    private void setupControls(View view) {
+        mNameEditText = (EditText) view.findViewById(R.id.name_edit_text);
+        mNumberEditText = (EditText) view.findViewById(R.id.number_edit_text);
+        mOkButton = (Button) view.findViewById(R.id.ok_button);
     }
 
-    private void setListeners(){
+    private void setListeners() {
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mCallback != null){
-                    if(validate()){
+                if (mCallback != null) {
+                    if (validate()) {
                         Lesson lesson = new Lesson();
                         lesson.setName(mNameEditText.getText().toString());
                         lesson.setNumber(Long.parseLong(mNumberEditText.getText().toString()));
@@ -83,18 +82,18 @@ public class LessonDialog extends DialogFragment {
         });
     }
 
-    private boolean validate(){
+    private boolean validate() {
         boolean correct = true;
-        if(mNameEditText.getText().toString().equals("")){
+        if (mNameEditText.getText().toString().equals("")) {
             mNameEditText.setError(getString(R.string.not_empty_field));
             correct = false;
         }
-        if(mNumberEditText.getText().toString().equals("")){
+        if (mNumberEditText.getText().toString().equals("")) {
             mNumberEditText.setError(getString(R.string.not_empty_field));
             correct = false;
         } else {
             long number = Long.parseLong(mNumberEditText.getText().toString());
-            if(number <= 0){
+            if (number <= 0) {
                 mNumberEditText.setError(getString(R.string.not_zero_field));
                 correct = false;
             }
@@ -104,19 +103,19 @@ public class LessonDialog extends DialogFragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState){
-        if(mLesson != null){
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        if (mLesson != null) {
             setData();
         }
     }
 
-    private void setData(){
+    private void setData() {
         mNameEditText.setText(mLesson.getName());
         mNumberEditText.setText(String.valueOf(mLesson.getNumber()));
     }
 
     @Override
-    public void onDismiss(DialogInterface dialogInterface){
+    public void onDismiss(DialogInterface dialogInterface) {
         mCallback = null;
         getFragmentManager().beginTransaction().remove(this).commit();
     }

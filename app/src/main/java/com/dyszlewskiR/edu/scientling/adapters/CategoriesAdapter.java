@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.CategoryActivity;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
+import com.dyszlewskiR.edu.scientling.data.models.models.Category;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 import java.util.ArrayList;
@@ -46,16 +46,16 @@ public class CategoriesAdapter extends BaseAdapter implements Filterable {
     private boolean mIsSpinner;
 
     public CategoriesAdapter(Context context, int resource, List<Category> data, DataManager dataManager) {
-        init(context, resource,data);
+        init(context, resource, data);
         mDataManager = dataManager;
     }
 
-    public CategoriesAdapter(Context context, int resource, List<Category> data, boolean spinner){
+    public CategoriesAdapter(Context context, int resource, List<Category> data, boolean spinner) {
         init(context, resource, data);
         mIsSpinner = spinner;
     }
 
-    private void init(Context context, int resource, List<Category> data){
+    private void init(Context context, int resource, List<Category> data) {
         mItems = data;
         mFilteredItems = data;
         mContext = context;
@@ -64,10 +64,10 @@ public class CategoriesAdapter extends BaseAdapter implements Filterable {
         addEmptyElement();
     }
 
-    private void addEmptyElement(){
+    private void addEmptyElement() {
         Category category = new Category();
         category.setName(mContext.getString(R.string.lack));
-        mItems.add(0,category);
+        mItems.add(0, category);
     }
 
     @Override
@@ -81,6 +81,10 @@ public class CategoriesAdapter extends BaseAdapter implements Filterable {
 
     @Override
     public long getItemId(int position) {
+        //TODO zobaczyć czy jest to zrobione poprawnie
+        if (position < 0) {
+            return -1;
+        }
         return mFilteredItems.get(position).getId();
     }
 
@@ -96,9 +100,9 @@ public class CategoriesAdapter extends BaseAdapter implements Filterable {
             viewHolder = (ViewHolder) rowView.getTag();
         }
         viewHolder.categoryTextView.setText(mFilteredItems.get(position).getName());
-        if(!mIsSpinner && viewHolder.actionButton != null){
-            setupMenu(position,viewHolder);
-            if(mItems.get(position).getName().equals(mContext.getString(R.string.lack))){
+        if (!mIsSpinner && viewHolder.actionButton != null) {
+            setupMenu(position, viewHolder);
+            if (mItems.get(position).getName().equals(mContext.getString(R.string.lack))) {
                 viewHolder.actionButton.setVisibility(View.GONE);
             } else {
                 viewHolder.actionButton.setVisibility(View.VISIBLE);
@@ -107,7 +111,7 @@ public class CategoriesAdapter extends BaseAdapter implements Filterable {
         return rowView;
     }
 
-    private void setupMenu(final int position, final ViewHolder viewHolder){
+    private void setupMenu(final int position, final ViewHolder viewHolder) {
         viewHolder.actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,14 +121,14 @@ public class CategoriesAdapter extends BaseAdapter implements Filterable {
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        if(item.getTitle().equals(mContext.getString(MENU_EDIT))){
+                        if (item.getTitle().equals(mContext.getString(MENU_EDIT))) {
                             mLastEdited = position;
                             Intent intent = new Intent(mContext, CategoryActivity.class);
-                            intent.putExtra("item",mFilteredItems.get(position));
-                            intent.putExtra("edit",true);
-                            ((Activity)mContext).startActivityForResult(intent, EDIT_REQUEST);
+                            intent.putExtra("item", mFilteredItems.get(position));
+                            intent.putExtra("edit", true);
+                            ((Activity) mContext).startActivityForResult(intent, EDIT_REQUEST);
                         }
-                        if(item.getTitle().equals(mContext.getString(MENU_DELETE))){
+                        if (item.getTitle().equals(mContext.getString(MENU_DELETE))) {
                             new DeleteCategoryAlertDialog(mContext, mFilteredItems.get(position)).show();
                         }
                         return true;
@@ -135,9 +139,9 @@ public class CategoriesAdapter extends BaseAdapter implements Filterable {
         });
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        if(requestCode == EDIT_REQUEST){
-            if(resultCode == Activity.RESULT_OK){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == EDIT_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
                 Category category = data.getParcelableExtra("result");
                 mFilteredItems.set(mLastEdited, category);
                 notifyDataSetChanged();
@@ -172,12 +176,10 @@ public class CategoriesAdapter extends BaseAdapter implements Filterable {
             final List<Category> list = mItems;
             int count = list.size();
             final List<Category> nlist = new ArrayList<Category>(count);
-            String itemString ;
-            for(int i=0; i<count; i++)
-            {
+            String itemString;
+            for (int i = 0; i < count; i++) {
                 itemString = list.get(i).getName();
-                if(itemString.toLowerCase().contains(filterString))
-                {
+                if (itemString.toLowerCase().contains(filterString)) {
                     nlist.add(mItems.get(i));
                 }
             }
@@ -193,7 +195,7 @@ public class CategoriesAdapter extends BaseAdapter implements Filterable {
         }
     }
 
-    private class DeleteCategoryAlertDialog extends AlertDialog{
+    private class DeleteCategoryAlertDialog extends AlertDialog {
 
         protected DeleteCategoryAlertDialog(Context context, final Category category) {
             super(context);

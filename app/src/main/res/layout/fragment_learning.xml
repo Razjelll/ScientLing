@@ -51,14 +51,15 @@
                 android:layout_marginTop="0dp"
                 android:layout_marginLeft="30dp"
                 android:text="Kategoria"/>
-            <Button
+
+            <com.dyszlewskiR.edu.scientling.widgets.SpeechButton
+                android:id="@+id/speech_button"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
-                android:id="@+id/speech_button"
-                android:background="@drawable/round_button"
+                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_margin="@dimen/margin"
-                android:layout_alignParentRight="true"/>
+                android:visibility="visible" />
         </RelativeLayout>
 
 

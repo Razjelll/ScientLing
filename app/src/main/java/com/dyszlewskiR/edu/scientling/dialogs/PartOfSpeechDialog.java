@@ -12,9 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.dyszlewskiR.edu.scientling.LingApplication;
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.PartOfSpeech;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
+import com.dyszlewskiR.edu.scientling.data.models.models.PartOfSpeech;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 
@@ -29,19 +29,17 @@ public class PartOfSpeechDialog extends DialogFragment {
     private List<PartOfSpeech> mPartsList;
     private Callback mCallback;
 
-    public void setCallback(Callback callback)
-    {
+    public void setCallback(Callback callback) {
         mCallback = callback;
     }
 
-    public interface Callback{
+    public interface Callback {
         void onPartOfSpeechOk(PartOfSpeech partOfSpeech);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
-        View view = inflater.inflate(R.layout.dialog_part_of_speech,container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.dialog_part_of_speech, container, false);
         setupControls(view);
         setListeners();
         loadData();
@@ -50,17 +48,15 @@ public class PartOfSpeechDialog extends DialogFragment {
         return view;
     }
 
-    private void setupControls(View view)
-    {
-        mListView = (ListView)view.findViewById(R.id.list);
+    private void setupControls(View view) {
+        mListView = (ListView) view.findViewById(R.id.list);
     }
 
-    private void setListeners(){
+    private void setListeners() {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(mCallback!=null)
-                {
+                if (mCallback != null) {
                     mCallback.onPartOfSpeechOk(mPartsList.get(position));
                 }
                 dismiss();
@@ -68,27 +64,24 @@ public class PartOfSpeechDialog extends DialogFragment {
         });
     }
 
-    private void loadData(){
-        DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
+    private void loadData() {
+        DataManager dataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
         mPartsList = dataManager.getPartsOfSpeech();
         mPartsList.add(0, null); //dodanie pustego elemtnu na początek listy
     }
 
-    private void setListAdapter()
-    {
+    private void setListAdapter() {
         PartOfSpeechAdapter adapter = new PartOfSpeechAdapter(getContext(), R.layout.item_part_of_speech, mPartsList);
         mListView.setAdapter(adapter);
     }
 
     @Override
-    public void onDismiss(DialogInterface dialogInterface)
-    {
+    public void onDismiss(DialogInterface dialogInterface) {
         mCallback = null;
         getFragmentManager().beginTransaction().remove(this).commit();
     }
 
-    private class PartOfSpeechAdapter extends ArrayAdapter<PartOfSpeech>
-    {
+    private class PartOfSpeechAdapter extends ArrayAdapter<PartOfSpeech> {
         private int mResource;
         private LayoutInflater mInflater;
 
@@ -99,27 +92,23 @@ public class PartOfSpeechDialog extends DialogFragment {
         }
 
         @Override
-        public int getCount()
-        {
+        public int getCount() {
             return mPartsList.size();
         }
 
         @Override
-        public PartOfSpeech getItem(int position)
-        {
+        public PartOfSpeech getItem(int position) {
             return mPartsList.get(position);
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent)
-        {
-            if(convertView == null)
-            {
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
                 convertView = mInflater.inflate(mResource, null);
             }
-            TextView view = (TextView)convertView;
-            if(mPartsList.get(position) != null){
-                String text = ResourceUtils.getString(mPartsList.get(position).getName(),getContext());
+            TextView view = (TextView) convertView;
+            if (mPartsList.get(position) != null) {
+                String text = ResourceUtils.getString(mPartsList.get(position).getName(), getContext());
                 view.setText(text);
             } else {
                 view.setText(getString(R.string.lack));

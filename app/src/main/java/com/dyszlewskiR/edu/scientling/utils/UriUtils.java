@@ -2,13 +2,10 @@ package com.dyszlewskiR.edu.scientling.utils;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.CursorIndexOutOfBoundsException;
 import android.net.Uri;
 import android.provider.MediaStore;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -17,19 +14,19 @@ import java.io.InputStream;
  */
 
 public class UriUtils {
-    public static String getFileName(Uri uri, Context context){
+    public static String getFileName(Uri uri, Context context) {
         String scheme = uri.getScheme();
-        if(scheme.equals("file")){
+        if (scheme.equals("file")) {
             return uri.getLastPathSegment();
-        } else if(scheme.equals("content")){
+        } else if (scheme.equals("content")) {
             String filename = null;
             String[] projection = {MediaStore.Images.Media.TITLE};
-            Cursor cursor = context.getContentResolver().query(uri, projection, null,null,null);
-            if(cursor.moveToFirst()){
+            Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+            if (cursor.moveToFirst()) {
                 int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE);
-                filename =  cursor.getString(columnIndex);
+                filename = cursor.getString(columnIndex);
             }
-            if(cursor != null){
+            if (cursor != null) {
                 cursor.close();
             }
             return filename;
@@ -47,8 +44,8 @@ public class UriUtils {
         int bufferSize = 1024;
         byte[] buffer = new byte[bufferSize];
         int len = 0;
-        while((len =inputStream.read(buffer)) != -1){
-            byteArrayOutputStream.write(buffer, 0 , len);
+        while ((len = inputStream.read(buffer)) != -1) {
+            byteArrayOutputStream.write(buffer, 0, len);
         }
         return byteArrayOutputStream.toByteArray();
     }

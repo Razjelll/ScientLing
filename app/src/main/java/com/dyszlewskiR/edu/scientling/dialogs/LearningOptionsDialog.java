@@ -1,25 +1,28 @@
 package com.dyszlewskiR.edu.scientling.dialogs;
 
-import android.app.Dialog;
-import android.content.Context;
+import android.app.DialogFragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.NumberPicker;
 import android.widget.Spinner;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.LearningListActivity;
-import com.dyszlewskiR.edu.scientling.adapters.CategoriesAdapter;
-import com.dyszlewskiR.edu.scientling.adapters.LessonsAdapter;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Category;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
+import com.dyszlewskiR.edu.scientling.adapters.CategorySpinnerAdapter;
+import com.dyszlewskiR.edu.scientling.adapters.LessonSpinnerAdapter;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
+import com.dyszlewskiR.edu.scientling.data.models.models.Category;
+import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.preferences.Preferences;
+import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
+import com.dyszlewskiR.edu.scientling.widgets.NumberPicker;
 
 import java.util.List;
 
@@ -27,7 +30,11 @@ import java.util.List;
  * Created by Razjelll on 15.01.2017.
  */
 
-public class LearningOptionsDialog extends Dialog {
+public class LearningOptionsDialog extends DialogFragment {
+
+    private final int LAYOUT_RESOURCE = R.layout.dialog_learning_option;
+    private final int LESSON_ADAPTER_RESOURCE = R.layout.item_simple;
+    private final int CATEGORY_ADAPTER_RESOURCE = R.layout.item_simple;
 
     private long mSetId;
     private List<Lesson> mLessons;
@@ -39,78 +46,86 @@ public class LearningOptionsDialog extends Dialog {
     private NumberPicker mWordsNumberPicker;
     private Button mStartButton;
 
-    private LessonsAdapter mLessonsAdapter;
-    private CategoriesAdapter mCategoriesAdapter;
+    private LessonSpinnerAdapter mLessonsAdapter;
+    private CategorySpinnerAdapter mCategoriesAdapter;
 
-    public LearningOptionsDialog(Context context,long setId, List<Lesson> lessons, List<Category> categories) {
-        super(context);
+    public void setSetId(long setId) {
         mSetId = setId;
-        mLessons = lessons;
-        mCategories = categories;
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.dialog_learning_option);
-        setupControls();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(LAYOUT_RESOURCE, container, false);
+        setupControls(view);
         setListeners();
+        getData();
         setAdapters();
-        setWidth();
+        return view;
     }
 
-    private void setWidth(){
-        ViewGroup.LayoutParams params= getWindow().getAttributes();
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        getWindow().setAttributes((android.view.WindowManager.LayoutParams)params);
+    public void getData() {
+        DataManager dataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
+        mLessons = dataManager.getLessons(new VocabularySet(mSetId));
+        Lesson anyLesson = new Lesson(-1);
+        mLessons.add(0, anyLesson);
+        mCategories = dataManager.getCategories();
+        Category anyCategory = new Category(-1);
+        mCategories.add(0, anyCategory);
 
     }
 
-    private void setupControls(){
-        mLessonSpinner = (Spinner)findViewById(R.id.lesson_spinner);
-        mCategorySpinner = (Spinner)findViewById(R.id.category_spinner);
-        mDifficultSpinner = (Spinner) findViewById(R.id.difficult_spinner);
-        mWordsNumberPicker = (NumberPicker)findViewById(R.id.words_number_picker);
-        mStartButton = (Button)findViewById(R.id.start_button);
+    private void setupControls(View view) {
+        mLessonSpinner = (Spinner) view.findViewById(R.id.lesson_spinner);
+        mCategorySpinner = (Spinner) view.findViewById(R.id.category_spinner);
+        mDifficultSpinner = (Spinner) view.findViewById(R.id.difficult_spinner);
+        mWordsNumberPicker = (NumberPicker) view.findViewById(R.id.words_number_picker);
+        mStartButton = (Button) view.findViewById(R.id.start_button);
 
-        mWordsNumberPicker.setMinValue(Constants.MIN_WORD_LEARNING);
-        mWordsNumberPicker.setMaxValue(Constants.MAX_WORD_LEARNING);
+        mWordsNumberPicker.setMax(Constants.MAX_WORD_LEARNING);
+        mWordsNumberPicker.setMin(Constants.MIN_WORD_LEARNING);
     }
 
-    private void setListeners(){
+    private void setListeners() {
         mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), LearningListActivity.class);
+                Intent intent = new Intent(getActivity(), LearningListActivity.class);
                 intent.putExtra("set", mSetId);
                 long lessonId = mCategoriesAdapter.getItemId(mLessonSpinner.getSelectedItemPosition());
-                if(lessonId > 0){
-                    intent.putExtra("lesson",lessonId);
+                if (lessonId > 0) {
+                    intent.putExtra("lesson", lessonId);
                 }
                 long categoryId = mCategoriesAdapter.getItemId(mCategorySpinner.getSelectedItemPosition());
-                if(categoryId > 0){
+                if (categoryId > 0) {
                     intent.putExtra("category", categoryId);
                 }
-                if(mDifficultSpinner.getSelectedItemPosition() != 0){
+                if (mDifficultSpinner.getSelectedItemPosition() != 0) {
                     intent.putExtra("difficult", mDifficultSpinner.getSelectedItemPosition());
                 }
-                intent.putExtra("order", Preferences.getOrderLearning(getContext()));
+                intent.putExtra("order", Preferences.getOrderLearning(getActivity()));
                 intent.putExtra("limit", mWordsNumberPicker.getValue());
-                getContext().startActivity(intent);
+                getActivity().startActivity(intent);
+                dismiss();
             }
         });
     }
 
-    private void setAdapters(){
-        mLessonsAdapter = new LessonsAdapter(getContext(), R.layout.item_lesson_spinner, mLessons, true);
+    private void setAdapters() {
+        mLessonsAdapter = new LessonSpinnerAdapter(getActivity(), LESSON_ADAPTER_RESOURCE, mLessons);
         mLessonSpinner.setAdapter(mLessonsAdapter);
 
-        mCategoriesAdapter = new CategoriesAdapter(getContext(),R.layout.item_category_spinner, mCategories, true);
+        mCategoriesAdapter = new CategorySpinnerAdapter(getActivity(), CATEGORY_ADAPTER_RESOURCE, mCategories);
         mCategorySpinner.setAdapter(mCategoriesAdapter);
 
-        String[] difficultLevels = {getContext().getString(R.string.lack), "1", "2","3","4","5"};
-        ArrayAdapter<String> difficultAdapter = new ArrayAdapter<>(getContext(),R.layout.item_difficult_spinner,difficultLevels);
+        String[] difficultLevels = {getActivity().getString(R.string.lack), "1", "2", "3", "4", "5"};
+        ArrayAdapter<String> difficultAdapter = new ArrayAdapter<>(getActivity(), R.layout.item_difficult_spinner, difficultLevels);
         mDifficultSpinner.setAdapter(difficultAdapter);
     }
+
+    @Override
+    public void onDismiss(DialogInterface dialogInterface) {
+        getFragmentManager().beginTransaction().remove(this).commit();
+        super.onDismiss(dialogInterface);
+    }
+
 }

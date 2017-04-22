@@ -27,30 +27,28 @@ public class DateUtils {
         return calendar.get(Calendar.DAY_OF_MONTH);
     }
 
-    public static Date getDate(int year, int month, int day)
-    {
+    public static Date getDate(int year, int month, int day) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, day);
         return calendar.getTime();
     }
 
-    public static Date getTodayDate()
-    {
+    public static Date getTodayDate() {
         Calendar calendar = Calendar.getInstance();
         return calendar.getTime();
     }
 
-    public static int getCurrentMonth(){
+    public static int getCurrentMonth() {
         Calendar calendar = Calendar.getInstance();
         return calendar.get(Calendar.MONTH);
     }
 
-    public static int getCurrentDay(){
+    public static int getCurrentDay() {
         Calendar calendar = Calendar.getInstance();
         return calendar.get(Calendar.DAY_OF_MONTH);
     }
 
-    public static Date addDays(Date date1,int days){
+    public static Date addDays(Date date1, int days) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date1);
         calendar.add(Calendar.DAY_OF_MONTH, days);

@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.dyszlewskiR.edu.scientling.LingApplication;
+import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.data.file.WordFileSystem;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.Lesson;
-import com.dyszlewskiR.edu.scientling.data.models.tableModels.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 
 import java.util.List;
 
@@ -26,37 +26,37 @@ public class DeletingLessonService extends Service {
     private DataManager mDataManager;
 
     @Override
-    public void onCreate(){
-        mDataManager = ((LingApplication)getApplication()).getDataManager();
+    public void onCreate() {
+        mDataManager = ((LingApplication) getApplication()).getDataManager();
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId){
+    public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(LOG_TAG, "onStartCommand");
         long id = intent.getLongExtra("lesson", -1);
         Lesson lesson = new Lesson(id);
-        long newLessonId = intent.getLongExtra("newLessonId",-1);
+        long newLessonId = intent.getLongExtra("newLessonId", -1);
         long setId = intent.getLongExtra("set", -1);
         VocabularySet set = mDataManager.getSetById(setId);
-        DeletingRunnable runnable = new DeletingRunnable(lesson, newLessonId,set.getCatalog(), mDataManager);
+        DeletingRunnable runnable = new DeletingRunnable(lesson, newLessonId, set.getCatalog(), mDataManager);
         runnable.run();
         return Service.START_STICKY;
     }
 
 
     @Override
-    public IBinder onBind(Intent intent){
+    public IBinder onBind(Intent intent) {
         return null;
     }
 
-    private class DeletingRunnable implements Runnable{
+    private class DeletingRunnable implements Runnable {
 
         private Lesson mLesson;
         private long mNewLessonId;
         private String mCatalog;
         private DataManager mDataManager;
 
-        public DeletingRunnable(Lesson lesson, long newLessonId,String catalog, DataManager dataManager){
+        public DeletingRunnable(Lesson lesson, long newLessonId, String catalog, DataManager dataManager) {
             mLesson = lesson;
             mNewLessonId = newLessonId;
             mCatalog = catalog;
@@ -80,28 +80,28 @@ public class DeletingLessonService extends Service {
          * także zostaną usunięte lub przeniesione do innej lekcji
          * Jeżeli słówka zostały usunięte z bazy usuwamy nagrania i obrazki.
          */
-        private void deleteLesson(){
+        private void deleteLesson() {
             List<String> imagesList = null;
             List<String> recordsList = null;
-            if(mNewLessonId == -1){ //robimy to w przypadku jeśli usuwane są słówka z bazy danych
+            if (mNewLessonId == -1) { //robimy to w przypadku jeśli usuwane są słówka z bazy danych
                 imagesList = mDataManager.getImagesNamesFromLesson(mLesson.getId());
-                recordsList= mDataManager.getRecordsNamesFromLesson(mLesson.getId());
+                recordsList = mDataManager.getRecordsNamesFromLesson(mLesson.getId());
             }
             mDataManager.deleteLesson(mLesson, mNewLessonId);
-            if(mNewLessonId == -1){
+            if (mNewLessonId == -1) {
                 deleteImages(imagesList);
                 deleteRecords(recordsList);
             }
         }
 
-        private void deleteImages(List<String> imagesList){
-            for(String imageName : imagesList){
+        private void deleteImages(List<String> imagesList) {
+            for (String imageName : imagesList) {
                 WordFileSystem.deleteImage(imageName, mCatalog, getBaseContext());
             }
         }
 
-        private void deleteRecords(List<String> recordsList){
-            for(String recordName : recordsList){
+        private void deleteRecords(List<String> recordsList) {
+            for (String recordName : recordsList) {
                 WordFileSystem.deleteRecord(recordName, mCatalog, getBaseContext());
             }
         }

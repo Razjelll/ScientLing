@@ -8,8 +8,8 @@ import android.os.Build;
  */
 
 public class Colors {
-    public static int getColor(int resource, Context context){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+    public static int getColor(int resource, Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return context.getColor(resource);
         } else {
             return context.getResources().getColor(resource);

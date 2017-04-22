@@ -3,12 +3,12 @@ package com.dyszlewskiR.edu.scientling.dialogs;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.provider.MediaStore;
-import android.support.v4.app.DialogFragment;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +19,6 @@ import android.widget.ImageView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.utils.BitmapUtils;
-import com.dyszlewskiR.edu.scientling.utils.Constants;
 import com.dyszlewskiR.edu.scientling.utils.FileUtils;
 
 import java.io.File;
@@ -29,7 +28,7 @@ import java.io.IOException;
  * Created by Razjelll on 21.03.2017.
  */
 
-public class ImageDialog extends DialogFragment{
+public class ImageDialog extends DialogFragment {
     private final int LAYOUT_RESOURCE = R.layout.dialog_image;
     private static final String IMAGE_FILENAME = "Image.jpg";
     private final int OPEN_REQUEST = 6736;
@@ -45,22 +44,22 @@ public class ImageDialog extends DialogFragment{
 
     private Callback mCallback;
 
-    public void setCallback(Callback callback){
+    public void setCallback(Callback callback) {
         mCallback = callback;
     }
 
-    public interface Callback{
+    public interface Callback {
         void onImageOk(Uri imageUri);
     }
 
-    public void setImageUri(Uri imageUri){
+    public void setImageUri(Uri imageUri) {
         mImageUri = imageUri;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        Log.d("ImageDialog","OnCreateView");
-        View view =inflater.inflate(LAYOUT_RESOURCE, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d("ImageDialog", "OnCreateView");
+        View view = inflater.inflate(LAYOUT_RESOURCE, container, false);
         setupControls(view);
         setListeners();
         setValues();
@@ -68,33 +67,34 @@ public class ImageDialog extends DialogFragment{
         return view;
     }
 
-    private void setupControls(View view){
-        mImageView = (ImageView)view.findViewById(R.id.image_image_view);
-        mCameraButton = (ImageButton)view.findViewById(R.id.camera_button);
-        mOpenButton = (ImageButton)view.findViewById(R.id.open_button);
-        mDeleteButton = (ImageButton)view.findViewById(R.id.delete_button);
-        mOkButton = (Button)view.findViewById(R.id.ok_button);
+    private void setupControls(View view) {
+        mImageView = (ImageView) view.findViewById(R.id.image_image_view);
+        mCameraButton = (ImageButton) view.findViewById(R.id.camera_button);
+        mOpenButton = (ImageButton) view.findViewById(R.id.open_button);
+        mDeleteButton = (ImageButton) view.findViewById(R.id.delete_button);
+        mOkButton = (Button) view.findViewById(R.id.ok_button);
     }
 
-    private void setListeners(){
+    private void setListeners() {
         setCameraButtonListener();
         setOpenButtonListener();
         setDeleteButtonListener();
         setOkButtonListener();
     }
 
-    private void setValues(){
-        if(mImageUri != null){
+    private void setValues() {
+        if (mImageUri != null) {
             updateImageUI();
         }
     }
 
-    /**Metoda uruchamiająca aparat i przechwytująca zdjęcie. Nestępnie wynik przechwytywania jest obsługiwany w
+    /**
+     * Metoda uruchamiająca aparat i przechwytująca zdjęcie. Nestępnie wynik przechwytywania jest obsługiwany w
      * metodzie onActivityResult. Wynik można zapisać od razu w pliku, ale działa to tylko korzystając
      * z External Storage, ponieważ ta pamięć traktowana jest jako globalna. Pamięć Internal Storage
      * jest prywatna, dlatego inne aplikacje nie mogą zapisywać w niej bezpośrednio danych.
      */
-    private void setCameraButtonListener(){
+    private void setCameraButtonListener() {
         mCameraButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,7 +106,7 @@ public class ImageDialog extends DialogFragment{
         });
     }
 
-    private void setOpenButtonListener(){
+    private void setOpenButtonListener() {
         mOpenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -116,7 +116,7 @@ public class ImageDialog extends DialogFragment{
         });
     }
 
-    private void setDeleteButtonListener(){
+    private void setDeleteButtonListener() {
         mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,11 +125,11 @@ public class ImageDialog extends DialogFragment{
         });
     }
 
-    private void setOkButtonListener(){
+    private void setOkButtonListener() {
         mOkButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mCallback != null){
+                if (mCallback != null) {
                     mCallback.onImageOk(mImageUri);
                 }
                 dismiss();
@@ -138,9 +138,9 @@ public class ImageDialog extends DialogFragment{
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        if(requestCode == OPEN_REQUEST){
-            if(resultCode == Activity.RESULT_OK){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == OPEN_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
                 Uri uri = data.getData();
                 mImageUri = uri;
                 updateImageUI();
@@ -151,14 +151,14 @@ public class ImageDialog extends DialogFragment{
         obrazka nie zmniejszamy jego rozmiaru i nie zapisujemy go w pamięci cache tylko przekazujemy jego
         Uri. Wprowadzając zmaianę rozmiaru tutaj było by niespójne.
          */
-        if(requestCode == CAMERA_REQUEST){
-            if(resultCode == Activity.RESULT_OK){
+        if (requestCode == CAMERA_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
                 Bundle extras = data.getExtras();
-                Bitmap bitmap =  (Bitmap)extras.get("data");
+                Bitmap bitmap = (Bitmap) extras.get("data");
                 //Bitmap resizedBitmap = BitmapUtils.resize(bitmap, Constants.MAX_IMAGE_SIZE, false); // zmniejszenie bitmapy
                 try {
                     //BitmapUtils.saveBitmap(resizedBitmap, getContext().getCacheDir().getAbsolutePath(), IMAGE_FILENAME);
-                    BitmapUtils.saveBitmap(bitmap,getContext().getCacheDir().getAbsolutePath(), IMAGE_FILENAME);
+                    BitmapUtils.saveBitmap(bitmap, getContext().getCacheDir().getAbsolutePath(), IMAGE_FILENAME);
                     mImageUri = FileUtils.getUriFromCache(IMAGE_FILENAME, getContext());
                     updateImageUI();
                 } catch (IOException e) {
@@ -168,13 +168,15 @@ public class ImageDialog extends DialogFragment{
         }
     }
 
-    /**Metoda aktualizująca interfejs użytkownika po ustawieniu nowego uri*/
-    private void updateImageUI(){
+    /**
+     * Metoda aktualizująca interfejs użytkownika po ustawieniu nowego uri
+     */
+    private void updateImageUI() {
         mImageView.setImageURI(mImageUri);
         mDeleteButton.setVisibility(View.VISIBLE);
     }
 
-    private void deleteImage(){
+    private void deleteImage() {
         mImageUri = null;
         mImageView.setImageURI(null);
         mDeleteButton.setVisibility(View.INVISIBLE);
@@ -182,12 +184,12 @@ public class ImageDialog extends DialogFragment{
     }
 
     @Override
-    public void onDismiss(DialogInterface dialogInterface){
-        Log.d("ImageDialog","onDismiss");
+    public void onDismiss(DialogInterface dialogInterface) {
+        Log.d("ImageDialog", "onDismiss");
         getFragmentManager().beginTransaction().remove(this).commit();
     }
 
-    public static void clearCache(Context context){
+    public static void clearCache(Context context) {
         FileUtils.deleteFileFromCache(IMAGE_FILENAME, context);
     }
 
