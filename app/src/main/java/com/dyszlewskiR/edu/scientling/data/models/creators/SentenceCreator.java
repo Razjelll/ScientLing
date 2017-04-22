@@ -12,9 +12,9 @@ import static com.dyszlewskiR.edu.scientling.data.database.tables.SentencesTable
  * Created by Razjelll on 12.11.2016.
  */
 
-public class SentenceCreator implements IModelCreator<Sentence> {
-    @Override
-    public Sentence createFromCursor(Cursor cursor) {
+public class SentenceCreator  {
+
+    public static Sentence createFromCursor(Cursor cursor) {
         Sentence sentence = new Sentence();
         int columnsCount = cursor.getColumnCount();
         for (int columnIndex = 0; columnIndex < columnsCount; columnIndex++) {

@@ -73,8 +73,7 @@ public class HintDao extends BaseDao<Hint> {
         Cursor cursor = mDb.query(TABLE_NAME, mTableColumns, WHERE_ID, whereArguments,
                 null, null, null, null);
         if (cursor.moveToFirst()) {
-            HintCreator creator = new HintCreator();
-            hint = creator.createFromCursor(cursor);
+            hint = HintCreator.createFromCursor(cursor);
         }
         if (!cursor.isClosed()) {
             cursor.close();
@@ -90,9 +89,8 @@ public class HintDao extends BaseDao<Hint> {
                 groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
             Hint hint = null;
-            HintCreator creator = new HintCreator();
             do {
-                hint = creator.createFromCursor(cursor);
+                hint = HintCreator.createFromCursor(cursor);
                 if (hint != null) {
                     tipsList.add(hint);
                 }

@@ -82,8 +82,7 @@ public class DefinitionDao extends BaseDao<Definition> {
                 null, null, null, null);
         Definition definition = null;
         if (cursor.moveToFirst()) {
-            DefinitionCreator definitionCreator = new DefinitionCreator();
-            definition = definitionCreator.createFromCursor(cursor);
+            definition = DefinitionCreator.createFromCursor(cursor);
         }
         closeCursor(cursor);
         return definition;
@@ -102,9 +101,8 @@ public class DefinitionDao extends BaseDao<Definition> {
                 groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
             Definition definition = null;
-            DefinitionCreator definitionCreator = new DefinitionCreator();
             do {
-                definition = definitionCreator.createFromCursor(cursor);
+                definition = DefinitionCreator.createFromCursor(cursor);
                 if (definition != null) {
                     definitionsList.add(definition);
                 }

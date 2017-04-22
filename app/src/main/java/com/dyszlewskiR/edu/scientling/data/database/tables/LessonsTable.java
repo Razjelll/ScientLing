@@ -15,6 +15,7 @@ public class LessonsTable {
         columns[LessonsColumns.NAME_POSITION] = LessonsColumns.NAME;
         columns[LessonsColumns.NUMBER_POSITION] = LessonsColumns.NUMBER;
         columns[LessonsColumns.SET_FK_POSITION] = LessonsColumns.SET_FK;
+        columns[LessonsColumns.GLOBAL_ID_POSITION] = LessonsColumns.GLOBAL_ID;
 
         return columns;
     }
@@ -24,12 +25,14 @@ public class LessonsTable {
         public static final String NAME = "name";
         public static final String NUMBER = "number";
         public static final String SET_FK = "set_fk";
+        public static final String GLOBAL_ID = "global_id";
 
         public static final int ID_POSITION = 0;
         public static final int NAME_POSITION = 1;
         public static final int NUMBER_POSITION = 2;
         public static final int SET_FK_POSITION = 3;
+        public static final int GLOBAL_ID_POSITION = 4;
 
-        public static final int COLUMNS_COUNT = 4;
+        public static final int COLUMNS_COUNT = 5;
     }
 }

@@ -78,8 +78,7 @@ public class SentenceDao extends BaseDao<Sentence> {
         Cursor cursor = mDb.query(TABLE_NAME, mTableColumns, where, whereArguments,
                 null, null, null, null);
         if (cursor.moveToFirst()) {
-            SentenceCreator sentenceCreator = new SentenceCreator();
-            sentence = sentenceCreator.createFromCursor(cursor);
+            sentence = SentenceCreator.createFromCursor(cursor);
         }
         closeCursor(cursor);
         return sentence;
@@ -93,9 +92,8 @@ public class SentenceDao extends BaseDao<Sentence> {
                 groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
             Sentence sentence = null;
-            SentenceCreator sentenceCreator = new SentenceCreator();
             do {
-                sentence = sentenceCreator.createFromCursor(cursor);
+                sentence = SentenceCreator.createFromCursor(cursor);
                 if (sentence != null) {
                     sentencesList.add(sentence);
                 }
@@ -126,9 +124,8 @@ public class SentenceDao extends BaseDao<Sentence> {
         Cursor cursor = mDb.rawQuery(SELECT_LINK_STATEMENT, whereArguments);
         if (cursor.moveToFirst()) {
             Sentence sentence;
-            SentenceCreator sentenceCreator = new SentenceCreator();
             do {
-                sentence = sentenceCreator.createFromCursor(cursor);
+                sentence = SentenceCreator.createFromCursor(cursor);
                 if (sentence != null) {
                     sentencesList.add(sentence);
                 }
@@ -145,8 +142,7 @@ public class SentenceDao extends BaseDao<Sentence> {
         Cursor cursor = mDb.query(SentencesTable.TABLE_NAME, mTableColumns, where, whereArguments,
                 null, null, null, null);
         if (cursor.moveToFirst()) {
-            SentenceCreator sentenceCreator = new SentenceCreator();
-            sentence = sentenceCreator.createFromCursor(cursor);
+            sentence = SentenceCreator.createFromCursor(cursor);
         }
         closeCursor(cursor);
         return sentence;

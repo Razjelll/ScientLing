@@ -227,12 +227,10 @@ public class WordDao extends BaseDao<Word> {
             e.printStackTrace();
         }
 
-
         queryBuilder.append(" WHERE W." + WordsColumns.ID + " = ?");
         Cursor cursor = mDb.rawQuery(queryBuilder.toString(), whereArguments);
         if (cursor.moveToFirst()) {
-            WordCreator wordCreator = new WordCreator();
-            word = wordCreator.createFromCursor(cursor);
+            word = WordCreator.createFromCursor(cursor);
         }
         closeCursor(cursor);
         return word;
@@ -261,9 +259,8 @@ public class WordDao extends BaseDao<Word> {
         List<Word> wordsList = new ArrayList<>();
         if (cursor.moveToFirst()) {
             Word word = null;
-            WordCreator creator = new WordCreator();
             do {
-                word = creator.createFromCursor(cursor);
+                word = WordCreator.createFromCursor(cursor);
                 if (word != null) {
                     wordsList.add(word);
                 }

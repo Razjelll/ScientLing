@@ -16,10 +16,9 @@ import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable.Wor
  * Created by Razjelll on 13.11.2016.
  */
 
-public class WordCreator implements IModelCreator<Word> {
+public class WordCreator {
 
-    @Override
-    public Word createFromCursor(Cursor cursor) {
+    public static Word createFromCursor(Cursor cursor) {
         Word word = new Word();
         Definition definition = null;
         Category category = null;

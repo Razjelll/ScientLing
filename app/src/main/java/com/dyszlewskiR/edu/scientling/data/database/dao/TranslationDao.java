@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.TranslationsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTranslationsTable;
+import com.dyszlewskiR.edu.scientling.data.models.creators.TranslationCreator;
 import com.dyszlewskiR.edu.scientling.data.models.models.Translation;
 
 import java.util.ArrayList;
@@ -71,11 +72,9 @@ public class TranslationDao extends BaseDao<Translation> {
         Cursor cursor = mDb.query(TranslationsTable.TABLE_NAME, mTableColumns, WHERE_ID, whereAttributes,
                 null, null, null, null);
         if (cursor.moveToFirst()) {
-            translation = this.buildTranslationFromCursor(cursor);
+            translation = TranslationCreator.createFromCursor(cursor);
         }
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
+        closeCursor(cursor);
         return translation;
     }
 
@@ -98,15 +97,13 @@ public class TranslationDao extends BaseDao<Translation> {
         if (cursor.moveToFirst()) {
             Translation translation = null;
             do {
-                translation = buildTranslationFromCursor(cursor);
+                translation = TranslationCreator.createFromCursor(cursor);
                 if (translation != null) {
                     translationsList.add(translation);
                 }
             } while (cursor.moveToNext());
         }
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
+        closeCursor(cursor);
         return translationsList;
     }
 
@@ -117,11 +114,9 @@ public class TranslationDao extends BaseDao<Translation> {
         Cursor cursor = mDb.query(TranslationsTable.TABLE_NAME, mTableColumns, where, whereArguments,
                 null, null, null, null);
         if (cursor.moveToFirst()) {
-            translation = buildTranslationFromCursor(cursor);
+            translation = TranslationCreator.createFromCursor(cursor);
         }
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
+        closeCursor(cursor);
         return translation;
     }
 
@@ -172,15 +167,13 @@ public class TranslationDao extends BaseDao<Translation> {
         if (cursor.moveToFirst()) {
             Translation translation = null;
             do {
-                translation = buildTranslationFromCursor(cursor);
+                translation = TranslationCreator.createFromCursor(cursor);
                 if (translation != null) {
                     translationsList.add(translation);
                 }
             } while (cursor.moveToNext());
         }
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
+        closeCursor(cursor);
         return translationsList;
     }
 
@@ -194,25 +187,9 @@ public class TranslationDao extends BaseDao<Translation> {
         String statement2 = new StringBuilder()
                 .append("SELECT* FROM ").append(TranslationsTable.TABLE_NAME)
                 .append(" WHERE ").append(TranslationsColumns.CONTENT).append("=?").toString();
-                /*.append(" WHERE ")
-                .append(TranslationsColumns.ID).append(" NOT IN")
-                .append(" (SELECT ").append(WordsTranslationsColumns.TRANSLATION_FK)
-                .append(" FROM ").append(WordsTranslationsTable.TABLE_NAME).append(")").getUri();*/
-        /*mDb.execSQL(statement);
-        String where = TranslationsColumns.ID + " NOT IN ";
-        String whereArg = " (SELECT " + WordsTranslationsColumns.TRANSLATION_FK
-                + " FROM " + WordsTranslationsTable.TABLE_NAME + ")";
-        where = where + whereArg;
-        String[] whereArguments = {};*/
+
         return mDb.delete(TranslationsTable.TABLE_NAME, statement, null);
-        //return mDb.delete(TranslationsTable.TABLE_NAME,statement, );
-        /*Cursor cursor1 = mDb.rawQuery(statement2, new String[]{"tl"});
-        int count1 = cursor1.getCount();
-        Cursor cursor = mDb.rawQuery(statement, new String[]{});
-        int count = cursor.getCount();
-        Cursor cursor2 = mDb.rawQuery(statement2, new String[]{});
-        int count2 = cursor1.getCount();
-        return count;*/
+
 
     }
 

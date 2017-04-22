@@ -23,8 +23,10 @@ import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
+import com.dyszlewskiR.edu.scientling.data.models.creators.LessonCreator;
 import com.dyszlewskiR.edu.scientling.data.models.creators.SetCreator;
 import com.dyszlewskiR.edu.scientling.data.models.models.Language;
+import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.models.SetItem;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.net.URLConnector;
@@ -503,7 +505,9 @@ public class DownloadSetsFragment extends Fragment {
                 SetCreator setCreator = new SetCreator();
                 VocabularySet set = setCreator.createFromJson(response.getSetJson());
                 JsonNode node = null;
+                LessonCreator creator = new LessonCreator();
                 while((node = response.getLessonJson()) != null){
+                    Lesson lesson = creator.createFromJson(node);
                     Log.d("DownloadAT", node.toString());
                 }
                 while((node = response.getWordJson()) != null){

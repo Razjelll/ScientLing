@@ -11,9 +11,9 @@ import static com.dyszlewskiR.edu.scientling.data.database.tables.HintsTable.Hin
  * Created by Razjelll on 22.12.2016.
  */
 
-public class HintCreator implements IModelCreator<Hint> {
-    @Override
-    public Hint createFromCursor(Cursor cursor) {
+public class HintCreator  {
+
+    public static Hint createFromCursor(Cursor cursor) {
         Hint hint = new Hint();
         int columnsCount = cursor.getColumnCount();
         for (int columnIndex = 0; columnIndex < columnsCount; columnIndex++) {

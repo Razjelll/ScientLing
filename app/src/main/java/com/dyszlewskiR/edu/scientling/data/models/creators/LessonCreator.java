@@ -4,7 +4,9 @@ import android.database.Cursor;
 
 import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
+import com.fasterxml.jackson.databind.JsonNode;
 
+import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns.GLOBAL_ID;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns.ID;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns.NAME;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns.NUMBER;
@@ -14,9 +16,9 @@ import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.L
  * Created by Razjelll on 19.12.2016.
  */
 
-public class LessonCreator implements IModelCreator<Lesson> {
-    @Override
-    public Lesson createFromCursor(Cursor cursor) {
+public class LessonCreator {
+
+    public static Lesson createFromCursor(Cursor cursor) {
         Lesson lesson = new Lesson();
         int columnsCount = cursor.getColumnCount();
         for (int columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
@@ -34,11 +36,32 @@ public class LessonCreator implements IModelCreator<Lesson> {
                     VocabularySet set = new VocabularySet(cursor.getLong(columnIndex));
                     lesson.setSet(set);
                     break;
+                case GLOBAL_ID:
+                    if(!cursor.isNull(columnIndex)){
+                        lesson.setGlobalId(cursor.getLong(columnIndex));
+                    }
                 default: //tutaj trafi postęp
                     lesson.setProgress(cursor.getInt(columnIndex));
 
             }
         }
+        return lesson;
+    }
+
+
+    private static final String ID = "id";
+    private static final String NAME = "name";
+    private static final String NUMBER = "number";
+
+    public static Lesson createFromJson(JsonNode node){
+        if(node == null){
+            return null;
+        }
+        Lesson lesson = new Lesson();
+        lesson.setGlobalId(node.path(ID).asLong());
+        lesson.setName(node.path(NAME).asText());
+        lesson.setNumber(node.path(NUMBER).asInt());
+
         return lesson;
     }
 }

@@ -24,7 +24,7 @@ public class LessonDao extends BaseDao<Lesson> {
     private final String INSERT_STATEMENT =
             "INSERT INTO " + LessonsTable.TABLE_NAME + "("
                     + LessonsColumns.NAME + ", " + LessonsColumns.NUMBER + ", "
-                    + LessonsColumns.SET_FK + ") VALUES (?,?,?)";
+                    + LessonsColumns.SET_FK + ", " +LessonsColumns.GLOBAL_ID +  ") VALUES (?,?,?,?)";
     private final String WHERE_ID = LessonsColumns.ID + "= ?";
 
 
@@ -41,6 +41,11 @@ public class LessonDao extends BaseDao<Lesson> {
         mInsertStatement.bindString(LessonsColumns.NAME_POSITION, entity.getName());
         mInsertStatement.bindLong(LessonsColumns.NUMBER_POSITION, entity.getNumber());
         mInsertStatement.bindLong(LessonsColumns.SET_FK_POSITION, entity.getSet().getId());
+        if(entity.getGlobalId() > 0){
+            mInsertStatement.bindLong(LessonsColumns.GLOBAL_ID_POSITION, entity.getGlobalId());
+        } else {
+            mInsertStatement.bindNull(LessonsColumns.GLOBAL_ID_POSITION);
+        }
         return mInsertStatement.executeInsert();
     }
 
@@ -50,6 +55,11 @@ public class LessonDao extends BaseDao<Lesson> {
         values.put(LessonsColumns.NAME, entity.getName());
         values.put(LessonsColumns.NUMBER, entity.getNumber());
         values.put(LessonsColumns.SET_FK, entity.getSet().getId());
+        if(entity.getGlobalId() > 0 ){
+            values.put(LessonsColumns.GLOBAL_ID, entity.getGlobalId());
+        } else {
+            values.putNull(LessonsColumns.GLOBAL_ID);
+        }
 
         String[] whereArguments = new String[]{String.valueOf(entity.getId())};
         mDb.update(LessonsTable.TABLE_NAME, values, WHERE_ID, whereArguments);
@@ -72,29 +82,9 @@ public class LessonDao extends BaseDao<Lesson> {
         Cursor cursor = mDb.query(LessonsTable.TABLE_NAME, mTableColumns, WHERE_ID, whereArguments,
                 null, null, null, null);
         if (cursor.moveToFirst()) {
-            LessonCreator creator = new LessonCreator();
-            lesson = creator.createFromCursor(cursor);
+            lesson = LessonCreator.createFromCursor(cursor);
         }
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
-        return lesson;
-    }
-
-    private Lesson buildLessonFromCursor(Cursor cursor) {
-        Lesson lesson = null;
-        if (cursor != null) {
-            lesson = new Lesson();
-            lesson.setId(cursor.getLong(LessonsColumns.ID_POSITION));
-            lesson.setName(cursor.getString(LessonsColumns.NAME_POSITION));
-            lesson.setNumber(cursor.getLong(LessonsColumns.NUMBER_POSITION));
-            long setId = cursor.getLong(LessonsColumns.SET_FK_POSITION);
-            if (setId > 0) {
-                VocabularySet set = new VocabularySet();
-                set.setId(setId);
-                lesson.setSet(set);
-            }
-        }
+        closeCursor(cursor);
         return lesson;
     }
 
@@ -106,9 +96,8 @@ public class LessonDao extends BaseDao<Lesson> {
                 groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
             Lesson lesson = null;
-            LessonCreator creator = new LessonCreator();
             do {
-                lesson = creator.createFromCursor(cursor);
+                lesson = LessonCreator.createFromCursor(cursor);
                 if (lesson != null) {
                     lessonsList.add(lesson);
                 }

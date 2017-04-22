@@ -16,10 +16,9 @@ import static com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable.Sets
  * Created by Razjelll on 31.03.2017.
  */
 
-public class SetCreator implements IModelCreator<VocabularySet> {
+public class SetCreator  {
 
-    @Override
-    public VocabularySet createFromCursor(Cursor cursor) {
+    public static VocabularySet createFromCursor(Cursor cursor) {
         VocabularySet set = null;
         if (cursor != null) {
             set = new VocabularySet();
@@ -42,12 +41,12 @@ public class SetCreator implements IModelCreator<VocabularySet> {
         return set;
     }
 
-    private final String ID = "id";
-    private final String NAME = "name";
-    private final String L1 = "l1";
-    private final String L2 = "l2";
+    private static final String ID = "id";
+    private static final String NAME = "name";
+    private static final String L1 = "l1";
+    private static final String L2 = "l2";
 
-    public VocabularySet createFromJson(JsonNode object) throws JSONException {
+    public static VocabularySet createFromJson(JsonNode object) throws JSONException {
         long id = object.path(ID).asLong();
         String name = object.path(NAME).asText();
         long l1 = object.path(L1).asLong();

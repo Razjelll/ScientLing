@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.PartsOfSpeechTable;
+import com.dyszlewskiR.edu.scientling.data.models.creators.PartOfSpeechCreator;
 import com.dyszlewskiR.edu.scientling.data.models.models.PartOfSpeech;
 
 import java.util.ArrayList;
@@ -65,23 +66,9 @@ public class PartOfSpeechDao extends BaseDao<PartOfSpeech> {
         Cursor cursor = mDb.query(PartsOfSpeechTable.TABLE_NAME, mTableColumns, WHERE_ID, whereArguments,
                 null, null, null, null);
         if (cursor.moveToFirst()) {
-            partOfSpeech = buildPartOfSpeechFromCursor(cursor);
+            partOfSpeech = PartOfSpeechCreator.createFromCursor(cursor);
         }
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
-
-        assert cursor.isClosed();
-        return partOfSpeech;
-    }
-
-    private PartOfSpeech buildPartOfSpeechFromCursor(Cursor cursor) {
-        PartOfSpeech partOfSpeech = null;
-        if (cursor != null) {
-            partOfSpeech = new PartOfSpeech();
-            partOfSpeech.setId(cursor.getLong(PartsOfSpeechColumns.ID_POSITION));
-            partOfSpeech.setName(cursor.getString(PartsOfSpeechColumns.NAME_POSITION));
-        }
+        closeCursor(cursor);
         return partOfSpeech;
     }
 
@@ -94,18 +81,13 @@ public class PartOfSpeechDao extends BaseDao<PartOfSpeech> {
         if (cursor.moveToFirst()) {
             PartOfSpeech partOfSpeech = null;
             do {
-                partOfSpeech = buildPartOfSpeechFromCursor(cursor);
+                partOfSpeech = PartOfSpeechCreator.createFromCursor(cursor);
                 if (partOfSpeech != null) {
                     partsOfSpeechList.add(partOfSpeech);
                 }
             } while (cursor.moveToNext());
         }
-        if (!cursor.isClosed()) {
-            cursor.close();
-        }
-
-        assert cursor.isClosed();
-
+        closeCursor(cursor);
         return partsOfSpeechList;
     }
 }

@@ -25,7 +25,8 @@ public class SetDao extends BaseDao<VocabularySet> {
             "INSERT INTO " + SetsTable.TABLE_NAME + "("
                     + SetsColumns.NAME + ", " + SetsColumns.LANGUAGE_L2_FK
                     + ", " + SetsColumns.LANGUAGE_L1_FK
-                    + ", " + SetsColumns.CATALOG + ") VALUES (?,?,?,?)";
+                    + ", " + SetsColumns.CATALOG +
+                    ", " + SetsColumns.GLOBAL_ID + ") VALUES (?,?,?,?,?)";
     private final String WHERE_ID = SetsColumns.ID + "= ?";
 
     public SetDao(SQLiteDatabase db) {
@@ -41,6 +42,11 @@ public class SetDao extends BaseDao<VocabularySet> {
         mInsertStatement.bindLong(SetsColumns.LANGUAGE_L2_FK_POSITION, entity.getLanguageL2().getId());
         mInsertStatement.bindLong(SetsColumns.LANGUAGE_L1_FK_POSITION, entity.getLanguageL1().getId());
         mInsertStatement.bindString(SetsColumns.CATALOG_POSITION, entity.getCatalog());
+        if(entity.getGlobalId() >0){
+            mInsertStatement.bindLong(SetsColumns.GLOBAL_ID_POSITION, entity.getGlobalId());
+        } else {
+            mInsertStatement.bindNull(SetsColumns.GLOBAL_ID_POSITION);
+        }
         return mInsertStatement.executeInsert();
     }
 
@@ -59,6 +65,11 @@ public class SetDao extends BaseDao<VocabularySet> {
             values.putNull(SetsColumns.LANGUAGE_L1_FK);
         }
         values.put(SetsColumns.CATALOG, entity.getCatalog());
+        if(entity.getGlobalId() > 0){
+            values.put(SetsColumns.GLOBAL_ID, entity.getGlobalId());
+        } else{
+            values.putNull(SetsColumns.GLOBAL_ID);
+        }
 
         String[] whereArguments = new String[]{String.valueOf(entity.getId())};
         mDb.update(TABLE_NAME, values, WHERE_ID, whereArguments);
@@ -82,8 +93,7 @@ public class SetDao extends BaseDao<VocabularySet> {
         Cursor cursor = mDb.query(TABLE_NAME, mTableColumns, WHERE_ID, whereArguments,
                 null, null, null, null);
         if (cursor.moveToFirst()) {
-            SetCreator creator = new SetCreator();
-            set = creator.createFromCursor(cursor);
+            set = SetCreator.createFromCursor(cursor);
         }
         closeCursor(cursor);
         return set;
@@ -98,9 +108,8 @@ public class SetDao extends BaseDao<VocabularySet> {
                 groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
             VocabularySet set = null;
-            SetCreator creator = new SetCreator();
             do {
-                set = creator.createFromCursor(cursor);
+                set = SetCreator.createFromCursor(cursor);
                 if (set != null) {
                     setsList.add(set);
                 }

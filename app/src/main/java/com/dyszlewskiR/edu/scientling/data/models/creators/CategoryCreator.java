@@ -11,9 +11,9 @@ import static com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTabl
  * Created by Razjelll on 12.11.2016.
  */
 
-public class CategoryCreator implements IModelCreator<Category> {
-    @Override
-    public Category createFromCursor(Cursor cursor) {
+public class CategoryCreator  {
+
+    public static Category createFromCursor(Cursor cursor) {
         Category category = new Category();
         int columnsCount = cursor.getColumnCount();
         for (int columnIndex = 0; columnIndex < columnsCount; columnIndex++) {

@@ -12,10 +12,9 @@ import static com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTab
  * Created by Razjelll on 12.11.2016.
  */
 
-public class DefinitionCreator implements IModelCreator<Definition> {
+public class DefinitionCreator  {
 
-    @Override
-    public Definition createFromCursor(Cursor cursor) {
+    public static Definition createFromCursor(Cursor cursor) {
         Definition definition = null;
         int columnsCount = cursor.getColumnCount();
         for (int columnIndex = 0; columnIndex < columnsCount; columnIndex++) {

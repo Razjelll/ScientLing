@@ -68,8 +68,7 @@ public class CategoryDao extends BaseDao<Category> {
         Cursor cursor = mDb.query(TABLE_NAME, mTableColumns, getWhereStatement(), getWhereArguments(id),
                 null, null, null, null);
         if (cursor.moveToFirst()) {
-            CategoryCreator categoryCreator = new CategoryCreator();
-            category = categoryCreator.createFromCursor(cursor);
+            category = CategoryCreator.createFromCursor(cursor);
         }
         closeCursor(cursor);
         return category;
@@ -87,10 +86,9 @@ public class CategoryDao extends BaseDao<Category> {
         Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection, selectionArgs,
                 groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
-            CategoryCreator categoryCreator = new CategoryCreator();
             Category category = null;
             do {
-                category = categoryCreator.createFromCursor(cursor);
+                category = CategoryCreator.createFromCursor(cursor);
                 if (category != null) {
                     categoriesList.add(category);
                 }

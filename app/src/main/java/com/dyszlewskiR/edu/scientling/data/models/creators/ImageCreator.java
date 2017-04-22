@@ -14,9 +14,9 @@ import static com.dyszlewskiR.edu.scientling.data.database.tables.ImagesTable.Im
  * Created by Razjelll on 18.01.2017.
  */
 
-public class ImageCreator implements IModelCreator {
+public class ImageCreator  {
 
-    public Image createFromCursor(Cursor cursor) {
+    public static Image createFromCursor(Cursor cursor) {
         Image image = new Image();
         int columnsCount = cursor.getColumnCount();
         for (int columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
@@ -37,7 +37,7 @@ public class ImageCreator implements IModelCreator {
         return image;
     }
 
-    private Bitmap getBitmapFromCursor(Cursor cursor, int columnIndex) {
+    private static Bitmap getBitmapFromCursor(Cursor cursor, int columnIndex) {
         if (!cursor.isNull(columnIndex)) {
             byte[] imageBytes = cursor.getBlob(columnIndex);
             return BitmapUtils.getBitmap(imageBytes);
