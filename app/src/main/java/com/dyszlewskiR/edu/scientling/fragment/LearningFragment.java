@@ -224,25 +224,6 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
 
     private void speech() {
         mSpeechButton.setLoading(true);
-        /*if(mRecordUri != null){
-            if(!mMediaPlayer.isInit()){
-                mMediaPlayer.init(getContext());
-            }
-            try {
-                mMediaPlayer.play(mRecordUri);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            if(mTextToSpeech == null){
-                mTextToSpeech = new TextToSpeech(getContext(), mSet.getLanguageL2().getCode());
-                mTextToSpeech.setCallback(this);
-            }
-
-            //mTextToSpeech.notifyNewMessage(mWords.get(mCurrentPosition).getContent());
-            mTextToSpeech.notifyNewMessage(mWords.get(mCurrentPosition).getContent());
-
-        }*/
         try {
             mSpeechPlayer.speech();
         } catch (IOException e) {

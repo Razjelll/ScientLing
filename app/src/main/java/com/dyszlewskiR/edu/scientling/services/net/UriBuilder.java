@@ -1,4 +1,4 @@
-package com.dyszlewskiR.edu.scientling.net;
+package com.dyszlewskiR.edu.scientling.services.net;
 
 import java.util.HashMap;
 import java.util.Map;

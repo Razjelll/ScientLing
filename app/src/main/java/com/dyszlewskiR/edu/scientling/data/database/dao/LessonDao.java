@@ -108,4 +108,17 @@ public class LessonDao extends BaseDao<Lesson> {
 
         return lessonsList;
     }
+
+    public long getId(long globalId){
+        String[] columns = {LessonsColumns.ID};
+        String selection = LessonsColumns.GLOBAL_ID + "=?";
+        String[] selectionArguments = {String.valueOf(globalId)};
+
+        Cursor cursor = mDb.query(LessonsTable.TABLE_NAME, columns, selection, selectionArguments,
+                null,null,null,null);
+        if(cursor.moveToFirst()){
+            return cursor.getLong(0);
+        }
+        return -1;
+    }
 }

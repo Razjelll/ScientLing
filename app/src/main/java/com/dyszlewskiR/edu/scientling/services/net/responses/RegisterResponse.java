@@ -1,8 +1,8 @@
-package com.dyszlewskiR.edu.scientling.net.responses;
+package com.dyszlewskiR.edu.scientling.services.net.responses;
 
 import android.util.JsonReader;
 
-import com.dyszlewskiR.edu.scientling.net.ResponseStatus;
+import com.dyszlewskiR.edu.scientling.services.net.ResponseStatus;
 
 import java.io.IOException;
 import java.io.InputStream;

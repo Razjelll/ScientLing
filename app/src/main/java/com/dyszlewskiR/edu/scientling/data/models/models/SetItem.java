@@ -1,5 +1,8 @@
 package com.dyszlewskiR.edu.scientling.data.models.models;
 
+
+import java.util.Date;
+
 /**
  * Created by Razjelll on 12.04.2017.
  */
@@ -17,6 +20,7 @@ public class SetItem {
     private int mDownloads;
     private int mImagesSize;
     private int mRecordsSize;
+    private Date mAddedDate;
 
     public long getId() {
         return mId;
@@ -112,5 +116,12 @@ public class SetItem {
 
     public void setRecordsSize(int size) {
         mRecordsSize = size;
+    }
+
+    public Date getAddedDate(){
+        return mAddedDate;
+    }
+    public void setAddedDate(Date date){
+        mAddedDate = date;
     }
 }

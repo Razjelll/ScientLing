@@ -1,12 +1,10 @@
-package com.dyszlewskiR.edu.scientling.net.requests;
+package com.dyszlewskiR.edu.scientling.services.net.requests;
 
-import com.dyszlewskiR.edu.scientling.net.URLConnector;
+import com.dyszlewskiR.edu.scientling.services.net.URLConnector;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-
-import javax.net.ssl.HttpsURLConnection;
 
 /**
  * Created by Razjelll on 21.04.2017.

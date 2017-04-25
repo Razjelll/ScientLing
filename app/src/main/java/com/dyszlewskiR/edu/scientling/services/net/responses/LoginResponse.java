@@ -1,17 +1,13 @@
-package com.dyszlewskiR.edu.scientling.net.responses;
+package com.dyszlewskiR.edu.scientling.services.net.responses;
 
 import android.util.JsonReader;
 
-import com.dyszlewskiR.edu.scientling.net.ResponseStatus;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.dyszlewskiR.edu.scientling.services.net.ResponseStatus;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URLConnection;
 
 /**
  * Created by Razjelll on 21.04.2017.

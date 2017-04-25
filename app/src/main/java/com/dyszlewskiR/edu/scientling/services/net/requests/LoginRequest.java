@@ -1,8 +1,6 @@
-package com.dyszlewskiR.edu.scientling.net.requests;
+package com.dyszlewskiR.edu.scientling.services.net.requests;
 
-import android.util.JsonReader;
-
-import com.dyszlewskiR.edu.scientling.net.URLConnector;
+import com.dyszlewskiR.edu.scientling.services.net.URLConnector;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import org.json.JSONException;
@@ -10,8 +8,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;

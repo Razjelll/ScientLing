@@ -1,6 +1,7 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -22,16 +23,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
+import com.dyszlewskiR.edu.scientling.activity.SetDetailsActivity;
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.data.models.creators.LessonCreator;
 import com.dyszlewskiR.edu.scientling.data.models.creators.SetCreator;
+import com.dyszlewskiR.edu.scientling.data.models.creators.WordCreator;
 import com.dyszlewskiR.edu.scientling.data.models.models.Language;
 import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.models.SetItem;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
-import com.dyszlewskiR.edu.scientling.net.URLConnector;
-import com.dyszlewskiR.edu.scientling.net.requests.DownloadSetRequest;
-import com.dyszlewskiR.edu.scientling.net.responses.DownloadSetResponse;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
+import com.dyszlewskiR.edu.scientling.services.net.DownloadSetsService;
+import com.dyszlewskiR.edu.scientling.services.net.URLConnector;
+import com.dyszlewskiR.edu.scientling.services.net.requests.DownloadSetRequest;
+import com.dyszlewskiR.edu.scientling.services.net.responses.DownloadSetResponse;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.services.json.SetsJsonReader;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
@@ -39,7 +44,6 @@ import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.json.JSONException;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import java.io.BufferedInputStream;
@@ -188,6 +192,16 @@ public class DownloadSetsFragment extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
+            }
+        });
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                long setId = mAdapter.getItemId(position);
+                Intent intent = new Intent(getContext(), SetDetailsActivity.class);
+                intent.putExtra("id", setId);
+                startActivity(intent);
             }
         });
 
@@ -366,12 +380,19 @@ public class DownloadSetsFragment extends Fragment {
         private List<SetItem> mItems;
         private Context mContext;
         private int mResource;
+        private DataManager mDataManager;
 
         public DownloadSetAdapter(Context context, int resource, List<SetItem> data) {
             super(context, resource, data);
             mContext = context;
             mResource = resource;
             mItems = data;
+            mDataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
+        }
+
+        @Override
+        public long getItemId(int position){
+            return mItems.get(position).getId();
         }
 
         @Override
@@ -395,18 +416,30 @@ public class DownloadSetsFragment extends Fragment {
                 viewHolder.languageL1TextView.setText(ResourceUtils.getString(mItems.get(position).getLanguageL1(), getContext()));
             }
 
-            viewHolder.authorTextView.setText(mItems.get(position).getAuthor());
+            //viewHolder.authorTextView.setText(mItems.get(position).getAuthor());
             viewHolder.numberWordsTextView.setText(String.valueOf(mItems.get(position).getWordsCount()));
             viewHolder.sizeTextView.setText(String.valueOf(mItems.get(position).getBasicSize()));
             viewHolder.ratingTextView.setText(String.valueOf(mItems.get(position).getRating()));
             viewHolder.downloadsTextView.setText(String.valueOf(mItems.get(position).getDownloads()));
-            viewHolder.downloadButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    DownloadSetAsyncTask task = new DownloadSetAsyncTask();
-                    task.execute(mItems.get(position).getId());
-                }
-            });
+            if(checkSetIsDownloaded(mItems.get(position).getId())){
+                viewHolder.downloadButton.setVisibility(View.GONE);
+                viewHolder.downloadedTextView.setVisibility(View.VISIBLE);
+            } else {
+                viewHolder.downloadButton.setVisibility(View.VISIBLE);
+                viewHolder.downloadedTextView.setVisibility(View.GONE);
+                viewHolder.downloadButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //DownloadSetAsyncTask task = new DownloadSetAsyncTask();
+                        //task.execute(mItems.get(position).getId());
+                        Intent intent = new Intent(getContext(), DownloadSetsService.class);
+                        intent.putExtra("id", mItems.get(position).getId());
+                        intent.putExtra("name", mItems.get(position).getName());
+                        getActivity().startService(intent);
+                    }
+                });
+            }
+
 
             viewHolder.downloadsTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -416,6 +449,10 @@ public class DownloadSetsFragment extends Fragment {
             });
 
             return rowView;
+        }
+
+        private boolean checkSetIsDownloaded(long setId){
+            return mDataManager.checkSetIdDownloaded(setId);
         }
     }
     //endregion
@@ -473,55 +510,31 @@ public class DownloadSetsFragment extends Fragment {
         public TextView nameTextView;
         public TextView languageL1TextView;
         public TextView languageL2TextView;
-        public TextView authorTextView;
+        //public TextView authorTextView;
         public TextView numberWordsTextView;
         public TextView sizeTextView;
         public TextView ratingTextView;
         public TextView downloadsTextView;
         public ImageView downloadButton;
+        public TextView downloadedTextView;
+        public TextView downloadingTextView;
 
         public ViewHolder(View view) {
             nameTextView = (TextView) view.findViewById(R.id.name_text_view);
             languageL1TextView = (TextView) view.findViewById(R.id.language_l1_text_view);
             languageL2TextView = (TextView) view.findViewById(R.id.language_l2_text_view);
-            authorTextView = (TextView) view.findViewById(R.id.author_text_view);
+            //authorTextView = (TextView) view.findViewById(R.id.author_text_view);
             numberWordsTextView = (TextView) view.findViewById(R.id.number_words_text_view);
             sizeTextView = (TextView) view.findViewById(R.id.size_text_view);
             ratingTextView = (TextView) view.findViewById(R.id.rating_text_view);
             downloadsTextView = (TextView) view.findViewById(R.id.downloads_text_view);
             downloadButton = (ImageView) view.findViewById(R.id.download_button);
+            downloadedTextView = (TextView)view.findViewById(R.id.downloaded_text_view);
+            downloadingTextView = (TextView)view.findViewById(R.id.is_download_text_view);
 
         }
 
     }
 
-    private class DownloadSetAsyncTask extends AsyncTask<Long, Void, Void>{
 
-        @Override
-        protected Void doInBackground(Long... params) {
-            DownloadSetRequest request = new DownloadSetRequest(params[0]);
-            try {
-                DownloadSetResponse response = new DownloadSetResponse(request.start());
-                SetCreator setCreator = new SetCreator();
-                VocabularySet set = setCreator.createFromJson(response.getSetJson());
-                JsonNode node = null;
-                LessonCreator creator = new LessonCreator();
-                while((node = response.getLessonJson()) != null){
-                    Lesson lesson = creator.createFromJson(node);
-                    Log.d("DownloadAT", node.toString());
-                }
-                while((node = response.getWordJson()) != null){
-                    Log.d("DownloadAT", node.toString());
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
 }

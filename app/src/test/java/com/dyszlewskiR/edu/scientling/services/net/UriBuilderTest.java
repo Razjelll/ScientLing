@@ -1,4 +1,4 @@
-package com.dyszlewskiR.edu.scientling.net;
+package com.dyszlewskiR.edu.scientling.services.net;
 
 import org.junit.Assert;
 import org.junit.Test;

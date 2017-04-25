@@ -20,6 +20,7 @@ import com.dyszlewskiR.edu.scientling.data.database.dao.WordDao;
 import com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.HintsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable;
+import com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable;
 import com.dyszlewskiR.edu.scientling.data.database.utils.QueryReader;
 import com.dyszlewskiR.edu.scientling.data.models.models.Category;
@@ -51,6 +52,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.zip.DeflaterInputStream;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable.WordsColumns;
@@ -73,7 +75,13 @@ public class DataManager {
     private WordDao mWordDao; //TODO przetestować, gdzie bedzie działało lepiej
     private CategoryDao mCategoryDao;
     private SetDao mSetDao;
+    private TranslationDao mTrasnaltionDao;
+    private SentenceDao mSentenceDao;
+    private DefinitionDao mDefinitionDao;
+    private HintDao mHintDao;
+    private LessonDao mLessonDao;
 
+    private boolean mTransactionStarted;
 
     public DataManager(Context context) {
         mContext = context;
@@ -132,23 +140,21 @@ public class DataManager {
 
 
     public long saveWord(Word word) {
-        mDb.beginTransaction();
+        WordDao wordDao = mTransactionStarted ? mWordDao : new WordDao(mDb);
+        if(!mTransactionStarted){
+            mDb.beginTransaction();
+        }
 
         //zapisywanie definicji
-        long definitionId = saveDefinition(word.getDefinition());
-        if (definitionId > 0) {
-            word.getDefinition().setId(definitionId);
+        if(word.getDefinition() != null){
+            long definitionId = saveDefinition(word.getDefinition());
+            if (definitionId > 0) {
+                word.getDefinition().setId(definitionId);
+            }
         }
-        //zapisywanie kategorii nie jest potrzebne, ponieważ kategoria jest ustalona odgórnie
-        /*long categoryId = saveCategory(word.getCategory());
-        if (categoryId > 0) {
-            word.getCategory().setId(categoryId);
-        }*/
 
-        assert word.getTranslations() != null;
-
-        WordDao wordDao = new WordDao(mDb);
         long wordId = wordDao.save(word);
+
         saveTranslations(word.getTranslations(), wordId);
         if (word.getSentences() != null) {
             saveSentences(word.getSentences(), wordId);
@@ -157,9 +163,11 @@ public class DataManager {
             saveHints(word.getHints(), wordId);
         }
 
+        if(!mTransactionStarted){
+            mDb.setTransactionSuccessful();
+            mDb.endTransaction();
+        }
 
-        mDb.setTransactionSuccessful();
-        mDb.endTransaction();
         return wordId;
     }
 
@@ -178,8 +186,12 @@ public class DataManager {
      * @return
      */
     private long saveDefinition(Definition definition) {
-
-        DefinitionDao definitionDao = new DefinitionDao(mDb);
+        DefinitionDao definitionDao;
+        if(!mTransactionStarted){
+            definitionDao = new DefinitionDao(mDb);
+        } else {
+            definitionDao = mDefinitionDao;
+        }
         long definitionId = 0;
         if (definition != null) {
             definitionId = definitionDao.getIdByContentAndTranslation(definition.getContent(), definition.getTranslation());
@@ -209,9 +221,12 @@ public class DataManager {
      * @param wordId
      */
     private void saveTranslations(ArrayList<Translation> translationsList, long wordId) {
-        //TODO pozmieniać nazwy translation i t
+        if(translationsList==null){
+            return;
+        }
         Translation existingTranslation = null;
-        TranslationDao translationDao = new TranslationDao(mDb);
+        TranslationDao translationDao = mTransactionStarted ? mTrasnaltionDao : new TranslationDao(mDb) ;
+
         for (Translation translation : translationsList) {
             existingTranslation = translationDao.getByContent(translation.getContent());
             long translationId;
@@ -222,28 +237,32 @@ public class DataManager {
             }
             translationDao.link(translationId, wordId);
         }
-        translationDao.deleteUnlinked();
+        if(!mTransactionStarted){
+            translationDao.deleteUnlinked();
+        }
     }
 
     private void saveSentences(ArrayList<Sentence> sentencesList, long wordId) {
         Sentence existingSentence = null;
-        SentenceDao sentenceDao = new SentenceDao(mDb);
-        for (Sentence s : sentencesList) {
-            existingSentence = sentenceDao.getByContent(s.getContent());
+        SentenceDao sentenceDao = mTransactionStarted ? mSentenceDao : new SentenceDao(mDb);
+        for (Sentence sentece : sentencesList) {
+            existingSentence = sentenceDao.getByContent(sentece.getContent());
             long sentenceId;
             if (existingSentence == null) {
-                sentenceId = sentenceDao.save(s);
+                sentenceId = sentenceDao.save(sentece);
             } else {
                 sentenceId = existingSentence.getId();
             }
             sentenceDao.link(sentenceId, wordId);
         }
-        sentenceDao.deleteUnlinked();
+        if(!mTransactionStarted){
+            sentenceDao.deleteUnlinked();
+        }
     }
 
     private void saveHints(List<Hint> hintsList, long wordId) {
         Hint existingHint = null;
-        HintDao hintDao = new HintDao(mDb);
+        HintDao hintDao = mTransactionStarted ? mHintDao : new HintDao(mDb);
         for (Hint hint : hintsList) {
             existingHint = hintDao.getByContent(hint.getContent());
             long hintId;
@@ -254,7 +273,9 @@ public class DataManager {
             }
             hintDao.link(hintId, wordId);
         }
-        hintDao.deleteUnlinked();
+        if(!mTransactionStarted){
+            hintDao.deleteUnlinked();
+        }
     }
 
     public void updateWord(Word word) {
@@ -355,7 +376,8 @@ public class DataManager {
     }
 
     public VocabularySet getSetById(long id) {
-        return mSetDao.get(id);
+        SetDao setDao = mTransactionStarted?mSetDao:new SetDao(mDb);
+        return setDao.get(id);
     }
 
     public List<Category> getCategories() {
@@ -368,12 +390,18 @@ public class DataManager {
     }
 
     public long saveSet(VocabularySet set) {
-        mDb.beginTransaction();
-        long id = mSetDao.save(set);
-        if (id > 0) {
-            mDb.setTransactionSuccessful();
+        if(!mTransactionStarted){
+            mDb.beginTransaction();
         }
-        mDb.endTransaction();
+
+        long id = mSetDao.save(set);
+
+        if(!mTransactionStarted){
+            if (id > 0) {
+                mDb.setTransactionSuccessful();
+            }
+            mDb.endTransaction();
+        }
         return id;
     }
 
@@ -419,13 +447,21 @@ public class DataManager {
     }
 
     public long saveLesson(Lesson lesson) {
-        LessonDao dao = new LessonDao(mDb);
-        mDb.beginTransaction();
-        long id = dao.save(lesson);
-        if (id > 0) {
-            mDb.setTransactionSuccessful();
+        if(!mTransactionStarted){
+            mLessonDao = new LessonDao(mDb);
+            mDb.beginTransaction();
         }
-        mDb.endTransaction();
+
+        long id = mLessonDao.save(lesson);
+
+        if(!mTransactionStarted){
+            if (id > 0) {
+                mDb.setTransactionSuccessful();
+            }
+            mDb.endTransaction();
+            mLessonDao = null;
+        }
+
         return id;
     }
 
@@ -483,8 +519,8 @@ public class DataManager {
         }
 
         String order = WordsColumns.LESSON_FK + ", " + WordsColumns.DIFFICULT;
-
-        List<Word> words = mWordDao.getAllWithJoins(true, where, whereArguments, null, null, order, limit);
+        WordDao wordDao = mTransactionStarted?mWordDao:new WordDao(mDb);
+        List<Word> words = wordDao.getAllWithJoins(true, where, whereArguments, null, null, order, limit);
         for (Word word : words) {
             completeWord(word);
         }
@@ -765,11 +801,6 @@ public class DataManager {
         int deletedSentences = sentenceDao.deleteUnlinked();
         int deletedHints = hintDao.deleteUnlinked();
         int deletedDefinitions = definitionDao.deleteUnlinked();
-        Log.d(TAG, "DeletedWords : " + deletedWords);
-        Log.d(TAG, "DeletedTranslations: " + deletedTranslations);
-        Log.d(TAG, "DeletedSentences: " + deletedSentences);
-        Log.d(TAG, "DeletedHints: " + deletedHints);
-        Log.d(TAG, "DeletedDefinitions: " + deletedDefinitions);
     }
 
     /**
@@ -874,5 +905,50 @@ public class DataManager {
     public Language getLanguageById(long id) {
         LanguageDao dao = new LanguageDao(mDb);
         return dao.get(id);
+    }
+
+    public void startTransaction(){
+        mWordDao = new WordDao(mDb);
+        mTrasnaltionDao = new TranslationDao(mDb);
+        mSentenceDao = new SentenceDao(mDb);
+        mHintDao = new HintDao(mDb);
+        mDefinitionDao = new DefinitionDao(mDb);
+        mSetDao = new SetDao(mDb);
+        mLessonDao = new LessonDao(mDb);
+        mDb.beginTransaction();
+        mTransactionStarted = true;
+    }
+
+    public void finishTranslation(){
+        mWordDao = null;
+        mTrasnaltionDao = null;
+        mSentenceDao = null;
+        mHintDao = null;
+        mDefinitionDao = null;
+        mSetDao = null;
+        mLessonDao = null;
+        mDb.setTransactionSuccessful();
+        mDb.endTransaction();
+        mTransactionStarted = false;
+    }
+
+    public long getLessonId(long globalId){
+        LessonDao lessonDao = mTransactionStarted ? mLessonDao : new LessonDao(mDb);
+        return lessonDao.getId(globalId);
+    }
+
+    public boolean checkSetIdDownloaded(long globalId){
+        String[] column = {"COUNT(1)"};
+        String selection = SetsTable.SetsColumns.GLOBAL_ID + "=?";
+        String[] selectionArgumnet = {String.valueOf(globalId)};
+        Cursor cursor = mDb.query(SetsTable.TABLE_NAME, column,selection,selectionArgumnet,
+                null,null,null,null);
+        if(cursor.moveToFirst()){
+            int count = cursor.getInt(0);
+            if(count > 0){
+                return true;
+            }
+        }
+        return false;
     }
 }

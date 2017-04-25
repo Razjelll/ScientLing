@@ -4,6 +4,9 @@ import android.database.Cursor;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.TranslationsTable;
 import com.dyszlewskiR.edu.scientling.data.models.models.Translation;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.TranslationsTable.*;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.TranslationsTable.TranslationsColumns.*;
@@ -23,4 +26,22 @@ public class TranslationCreator {
         }
         return translation;
     }
+
+    private static final String CONTENT = "c";
+
+    public static Translation createFromJson(JsonNode node){
+        Translation translation = new Translation();
+        translation.setContent(node.path(CONTENT).asText());
+
+        return translation;
+    }
+
+    @JsonCreator
+    public Translation createFromJson(@JsonProperty(CONTENT) String content){
+        Translation translation = new Translation();
+        translation.setContent(content);
+        return translation;
+    }
 }
+
+

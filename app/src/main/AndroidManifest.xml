@@ -38,6 +38,7 @@
         <service android:name=".services.data.DeletingLessonService" />
         <service android:name=".services.data.DeletingSetService" />
         <service android:name=".services.data.DeletingWordService" />
+        <service android:name=".services.net.DownloadSetsService" />
 
         <activity android:name=".activity.LoginActivity" />
         <activity
@@ -163,6 +164,10 @@
         <activity
             android:name=".activity.RegistrationActivity"
             android:label="@string/title_activity_registration"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".activity.SetDetailsActivity"
+            android:label="@string/title_activity_set_details"
             android:theme="@style/NoActionBar"></activity>
     </application>
 

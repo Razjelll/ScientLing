@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.ExampleSentences;
 import com.dyszlewskiR.edu.scientling.data.database.tables.SentencesTable;
+import com.dyszlewskiR.edu.scientling.data.database.tables.TranslationsTable;
 import com.dyszlewskiR.edu.scientling.data.models.creators.SentenceCreator;
 import com.dyszlewskiR.edu.scientling.data.models.models.Sentence;
 
@@ -43,8 +44,13 @@ public class SentenceDao extends BaseDao<Sentence> {
     @Override
     public long save(Sentence entity) {
         mInsertStatement.clearBindings();
-        mInsertStatement.bindString(1, entity.getContent());
-        mInsertStatement.bindString(2, entity.getTranslation());
+        mInsertStatement.bindString(SentencesColumns.CONTENT_POSITION, entity.getContent());
+        if(entity.getTranslation() != null){
+            mInsertStatement.bindString(SentencesColumns.TRANSLATION_POSITION, entity.getTranslation());
+        } else {
+            mInsertStatement.bindNull(SentencesColumns.TRANSLATION_POSITION);
+        }
+
         return mInsertStatement.executeInsert();
     }
 
@@ -52,7 +58,11 @@ public class SentenceDao extends BaseDao<Sentence> {
     public void update(Sentence entity) {
         final ContentValues values = new ContentValues();
         values.put(SentencesColumns.CONTENT, entity.getContent());
-        values.put(SentencesColumns.TRANSLATION, entity.getTranslation());
+        if(entity.getTranslation() != null){
+            values.put(SentencesColumns.TRANSLATION, entity.getTranslation());
+        } else {
+            values.putNull(SentencesColumns.TRANSLATION);
+        }
 
         String where = SentencesColumns.ID + "= ?";
         String[] whereArguments = new String[]{String.valueOf(entity.getId())};

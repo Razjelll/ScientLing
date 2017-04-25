@@ -5,24 +5,20 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.JsonReader;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.net.requests.LoginRequest;
-import com.dyszlewskiR.edu.scientling.net.responses.LoginResponse;
+import com.dyszlewskiR.edu.scientling.services.net.requests.LoginRequest;
+import com.dyszlewskiR.edu.scientling.services.net.responses.LoginResponse;
 import com.dyszlewskiR.edu.scientling.preferences.LogPref;
 import com.dyszlewskiR.edu.scientling.utils.MD5;
 
 import org.json.JSONException;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
 
 public class LoginActivity extends AppCompatActivity {

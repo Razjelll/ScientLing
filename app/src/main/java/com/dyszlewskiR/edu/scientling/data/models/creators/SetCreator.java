@@ -47,15 +47,11 @@ public class SetCreator  {
     private static final String L2 = "l2";
 
     public static VocabularySet createFromJson(JsonNode object) throws JSONException {
-        long id = object.path(ID).asLong();
-        String name = object.path(NAME).asText();
-        long l1 = object.path(L1).asLong();
-        long l2 = object.path(L2).asLong();
-
         VocabularySet set = new VocabularySet();
-        set.setName(name);
-        set.setLanguageL1(new Language(l1));
-        set.setLanguageL2(new Language(l2));
+        set.setGlobalId(object.path(ID).asLong());
+        set.setName(object.path(NAME).asText());
+        set.setLanguageL1(new Language(object.path(L1).asLong()));
+        set.setLanguageL2(new Language(object.path(L2).asLong()));
 
         return set;
     }

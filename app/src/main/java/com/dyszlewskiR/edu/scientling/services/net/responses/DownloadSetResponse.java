@@ -1,28 +1,18 @@
-package com.dyszlewskiR.edu.scientling.net.responses;
+package com.dyszlewskiR.edu.scientling.services.net.responses;
 
-import android.util.JsonReader;
-
-import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
-import com.dyszlewskiR.edu.scientling.net.ResponseStatus;
+import com.dyszlewskiR.edu.scientling.services.net.ResponseStatus;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.ContentHandler;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 
 /**
@@ -38,6 +28,7 @@ public class DownloadSetResponse {
     public static final int ERROR = -2;
     public static final int NON_EXIST = -3;
 
+    private final String NUM_WORDS = "num_words";
     private final String SET = "set";
     private final String LESSONS = "lessons";
     private final String WORDS = "words";
@@ -68,9 +59,14 @@ public class DownloadSetResponse {
                 return ERROR;
         }
     }
+    public int getWordsCount() throws IOException {
+        if(findNumberNode(NUM_WORDS)){
+            return mParser.getIntValue();
+        }
+        return 0;
+    }
 
     public JsonNode getSetJson() throws IOException, ParseException, JSONException {
-        prepareValues();
         return getNode(SET);
     }
 
@@ -99,6 +95,10 @@ public class DownloadSetResponse {
        return findNode(nodeName, JsonToken.START_OBJECT);
     }
 
+    private boolean findNumberNode(String nodeName)  throws IOException {
+        return findNode(nodeName, JsonToken.VALUE_NUMBER_INT);
+    }
+
     private boolean findNode(String nodeName, JsonToken token) throws IOException {
         while(mParser.nextToken() != JsonToken.END_OBJECT){
             String fieldName = mParser.getCurrentName();
@@ -118,6 +118,7 @@ public class DownloadSetResponse {
     private boolean findArray(String arrayName) throws IOException {
         return findNode(arrayName, JsonToken.START_ARRAY);
     }
+
 
     public String getSetJsonString() throws ParseException, JSONException, IOException {
         return mMapper.writeValueAsString(getSetJson());

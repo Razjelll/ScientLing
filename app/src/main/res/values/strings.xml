@@ -338,7 +338,12 @@
         <item>@string/added_date</item>
     </string-array>
     <string name="load_more">Załaduj więcej</string>
-
+    <string name="downloaded">Pobrano</string>
+    <string name="downloading">Pobieranie</string>
+    <string name="finished">Zakończono</string>
+    <string name="download">Pobierz</string>
+    <string name="images_size">Rozmiar obrazków</string>
+    <string name="records_size">Rozmiar nagrań</string>
     <!--LOGOWANIE I REJESTRACJA-->
     <string name="bad_login">Login lub hasło jest niepoprawne</string>
     <string name="title_activity_registration">RegistrationActivity</string>
@@ -354,4 +359,5 @@
     <string name="not_contain_element">Hasło nie może zawierać znaków : </string>
     <string name="registration">Rejestracja</string>
     <string name="registration_success">Rejestracja przebiegła pomyślnie</string>
+    <string name="title_activity_set_details">SetDetailsActivity</string>
 </resources>

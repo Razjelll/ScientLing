@@ -30,8 +30,8 @@ public class LearningActivity extends AppCompatActivity {
         setupToolbar();
         setupControls();
         setListeners();
-    }
 
+    }
 
     private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -51,16 +51,14 @@ public class LearningActivity extends AppCompatActivity {
     }
 
     private void setListeners() {
-        mCloseButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mLearningMode) {
+        if(mLearningMode){
+            mCloseButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
                     showExitAlertDialog();
-                } else {
-                    finish();
                 }
-            }
-        });
+            });
+        }
     }
 
     private void showExitAlertDialog() {
@@ -91,7 +89,8 @@ public class LearningActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        showExitAlertDialog();
+        //showExitAlertDialog();
+        finish();
     }
 
     private class ExitAlertDialog extends AlertDialog {

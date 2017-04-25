@@ -3,6 +3,7 @@ package com.dyszlewskiR.edu.scientling.data.models.creators;
 import android.database.Cursor;
 
 import com.dyszlewskiR.edu.scientling.data.models.models.Definition;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable.DefinitionsColumns.CONTENT;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable.DefinitionsColumns.ID;
@@ -33,5 +34,18 @@ public class DefinitionCreator  {
             }
         }
         return definition;
+    }
+
+    private static final String DEFINITION_CONTENT = "c";
+    private static final String DEFINITION_TRANSLATION = "t";
+
+    public static Definition createFromJson(JsonNode node){
+        if(node != null){
+            Definition definition = new Definition();
+            definition.setContent(node.path(DEFINITION_CONTENT).asText());
+            definition.setTranslation(node.path(DEFINITION_TRANSLATION).asText());
+            return definition;
+        }
+        return null;
     }
 }

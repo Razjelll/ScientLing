@@ -11,8 +11,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.net.requests.RegisterRequest;
-import com.dyszlewskiR.edu.scientling.net.responses.RegisterResponse;
+import com.dyszlewskiR.edu.scientling.services.net.requests.RegisterRequest;
+import com.dyszlewskiR.edu.scientling.services.net.responses.RegisterResponse;
 import com.dyszlewskiR.edu.scientling.utils.MD5;
 
 import org.json.JSONException;
