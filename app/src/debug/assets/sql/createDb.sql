@@ -29,6 +29,9 @@ CREATE TABLE Sets (
         language_l2_fk INTEGER,
         language_l1_fk INTEGER,
         global_id INTEGER,
+        uploaded INTEGER DEFAULT 0,
+        images_downloaded INTEGER DEFAULT 0,
+        records_downloaded INTEGER DEFAULT 0,
         catalog TEXT NOT NULL,
         FOREIGN KEY (language_l2_fk) REFERENCES Languages(id),
         FOREIGN KEY (language_l1_fk) REFERENCES Languages(id)

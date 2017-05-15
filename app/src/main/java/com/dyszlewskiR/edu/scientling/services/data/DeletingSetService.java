@@ -6,7 +6,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
-import com.dyszlewskiR.edu.scientling.data.file.WordFileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 
 /**
@@ -53,7 +53,7 @@ public class DeletingSetService extends Service {
 
         private void deleteSet() {
             mDataManager.deleteSet(mSet);
-            WordFileSystem.deleteCatalog(mSet.getCatalog(), getBaseContext());
+            FileSystem.deleteCatalog(mSet.getCatalog(), getBaseContext());
         }
     }
 }

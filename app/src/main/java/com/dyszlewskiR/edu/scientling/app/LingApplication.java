@@ -59,6 +59,5 @@ public class LingApplication extends Application {
         Log.d(TAG, "onTerminate");
         mDataManager.release();
         super.onTerminate();
-
     }
 }

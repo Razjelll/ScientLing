@@ -15,6 +15,7 @@ import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.data.file.FileNameCreator;
 import com.dyszlewskiR.edu.scientling.data.models.models.Language;
 import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
+import com.dyszlewskiR.edu.scientling.data.models.models.SetListItem;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.dialogs.LanguageDialog;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
@@ -83,11 +84,7 @@ public class SetEditFragment extends Fragment implements LanguageDialog.Callback
             public void onClick(View v) {
                 if (validate()) {
                     VocabularySet set = getSet();
-                    long setId = saveSet(set);
-                    //ustawiamy id ponieważ , na liscie SetManagerFragment nie pobieramy zestawów po utworzeniu
-                    //nowego zestawu, tylko dodajemy do listy nowo powstały zestaw
-                    //ustawine id pomaga w późniejszej edycji, chyba
-                    set.setId(setId);
+                    saveSet(set);
                     setResultAndFinish(set);
                 }
             }
@@ -149,13 +146,14 @@ public class SetEditFragment extends Fragment implements LanguageDialog.Callback
         Lesson defaultLesson = new Lesson();
         defaultLesson.setName("");
         defaultLesson.setNumber(Constants.DEFAULT_LESSON_NUMBER);
-        defaultLesson.setSet(set);
+        //defaultLesson.setSet(set);
+        defaultLesson.setSetId(set.getId());
         long lessonId = dataManager.saveLesson(defaultLesson);
     }
 
-    private void setResultAndFinish(VocabularySet set) {
+    private void setResultAndFinish(VocabularySet item) {
         Intent intent = new Intent();
-        intent.putExtra("result", set);
+        intent.putExtra("result", item);
         getActivity().setResult(Activity.RESULT_OK, intent);
         getActivity().finish();
     }
@@ -170,9 +168,15 @@ public class SetEditFragment extends Fragment implements LanguageDialog.Callback
 
     private void loadData() {
         Intent intent = getActivity().getIntent();
-        VocabularySet set = intent.getParcelableExtra("item");
-        if (set != null) {
-            mSet = set;
+        //VocabularySet set = intent.getParcelableExtra("item");
+        long setId = intent.getLongExtra("setId",-1);
+        if(setId > 0){
+            DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
+            mSet = dataManager.getSetById(setId);
+            Language l1 = dataManager.getLanguageById(mSet.getLanguageL1().getId());
+            Language l2 = dataManager.getLanguageById(mSet.getLanguageL2().getId());
+            mSet.setLanguageL1(l1);
+            mSet.setLanguageL2(l2);
             mEdit = true;
         }
     }
@@ -208,6 +212,4 @@ public class SetEditFragment extends Fragment implements LanguageDialog.Callback
             mSet.setLanguageL2(language);
         }
     }
-
-
 }

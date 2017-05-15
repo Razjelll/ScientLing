@@ -102,6 +102,7 @@ public class LoginActivity extends AppCompatActivity {
             LoginRequest request = new LoginRequest(params[0].getUsername(), params[0].getPassword());
             try {
                 LoginResponse response = new LoginResponse(request.start());
+                int code = response.getResultCode();
                 LoginResponse.Params responseParams = response.getParams();
                 response.closeConnection();
                 return responseParams;
@@ -118,6 +119,11 @@ public class LoginActivity extends AppCompatActivity {
             if(result != null && result.getResponseCode()==LoginResponse.LOGIN_SUCCESS){
                 LogPref.setLogged(true, getBaseContext());
                 LogPref.setLogin(result.getLogin(), getBaseContext());
+                try {
+                    LogPref.setPassword(MD5.getMD5(mPasswordEditText.getText().toString()), getBaseContext());
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
                 Intent intent = new Intent();
                 intent.putExtra("login", result.getLogin());
                 setResult(Activity.RESULT_OK, intent);

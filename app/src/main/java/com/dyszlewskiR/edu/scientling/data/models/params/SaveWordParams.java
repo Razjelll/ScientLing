@@ -14,8 +14,10 @@ public class SaveWordParams {
     private Word mWord;
     private VocabularySet mSet;
     private boolean mEdit;
-    private Uri mImage;
-    private Uri mRecord;
+    private Uri mImageToInsert;
+    private Uri mRecordToInsert;
+    private Uri mImageToDelete;
+    private Uri mRecordToDelete;
 
     public Word getWord() {
         return mWord;
@@ -41,19 +43,27 @@ public class SaveWordParams {
         mEdit = edit;
     }
 
-    public Uri getImageUri() {
-        return mImage;
+    public Uri getImageToInsert() {
+        return mImageToInsert;
     }
 
-    public void setImageUri(Uri imageUri) {
-        mImage = imageUri;
+    public void setImageToInsert(Uri imageUri) {
+        mImageToInsert = imageUri;
     }
 
-    public Uri getRecordUri() {
-        return mRecord;
+    public Uri getRecordToInsert() {
+        return mRecordToInsert;
     }
 
-    public void setRecordUri(Uri recordUri) {
-        mRecord = recordUri;
+    public void setRecordToInsert(Uri recordUri) {
+        mRecordToInsert = recordUri;
     }
+
+    public Uri getImageToDelete(){return mImageToDelete;}
+
+    public void setImageToDelete(Uri imageUri){mImageToDelete = imageUri;}
+
+    public Uri getRecordToDelete(){return mRecordToDelete;}
+
+    public void setRecordToDelete(Uri recordUri){mRecordToDelete = recordUri;}
 }

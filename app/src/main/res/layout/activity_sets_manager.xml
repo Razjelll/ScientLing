@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.dyszlewskiR.edu.scientling.activity.SetsManagerActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -20,6 +21,16 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_sets_manager" />
+   <!-- <include layout="@layout/content_sets_manager" />-->
+    <android.support.design.widget.TabLayout android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ></android.support.design.widget.TabLayout>
+    <!--<com.dyszlewskiR.edu.scientling.widgets.NonSwipeableViewPager android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></com.dyszlewskiR.edu.scientling.widgets.NonSwipeableViewPager>-->
+    <FrameLayout android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></FrameLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+</LinearLayout>

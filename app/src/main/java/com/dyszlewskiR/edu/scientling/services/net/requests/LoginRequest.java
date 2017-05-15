@@ -1,5 +1,8 @@
 package com.dyszlewskiR.edu.scientling.services.net.requests;
 
+import android.util.Base64;
+
+import com.dyszlewskiR.edu.scientling.preferences.LogPref;
 import com.dyszlewskiR.edu.scientling.services.net.URLConnector;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 
@@ -10,34 +13,42 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.Authenticator;
 import java.net.HttpURLConnection;
+import java.net.PasswordAuthentication;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-
-/**
- * Created by Razjelll on 19.04.2017.
- */
 
 public class LoginRequest {
 
     private static final String LOGIN_REQUEST = Constants.SERVER_ADDRESS + "/login";
     private static int TIME_OUT = 5000;
-    private Map<String, String> mParams;
+
 
     private final String USERNAME = "username";
     private final String PASSWORD = "password";
 
+    private String mUsername;
+    private String mPassword;
+
 
     public LoginRequest(String username, String password) {
-        mParams = new HashMap<>();
-        mParams.put("username", username);
-
-        mParams.put("password", password);
+        mUsername = username;
+        mPassword= password;
     }
 
     public HttpURLConnection start() throws IOException, JSONException {
+       /* Authenticator.setDefault(new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(mUsername,mPassword.toCharArray());
+            }
+        });*/
         HttpURLConnection connection = URLConnector.getHttpConnection(LOGIN_REQUEST, TIME_OUT);
-        String content = getJson(mParams.get(USERNAME), mParams.get(PASSWORD));
+        String content = getJson(mUsername, mPassword);
+        connection.setRequestProperty("Authorization", Authentication.prepare(mUsername, mPassword));
+
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestProperty("Content-Length", String.valueOf(content.length()));
         connection.setDoOutput(true);

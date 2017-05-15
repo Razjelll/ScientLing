@@ -1,4 +1,4 @@
-package com.dyszlewskiR.edu.scientling.services.net;
+package com.dyszlewskiR.edu.scientling.services.net.values;
 
 /**
  * Created by Razjelll on 21.04.2017.

@@ -49,7 +49,8 @@ public class LessonFragment extends Fragment {
         mLesson = intent.getParcelableExtra("item");
         mEdit = intent.getBooleanExtra("edit", false);
         if (mSet == null && mLesson != null) {
-            mSet = mLesson.getSet();
+            //mSet = mLesson.getSet();
+            mSet = new VocabularySet(mLesson.getSetId());
         }
     }
 
@@ -95,7 +96,8 @@ public class LessonFragment extends Fragment {
         }
         mLesson.setName(String.valueOf(mNameTextView.getText()));
         mLesson.setNumber(Long.parseLong(String.valueOf(mNumberTextView.getText())));
-        mLesson.setSet(mSet);
+        //mLesson.setSet(mSet);
+        mLesson.setSetId(mSet.getId());
         if (mEdit) {
             mDataManager.updateLesson(mLesson);
         } else {

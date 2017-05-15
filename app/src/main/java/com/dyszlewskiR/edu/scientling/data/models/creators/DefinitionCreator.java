@@ -40,7 +40,7 @@ public class DefinitionCreator  {
     private static final String DEFINITION_TRANSLATION = "t";
 
     public static Definition createFromJson(JsonNode node){
-        if(node != null){
+        if(node != null && node.size()>0){
             Definition definition = new Definition();
             definition.setContent(node.path(DEFINITION_CONTENT).asText());
             definition.setTranslation(node.path(DEFINITION_TRANSLATION).asText());

@@ -7,12 +7,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URLConnection;
 
-/**
- * Created by Razjelll on 25.04.2017.
- */
-
 public class SetDetailRequest {
-    private static final String GET_SET_DETAIL_REQUEST = Constants.SERVER_ADDRESS + "/sets/details";
+    private static final String REQUEST_URI = Constants.SERVER_ADDRESS + "/sets/?/details";
 
     private long mSetId;
 
@@ -21,8 +17,8 @@ public class SetDetailRequest {
     }
 
     public HttpURLConnection start() throws IOException{
-        String url = GET_SET_DETAIL_REQUEST + "/" + mSetId;
-        HttpURLConnection connection = URLConnector.getHttpConnection(url, Constants.SERVER_TIMEOUT);
+        String requestUri = REQUEST_URI.replace("?", String.valueOf(mSetId));
+        HttpURLConnection connection = URLConnector.getHttpConnection(requestUri, Constants.SERVER_TIMEOUT);
         connection.connect();
         return connection;
     }

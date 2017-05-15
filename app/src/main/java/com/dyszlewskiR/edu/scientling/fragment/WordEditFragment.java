@@ -10,11 +10,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.HintsListActivity;
@@ -23,7 +23,7 @@ import com.dyszlewskiR.edu.scientling.activity.SentencesListActivity;
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.asyncTasks.SaveWordAsyncTask;
 import com.dyszlewskiR.edu.scientling.data.file.FileNameCreator;
-import com.dyszlewskiR.edu.scientling.data.file.WordFileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.Category;
 import com.dyszlewskiR.edu.scientling.data.models.models.Definition;
 import com.dyszlewskiR.edu.scientling.data.models.models.Hint;
@@ -64,11 +64,12 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
     //endregion
 
     //region Variables
+    private View mRootView;
     /**
      * Kontener przechowujący dodatkowe informacje o słóku, domyślnie jest ukryty, aby nie pokazywać
      * użytkownikowi zbyt wielu kontrolek. Jeśli będą mu potrzebne odkrywa je klikając na mMoreButton
      */
-    private LinearLayout mAdvancedGroup;
+    private View mAdvancedContainer;
     /**
      * Treść słóka
      */
@@ -148,6 +149,8 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
     private Uri mImageUri;
     private Uri mRecordUri;
     private boolean mEdit;
+    private Uri mOldImageUri;
+    private Uri mOldRecordUri;
     /**
      * Określa czy po dodaniu lub aktualizacji nowego słówka aktywność ma zostać zamknięta
      */
@@ -224,19 +227,9 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
     }
 
     private void setupControls(View view) {
-        mAdvancedGroup = (LinearLayout) view.findViewById(R.id.advanced_edit_group);
+        mRootView = view;
         mWordEditText = (EditText) view.findViewById(R.id.word_edit_text);
         mTranslationEditText = (EditText) view.findViewById(R.id.translation_edit_text);
-        mLessonButton = (Button) view.findViewById(R.id.lesson_button);
-        mDefinitionButton = (Button) view.findViewById(R.id.definition_button);
-        mPartOfSpeechButton = (Button) view.findViewById(R.id.part_of_speech_button);
-        mDifficultButton = (Button) view.findViewById(R.id.difficult_button);
-        mCategoryButton = (Button) view.findViewById(R.id.category_button);
-        mSentencesButton = (Button) view.findViewById(R.id.sentences_button);
-        mHintsButton = (Button) view.findViewById(R.id.hints_button);
-        mImageButton = (Button) view.findViewById(R.id.image_button);
-        mImageView = (ImageView) view.findViewById(R.id.image_image_view);
-        mRecordButton = (Button) view.findViewById(R.id.record_button);
         mMoreButton = (ImageButton) view.findViewById(R.id.more_image_button);
         mSaveButton = (Button) view.findViewById(R.id.save_button);
     }
@@ -256,6 +249,204 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
             mWordEditText.setText(mWord.getContent());
             String translations = TranslationListConverter.toString(mWord.getTranslations());
             mTranslationEditText.setText(translations);
+        }
+
+    }
+
+    private void setListeners() {
+        mMoreButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "MoreButton Click");
+                setVisibilityAdvancedContainer();
+            }
+        });
+        mSaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "SaveButton Click");
+                saveWord();
+            }
+        });
+    }
+
+    //endregion
+
+    //region SaveWord
+    private void saveWord() {
+        if (validate()) {
+            SaveWordAsyncTask task = new SaveWordAsyncTask(mDataManager, getActivity());
+            SaveWordParams params = new SaveWordParams();
+            params.setEdit(mEdit);
+            Word word = getWord(mSet.getCatalog());
+
+
+            //wstawianie plików do zapisu i do usunięcia
+            if(mOldImageUri==null ){
+                //jeżeli nie było poprzedniej wartości obrazka wstawiamy obecną, nawet jeśli jest null
+                //ponieważ jeżeli będzie null nie zostanie zapisana
+                if(mImageUri != null){
+                    params.setImageToInsert(mImageUri);
+                    String imageName = FileNameCreator.getImageName(word.getContent(), mSet.getCatalog(), getContext());
+                    word.setImageName(imageName);
+                }
+            } else if(mImageUri == null){
+                //jeżeli obrazek był wstawiony i został usunięty
+                params.setImageToDelete(mOldImageUri);
+                word.setImageName(null);
+            } else if(!mOldImageUri.equals(mImageUri)){
+                //jeżeli żadna z wartości nie jest nullem, obrazek został zmieniony na inny
+                params.setImageToDelete(mOldImageUri);
+                params.setImageToInsert(mImageUri);
+                //tutaj nie zmieniamy nazwy obrazka
+            }
+
+            if(mOldRecordUri == null){
+                if (mRecordUri != null) {
+                    params.setRecordToInsert(mRecordUri);
+                    String recordName = FileNameCreator.getRecordName(word.getContent(), mSet.getCatalog(), getContext());
+                    word.setRecordName(recordName);
+                }
+            } else if(mRecordUri == null) {
+                params.setRecordToDelete(mOldRecordUri);
+                word.setRecordName(null);
+            } else if(!mOldRecordUri.equals(mRecordUri)){
+                params.setRecordToDelete(mOldRecordUri);
+                params.setRecordToInsert(mRecordUri);
+                //tutaj nie zmieniamy nazwy nagrania
+            }
+            params.setWord(getWord(mSet.getCatalog()));
+            params.setSet(mSet);
+            task.setCallback(this);
+            task.execute(params);
+        }
+    }
+
+    private Word getWord(String catalog) {
+        Word word = mWord;
+        word.setContent(mWordEditText.getText().toString());
+        word.setTranslations(getTranslations());
+        word.setOwn(true);
+        if (word.getLessonId() == 0) { //jeśli użytkownik nie ustawiał słówka
+            Lesson lesson = mDataManager.getDefaultLesson(mSet.getId());
+            word.setLessonId(lesson.getId());
+        }
+        //TODO przerobić na jakieś domyślne nazwy rozszerzeń, zobaczyć czy lepiej jest z kropką czy bez
+        /*if (mImageUri != null) {
+            String imageName = FileNameCreator.getImageName(word.getContent(), catalog, getContext());
+            word.setImageName(imageName);
+        }
+        if (mRecordUri != null) {
+            String recordName = FileNameCreator.getRecordName(word.getContent(), catalog, getContext());
+            word.setRecordName(recordName);
+        }*/
+
+        return word;
+    }
+
+    private ArrayList<Translation> getTranslations() {
+        String[] translations = mTranslationEditText.getText().toString().split(Constants.TRANSLATION_SEPARATOR);
+        Translation translation;
+        ArrayList<Translation> translationsList = new ArrayList<>();
+        for (String s : translations) {
+            translation = new Translation();
+            translation.setContent(s);
+            translationsList.add(translation);
+        }
+        return translationsList;
+    }
+
+    private boolean validate() {
+        boolean correct = true;
+        if (mWordEditText.getText().toString().equals("")) {
+            mWordEditText.setError(getString(R.string.field_not_empty));
+            correct = false;
+        }
+        if (mTranslationEditText.getText().toString().equals("")) {
+            mTranslationEditText.setError(getString(R.string.field_not_empty));
+            correct = false;
+        }
+        return correct;
+    }
+
+    /**
+     * Metoda czyszcząca wszystkie pola w aktywności. metoda będize wywoływana po zakończeniu zapisywania
+     * słówka w klasie SaveWordAsyncTask
+     */
+    public void clear() {
+        mWord = new Word();
+        mImageUri = null;
+        mRecordUri = null;
+
+        mWordEditText.setText("");
+        mTranslationEditText.setText("");
+        mLessonButton.setText("");
+        mDefinitionButton.setText("");
+        mPartOfSpeechButton.setText("");
+        mDifficultButton.setText("");
+        mCategoryButton.setText("");
+        mSentencesButton.setText("");
+        mHintsButton.setText("");
+        mImageButton.setText("");
+        mRecordButton.setText("");
+    }
+
+    //endregion
+
+    //region ButtonsClicks
+    private void startSentenceActivity() {
+        Intent intent = new Intent(getContext(), SentencesListActivity.class);
+        if (mWord.getSentences() != null) {
+            intent.putParcelableArrayListExtra("list", mWord.getSentences());
+        }
+        startActivityForResult(intent, SENTENCE_REQUEST);
+    }
+
+    private void startHintsActivity() {
+        Intent intent = new Intent(getContext(), HintsListActivity.class);
+        if (mWord.getHints() != null) {
+            intent.putParcelableArrayListExtra("list", mWord.getHints());
+        }
+        startActivityForResult(intent, HINTS_REQUEST);
+    }
+
+    private void startLessonActivity() {
+        Intent intent = new Intent(getContext(), LessonSelectionActivity.class);
+        intent.putExtra("set", mSet.getId());
+        startActivityForResult(intent, LESSON_REQUEST);
+    }
+
+    private void setVisibilityAdvancedContainer() {
+        if(mAdvancedContainer == null){
+            ViewStub viewStub = (ViewStub)mRootView.findViewById(R.id.more_container);
+            mAdvancedContainer = viewStub.inflate();
+            setupControlsAdvancedContainer(mAdvancedContainer);
+            setDataAdvancedContainer();
+            setAdvancedListener();
+        } else {
+            if (mAdvancedContainer.getVisibility() == View.VISIBLE) {
+                mAdvancedContainer.setVisibility(View.GONE);
+            } else {
+                mAdvancedContainer.setVisibility(View.VISIBLE);
+            }
+        }
+    }
+
+    private void setupControlsAdvancedContainer(View view){
+        mLessonButton = (Button) view.findViewById(R.id.lesson_button);
+        mDefinitionButton = (Button) view.findViewById(R.id.definition_button);
+        mPartOfSpeechButton = (Button) view.findViewById(R.id.part_of_speech_button);
+        mDifficultButton = (Button) view.findViewById(R.id.difficult_button);
+        mCategoryButton = (Button) view.findViewById(R.id.category_button);
+        mSentencesButton = (Button) view.findViewById(R.id.sentences_button);
+        mHintsButton = (Button) view.findViewById(R.id.hints_button);
+        mImageButton = (Button) view.findViewById(R.id.image_button);
+        mImageView = (ImageView) view.findViewById(R.id.image_image_view);
+        mRecordButton = (Button) view.findViewById(R.id.record_button);
+    }
+
+    private void setDataAdvancedContainer(){
+        if(mEdit){
             Lesson lesson = mDataManager.getLessonById(mWord.getLessonId());
             setLessonButton(lesson);
             setDefinitionButton(mWord.getDefinition());
@@ -266,15 +457,22 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
                 setSentenceButton(mWord.getSentences().size());
             if (mWord.getHints() != null)
                 setHintButton(mWord.getHints().size());
-            mImageUri = WordFileSystem.getImageUri(mWord.getImageName(), mSet.getCatalog(), getContext());
+            mImageUri = FileSystem.getImageUri(mWord.getImageName(), mSet.getCatalog(), getContext());
+            if(mImageUri != null){
+                mOldImageUri = Uri.parse(mImageUri.toString());
+            }
+
             setImageButton(mImageUri);
-            mRecordUri = WordFileSystem.getRecordUri(mWord.getRecordName(), mSet.getCatalog(), getContext());
+            mRecordUri = FileSystem.getRecordUri(mWord.getRecordName(), mSet.getCatalog(), getContext());
+            if(mRecordUri != null){
+                mOldRecordUri = Uri.parse(mRecordUri.toString());
+            }
+
             setRecordButton(mRecordUri);
         }
-
     }
 
-    private void setListeners() {
+    private void setAdvancedListener(){
         mLessonButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -360,139 +558,6 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
 
             }
         });
-        mMoreButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "MoreButton Click");
-                changeAdvancedGroupVisibility();
-            }
-        });
-        mSaveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "SaveButton Click");
-                saveWord();
-            }
-        });
-    }
-
-    //endregion
-
-    //region SaveWord
-    private void saveWord() {
-        if (validate()) {
-            SaveWordAsyncTask task = new SaveWordAsyncTask(mDataManager, getActivity());
-            SaveWordParams params = new SaveWordParams();
-            params.setEdit(mEdit);
-            params.setWord(getWord(mSet.getCatalog()));
-            params.setImageUri(mImageUri);
-            params.setRecordUri(mRecordUri);
-            params.setSet(mSet);
-            task.setCallback(this);
-            task.execute(params);
-        }
-    }
-
-    private Word getWord(String catalog) {
-        Word word = mWord;
-        word.setContent(mWordEditText.getText().toString());
-        word.setTranslations(getTranslations());
-        word.setOwn(true);
-        if (word.getLessonId() == 0) { //jeśli użytkownik nie ustawiał słówka
-            Lesson lesson = mDataManager.getDefaultLesson(mSet.getId());
-            word.setLessonId(lesson.getId());
-        }
-        //TODO przerobić na jakieś domyślne nazwy rozszerzeń, zobaczyć czy lepiej jest z kropką czy bez
-        if (mImageUri != null) {
-            String imageName = FileNameCreator.getFileName(word.getContent(), catalog, "jpg", getContext());
-            word.setImageName(imageName);
-        }
-        if (mRecordUri != null) {
-            String recordName = FileNameCreator.getFileName(word.getContent(), catalog, "waw", getContext());
-            word.setRecordName(recordName);
-        }
-
-        return word;
-    }
-
-    private ArrayList<Translation> getTranslations() {
-        String[] translations = mTranslationEditText.getText().toString().split(Constants.TRANSLATION_SEPARATOR);
-        Translation translation;
-        ArrayList<Translation> translationsList = new ArrayList<>();
-        for (String s : translations) {
-            translation = new Translation();
-            translation.setContent(s);
-            translationsList.add(translation);
-        }
-        return translationsList;
-    }
-
-    private boolean validate() {
-        boolean correct = true;
-        if (mWordEditText.getText().toString().equals("")) {
-            mWordEditText.setError(getString(R.string.field_not_empty));
-            correct = false;
-        }
-        if (mTranslationEditText.getText().toString().equals("")) {
-            mTranslationEditText.setError(getString(R.string.field_not_empty));
-            correct = false;
-        }
-        return correct;
-    }
-
-    /**
-     * Metoda czyszcząca wszystkie pola w aktywności. metoda będize wywoływana po zakończeniu zapisywania
-     * słówka w klasie SaveWordAsyncTask
-     */
-    public void clear() {
-        mWord = new Word();
-        mImageUri = null;
-        mRecordUri = null;
-
-        mWordEditText.setText("");
-        mTranslationEditText.setText("");
-        mLessonButton.setText("");
-        mDefinitionButton.setText("");
-        mPartOfSpeechButton.setText("");
-        mDifficultButton.setText("");
-        mCategoryButton.setText("");
-        mSentencesButton.setText("");
-        mHintsButton.setText("");
-        mImageButton.setText("");
-        mRecordButton.setText("");
-    }
-
-    //endregion
-
-    //region ButtonsClicks
-    private void startSentenceActivity() {
-        Intent intent = new Intent(getContext(), SentencesListActivity.class);
-        if (mWord.getSentences() != null) {
-            intent.putParcelableArrayListExtra("list", mWord.getSentences());
-        }
-        startActivityForResult(intent, SENTENCE_REQUEST);
-    }
-
-    private void startHintsActivity() {
-        Intent intent = new Intent(getContext(), HintsListActivity.class);
-        if (mWord.getHints() != null) {
-            intent.putParcelableArrayListExtra("list", mWord.getHints());
-        }
-        startActivityForResult(intent, HINTS_REQUEST);
-    }
-
-    private void startLessonActivity() {
-        Intent intent = new Intent(getContext(), LessonSelectionActivity.class);
-        intent.putExtra("set", mSet.getId());
-        startActivityForResult(intent, LESSON_REQUEST);
-    }
-
-    private void changeAdvancedGroupVisibility() {
-        if (mAdvancedGroup.getVisibility() == View.VISIBLE) {
-            mAdvancedGroup.setVisibility(View.GONE);
-        } else {
-            mAdvancedGroup.setVisibility(View.VISIBLE);
-        }
     }
     //endregion
 

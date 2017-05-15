@@ -90,12 +90,18 @@
     <string name="l1">Język który znasz </string>
     <string name="lessons">Lekcje</string>
     <string name="choose">Wybierz</string>
+    <string name="upload">Wyślij</string>
     <string name="set_name">Nazwa zestawu</string>
     <string name="language">Język</string>
     <string name="vocabulary_set">Zestaw</string>
     <string name="no_set">Nie ustawiono zbioru</string>
     <string name="choose_set">Wybierz zestaw</string>
     <string name="create_set">Utwórz zestaw</string>
+    <string name="sets_tab">Zestawy</string>
+    <string name="server_tab">Wysłane</string>
+    <string name="delete_images">Usuń obrazki</string>
+    <string name="delete_records">Usuń nagrania</string>
+    <string name="change_description">Zmień opis</string>
     <!--LEKCJA -->
     <string name="lesson_number">Numer lekcji</string>
     <string name="lesson_name">Nazwa lekcji</string>
@@ -106,6 +112,9 @@
 
     <!--KATEGORIA-->
     <string name="category_name">Nazwa kategorii</string>
+
+
+
     <!--PODPOWIEDZI-->
     <string name="hint_content">Zawartość podpowiedzi</string>
     <!--CZESC MOWY-->
@@ -156,6 +165,8 @@
     <string name="word_lesson_connection">Liczba słówek w usuwanej lekcji:</string>
     <string name="sure_delete_category">Czy na pewno chesz usunąć kategorię</string>
     <string name="sure_delete_set">Czy na pewno chcesz usunąć zestaw?</string>
+    <string name="sure_delete_images">Czy na pewno chcesz usunąć obrazki?</string>
+    <string name="sure_delete_records">Czy na pewno chcesz usunąć nagrania?</string>
     <string name="sure_delte_lesson">Czy na pewno chcesz usunąć lekcje?</string>
     <string name="not_empty_field">To pole nie może być puste</string>
     <string name="not_zero_field">Wartość musi być większa od zera</string>
@@ -344,6 +355,15 @@
     <string name="download">Pobierz</string>
     <string name="images_size">Rozmiar obrazków</string>
     <string name="records_size">Rozmiar nagrań</string>
+    <string name="description">Opis</string>
+    <string name="more_information">Więcej informacji</string>
+    <string name="less_information">Mniej informacji</string>
+
+    <!--Wysyłanie zestawów-->
+    <string name="upload_all">Wyślij</string>
+    <string name="upload_database">Wyślij bazę</string>
+    <string name="upload_images">Wyslij obrazki</string>
+    <string name="upload_records">Wyślj nagrania</string>
     <!--LOGOWANIE I REJESTRACJA-->
     <string name="bad_login">Login lub hasło jest niepoprawne</string>
     <string name="title_activity_registration">RegistrationActivity</string>

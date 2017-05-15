@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.file.WordFileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -55,7 +55,7 @@ public class ImagePagerFragment extends Fragment {
     }
 
     private void setImage() {
-        Uri uri = WordFileSystem.getImageUri(mFileName, mCatalogName, getContext());
+        Uri uri = FileSystem.getImageUri(mFileName, mCatalogName, getContext());
         mImageView.setImageURI(uri);
     }
 

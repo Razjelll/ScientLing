@@ -6,7 +6,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
-import com.dyszlewskiR.edu.scientling.data.file.WordFileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 
@@ -96,13 +96,13 @@ public class DeletingLessonService extends Service {
 
         private void deleteImages(List<String> imagesList) {
             for (String imageName : imagesList) {
-                WordFileSystem.deleteImage(imageName, mCatalog, getBaseContext());
+                FileSystem.deleteImage(imageName, mCatalog, getBaseContext());
             }
         }
 
         private void deleteRecords(List<String> recordsList) {
             for (String recordName : recordsList) {
-                WordFileSystem.deleteRecord(recordName, mCatalog, getBaseContext());
+                FileSystem.deleteRecord(recordName, mCatalog, getBaseContext());
             }
         }
     }

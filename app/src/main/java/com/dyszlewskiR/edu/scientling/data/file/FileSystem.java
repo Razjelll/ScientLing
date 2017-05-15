@@ -8,7 +8,9 @@ import com.dyszlewskiR.edu.scientling.utils.BitmapUtils;
 import com.dyszlewskiR.edu.scientling.utils.FileUtils;
 import com.dyszlewskiR.edu.scientling.utils.UriUtils;
 
+import java.io.File;
 import java.io.IOException;
+
 
 /**
  * Klasa odpowiedzialna za zapisywanie obrazków i nagrań.
@@ -16,16 +18,26 @@ import java.io.IOException;
  * Klasa stanowi dodatkową warstwę zapisu pliku, na której można wykonywać dodatkowe działania,
  * takie jak przeskalowanie obrazków
  */
-public class WordFileSystem {
+public class FileSystem {
 
     private static final int MAX_IMAGE_SIZE = 300;
+    public static final String IMAGES = "images";
+    public static final String RECORDS = "records";
+
+    private static String getImagesCatalog(String catalogName){
+        return catalogName + "/" + IMAGES;
+    }
+
+    private static String getRecordsCatalog(String catalogName){
+        return catalogName + "/" + RECORDS;
+    }
 
     public static void saveImage(String fileName, String setCatalog, byte[] data, boolean resize, Context context) throws IOException {
         if (resize) {
             data = getResizedData(data, MAX_IMAGE_SIZE);
         }
         //TODO zrobić wykrywanie z jakiej pamięci korzystamy w tej chwili i zapisanie w odpowiednim miejsu
-        FileUtils.saveFileInternalStorage(setCatalog, fileName, data, context);
+        FileUtils.saveFileInternalStorage(getImagesCatalog(setCatalog), fileName, data, context);
     }
 
     /**
@@ -53,7 +65,7 @@ public class WordFileSystem {
 
     public static void saveRecord(String fileName, String setCatalog, byte[] data, Context context) throws IOException {
         //TODO sprawdzenie w jakiej pamięci powinno zostać zapisane nagranie
-        FileUtils.saveFileInternalStorage(setCatalog, fileName, data, context);
+        FileUtils.saveFileInternalStorage(getRecordsCatalog(setCatalog), fileName, data, context);
     }
 
     public static void saveRecord(String fileName, String setCatalog, Uri uri, Context context) throws IOException {
@@ -66,32 +78,53 @@ public class WordFileSystem {
         if (fileName == null || setCatalog == null) {
             return null;
         }
-        return FileUtils.getInternalStorageUri(fileName, setCatalog, context);
+        return FileUtils.getInternalStorageUri(fileName, getImagesCatalog(setCatalog), context);
     }
 
     public static Uri getRecordUri(String fileName, String setCatalog, Context context) {
         if (fileName == null || setCatalog == null) {
             return null;
         }
-        return FileUtils.getInternalStorageUri(fileName, setCatalog, context);
+        return FileUtils.getInternalStorageUri(fileName, getRecordsCatalog(setCatalog), context);
     }
 
+    public static File getCatalog(String catalog, Context context){
+        return FileUtils.getInternalCatalog(catalog, context);
+    }
+
+    public static File getFile(String name, String catalog, Context context){
+        return FileUtils.getFile(name, catalog, context);
+    }
 
     // TODO można zrobić jedną metodę dla obrazków i nagrań
     public static void deleteImage(String fileName, String setCatalog, Context context) {
         if (fileName != null && setCatalog != null) {
-            FileUtils.deleteFileInternalStorage(fileName, setCatalog, context);
+            FileUtils.deleteFileInternalStorage(fileName, getImagesCatalog(setCatalog), context);
+        }
+    }
+
+    public static void deleteFile(Uri uri){
+        if(uri != null){
+            FileUtils.deleteFileInternalStorage(uri);
         }
     }
 
     public static void deleteRecord(String fileName, String setCatalog, Context context) {
         if (fileName != null && setCatalog != null) {
-            FileUtils.deleteFileInternalStorage(fileName, setCatalog, context);
+            FileUtils.deleteFileInternalStorage(fileName,getRecordsCatalog(setCatalog), context);
         }
     }
 
     public static void deleteCatalog(String catalogName, Context context) {
         FileUtils.deleteDirectory(catalogName, context);
+    }
+
+    public static void deleteImageCatalog(String catalogName, Context context){
+        deleteCatalog(getImagesCatalog(catalogName), context);
+    }
+
+    public static void deleteRecordsCatalog(String catalogName, Context context){
+        deleteCatalog(getRecordsCatalog(catalogName), context);
     }
 
     public static boolean checkFileExist(String fileName, String catalog, Context context) {
@@ -101,5 +134,32 @@ public class WordFileSystem {
         boolean found = FileUtils.checkFileExist(fileName, context.getFilesDir().getAbsolutePath() + "/" + catalog);
         return found;
     }
+
+    public static boolean checkImageExist(String fileName, String catalog, Context context){
+        return checkFileExist(fileName, catalog, IMAGES, context);
+    }
+
+    public static boolean checkRecordExist(String fileName, String catalog, Context context){
+        return checkFileExist(fileName, catalog, RECORDS, context);
+    }
+
+    private static boolean checkFileExist(String fileName, String catalog, String type, Context context){
+        if (fileName == null || catalog == null) {
+            return false;
+        }
+        boolean found = FileUtils.checkFileExist(fileName, context.getFilesDir().getAbsolutePath() + "/" + catalog + "/"+type);
+        return found;
+    }
+
+    public static String getImagePath(String setCatalog, Context context){
+        File file = FileUtils.getInternalCatalog(getImagesCatalog(setCatalog), context);
+        return file.getAbsolutePath();
+    }
+
+    public static String getRecordsPath(String setCatalog, Context context){
+        File file = FileUtils.getInternalCatalog(getRecordsCatalog(setCatalog), context);
+        return file.getAbsolutePath();
+    }
+
 
 }

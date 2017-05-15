@@ -1,6 +1,7 @@
 package com.dyszlewskiR.edu.scientling.asyncTasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.activity.MainActivity;
 import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
@@ -32,8 +33,11 @@ public class MainInitializationValuesTask extends AsyncTask<DataManager, Void, V
     @Override
     protected Void doInBackground(DataManager... params) {
         DataManager dataManager = params[0];
+        Log.d(getClass().getSimpleName(), "getDataManager");
         mSet = dataManager.getSetById(Settings.getCurrentSetId(mActivity.getBaseContext()));
+        Log.d(getClass().getSimpleName(), "getSet");
         mLessons = dataManager.getLessonsWithProgress(mSet);
+        Log.d(getClass().getSimpleName(), "getLesson");
         return null;
     }
 

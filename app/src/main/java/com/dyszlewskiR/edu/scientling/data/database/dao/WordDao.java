@@ -281,6 +281,16 @@ public class WordDao extends BaseDao<Word> {
     public List<Word> getAllWithJoins(boolean distinct, String selection, String[] selectionArgs,
                                       String groupBy, String having, String orderBy, String limit) {
 
+        Cursor cursor = getAllCursor(distinct, selection,selectionArgs, groupBy, having, orderBy, limit);
+        List<Word> wordsList = getWordsListFromCursor(cursor);
+        closeCursor(cursor);
+        assert cursor.isClosed();
+
+        return wordsList;
+    }
+
+    public Cursor getAllCursor(boolean distinct, String selection, String[] selectionArgs,
+                               String groupBy, String having, String orderBy, String limit){
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("SELECT ");
         if (distinct) {
@@ -306,12 +316,7 @@ public class WordDao extends BaseDao<Word> {
             queryBuilder.append(" LIMIT ").append(limit);
         }
 
-        Cursor cursor = mDb.rawQuery(queryBuilder.toString(), selectionArgs);
-        List<Word> wordsList = getWordsListFromCursor(cursor);
-        closeCursor(cursor);
-        assert cursor.isClosed();
-
-        return wordsList;
+        return mDb.rawQuery(queryBuilder.toString(), selectionArgs);
     }
 
     public List<Word> getSimpleWords(String selection, String[] selectionArgs, String orderBy,

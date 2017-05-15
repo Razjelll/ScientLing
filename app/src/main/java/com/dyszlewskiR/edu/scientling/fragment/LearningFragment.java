@@ -23,7 +23,7 @@ import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.SummaryLearningActivity;
-import com.dyszlewskiR.edu.scientling.data.file.WordFileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.services.speech.ISpeechCallback;
@@ -151,7 +151,7 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
         if (mWords.get(position).hasDefinition()) {
             return DEFINITION_FRAGMENT;
         }
-        if (WordFileSystem.checkFileExist(mWords.get(position).getImageName(), mSet.getCatalog(), getContext())) {
+        if (FileSystem.checkImageExist(mWords.get(position).getImageName(), mSet.getCatalog(), getContext())) {
             return IMAGE_FRAGMENT;
         }
 
@@ -326,7 +326,7 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
         } else {
             replaceFragment(newFragmentNumber, position);
         }
-        mRecordUri = WordFileSystem.getRecordUri(mWords.get(position).getRecordName(), mSet.getCatalog(), getContext());
+        mRecordUri = FileSystem.getRecordUri(mWords.get(position).getRecordName(), mSet.getCatalog(), getContext());
         arrangeVisibilityButtons(position);
 
     }
@@ -358,7 +358,7 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
         } else {
             mDefinitionButton.setVisibility(View.VISIBLE);
         }
-        if (WordFileSystem.checkFileExist(mWords.get(position).getImageName(), mSet.getCatalog(), getContext())) {
+        if (FileSystem.checkImageExist(mWords.get(position).getImageName(), mSet.getCatalog(), getContext())) {
             mImageButton.setVisibility(View.VISIBLE);
         } else {
             mImageButton.setVisibility(View.GONE);

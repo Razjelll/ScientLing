@@ -21,6 +21,11 @@ public class SetItem {
     private int mImagesSize;
     private int mRecordsSize;
     private Date mAddedDate;
+    private boolean mIsDownloading;
+    private boolean mIsDownloaded;
+    private int mDownloadingProgress;
+    private boolean mImagesDownloaded;
+    private boolean mRecordsDownloaded;
 
     public long getId() {
         return mId;
@@ -123,5 +128,33 @@ public class SetItem {
     }
     public void setAddedDate(Date date){
         mAddedDate = date;
+    }
+
+    public boolean isDownloading(){return mIsDownloading;}
+    public void setDownloading(boolean isDownloading){
+        mIsDownloading = isDownloading;
+    }
+
+    public boolean isDownloaded(){
+        return mIsDownloaded;
+    }
+    public void setDownloaded(boolean isDownloaded){
+        mIsDownloaded = isDownloaded;
+    }
+
+    public int getDownloadingProgress(){return mDownloadingProgress;}
+    public void setDownloadingProgress(int progress){mDownloadingProgress = progress;}
+
+    public boolean isImagesDownloaded(){return mImagesDownloaded;}
+    public void setImagesDownloaded(boolean downloaded){mImagesDownloaded = downloaded;}
+
+    public boolean isRecordsDownloaded(){return mRecordsDownloaded;}
+    public void setRecordsDownloaded(boolean downloaded){mRecordsDownloaded = downloaded;}
+
+    public void setDownloadInfo(SetDownloadInfo info){
+        if(info != null){
+            mImagesDownloaded = info.isImagesDownloaded();
+            mRecordsDownloaded = info.isRecordsDownloaded();
+        }
     }
 }

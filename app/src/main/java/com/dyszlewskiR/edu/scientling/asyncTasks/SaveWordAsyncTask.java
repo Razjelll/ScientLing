@@ -5,7 +5,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.dyszlewskiR.edu.scientling.data.file.WordFileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.data.models.params.SaveWordParams;
@@ -65,11 +65,18 @@ public class SaveWordAsyncTask extends AsyncTask<SaveWordParams, Void, Word> {
         } else {
             wordId = saveWord(word);
         }
-        if (params[0].getImageUri() != null) {
-            saveImage(word.getImageName(), set.getCatalog(), params[0].getImageUri());
+        if(params[0].getImageToDelete() != null){
+            deleteImage(params[0].getImageToDelete());
         }
-        if (params[0].getRecordUri() != null) {
-            saveRecord(word.getRecordName(), set.getCatalog(), params[0].getRecordUri());
+        if(params[0].getRecordToDelete() != null){
+            deleteRecord(params[0].getRecordToDelete());
+        }
+
+        if (params[0].getImageToInsert() != null) {
+            saveImage(word.getImageName(), set.getCatalog(), params[0].getImageToInsert());
+        }
+        if (params[0].getRecordToInsert() != null) {
+            saveRecord(word.getRecordName(), set.getCatalog(), params[0].getRecordToInsert());
         }
         word.setId(wordId);
         return word;
@@ -99,7 +106,7 @@ public class SaveWordAsyncTask extends AsyncTask<SaveWordParams, Void, Word> {
 
     private void saveImage(String fileName, String setCatalog, Uri uri) {
         try {
-            WordFileSystem.saveImage(fileName, setCatalog, uri, mContext, true);
+            FileSystem.saveImage(fileName, setCatalog, uri, mContext, true);
         } catch (IOException e) {
             e.printStackTrace(); // TODO pokazać na dialogu  błąd zapisywanie obrazka
         }
@@ -107,9 +114,17 @@ public class SaveWordAsyncTask extends AsyncTask<SaveWordParams, Void, Word> {
 
     private void saveRecord(String fileName, String setCatalog, Uri uri) {
         try {
-            WordFileSystem.saveRecord(fileName, setCatalog, uri, mContext);
+            FileSystem.saveRecord(fileName, setCatalog, uri, mContext);
         } catch (IOException e) {
             e.printStackTrace(); //TODO pokazać na dialogu błąd zapisywania nagrania
         }
+    }
+
+    private void deleteImage(Uri uri){
+        FileSystem.deleteFile(uri);
+    }
+
+    private void deleteRecord(Uri uri){
+        FileSystem.deleteFile(uri);
     }
 }

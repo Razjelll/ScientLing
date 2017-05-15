@@ -9,36 +9,63 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
 
+import java.util.Set;
+
 import static com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable.SetsColumns;
-
-
-/**
- * Created by Razjelll on 31.03.2017.
- */
 
 public class SetCreator  {
 
     public static VocabularySet createFromCursor(Cursor cursor) {
-        VocabularySet set = null;
-        if (cursor != null) {
-            set = new VocabularySet();
-            set.setId(cursor.getLong(SetsColumns.ID_POSITION));
-            set.setName(cursor.getString(SetsColumns.NAME_POSITION));
-            long languageL2Id = cursor.getLong(SetsColumns.LANGUAGE_L2_FK_POSITION);
-            if (languageL2Id > 0) {
-                Language language = new Language();
-                language.setId(languageL2Id);
-                set.setLanguageL2(language);
+        if(cursor != null){
+            VocabularySet set = new VocabularySet();
+            for(int i=0; i<cursor.getColumnCount(); i++){
+                switch (cursor.getColumnName(i)){
+                    case SetsColumns.ID:
+                        set.setId(cursor.getLong(i)); break;
+                    case SetsColumns.NAME:
+                        set.setName(cursor.getString(i)); break;
+                    case SetsColumns.LANGUAGE_L2_FK:
+                        if(!cursor.isNull(i)){
+                            long languageL2 = cursor.getLong(i);
+                            if(languageL2 > 0){
+                                set.setLanguageL2(new Language(languageL2));
+                            }
+                        }
+                        break;
+                    case SetsColumns.LANGUAGE_L1_FK:
+                        if(!cursor.isNull(i)){
+                            long languageL1 = cursor.getLong(i);
+                            if(languageL1 > 0){
+                                set.setLanguageL1(new Language(languageL1));
+                            }
+                        }
+                        break;
+                    case SetsColumns.CATALOG:
+                        set.setCatalog(cursor.getString(i)); break;
+                    case SetsColumns.GLOBAL_ID:
+                        if(!cursor.isNull(i)){
+                            set.setGlobalId(cursor.getLong(i));
+                        }
+                        break;
+                    case SetsColumns.UPLOADED:
+                        if(!cursor.isNull(i)){
+                            set.setUploaded(cursor.getInt(i));
+                        }
+                        break;
+                    case SetsColumns.IMAGES_DOWNLOADED:
+                        if(!cursor.isNull(i)){
+                            set.setImagesDownloaded(cursor.getInt(i));
+                        }
+                        break;
+                    case SetsColumns.RECORDS_DOWNLOADED:
+                        if(!cursor.isNull(i)){
+                            set.setRecordsDownloaded(cursor.getInt(i));
+                        }
+                }
             }
-            long languageL1Id = cursor.getLong(SetsColumns.LANGUAGE_L1_FK_POSITION);
-            if (languageL1Id > 0) {
-                Language language = new Language();
-                language.setId(languageL1Id);
-                set.setLanguageL1(language);
-            }
-            set.setCatalog(cursor.getString(SetsColumns.CATALOG_POSITION));
+            return set;
         }
-        return set;
+        return null;
     }
 
     private static final String ID = "id";

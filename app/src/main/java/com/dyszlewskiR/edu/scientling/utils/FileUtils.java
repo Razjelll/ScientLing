@@ -20,6 +20,8 @@ import java.io.InputStream;
 public class FileUtils {
 
     private static final String LOG_TAG = "FileUtils";
+    private static final String IMAGES_FOLDER = "images";
+    private static final String RECORD_FOLDER = "records";
 
     public static byte[] getBytes(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
@@ -111,6 +113,11 @@ public class FileUtils {
      * @throws IOException
      */
     public static void saveFileInternalStorage(String catalog, String fileName, byte[] data, Context context) throws IOException {
+        String string = catalog.split("/")[0];
+        File cat = new File(context.getFilesDir(), string);
+        if(!cat.exists()){
+            cat.mkdir();
+        }
         File catalogDir = new File(context.getFilesDir(), catalog);
         if (!catalogDir.exists()) {
             catalogDir.mkdir();
@@ -126,6 +133,14 @@ public class FileUtils {
             return file.delete();
         }
         return true;
+    }
+
+    public static boolean deleteFileInternalStorage(Uri uri){
+        File file = new File(uri.getPath());
+        if(file.exists()){
+            return file.delete();
+        }
+        return false;
     }
 
     public static boolean deleteDirectory(String dirName, Context context) {
@@ -147,6 +162,16 @@ public class FileUtils {
             return null;
         }
         return Uri.fromFile(new File(context.getFilesDir() + "/" + catalog, filename));
+    }
+
+    public static File getInternalCatalog(String catalog, Context context){
+        File file = new File(context.getFilesDir() + "/" + catalog);
+        return file;
+    }
+
+    public static File getFile(String name, String catalog, Context context){
+        File file = new File(context.getFilesDir() + "/" + catalog+ "/" + name);
+        return file;
     }
 
     //----------------------------------------------------------------------------------------------

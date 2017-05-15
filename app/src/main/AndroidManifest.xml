@@ -38,7 +38,9 @@
         <service android:name=".services.data.DeletingLessonService" />
         <service android:name=".services.data.DeletingSetService" />
         <service android:name=".services.data.DeletingWordService" />
-        <service android:name=".services.net.DownloadSetsService" />
+        <service android:name=".services.net.services.DownloadSetsService" />
+            <!--android:process=":downloading_set"/>-->
+        <service android:name=".services.net.services.UploadSetService"/>
 
         <activity android:name=".activity.LoginActivity" />
         <activity

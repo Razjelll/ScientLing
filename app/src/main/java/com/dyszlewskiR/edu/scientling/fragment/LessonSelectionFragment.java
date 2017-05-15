@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,6 +28,7 @@ import com.dyszlewskiR.edu.scientling.activity.WordsManagerActivity;
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.dialogs.LessonDialog;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.services.data.DeletingLessonService;
@@ -34,9 +36,6 @@ import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import java.util.List;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class LessonSelectionFragment extends Fragment implements LessonDialog.Callback {
 
     private final int LAYOUT_RESOURCE = R.layout.fragment_lesson_selection;
@@ -44,11 +43,8 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
     private final String DEFUALT_LESSON_NUMBER = "0";
 
     private ListView mListView;
-    private List<Lesson> mItems;
     private long mSetId;
 
-    private Context mContext;
-    private int mResource;
     private LessonAdapter mAdapter;
 
     private int mLastEditedPosition;
@@ -77,7 +73,6 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
         View view = inflater.inflate(LAYOUT_RESOURCE, container, false);
         setupControls(view);
         setListeners();
-        loadData();
         return view;
     }
 
@@ -91,18 +86,26 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Intent intent = new Intent();
-                    intent.putExtra("result", mItems.get(position));
+                    intent.putExtra("result", mAdapter.getItem(position));
                     getActivity().setResult(Activity.RESULT_OK, intent);
                     getActivity().finish();
+                }
+            });
+        } else {
+            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    startWordsManagerActivity(position);
                 }
             });
         }
     }
 
-    private void loadData() {
-        DataManager dataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
-        //można stworzyć nowy zbiór, ponieważ przy zapytaniu brane pod uwagę jest tylko id
-        mItems = dataManager.getLessons(new VocabularySet(mSetId));
+    private void startWordsManagerActivity(int itemPosition) {
+        Intent intent = new Intent(getContext(), WordsManagerActivity.class);
+        intent.putExtra("set", mSetId);
+        intent.putExtra("lesson", mAdapter.getItem(itemPosition));
+        startActivity(intent);
     }
 
     @Override
@@ -112,8 +115,61 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
     }
 
     private void setAdapter() {
-        mAdapter = new LessonAdapter(getActivity(), ADAPTER_ITEM_RESOURCE);
+        DataManager dataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
+        //można stworzyć nowy zbiór, ponieważ przy zapytaniu brane pod uwagę jest tylko id
+        List<Lesson> lessons = dataManager.getLessons(new VocabularySet(mSetId));
+        mAdapter = new LessonAdapter(getActivity(), ADAPTER_ITEM_RESOURCE, lessons);
         mListView.setAdapter(mAdapter);
+        registerForContextMenu(mListView);
+    }
+
+    private final int WORDS = R.string.words;
+    private final int EDIT = R.string.edit;
+    private final int DELETE = R.string.delete;
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        int position = info.position;
+        Lesson lesson = mAdapter.getItem(position);
+        if (lesson.getName().equals("")) {
+            menu.setHeaderTitle(getString(R.string.unallocated));
+        } else {
+            menu.setHeaderTitle(lesson.getName());
+        }
+        menu.add(0, WORDS, 0, getString(WORDS));
+        if (lesson.getNumber() != Constants.DEFAULT_LESSON_NUMBER) {
+            menu.add(0, EDIT, 0, getString(EDIT));
+            menu.add(0, DELETE, 0, getString(DELETE));
+        }
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item){
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        int position = info.position;
+
+        switch (item.getItemId()){
+            case WORDS:
+                startWordsManagerActivity(position); break;
+            case EDIT:
+                editItem(position); break;
+            case DELETE:
+                showDeleteDialog(position); break;
+        }
+        return true;
+    }
+
+    private void editItem(int position){
+        LessonDialog dialog = new LessonDialog();
+        dialog.setCallback(LessonSelectionFragment.this);
+        dialog.setLesson(mAdapter.getItem(position));
+        dialog.show(getFragmentManager(), "LessonDialog");
+    }
+
+    private void showDeleteDialog(int position){
+        DeleteDialog dialog = new DeleteDialog(getContext(), mAdapter.getItem(position));
+        dialog.show();
     }
 
     @Override
@@ -147,9 +203,9 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
         long lessonId = saveLessonInDb(lesson, edit);
         lesson.setId(lessonId);
         if (!edit) { //dodawanie nowej lekcji
-            mItems.add(lesson);
+            mAdapter.add(lesson);
         } else { //edycja
-            mItems.set(mLastEditedPosition, lesson);
+            mAdapter.set(mLastEditedPosition, lesson);
         }
         mAdapter.notifyDataSetChanged();
     }
@@ -164,7 +220,8 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
     private long saveLessonInDb(Lesson lesson, boolean update) {
         DataManager dataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
         //TODO chyba można tak zrobić, przetestować czy będzie poprawnie zapisywać
-        lesson.setSet(new VocabularySet(mSetId));
+        //lesson.setSet(new VocabularySet(mSetId));
+        lesson.setSetId(mSetId);
         long id;
         if (update) {
             dataManager.updateLesson(lesson);
@@ -191,9 +248,24 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
         private final int MENU_WORDS = R.string.words;
         private final int WORDS_REQUEST = 9673;
 
-        public LessonAdapter(Context context, int resource) {
+        private List<Lesson> mItems;
+        private Context mContext;
+        private int mResource;
+
+        public LessonAdapter(Context context, int resource, List<Lesson> data) {
             mContext = context;
             mResource = resource;
+            mItems = data;
+        }
+
+        public void add(Lesson lesson){
+            mItems.add(lesson);
+            notifyDataSetChanged();
+        }
+
+        public void set(int position, Lesson lesson){
+            mItems.set(position, lesson);
+            notifyDataSetChanged();
         }
 
         @Override
@@ -202,7 +274,7 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
         }
 
         @Override
-        public Object getItem(int position) {
+        public Lesson getItem(int position) {
             return mItems.get(position);
         }
 
@@ -212,7 +284,7 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, final ViewGroup parent) {
             View rowView = convertView;
             ViewHolder viewHolder;
             if (rowView == null) {
@@ -231,70 +303,14 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
                 viewHolder.lessonNameTextView.setText(mItems.get(position).getName());
                 viewHolder.lessonNumberTextView.setText(String.valueOf(mItems.get(position).getNumber()));
             }
-            //if(mItems.get(position).getNumber() != Constants.DEFAULT_LESSON_NUMBER){
-            setupMenu(position, viewHolder);
-            //} else {
-            //ukrywamy przycisk akcji, ponieważ nie chcemy aby ktoś modyfikował lekcję domyślną
-            // viewHolder.actionButton.setVisibility(View.GONE);
-            //}
-
-            return rowView;
-        }
-
-        private void setupMenu(final int position, final ViewHolder viewHolder) {
             viewHolder.actionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PopupMenu popupMenu = new PopupMenu(mContext, viewHolder.actionButton);
-                    if (mItems.get(position).getNumber() != Constants.DEFAULT_LESSON_NUMBER) {
-                        popupMenu.getMenu().add(getString(MENU_EDIT));
-                        popupMenu.getMenu().add(getString(MENU_DELETE));
-                    }
-
-                    if (mManager) {
-                        popupMenu.getMenu().add(getString(MENU_WORDS));
-                    }
-
-                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            if (item.getTitle().equals(getString(MENU_EDIT))) {
-                                editItem(position);
-                                mLastEditedPosition = position;
-                            }
-                            if (item.getTitle().equals(getString(MENU_DELETE))) {
-                                deleteItem(position);
-                            }
-                            if (item.getTitle().equals(getString(MENU_WORDS))) {
-                                startWordsManagerActivity(position);
-                            }
-                            return true;
-                        }
-                    });
-                    popupMenu.show();
+                    parent.showContextMenuForChild(v);
                 }
             });
+            return rowView;
         }
-
-        private void editItem(int itemPosition) {
-            LessonDialog dialog = new LessonDialog();
-            dialog.setCallback(LessonSelectionFragment.this);
-            dialog.setLesson(mItems.get(itemPosition));
-            dialog.show(getFragmentManager(), "LessonDialog");
-        }
-
-        private void deleteItem(int itemPosition) {
-            DeleteDialog dialog = new DeleteDialog(mContext, mItems.get(itemPosition));
-            dialog.show();
-        }
-
-        private void startWordsManagerActivity(int itemPosition) {
-            Intent intent = new Intent(mContext, WordsManagerActivity.class);
-            intent.putExtra("set", mSetId);
-            intent.putExtra("lesson", mItems.get(itemPosition));
-            startActivity(intent);
-        }
-
     }
 
     private static class ViewHolder {
@@ -323,21 +339,10 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
                 public void onClick(DialogInterface dialog, int which) {
                     //deleteLesson(lesson, -1);
                     startDeletingService(lesson, -1, mSetId);
-                    mItems.remove(lesson);
+                    //mAdapter.remove(lesson); //TODO tutaj to zakomentowałem
                     mAdapter.notifyDataSetChanged();
                 }
             });
-            /*this.setButton(BUTTON_NEUTRAL, getString(R.string.delete_without_words), new OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    LessonDialog lessonDialog = new LessonDialog();
-
-                    lessonDialog.setTitle(getString(R.string.change_lesson));
-                    lessonDialog.setCallback(DeleteDialog.this);
-                    lessonDialog.show(getFragmentManager(), "LessonDialog");
-
-                }
-            });*/
             this.setButton(BUTTON_NEGATIVE, getString(R.string.no), new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

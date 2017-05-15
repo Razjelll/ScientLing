@@ -2,7 +2,7 @@ package com.dyszlewskiR.edu.scientling.services.net.responses;
 
 import android.util.JsonReader;
 
-import com.dyszlewskiR.edu.scientling.services.net.ResponseStatus;
+import com.dyszlewskiR.edu.scientling.services.net.values.ResponseStatus;
 
 import java.io.IOException;
 import java.io.InputStream;

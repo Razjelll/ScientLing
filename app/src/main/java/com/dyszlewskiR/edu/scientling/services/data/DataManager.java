@@ -3,7 +3,6 @@ package com.dyszlewskiR.edu.scientling.services.data;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.data.database.DatabaseHelper;
 import com.dyszlewskiR.edu.scientling.data.database.dao.CategoryDao;
@@ -32,6 +31,8 @@ import com.dyszlewskiR.edu.scientling.data.models.models.PartOfSpeech;
 import com.dyszlewskiR.edu.scientling.data.models.models.Repetition;
 import com.dyszlewskiR.edu.scientling.data.models.models.RepetitionGroup;
 import com.dyszlewskiR.edu.scientling.data.models.models.Sentence;
+import com.dyszlewskiR.edu.scientling.data.models.models.SetDownloadInfo;
+import com.dyszlewskiR.edu.scientling.data.models.models.SetListItem;
 import com.dyszlewskiR.edu.scientling.data.models.models.Translation;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.models.Word;
@@ -52,7 +53,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.zip.DeflaterInputStream;
+import java.util.Set;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable.WordsColumns;
@@ -75,7 +76,7 @@ public class DataManager {
     private WordDao mWordDao; //TODO przetestować, gdzie bedzie działało lepiej
     private CategoryDao mCategoryDao;
     private SetDao mSetDao;
-    private TranslationDao mTrasnaltionDao;
+    private TranslationDao mTranslationDao;
     private SentenceDao mSentenceDao;
     private DefinitionDao mDefinitionDao;
     private HintDao mHintDao;
@@ -106,7 +107,7 @@ public class DataManager {
         return word;
     }
 
-    private void completeWord(Word word) {
+    public void completeWord(Word word) {
         if (word != null) {
             getAndSetTranslations(word);
             getAndSetSentences(word);
@@ -225,7 +226,7 @@ public class DataManager {
             return;
         }
         Translation existingTranslation = null;
-        TranslationDao translationDao = mTransactionStarted ? mTrasnaltionDao : new TranslationDao(mDb) ;
+        TranslationDao translationDao = mTransactionStarted ? mTranslationDao : new TranslationDao(mDb) ;
 
         for (Translation translation : translationsList) {
             existingTranslation = translationDao.getByContent(translation.getContent());
@@ -297,17 +298,17 @@ public class DataManager {
         mDb.endTransaction();
     }
 
-    public void deleteWord(Word word) {
+    public int deleteWord(Word word) {
         mDb.beginTransaction();
         TranslationDao translationDao = new TranslationDao(mDb);
         translationDao.unLink(word.getId());
         SentenceDao sentenceDao = new SentenceDao(mDb);
         sentenceDao.unlink(word.getId());
         WordDao wordDao = new WordDao(mDb);
-        wordDao.delete(word);
-
+        int result = wordDao.delete(word);
         mDb.setTransactionSuccessful();
         mDb.endTransaction();
+        return result;
     }
 
     public List<Word> getQuestions(QuestionsParams params) {
@@ -472,6 +473,21 @@ public class DataManager {
             completeWord(word);
         }
         return words;
+    }
+
+    public Cursor getAllWordsCursor(long setId){
+        WordDao wordDao = new WordDao(mDb);
+        String selection = LessonsTable.ALIAS_DOT+LessonsColumns.SET_FK + "=?";
+        String[] selectionArguments = {String.valueOf(setId)};
+        return wordDao.getAllCursor(false,selection,selectionArguments,null,null,null,null);
+    }
+
+    public Cursor getAllLessonsCursor(long setId){
+        LessonDao lessonDao = new LessonDao(mDb);
+        String selection = LessonsColumns.SET_FK + "=?";
+        String[] selectionArguments = {String.valueOf(setId)};
+        return lessonDao.getAllCursor(false, LessonsTable.getColumns(), selection, selectionArguments,
+                null,null,null,null);
     }
 
     public List<Word> getWords(WordsParams params, boolean onlyOneLesson) {
@@ -909,19 +925,19 @@ public class DataManager {
 
     public void startTransaction(){
         mWordDao = new WordDao(mDb);
-        mTrasnaltionDao = new TranslationDao(mDb);
+        mTranslationDao = new TranslationDao(mDb);
         mSentenceDao = new SentenceDao(mDb);
         mHintDao = new HintDao(mDb);
         mDefinitionDao = new DefinitionDao(mDb);
         mSetDao = new SetDao(mDb);
         mLessonDao = new LessonDao(mDb);
-        mDb.beginTransaction();
+        mDb.beginTransactionNonExclusive();
         mTransactionStarted = true;
     }
 
     public void finishTranslation(){
         mWordDao = null;
-        mTrasnaltionDao = null;
+        mTranslationDao = null;
         mSentenceDao = null;
         mHintDao = null;
         mDefinitionDao = null;
@@ -937,18 +953,88 @@ public class DataManager {
         return lessonDao.getId(globalId);
     }
 
-    public boolean checkSetIdDownloaded(long globalId){
-        String[] column = {"COUNT(1)"};
-        String selection = SetsTable.SetsColumns.GLOBAL_ID + "=?";
-        String[] selectionArgumnet = {String.valueOf(globalId)};
-        Cursor cursor = mDb.query(SetsTable.TABLE_NAME, column,selection,selectionArgumnet,
-                null,null,null,null);
-        if(cursor.moveToFirst()){
-            int count = cursor.getInt(0);
-            if(count > 0){
-                return true;
-            }
-        }
-        return false;
+    public List<SetListItem> getSetListItems(){
+        String[] columns = {SetsTable.SetsColumns.ID, SetsTable.SetsColumns.NAME,
+                SetsTable.SetsColumns.GLOBAL_ID, SetsTable.SetsColumns.UPLOADED};
+        SetDao setDao = new SetDao(mDb);
+        return setDao.getAllListItem(columns, null,null,null,null,null,null);
     }
+
+    public SetDownloadInfo getSetDownloadInfo(long globalId){
+        String[] columns = {SetsTable.SetsColumns.IMAGES_DOWNLOADED, SetsTable.SetsColumns.RECORDS_DOWNLOADED};
+        String selection = SetsTable.SetsColumns.GLOBAL_ID + "=?";
+        String[] selectionArgs = {String.valueOf(globalId)};
+        SetDao setDao = new SetDao(mDb);
+        return setDao.getSetDownloadInfo(columns, selection, selectionArgs);
+    }
+
+    public void updateSetImagesDownloaded(boolean downloaded, long globalId){
+        String column = SetsTable.SetsColumns.IMAGES_DOWNLOADED;
+        String selectionColumn = SetsTable.SetsColumns.GLOBAL_ID;
+        updateSetValue(downloaded, globalId, column, selectionColumn);
+    }
+
+    public void updateSetRecordsDownloaded(boolean downloaded, long globalId){
+        String column = SetsTable.SetsColumns.RECORDS_DOWNLOADED;
+        String selectionColumn = SetsTable.SetsColumns.GLOBAL_ID;
+        updateSetValue(downloaded, globalId, column, selectionColumn);
+    }
+
+    /**
+     * Metoda która aktualizuje globalny numer indentyfikacyjny na podstawie jego dotychczasowego numeru.
+     * Metoda używana do skasowania numeru globalnego, które nastepuje po usunięciu zestawu z serwera
+     * @param newGlobalId globalny numer identyfikacyjny zestawu który będzie ustawiony
+     * @param oldGlobalId dotychczasowy globalny numer identyfikacyjny zestawu który będzie zmodyfikowany
+     */
+    public void updateSetGlobalId(Long newGlobalId, long oldGlobalId){
+        insertSetGlobalId(newGlobalId, oldGlobalId, SetsTable.SetsColumns.GLOBAL_ID);
+    }
+
+    public void insertSetGlobalId(Long newGlobalId, long setId){
+        insertSetGlobalId(newGlobalId, setId, SetsTable.SetsColumns.ID);
+    }
+
+    private void insertSetGlobalId(Long newGlobalId, long currentId, String selectionColumn){
+        String column = SetsTable.SetsColumns.GLOBAL_ID;
+        String selection = selectionColumn + "=?";
+        String[] selectionArguments = {String.valueOf(currentId)};
+        SetDao setDao = new SetDao(mDb);
+        setDao.update(column, newGlobalId, selection, selectionArguments);
+    }
+
+    public void updateSetUploaded(boolean uploaded, long setId){
+        String column = SetsTable.SetsColumns.UPLOADED;
+        String selectionColumn = SetsTable.SetsColumns.ID;
+        updateSetValue(uploaded, setId, column,selectionColumn);
+    }
+
+    private void updateSetValue(boolean downloaded, long id, String column, String selectionColumn){
+        String selection = selectionColumn +"=?";
+        String[] selectionArguments = {String.valueOf(id)};
+        SetDao setDao = new SetDao(mDb);
+        setDao.update(column,downloaded, selection, selectionArguments);
+    }
+
+    public void updateImageUploaded(boolean uploaded, long setId){
+        String column = SetsTable.SetsColumns.IMAGES_DOWNLOADED;
+        String selectionColumn = SetsTable.SetsColumns.ID;
+        updateSetValue(uploaded, setId, column, selectionColumn);
+    }
+
+    public void updateRecordsUploaded(boolean uploaded, long setId){
+        String column = SetsTable.SetsColumns.RECORDS_DOWNLOADED;
+        String selectionColumn = SetsTable.SetsColumns.ID;
+        updateSetValue(uploaded, setId, column, selectionColumn);
+    }
+
+    public String getSetCatalog(long globalId){
+        String[] columns = {SetsTable.SetsColumns.CATALOG};
+        String selection = SetsTable.SetsColumns.GLOBAL_ID + "=?";
+        String[] selectionArguments = {String.valueOf(globalId)};
+        SetDao setDao = new SetDao(mDb);
+        VocabularySet set = setDao.get(columns, selection, selectionArguments);
+        return  set.getCatalog();
+    }
+
+
 }

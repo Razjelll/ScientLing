@@ -40,7 +40,8 @@ public class LessonDao extends BaseDao<Lesson> {
         mInsertStatement.clearBindings();
         mInsertStatement.bindString(LessonsColumns.NAME_POSITION, entity.getName());
         mInsertStatement.bindLong(LessonsColumns.NUMBER_POSITION, entity.getNumber());
-        mInsertStatement.bindLong(LessonsColumns.SET_FK_POSITION, entity.getSet().getId());
+        //mInsertStatement.bindLong(LessonsColumns.SET_FK_POSITION, entity.getSet().getId());
+        mInsertStatement.bindLong(LessonsColumns.SET_FK_POSITION, entity.getSetId());
         if(entity.getGlobalId() > 0){
             mInsertStatement.bindLong(LessonsColumns.GLOBAL_ID_POSITION, entity.getGlobalId());
         } else {
@@ -54,7 +55,8 @@ public class LessonDao extends BaseDao<Lesson> {
         final ContentValues values = new ContentValues();
         values.put(LessonsColumns.NAME, entity.getName());
         values.put(LessonsColumns.NUMBER, entity.getNumber());
-        values.put(LessonsColumns.SET_FK, entity.getSet().getId());
+        //values.put(LessonsColumns.SET_FK, entity.getSet().getId());
+        values.put(LessonsColumns.SET_FK, entity.getSetId());
         if(entity.getGlobalId() > 0 ){
             values.put(LessonsColumns.GLOBAL_ID, entity.getGlobalId());
         } else {
@@ -92,8 +94,9 @@ public class LessonDao extends BaseDao<Lesson> {
     public List<Lesson> getAll(boolean distinct, String[] columns, String selection, String[] selectionArgs,
                                String groupBy, String having, String orderBy, String limit) {
         List<Lesson> lessonsList = new ArrayList<>();
-        Cursor cursor = mDb.query(distinct, LessonsTable.TABLE_NAME, columns, selection, selectionArgs,
-                groupBy, having, orderBy, limit);
+        /*Cursor cursor = mDb.query(distinct, LessonsTable.TABLE_NAME, columns, selection, selectionArgs,
+                groupBy, having, orderBy, limit);*/
+        Cursor cursor = getAllCursor(distinct, columns, selection, selectionArgs, groupBy, having, orderBy,limit);
         if (cursor.moveToFirst()) {
             Lesson lesson = null;
             do {
@@ -107,6 +110,11 @@ public class LessonDao extends BaseDao<Lesson> {
         assert cursor.isClosed();
 
         return lessonsList;
+    }
+
+    public Cursor getAllCursor(boolean distinct, String[] columns, String selection, String[] selectionArgs,
+                               String groupBy, String having, String orderBy, String limit){
+        return mDb.query(distinct,LessonsTable.TABLE_NAME, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
     }
 
     public long getId(long globalId){

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,9 +49,6 @@ import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class WordsManagerFragment extends Fragment {
 
     private final String LOG_TAG = "WordsManagerFaragment";
@@ -79,12 +77,6 @@ public class WordsManagerFragment extends Fragment {
     private ImageButton mSearchButton;
     private ListView mListView;
 
-    private List<Word> mWordsList;
-    private List<VocabularySet> mSetsList;
-    private List<Lesson> mLessonsList;
-    private List<Category> mCategoriesList;
-
-
     private VocabularySet mSet;
     private Lesson mLesson;
     private Category mCategory;
@@ -105,7 +97,6 @@ public class WordsManagerFragment extends Fragment {
     private int mLastEditedPosition;
 
     //endregion
-
     public WordsManagerFragment() {
     }
 
@@ -113,6 +104,7 @@ public class WordsManagerFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mDataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
+        Log.d(LOG_TAG, "onCreate");
         loadData();
 
         setHasOptionsMenu(true);
@@ -129,11 +121,13 @@ public class WordsManagerFragment extends Fragment {
         if (mLesson == null) {
             mLesson = new Lesson(ANY_LESSON_ID);
         }
+        Log.d(LOG_TAG, "loadData end");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(LOG_TAG, "onCreteView");
         View view = inflater.inflate(R.layout.fragment_words_manager, container, false);
         setupControls(view);
         setListeners();
@@ -151,9 +145,7 @@ public class WordsManagerFragment extends Fragment {
         mSearchEditText = (EditText) view.findViewById(R.id.search_edit_text);
         mSearchButton = (ImageButton) view.findViewById(R.id.search_button);
         mListView = (ListView) view.findViewById(R.id.list);
-
     }
-
     //region Listeners
 
     private void setListeners() {
@@ -162,6 +154,8 @@ public class WordsManagerFragment extends Fragment {
         setCategorySpinnerListener();
         setTypeSpinnerListener();
         setSearchButtonListeners();
+        setListViewListeners();
+        Log.d(LOG_TAG, "setListners end");
     }
 
     private void setSetSpinnerListener() {
@@ -191,6 +185,8 @@ public class WordsManagerFragment extends Fragment {
                 mSetSpinnerTouched = false;
             }
         });
+
+        Log.d(LOG_TAG, "setSetSpinnerListener end");
     }
 
     private void setLessonSpinnerListener() {
@@ -211,7 +207,6 @@ public class WordsManagerFragment extends Fragment {
                     mLessonSpinnerTouched = false;
                 }
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 mLessonSpinnerTouched = false;
@@ -279,6 +274,15 @@ public class WordsManagerFragment extends Fragment {
         });
     }
 
+    private void setListViewListeners(){
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+               seeWord(position);
+            }
+        });
+    }
+
     //endregion
 
     @Override
@@ -302,6 +306,8 @@ public class WordsManagerFragment extends Fragment {
         mTypesAdapter = new ArrayAdapter(getContext(), TYPES_ADAPTER_RESOURCE, typesArray);
         mTypeSpinner.setAdapter(mTypesAdapter);
         setWordList(mSet, mLesson, mCategory, mType);
+
+        Log.d(LOG_TAG, "setAdapters");
     }
 
     private List<Lesson> getLessonsList(VocabularySet set) {
@@ -331,8 +337,10 @@ public class WordsManagerFragment extends Fragment {
         }
         params.setType(type);
 
+        Log.d(LOG_TAG, "setWordList before task");
         DownloadWordAsyncTask task = new DownloadWordAsyncTask(mDataManager, getContext());
-        task.execute(params);
+        //task.execute(params);
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
     }
 
     private void setData() {
@@ -340,13 +348,88 @@ public class WordsManagerFragment extends Fragment {
         mSetSpinner.setSelection(setSelection);
         int lessonSelection = mLessonAdapter.getPosition(mLesson);
         mLessonSpinner.setSelection(lessonSelection);
+        Log.d(LOG_TAG, "setData");
+    }
+
+    private final int SEE = R.string.see;
+    private final int EDIT = R.string.edit;
+    private final int ADD_TO_HARD = R.string.add_to_hard;
+    private final int REMOVE_FROM_HARD = R.string.remove_from_hard;
+    private final int DELETE = R.string.delete;
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu,View view, ContextMenu.ContextMenuInfo menuInfo){
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+        int position = info.position;
+        Word word = mWordAdapter.getItem(position);
+        menu.setHeaderTitle(word.getContent());
+        menu.add(0,SEE,0, getString(SEE));
+        menu.add(0,EDIT, 0, getString(EDIT));
+        if(word.isSelected()){
+            menu.add(0, REMOVE_FROM_HARD, 0, getString(REMOVE_FROM_HARD));
+        } else {
+            menu.add(0, ADD_TO_HARD, 0, getString(ADD_TO_HARD));
+        }
+        menu.add(0, DELETE, 0, getString(DELETE));
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item){
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        int position = info.position;
+        switch (item.getItemId()){
+            case SEE:
+                seeWord(position); break;
+            case EDIT:
+                editWord(position); break;
+            case ADD_TO_HARD:
+                changeHard(position,true); break;
+            case REMOVE_FROM_HARD:
+                changeHard(position, false); break;
+            case DELETE:
+                showDeleteDialog(position); break;
+        }
+        return true;
+    }
+
+    private void seeWord(int position){
+        Intent intent = new Intent(getContext(), LearningActivity.class);
+        //przekazujemy do intencji listę z jednym słowkiem, ponieważ otwierana aktywność
+        //oczekuje właśnie takiej formy danych, ponieważ korzystamy z aktywności
+        //zaprojektowanej z pracą z listą słówek.
+        ArrayList<Word> word = new ArrayList<>();
+        word.add(mWordAdapter.getItem(position));
+        intent.putParcelableArrayListExtra("items", word);
+        intent.putExtra("set", mSet);
+        intent.putExtra("learning", false);
+        startActivity(intent);
+    }
+
+    private void editWord(int position){
+        Intent intent = new Intent(getContext(), WordEditActivity.class);
+        intent.putExtra("item", mWordAdapter.getItem(position));
+        intent.putExtra("set", mSet);
+        intent.putExtra("edit", true);
+        mLastEditedPosition = position;
+        startActivityForResult(intent, EDIT_WORD_REQUEST);
+    }
+
+    private void changeHard(int itemPosition, boolean isHard) {
+        Word word = mWordAdapter.getItem(itemPosition);
+        word.setSelected(isHard);
+        mDataManager.updateWord(word);
+        //TODO zobaczyć czy jeszcze jakieś wyświetlane trudnych jest jeszcze włączone
+        //viewHolder.hardImageView.setVisibility(View.VISIBLE);
+    }
+
+    private void showDeleteDialog(int position) {
+        new DeleteWordAlertDialog(getContext(), mWordAdapter.getItem(position), mDataManager).show();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_words_manager, menu);
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -466,16 +549,8 @@ public class WordsManagerFragment extends Fragment {
     }
     //endregion
 
-
     //region WordAdapter
     private class WordAdapter extends ArrayAdapter implements Filterable {
-        private final int MENU_SEE = R.string.see;
-        private final int MENU_EDIT = R.string.edit;
-        private final int MENU_ADD_TO_HARD = R.string.add_to_hard;
-        private final int MENU_REMOVE_FROM_HARD = R.string.remove_from_hard;
-        private final int MENU_DELETE = R.string.delete;
-
-
         private List<Word> mItems;
         private List<Word> mFilteredItems;
         private Context mContext;
@@ -503,7 +578,7 @@ public class WordsManagerFragment extends Fragment {
         }
 
         @Override
-        public Object getItem(int position) {
+        public Word getItem(int position) {
             return mFilteredItems.get(position);
         }
 
@@ -521,7 +596,7 @@ public class WordsManagerFragment extends Fragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, final ViewGroup parent) {
             View rowView = convertView;
             ViewHolder viewHolder;
             if (convertView == null) {
@@ -548,121 +623,14 @@ public class WordsManagerFragment extends Fragment {
             if (mFilteredItems.get(position).isSelected()) {
                 viewHolder.hardImageView.setVisibility(View.VISIBLE);
             }
-            setupMenu(position, viewHolder);
-            return rowView;
-        }
-
-        private void setupMenu(final int position, final ViewHolder viewHolder) {
             viewHolder.actionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    PopupMenu popupMenu = new PopupMenu(mContext, viewHolder.actionButton);
-                    popupMenu.getMenu().add(getString(MENU_SEE));
-                    popupMenu.getMenu().add(getString(MENU_EDIT));
-                    if (mFilteredItems.get(position).isSelected()) {
-                        popupMenu.getMenu().add(getString(MENU_REMOVE_FROM_HARD));
-                    } else {
-                        popupMenu.getMenu().add(getString(MENU_ADD_TO_HARD));
-                    }
-                    popupMenu.getMenu().add(getString(MENU_DELETE));
-
-                    popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                        @Override
-                        public boolean onMenuItemClick(MenuItem item) {
-                            if (item.getTitle().equals(getString(MENU_SEE))) {
-                                seeItem(position);
-                            }
-                            if (item.getTitle().equals(getString(MENU_EDIT))) {
-                                editItem(position);
-                            }
-                            if (item.getTitle().equals(getString(MENU_ADD_TO_HARD))) {
-                                addToHardItem(position, viewHolder);
-                            }
-                            if (item.getTitle().equals(getString(MENU_REMOVE_FROM_HARD))) {
-                                removeFromHardItem(position, viewHolder);
-                            }
-                            if (item.getTitle().equals(getString(MENU_DELETE))) {
-                                deleteItem(position);
-                            }
-                            return true;
-                        }
-                    });
-                    popupMenu.show();
+                    parent.showContextMenuForChild(v);
                 }
             });
+            return rowView;
         }
-
-        private void seeItem(int itemPosition) {
-            Intent intent = new Intent(mContext, LearningActivity.class);
-            //przekazujemy do intencji listę z jednym słowkiem, ponieważ otwierana aktywność
-            //oczekuje właśnie takiej formy danych, ponieważ korzystamy z aktywności
-            //zaprojektowanej z pracą z listą słówek.
-            ArrayList<Word> word = new ArrayList<>();
-            word.add(mFilteredItems.get(itemPosition));
-            intent.putParcelableArrayListExtra("items", word);
-            intent.putExtra("set", mSet);
-            intent.putExtra("learning", false);
-            startActivity(intent);
-        }
-
-        private void editItem(int itemPosition) {
-            Intent intent = new Intent(mContext, WordEditActivity.class);
-            intent.putExtra("item", mFilteredItems.get(itemPosition));
-            intent.putExtra("set", mSet);
-            intent.putExtra("edit", true);
-            mLastEditedPosition = itemPosition;
-            startActivityForResult(intent, EDIT_WORD_REQUEST);
-
-        }
-
-        private void addToHardItem(int itemPosition, ViewHolder viewHolder) {
-            mFilteredItems.get(itemPosition).setSelected(true);
-            mDataManager.updateWord(mFilteredItems.get(itemPosition));
-            viewHolder.hardImageView.setVisibility(View.VISIBLE);
-        }
-
-        private void removeFromHardItem(int itemPosition, ViewHolder viewHolder) {
-            mFilteredItems.get(itemPosition).setSelected(false);
-            mDataManager.updateWord(mFilteredItems.get(itemPosition));
-            mItems.remove(itemPosition);
-            viewHolder.hardImageView.setVisibility(View.INVISIBLE);
-            notifyDataSetChanged();
-        }
-
-        private void deleteItem(int itemPosition) {
-            new DeleteWordAlertDialog(mContext, mFilteredItems.get(itemPosition), mDataManager).show();
-        }
-
-        //region DeleteWordAlertDialog
-        private class DeleteWordAlertDialog extends AlertDialog {
-
-            public DeleteWordAlertDialog(Context context, final Word word, final DataManager dataManager) {
-                super(context);
-                setTitle(context.getString(R.string.deleting_word));
-                String message = context.getString(R.string.sure_delete_word) + "/n"
-                        + word.getContent() + TranslationListConverter.toString(word.getTranslations());
-                setMessage(message);
-                setButton(BUTTON_POSITIVE, context.getString(R.string.yes), new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                       /* WordFileSystem.deleteImage(word.getImageName(), mSet.getCatalog(), getContext());
-                        WordFileSystem.deleteRecord(word.getRecordName(), mSet.getCatalog(), getContext());
-                        dataManager.deleteWord(word);*/
-                        startDeletingService(word, mSet.getCatalog());
-                        mFilteredItems.remove(word);
-                        notifyDataSetChanged();
-                    }
-                });
-                setButton(BUTTON_NEGATIVE, context.getString(R.string.no), new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-            }
-        }
-
-
         //endregion
 
         //region ValueFilter
@@ -707,7 +675,6 @@ public class WordsManagerFragment extends Fragment {
         //endregion
     }
 
-
     private static class ViewHolder {
         public TextView contentTextView;
         public TextView translationTextView;
@@ -725,7 +692,6 @@ public class WordsManagerFragment extends Fragment {
             actionButton = (ImageView) view.findViewById(R.id.menu_button);
         }
     }
-
     //endregion
 
     //region DownloadWordAsyncTask
@@ -736,6 +702,7 @@ public class WordsManagerFragment extends Fragment {
         public DownloadWordAsyncTask(DataManager dataManager, Context context) {
             mDataManager = dataManager;
             mContext = context;
+            Log.d(LOG_TAG, "DownloadWordAsyncTask");
         }
 
         @Override
@@ -745,10 +712,12 @@ public class WordsManagerFragment extends Fragment {
             if (mWordAdapter != null) {
                 mWordAdapter.clear();
             }
+            Log.d(LOG_TAG, "onPreExecute");
         }
 
         @Override
         protected List<Word> doInBackground(WordsParams... params) {
+            Log.d(LOG_TAG, "doInBackground");
             return mDataManager.getWords(params[0], true);
         }
 
@@ -761,7 +730,35 @@ public class WordsManagerFragment extends Fragment {
             } else {
                 mWordAdapter = new WordAdapter(mContext, WORD_ADAPTER_RESOURCE, result, mDataManager);
                 mListView.setAdapter(mWordAdapter);
+                registerForContextMenu(mListView);
             }
+        }
+    }
+    //endregion
+
+    //region DeleteWordAlertDialog
+    private class DeleteWordAlertDialog extends AlertDialog {
+
+        public DeleteWordAlertDialog(Context context, final Word word, final DataManager dataManager) {
+            super(context);
+            setTitle(context.getString(R.string.deleting_word));
+            String message = context.getString(R.string.sure_delete_word) + "/n"
+                    + word.getContent() + TranslationListConverter.toString(word.getTranslations());
+            setMessage(message);
+            setButton(BUTTON_POSITIVE, context.getString(R.string.yes), new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startDeletingService(word, mSet.getCatalog());
+                    mWordAdapter.remove(word);
+                    mWordAdapter.notifyDataSetChanged();
+                }
+            });
+            setButton(BUTTON_NEGATIVE, context.getString(R.string.no), new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
         }
     }
     //endregion

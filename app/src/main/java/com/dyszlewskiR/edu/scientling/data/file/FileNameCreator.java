@@ -9,6 +9,10 @@ import com.dyszlewskiR.edu.scientling.utils.FileUtils;
  */
 
 public class FileNameCreator {
+
+    private static final String IMAGE_EXTENSION =".jpg";
+    private static final String RECORD_EXTENSION = ".wav";
+
     /**
      * Liczba określająca ile pierwszych liter rootname ma posłużyć do utworzenia nazwy pliku.
      * Wartość -1 oznacza, że żadne ograniczenie nie będzie zastosowane.
@@ -28,21 +32,29 @@ public class FileNameCreator {
      * @param extension rozszerzenie jakie będize miał plik
      * @return
      */
-    public static String getFileName(String rootName, String catalog, String extension, Context context) {
+    private static String getFileName(String rootName, String catalog, String extension, Context context) {
         boolean found;
         int number = 0;
         int name_length = rootName.length() < ROOT_CATALOG_NAME_LENGTH ? rootName.length() : ROOT_CATALOG_NAME_LENGTH;
         String shortRootName = rootName.substring(0, name_length);
-        String fileName = shortRootName + "." + extension;
+        String fileName = shortRootName + extension;
         do {
             if (number != 0) {
-                fileName = shortRootName + number + "." + extension;
+                fileName = shortRootName + number  + extension;
             }
             //find = FileUtils.checkFileExist(catalog, fileName);
-            found = WordFileSystem.checkFileExist(fileName, catalog, context);
+            found = FileSystem.checkFileExist(fileName, catalog, context);
             number++;
         } while (found);
         return fileName;
+    }
+
+    public static String getImageName(String rootName, String catalog, Context context){
+        return getFileName(rootName, catalog+"/"+FileSystem.IMAGES, IMAGE_EXTENSION, context);
+    }
+
+    public static String getRecordName(String rootName, String catalog, Context context){
+        return getFileName(rootName, catalog+"/"+FileSystem.RECORDS, RECORD_EXTENSION, context);
     }
 
     public static String getCatalogName(String rootName, String catalog) {

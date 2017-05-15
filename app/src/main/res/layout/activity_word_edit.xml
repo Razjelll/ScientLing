@@ -21,32 +21,9 @@
             android:background="@color/colorMain"
             app:popupTheme="@style/PopupOverlay"
             app:navigationIcon="?attr/homeAsUpIndicator" >
-            <ToggleButton
-                android:id="@+id/more_toggle_button"
-                android:layout_width="?attr/actionBarSize"
-                android:layout_height="?attr/actionBarSize"
-
-
-
-                android:drawablePadding="15dp"
-                android:textOn=""
-                android:textOff=""
-                android:layout_gravity="right"
-                />
             </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-
-
-    <!--<Button
-        style="@style/ButtonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"/>-->
-
     <include layout="@layout/content_word_edit" />
-
-
-
 
 </android.support.design.widget.CoordinatorLayout>

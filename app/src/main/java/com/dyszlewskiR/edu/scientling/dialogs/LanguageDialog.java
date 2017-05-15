@@ -20,10 +20,6 @@ import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 
 import java.util.List;
 
-/**
- * Created by Razjelll on 01.04.2017.
- */
-
 public class LanguageDialog extends DialogFragment {
     private final int LAYOUT_RESOURCE = R.layout.dialog_language;
     private final int ADAPTER_ITEM_RESOURCE = R.layout.item_language;

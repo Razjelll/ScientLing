@@ -6,6 +6,14 @@
         style="@style/TextViewStyle"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"/>
+    <ImageView android:id="@+id/uploaded_image_view"
+        android:layout_width="@dimen/square_button_size"
+        android:layout_height="@dimen/square_button_size"
+        android:src="@color/correctColor"
+        android:padding="@dimen/padding"
+        android:layout_gravity="center_vertical"
+        android:visibility="invisible"
+        />
     <ImageView android:id="@+id/action_button"
         android:layout_width="@dimen/square_button_size"
         android:layout_height="@dimen/square_button_size"

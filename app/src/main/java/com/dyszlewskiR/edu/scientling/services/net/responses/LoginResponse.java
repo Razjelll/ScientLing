@@ -2,16 +2,12 @@ package com.dyszlewskiR.edu.scientling.services.net.responses;
 
 import android.util.JsonReader;
 
-import com.dyszlewskiR.edu.scientling.services.net.ResponseStatus;
+import com.dyszlewskiR.edu.scientling.services.net.values.ResponseStatus;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-
-/**
- * Created by Razjelll on 21.04.2017.
- */
 
 public class LoginResponse {
 

@@ -112,10 +112,10 @@ public class RegistrationActivity extends AppCompatActivity {
             return false;
         }
 
-        if (!password.matches(".*\\d+.*")) {
+        /*if (!password.matches(".*\\d+.*")) {
             mPasswordEditText.setError(getString(R.string.must_contain_number));
             return false;
-        }
+        }*/
 
         for (String element : INCORRECT_ELEMENTS) {
             if (password.contains(element)) {

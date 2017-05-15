@@ -33,8 +33,9 @@ public class LessonCreator {
                     lesson.setNumber(cursor.getInt(columnIndex));
                     break;
                 case SET_FK:
-                    VocabularySet set = new VocabularySet(cursor.getLong(columnIndex));
-                    lesson.setSet(set);
+                    /*VocabularySet set = new VocabularySet(cursor.getLong(columnIndex));
+                    lesson.setSet(set);*/
+                    lesson.setSetId(cursor.getLong(columnIndex));
                     break;
                 case GLOBAL_ID:
                     if(!cursor.isNull(columnIndex)){

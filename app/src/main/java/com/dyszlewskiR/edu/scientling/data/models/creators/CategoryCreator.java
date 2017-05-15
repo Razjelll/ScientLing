@@ -30,11 +30,11 @@ public class CategoryCreator  {
         return category;
     }
 
-    private static final String ID = "category";
+    private static final String CATEGORY_ID = "category";
 
     public static Category createFromJson(JsonNode node){
         Category category = new Category();
-        category.setId(node.path(ID).asLong());
+        category.setId(node.path(CATEGORY_ID).asLong());
         return category;
     }
 }

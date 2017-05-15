@@ -6,7 +6,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
-import com.dyszlewskiR.edu.scientling.data.file.WordFileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 
 /**
@@ -50,14 +50,15 @@ public class DeletingWordService extends Service {
 
         @Override
         public void run() {
-            if (WordFileSystem.checkFileExist(mWord.getImageName(), mSetCatalog, getBaseContext())) {
-                WordFileSystem.deleteImage(mWord.getImageName(), mSetCatalog, getBaseContext());
+            int deletingResult = mDataManager.deleteWord(mWord);
+            if(deletingResult >0){
+                if (FileSystem.checkImageExist(mWord.getImageName(), mSetCatalog, getBaseContext())) {
+                    FileSystem.deleteImage(mWord.getImageName(), mSetCatalog, getBaseContext());
+                }
+                if (FileSystem.checkRecordExist(mWord.getRecordName(), mSetCatalog, getBaseContext())) {
+                    FileSystem.deleteRecord(mWord.getRecordName(), mSetCatalog, getBaseContext());
+                }
             }
-            if (WordFileSystem.checkFileExist(mWord.getRecordName(), mSetCatalog, getBaseContext())) {
-                WordFileSystem.deleteRecord(mWord.getRecordName(), mSetCatalog, getBaseContext());
-            }
-            mDataManager.deleteWord(mWord);
-
         }
     }
 }

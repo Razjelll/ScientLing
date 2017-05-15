@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -177,7 +178,7 @@ public class MainActivity extends AppCompatActivity
 
     private void setInitialValues() {
         mDataManager = ((LingApplication) getApplication()).getDataManager();
-        new MainInitializationValuesTask(this).execute(mDataManager);
+        new MainInitializationValuesTask(this).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mDataManager);
     }
 
     public void onPostGetDataTask(VocabularySet set, List<Lesson> lessons) {
@@ -482,7 +483,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void startManagerWordsActivity() {
-        Intent intent = new Intent(getBaseContext(), ManageWordsActivity.class);
+        Intent intent = new Intent(getBaseContext(), WordsManagerActivity.class);
         startActivity(intent);
     }
 

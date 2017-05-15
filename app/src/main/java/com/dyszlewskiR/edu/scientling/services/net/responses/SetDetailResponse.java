@@ -3,7 +3,7 @@ package com.dyszlewskiR.edu.scientling.services.net.responses;
 import android.util.JsonReader;
 
 import com.dyszlewskiR.edu.scientling.data.models.models.SetItem;
-import com.dyszlewskiR.edu.scientling.services.net.ResponseStatus;
+import com.dyszlewskiR.edu.scientling.services.net.values.ResponseStatus;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import java.io.IOException;
@@ -12,10 +12,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-
-/**
- * Created by Razjelll on 25.04.2017.
- */
 
 public class SetDetailResponse {
 
