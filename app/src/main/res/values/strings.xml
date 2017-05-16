@@ -359,6 +359,15 @@
     <string name="more_information">Więcej informacji</string>
     <string name="less_information">Mniej informacji</string>
 
+    <string name="info">Informacje</string>
+    <string name="download_all">Pobierz wszystko</string>
+    <string name="download_database">Pobierz bazę</string>
+    <string name="download_images">Pobierz obrazki</string>
+    <string name="download_records">Pobierz nagrania</string>
+
+    <string name="upload_rating">Prześlij ocenę</string>
+    <string name="rate">Oceń</string>
+
     <!--Wysyłanie zestawów-->
     <string name="upload_all">Wyślij</string>
     <string name="upload_database">Wyślij bazę</string>

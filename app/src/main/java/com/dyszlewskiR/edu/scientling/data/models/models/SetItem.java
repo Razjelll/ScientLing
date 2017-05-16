@@ -3,10 +3,6 @@ package com.dyszlewskiR.edu.scientling.data.models.models;
 
 import java.util.Date;
 
-/**
- * Created by Razjelll on 12.04.2017.
- */
-
 public class SetItem {
     private long mId;
     private String mName;
@@ -26,6 +22,8 @@ public class SetItem {
     private int mDownloadingProgress;
     private boolean mImagesDownloaded;
     private boolean mRecordsDownloaded;
+    private Boolean mWasDownloaded;
+    private Integer mUserRating;
 
     public long getId() {
         return mId;
@@ -157,4 +155,14 @@ public class SetItem {
             mRecordsDownloaded = info.isRecordsDownloaded();
         }
     }
+
+    public boolean hasImages(){return mImagesSize != 0;}
+
+    public boolean hasRecords(){return mRecordsSize != 0;}
+
+    public Boolean getWasDownloaded(){return mWasDownloaded;}
+    public void setWasDownloaded(Boolean wasDownloaded){mWasDownloaded = wasDownloaded;}
+
+    public Integer getUserRating(){return mUserRating;}
+    public void setUserRating(Integer userRating) {mUserRating = userRating;}
 }

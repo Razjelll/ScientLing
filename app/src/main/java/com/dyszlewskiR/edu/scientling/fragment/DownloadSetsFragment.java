@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,6 +29,7 @@ import android.widget.TextView;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.SetDetailsActivity;
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
+import com.dyszlewskiR.edu.scientling.data.file.FileSizeFormatter;
 import com.dyszlewskiR.edu.scientling.data.models.models.Language;
 import com.dyszlewskiR.edu.scientling.data.models.models.SetDownloadInfo;
 import com.dyszlewskiR.edu.scientling.data.models.models.SetItem;
@@ -119,8 +121,6 @@ public class DownloadSetsFragment extends Fragment {
 
 
         SetsListAsyncTask task = new SetsListAsyncTask(false);
-        //task.execute("http://damianchodorek.com/wsexample/");
-        //task.execute("http://10.0.2.2:3229");
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, getRequestParam());
         return view;
     }
@@ -151,6 +151,7 @@ public class DownloadSetsFragment extends Fragment {
         int ADAPTER_ITEM_RESOURCE = R.layout.item_downloaded_set;
         mAdapter = new DownloadSetAdapter(getContext(), ADAPTER_ITEM_RESOURCE, new ArrayList<SetItem>());
         mListView.setAdapter(mAdapter);
+        registerForContextMenu(mListView);
 
         String[] sortingList = getContext().getResources().getStringArray(R.array.sorting_downloaded_set);
         mSortingSpinner.setAdapter(new ArrayAdapter<>(getContext(), SIMPLE_ADAPTER_RESOURCE, sortingList));
@@ -224,18 +225,99 @@ public class DownloadSetsFragment extends Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                long setId = mAdapter.getItemId(position);
-                Intent intent = new Intent(getContext(), SetDetailsActivity.class);
-                intent.putExtra("id", setId);
-                startActivity(intent);
+                startDetailsActivity(position);
             }
         });
+    }
+
+    private void startDetailsActivity(int position){
+        long setId = mAdapter.getItemId(position);
+        Intent intent = new Intent(getContext(), SetDetailsActivity.class);
+        intent.putExtra("id", setId);
+        startActivity(intent);
+    }
+
+    private final int INFO = R.string.info;
+    private final int DOWNLOAD_ALL = R.string.download_all;
+    private final int DOWNLOAD_DATABASE = R.string.download_database;
+    private final int DOWNLOAD_IMAGES = R.string.download_images;
+    private final int DOWNLOAD_RECORDS = R.string.download_records;
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo){
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
+        int position = info.position;
+        SetItem item = mAdapter.getItem(position);
+        menu.setHeaderTitle(item.getName());
+        menu.add(0, INFO, 0, getString(INFO));
+        if(!item.isDownloaded()){
+            long allSize = item.getBasicSize() + item.getImagesSize() + item.getRecordsSize();
+            String downloadAllText = getString(DOWNLOAD_ALL) + getSizeText(allSize);
+            menu.add(0, DOWNLOAD_ALL, 0, downloadAllText);
+            String databaseText = getString(DOWNLOAD_DATABASE) + getSizeText(item.getBasicSize());
+            menu.add(0, DOWNLOAD_DATABASE, 0, databaseText);
+        } else {
+            if(item.hasImages() && !item.isImagesDownloaded()){
+                String imagesText = getString(DOWNLOAD_IMAGES) + getSizeText(item.getImagesSize());
+                menu.add(0, DOWNLOAD_IMAGES, 0, imagesText);
+            }
+            if(item.hasRecords() && !item.isRecordsDownloaded()){
+                String recordsText = getString(DOWNLOAD_RECORDS) + getSizeText(item.getRecordsSize());
+                menu.add(0, DOWNLOAD_RECORDS, 0, recordsText);
+            }
+        }
+    }
+
+    private String getSizeText(long size){
+        return " (" + FileSizeFormatter.getSize(size) + ")";
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item){
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        int position = info.position;
+        SetItem setItem = mAdapter.getItem(position);
+        switch(item.getItemId()){
+            case INFO:
+                startDetailsActivity(position); break;
+            case DOWNLOAD_ALL:
+                startDownloadSetService(setItem, true, true, true); break;
+            case DOWNLOAD_DATABASE:
+                startDownloadSetService(setItem, true, false , false); break;
+            case DOWNLOAD_IMAGES:
+                startDownloadSetService(setItem, false, true, false); break;
+            case DOWNLOAD_RECORDS:
+                startDownloadSetService(setItem, false , false, true); break;
+        }
+        return true;
+    }
+
+    private void startDownloadSetService(SetItem item,boolean database, boolean images, boolean records) {
+        Intent intent = new Intent(getActivity().getApplicationContext(), DownloadSetsService.class);
+        intent.putExtra("id", item.getId());
+        intent.putExtra("name", item.getName());
+        if(database) {
+            intent.putExtra("database", true);
+        }
+        if(images){
+            intent.putExtra("images",true);
+        }
+        if(records) {
+            intent.putExtra("records",true);
+        }
+
+        getActivity().startService(intent);
+        item.setDownloadingProgress(0);
+        item.setDownloading(true);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_download_sets, menu);
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -417,7 +499,6 @@ public class DownloadSetsFragment extends Fragment {
                 if (result.size() < ITEMS_ON_LIST) {
                     mListFooter.setVisibility(View.GONE);
                 }
-                //mTextView.setText(result);
             } else {
                 mLoadingProgressBar.setVisibility(View.GONE);
                 mLoadingTextView.setText(getString(R.string.connection_error));
@@ -444,12 +525,17 @@ public class DownloadSetsFragment extends Fragment {
         }
 
         @Override
+        public SetItem getItem(int position){
+            return mItems.get(position);
+        }
+
+        @Override
         public long getItemId(int position){
             return mItems.get(position).getId();
         }
 
         @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, final ViewGroup parent) {
             View rowView = convertView;
             final ViewHolder viewHolder;
             if (rowView == null) {
@@ -461,12 +547,12 @@ public class DownloadSetsFragment extends Fragment {
                 viewHolder = (ViewHolder) rowView.getTag();
             }
 
-            SetItem item = mItems.get(position);
+            final SetItem item = mItems.get(position);
             viewHolder.nameTextView.setText(item.getName());
-            if (mItems.get(position).getLanguageL2() != null) {
+            if (item.getLanguageL2() != null) {
                 viewHolder.languageL2TextView.setText(ResourceUtils.getString(item.getLanguageL2(), getContext()));
             }
-            if (mItems.get(position).getLanguageL1() != null) {
+            if (item.getLanguageL1() != null) {
                 viewHolder.languageL1TextView.setText(ResourceUtils.getString(item.getLanguageL1(), getContext()));
             }
 
@@ -478,11 +564,13 @@ public class DownloadSetsFragment extends Fragment {
             //if(checkSetIsDownloaded(mItems.get(position).getId())){
             //TODO poustawiać wszystko tak jak powinno być
             if(item.isDownloaded()){
-                if(!item.isImagesDownloaded() || !item.isRecordsDownloaded()){
-                    showDownloaded(viewHolder, false);
+                if((item.hasImages() && !item.isImagesDownloaded()) || (item.hasRecords() && item.isRecordsDownloaded())) {
+                        showDownloaded(viewHolder, false);
+
                 } else {
                     showDownloaded(viewHolder, true);
                 }
+
             } else
             if(item.isDownloading()){
                 showDownloading(viewHolder);
@@ -498,82 +586,18 @@ public class DownloadSetsFragment extends Fragment {
                 viewHolder.downloadButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        PopupMenu popupMenu = new PopupMenu(getContext(), viewHolder.downloadButton);
-                        if(mItems.get(position).isDownloaded()){
-                            if(!mItems.get(position).isImagesDownloaded()){
-                                popupMenu.getMenu().add("Pobierz obrazki");
-                            }
-                            if(!mItems.get(position).isRecordsDownloaded()){
-                                popupMenu.getMenu().add("Pobierz nagrania");
-                            }
-                        } else {
-                            popupMenu.getMenu().add("Pobierz wszystko");
-                            popupMenu.getMenu().add("Pobierz tylko bazę");
-                        }
-                        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem item) {
-
-                                if(item.getTitle().equals("Pobierz wszystko")) {
-                                    startDownloadSetService(true, true, true, position);
-                                }
-                                if(item.getTitle().equals("Pobierz tylko bazę")) {
-                                    startDownloadSetService(true, false, false, position);
-                                }
-                                if(item.getTitle().equals("Pobierz obrazki")){
-                                    startDownloadSetService(false, true, false, position);
-                                }
-                                if(item.getTitle().equals("Pobierz nagrania")){
-                                    startDownloadSetService(false, false, true, position);
-                                }
-                                return true;
-                            }
-                        });
-
-                        popupMenu.show();
+                        parent.showContextMenuForChild(v);
                     }
                 });
             }
-
             viewHolder.downloadsTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //TODO
                 }
             });
-
             return rowView;
         }
-
-        private void startDownloadSetService(boolean database, boolean images, boolean records, int position) {
-            Intent intent = new Intent(getActivity().getApplicationContext(), DownloadSetsService.class);
-            intent.putExtra("id", mItems.get(position).getId());
-            intent.putExtra("name", mItems.get(position).getName());
-            if(database) {
-                intent.putExtra("database", true);
-            }
-            if(images){
-                intent.putExtra("images",true);
-            }
-            if(records) {
-                intent.putExtra("records",true);
-            }
-
-            getActivity().startService(intent);
-            mItems.get(position).setDownloadingProgress(0);
-            mItems.get(position).setDownloading(true);
-            notifyDataSetChanged();
-        }
-
-        public void setDownloading(long globalSetId){
-            for(SetItem item : mItems){
-                if(item.getId() == globalSetId){
-                    item.setDownloading(true);
-                }
-            }
-            notifyDataSetChanged();
-        }
-
 
         public void setDownloadProgress(long setId, int progress){
             if(progress > 0){

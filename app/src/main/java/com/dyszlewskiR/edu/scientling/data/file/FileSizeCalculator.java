@@ -25,15 +25,13 @@ public class FileSizeCalculator {
 
     private static float calculate(long longInBytes, int unit){
         float size = longInBytes;
-        //nie wstawiamy breaków i wyliczamy w odwrotnej kolejności, ponieważ nie jeżeli chemy wartość w GB
-        // będzędziemy musieli podzielić 3 razy przez 1024, i tak też się stanie;
         switch (unit){
             case GB:
-                size = size /1024.f;
+                return FileSizeConverter.bytesToGB(size);
             case MB:
-                size = size / 1024.f;
+                return FileSizeConverter.bytesToMB(size);
             case KB:
-                size = size / 1024.f;
+                return FileSizeConverter.bytesToKb(size);
         }
         return  size;
     }

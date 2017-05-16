@@ -374,6 +374,8 @@ public class SetsManagerFragment extends Fragment {
         if(set != null){
             String catalog = set.getCatalog();
             FileSystem.deleteImageCatalog(catalog, getContext());
+            DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
+            dataManager.updateSetImagesDownloaded(false, set.getGlobalId());
             //TODO aktualizacja
         }
     }
@@ -382,6 +384,8 @@ public class SetsManagerFragment extends Fragment {
         if(set != null){
             String catalog = set.getCatalog();
             FileSystem.deleteRecordsCatalog(catalog, getContext());
+            DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
+            dataManager.updateRecordsUploaded(false, set.getGlobalId());
         }
     }
 

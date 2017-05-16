@@ -9,17 +9,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.Button;
+import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.data.file.FileSizeCalculator;
 import com.dyszlewskiR.edu.scientling.data.file.SizeConverter;
 import com.dyszlewskiR.edu.scientling.data.models.models.SetItem;
+import com.dyszlewskiR.edu.scientling.preferences.LogPref;
+import com.dyszlewskiR.edu.scientling.services.net.requests.RatingRequest;
 import com.dyszlewskiR.edu.scientling.services.net.requests.SetDetailRequest;
+import com.dyszlewskiR.edu.scientling.services.net.responses.RatingResponse;
 import com.dyszlewskiR.edu.scientling.services.net.responses.SetDetailResponse;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
+
+import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -46,6 +54,9 @@ public class SetDetailsActivity extends AppCompatActivity {
     private TextView mSizeTextView;
     private TextView mImagesSizeTextView;
     private TextView mRecordsSizeTextView;
+
+    private RatingBar mRatingBar;
+    private TextView mUploadRatingButton;
 
     private long mSetId;
 
@@ -95,6 +106,26 @@ public class SetDetailsActivity extends AppCompatActivity {
         SimpleDateFormat format = new SimpleDateFormat("dd.mm.yyyy");
         if(item.getAddedDate() != null){
             mAddedDateTextView.setText(format.format(item.getAddedDate()));
+        }
+
+        if(item.getWasDownloaded() != null && item.getWasDownloaded()){
+            ViewStub stub = (ViewStub)findViewById(R.id.rating_container);
+            ViewGroup ratingContainer = (ViewGroup)stub.inflate();
+            mRatingBar = (RatingBar)ratingContainer.findViewById(R.id.rating_bar);
+            mUploadRatingButton = (TextView)ratingContainer.findViewById(R.id.upload_rating_button);
+
+            if(item.getUserRating() > 0){
+                mRatingBar.setRating(item.getUserRating());
+            }
+            mUploadRatingButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int rating = (int)mRatingBar.getRating();
+                    RatingParam param = new RatingParam(mSetId, rating, LogPref.getLogin(getBaseContext()), LogPref.getPassword(getBaseContext()));
+                    RatingAsyncTask task = new RatingAsyncTask();
+                    task.execute(param);
+                }
+            });
         }
 
         if(mDescriptionContainer != null){
@@ -147,7 +178,7 @@ public class SetDetailsActivity extends AppCompatActivity {
 
         @Override
         protected SetItem doInBackground(Long... params) {
-            SetDetailRequest request = new SetDetailRequest(params[0]);
+            SetDetailRequest request = new SetDetailRequest(params[0], LogPref.getLogin(getBaseContext()), LogPref.getPassword(getBaseContext()));
             try {
                 HttpURLConnection connection = request.start();
                 SetDetailResponse response = new SetDetailResponse(connection);
@@ -158,6 +189,8 @@ public class SetDetailsActivity extends AppCompatActivity {
                 e.printStackTrace();
             } catch (ParseException e) {
                 e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
             return null;
         }
@@ -167,6 +200,64 @@ public class SetDetailsActivity extends AppCompatActivity {
             if(result != null){
                 fillControls(result);
             }
+        }
+    }
+
+    private class RatingParam{
+        private long mSetId;
+        private int mRating;
+        private String mUsername;
+        private String mPassword;
+
+        public RatingParam(long setId, int rating, String username, String password){
+            mSetId = setId;
+            mRating = rating;
+            mUsername = username;
+            mPassword = password;
+        }
+
+        public long getSetId(){return mSetId;}
+        public int getRating(){return mRating;}
+        public String getUsername(){return mUsername;}
+        public String getPassword(){return mPassword;}
+    }
+
+    private class RatingAsyncTask extends AsyncTask<RatingParam, Void, Boolean>{
+
+        @Override
+        protected Boolean doInBackground(RatingParam... params) {
+            HttpURLConnection connection = null;
+            try {
+                connection = RatingRequest.start(params[0].getSetId(), params[0].getRating(),
+                        params[0].getUsername(), params[0].getPassword());
+                RatingResponse response = new RatingResponse(connection);
+                if(response.getResultCode()>0){
+                    response.getResponse();
+                    response.closeConnection();
+                    return true;
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } finally {
+                if(connection != null){
+                    connection.disconnect();
+                }
+            }
+            return false;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result){
+            if(result){
+                Toast.makeText(getBaseContext(), "Ocena została wystawiona", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getBaseContext(), "Wystąpił błąd przy wysyłaniu oceny", Toast.LENGTH_SHORT).show();
+            }
+            //TODO dodać napisy do stringu
+
         }
     }
 

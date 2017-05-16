@@ -6,10 +6,6 @@ import com.dyszlewskiR.edu.scientling.utils.Constants;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
-/**
- * Created by Razjelll on 27.04.2017.
- */
-
 public class SetsListRequest {
 
     private final String REQUEST_URI = Constants.SERVER_ADDRESS + "/sets";

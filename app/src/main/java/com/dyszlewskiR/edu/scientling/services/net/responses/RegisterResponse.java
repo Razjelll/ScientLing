@@ -9,10 +9,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 
-/**
- * Created by Razjelll on 21.04.2017.
- */
-
 public class RegisterResponse {
 
     public static final int OK = 1;

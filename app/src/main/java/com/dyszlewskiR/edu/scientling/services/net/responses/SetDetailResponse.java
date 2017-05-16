@@ -31,6 +31,9 @@ public class SetDetailResponse {
     private static final String RATING = "rating";
     private static final String DOWNLOAD_COUNT = "download_count";
     private static final String ADDED_DATE = "added_date";
+    private static final String USER_DOWNLOAD = "user_download";
+    private static final String USER_RATING = "user_rating";
+
 
     private HttpURLConnection mConnection;
 
@@ -84,7 +87,11 @@ public class SetDetailResponse {
                     item.setDownloads(jsonReader.nextInt()); break;
                 case ADDED_DATE:
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Constants.POSTGRESS_DATE_FORMAT);
-                    item.setAddedDate(simpleDateFormat.parse(jsonReader.nextString()));
+                    item.setAddedDate(simpleDateFormat.parse(jsonReader.nextString())); break;
+                case USER_DOWNLOAD:
+                    item.setWasDownloaded(jsonReader.nextBoolean()); break;
+                case USER_RATING:
+                    item.setUserRating(jsonReader.nextInt()); break;
             }
         }
         return item;
