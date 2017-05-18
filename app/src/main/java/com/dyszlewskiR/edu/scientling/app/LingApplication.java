@@ -1,6 +1,8 @@
 package com.dyszlewskiR.edu.scientling.app;
 
+import android.app.ActivityManager;
 import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.preferences.PreferenceInitializer;
@@ -8,17 +10,19 @@ import com.dyszlewskiR.edu.scientling.preferences.Settings;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 
-/**
- * Created by Razjelll on 01.12.2016.
- */
-
 public class LingApplication extends Application {
 
     private final String TAG = "LingApplication";
 
+    private static LingApplication mInstance;
+
     private DataManager mDataManager;
     private long mCurrentSetId;
     private long mCurrentLessonId;
+
+    public static synchronized LingApplication getInstance(){
+        return mInstance;
+    }
 
     public DataManager getDataManager() {
         return mDataManager;
@@ -36,6 +40,7 @@ public class LingApplication extends Application {
     public void onCreate() {
         Log.d(TAG, "onCreate");
         super.onCreate();
+        mInstance = this;
         mDataManager = new DataManager(getBaseContext());
         mCurrentSetId = Settings.getCurrentSetId(getBaseContext());
         if (!PreferenceInitializer.isInitialize(getBaseContext())) {
@@ -59,5 +64,15 @@ public class LingApplication extends Application {
         Log.d(TAG, "onTerminate");
         mDataManager.release();
         super.onTerminate();
+    }
+
+    public boolean isServiceRunning(Class<?> serviceClass){
+        ActivityManager manager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
+        for(ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)){
+            if(serviceClass.getName().equals(service.service.getClassName())){
+                return true;
+            }
+        }
+        return false;
     }
 }

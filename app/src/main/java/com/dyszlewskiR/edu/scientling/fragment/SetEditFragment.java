@@ -162,7 +162,7 @@ public class SetEditFragment extends Fragment implements LanguageDialog.Callback
         VocabularySet set = mSet;
         set.setName(mNameEditText.getText().toString());
         //języków nie trzeba pobierać, ponieważ są ustawiana podczas wybierania
-        set.setCatalog(FileNameCreator.getCatalogName(set.getName(), getContext().getFilesDir().getAbsolutePath()));
+        set.setCatalog(FileNameCreator.getCatalogName(set.getName(), getContext().getFilesDir().getAbsolutePath(),getActivity())); //todo
         return set;
     }
 

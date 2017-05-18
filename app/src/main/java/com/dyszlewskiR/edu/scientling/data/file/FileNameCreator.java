@@ -57,7 +57,7 @@ public class FileNameCreator {
         return getFileName(rootName, catalog+"/"+FileSystem.RECORDS, RECORD_EXTENSION, context);
     }
 
-    public static String getCatalogName(String rootName, String catalog) {
+    public static String getCatalogName(String rootName, String catalog, Context context) {
         boolean find;
         int number = 0;
         String catalogName = rootName;
@@ -65,7 +65,8 @@ public class FileNameCreator {
             if (number != 0) {
                 catalogName = rootName + number;
             }
-            find = FileUtils.checkFileExist(catalog, catalogName);
+            //find = FileUtils.checkFileExist(catalog, catalogName, );
+            find = FileSystem.checkFileExist(catalog, catalogName, context);
             number++;
         } while (find);
         return catalogName;

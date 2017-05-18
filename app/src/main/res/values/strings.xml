@@ -368,6 +368,9 @@
     <string name="upload_rating">Prześlij ocenę</string>
     <string name="rate">Oceń</string>
 
+    <string name="database">Baza danych</string>
+    <string name="images">Obrazki</string>
+    <string name="records">Nagrania</string>
     <!--Wysyłanie zestawów-->
     <string name="upload_all">Wyślij</string>
     <string name="upload_database">Wyślij bazę</string>

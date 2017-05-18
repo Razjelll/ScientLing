@@ -32,6 +32,14 @@ public class FileSystem {
         return catalogName + "/" + RECORDS;
     }
 
+    public static String getMediaCatalog(String catalogName, String mediaType){
+        if (mediaType.equals(IMAGES)) {
+            return getImagesCatalog(catalogName);
+        } else {
+            return getRecordsCatalog(catalogName);
+        }
+    }
+
     public static void saveImage(String fileName, String setCatalog, byte[] data, boolean resize, Context context) throws IOException {
         if (resize) {
             data = getResizedData(data, MAX_IMAGE_SIZE);
@@ -131,8 +139,30 @@ public class FileSystem {
         if (fileName == null || catalog == null) {
             return false;
         }
-        boolean found = FileUtils.checkFileExist(fileName, context.getFilesDir().getAbsolutePath() + "/" + catalog);
+        //TODO to przerobić, ponieważ context.getFilesDir nie powinno być tutaj
+        boolean found = FileUtils.checkFileExist(fileName, catalog, context);
         return found;
+    }
+
+    public static boolean hasImages(String catalogName, Context context){
+        return isCatalogEmpty(getImagesCatalog(catalogName), context);
+    }
+
+    public static boolean hasRecords(String catalogName, Context context){
+        return isCatalogEmpty(getRecordsCatalog(catalogName), context);
+    }
+
+    private static boolean isCatalogEmpty(String catalogPath, Context context){
+        if(catalogPath == null || context == null){
+            return false;
+        }
+        /*boolean isEmpty = FileUtils.isCatalogEmpty(catalogPath, context);
+        return isEmpty;*/
+        File file = new File(FileUtils.getPath(catalogPath, context));
+        if(file.exists()){
+            return file.listFiles().length >0;
+        }
+        return false;
     }
 
     public static boolean checkImageExist(String fileName, String catalog, Context context){
@@ -147,7 +177,8 @@ public class FileSystem {
         if (fileName == null || catalog == null) {
             return false;
         }
-        boolean found = FileUtils.checkFileExist(fileName, context.getFilesDir().getAbsolutePath() + "/" + catalog + "/"+type);
+       // boolean found = FileUtils.checkFileExist(fileName, context.getFilesDir().getAbsolutePath() + "/" + catalog + "/"+type);
+        boolean found = FileUtils.checkFileExist(fileName, catalog + "/"+type, context);
         return found;
     }
 
@@ -160,6 +191,19 @@ public class FileSystem {
         File file = FileUtils.getInternalCatalog(getRecordsCatalog(setCatalog), context);
         return file.getAbsolutePath();
     }
+
+    public static String getMediaPath(String setCatalog, String mediaType, Context context){
+        if(mediaType.equals(IMAGES)){
+            return getImagePath(setCatalog, context);
+        } else {
+            return getRecordsPath(setCatalog, context);
+        }
+    }
+
+    public static String getPath(String catalgo, Context context){
+        return FileUtils.getPath(catalgo, context);
+    }
+
 
 
 }

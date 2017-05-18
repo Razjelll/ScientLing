@@ -108,6 +108,7 @@ public class SetDetailsActivity extends AppCompatActivity {
             mAddedDateTextView.setText(format.format(item.getAddedDate()));
         }
 
+        //jeśli użytkownik pobrał dany zestaw wyświetlamy część pozwalającą ocenić zestaw
         if(item.getWasDownloaded() != null && item.getWasDownloaded()){
             ViewStub stub = (ViewStub)findViewById(R.id.rating_container);
             ViewGroup ratingContainer = (ViewGroup)stub.inflate();

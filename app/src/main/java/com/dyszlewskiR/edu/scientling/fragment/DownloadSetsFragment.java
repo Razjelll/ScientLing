@@ -1,12 +1,15 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -50,7 +53,7 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DownloadSetsFragment extends Fragment {
+public class DownloadSetsFragment extends Fragment implements ServiceConnection, DownloadSetsService.Callback{
 
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
@@ -74,9 +77,6 @@ public class DownloadSetsFragment extends Fragment {
 
     private final String LOG_TAG = "DownloadSetsFragment";
     private final int SIMPLE_ADAPTER_RESOURCE = R.layout.item_simple;
-
-    private final String REQUEST_URI = Constants.SERVER_ADDRESS + "/sets";
-    private final int TIME_OUT = 3000;
 
     private final int ITEMS_ON_LIST = 10;
     private final int EMPTY_LANGUAGE_ID = -1;
@@ -102,13 +102,64 @@ public class DownloadSetsFragment extends Fragment {
     private ProgressBar mFooterProgressBar;
     private int mPage;
 
+    private DownloadSetsService mService;
+
+    private boolean mIsConfigurationChange;
+    private boolean mIsServiceBound;
+
     public DownloadSetsFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(!LingApplication.getInstance().isServiceRunning(DownloadSetsService.class)){
+            Log.d(LOG_TAG, "Service is Running");
+            Intent intent = new Intent(getActivity().getApplicationContext(), DownloadSetsService.class);
+            getActivity().getApplicationContext().startService(intent);
+        }
+        Log.d(LOG_TAG, "Service is not run");
+        Intent bindIntent = new Intent(getActivity().getApplicationContext(), DownloadSetsService.class);
+        getActivity().getApplicationContext().bindService(bindIntent, this, Context.BIND_AUTO_CREATE);
+        //getActivity().startService(bindIntent);
+        mIsServiceBound = true;
+
+
+        /*ConfigurationInstance instance = (ConfigurationInstance)getActivity().getLastCustomNonConfigurationInstance();
+        if(instance != null){
+            mIsConfigurationChange = false;
+            //mService = instance.getService();
+            mAdapter = instance.getAdapter();
+        }*/
+        //pozwala przetrwać konfiguracji okna obrót ekranu
+        //fragment jest przywracany do stanu w jakim był przed obrotem
+        setRetainInstance(true);
         setHasOptionsMenu(true);
+    }
+
+    private class ConfigurationInstance{
+        private DownloadSetsService mServiceConfiguration;
+        private List<SetItem> mSetItemsConfigutration;
+        private DownloadSetAdapter mAdapterConfiguration;
+
+        public DownloadSetsService getService(){return mServiceConfiguration;}
+        public void setService(DownloadSetsService service){mServiceConfiguration = service;}
+
+        public List<SetItem> getItems(){return mSetItemsConfigutration;}
+        public void setItems(List<SetItem> setItems) {mSetItemsConfigutration = setItems;}
+
+        public DownloadSetAdapter getAdapter(){return mAdapterConfiguration;}
+        public void setAdapter(DownloadSetAdapter adapter){mAdapterConfiguration = adapter;}
+
+    }
+    public Object onRetainNonConfigurationInstance(){
+        ConfigurationInstance instance = new ConfigurationInstance();
+        instance.setService(mService);
+        //instance.setItems(mAdapter.getItems());
+        instance.setAdapter(mAdapter);
+        mIsConfigurationChange = true;
+        return instance;
     }
 
     @Override
@@ -119,9 +170,12 @@ public class DownloadSetsFragment extends Fragment {
         setListFooter();
         setAdapters();
 
-
-        SetsListAsyncTask task = new SetsListAsyncTask(false);
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, getRequestParam());
+        if(mAdapter.isEmpty()){
+            SetsListAsyncTask task = new SetsListAsyncTask(false);
+            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, getRequestParam());
+        } else {
+            mListView.setAdapter(mAdapter);
+        }
         return view;
     }
 
@@ -149,7 +203,10 @@ public class DownloadSetsFragment extends Fragment {
 
     public void setAdapters() {
         int ADAPTER_ITEM_RESOURCE = R.layout.item_downloaded_set;
-        mAdapter = new DownloadSetAdapter(getContext(), ADAPTER_ITEM_RESOURCE, new ArrayList<SetItem>());
+        if(mAdapter == null){
+            mAdapter = new DownloadSetAdapter(getContext(), ADAPTER_ITEM_RESOURCE, new ArrayList<SetItem>());
+        }
+
         mListView.setAdapter(mAdapter);
         registerForContextMenu(mListView);
 
@@ -173,6 +230,21 @@ public class DownloadSetsFragment extends Fragment {
         intentFilter.addAction(DownloadSetsService.CUSTOM_INTENT);
         getActivity().registerReceiver(mIntentReceiver, intentFilter, null, mHandler);
         mReceiverRegistered = true;
+
+        if(mService==null){
+            /*Log.d(LOG_TAG, "bindService");
+            Intent bindIntent = new Intent(getActivity().getApplicationContext(), DownloadSetsService.class);
+            getActivity().getApplicationContext().bindService(bindIntent, this, Context.BIND_AUTO_CREATE);
+            //getActivity().startService(bindIntent);
+            mIsServiceBound = true;*/
+
+        } else {
+            mService.setCallback(this);
+            mLoadingContainer.setVisibility(View.GONE);
+            mListView.setVisibility(View.VISIBLE);
+            mListFooter.setVisibility(View.VISIBLE);
+            mService.setCallback(this);
+        }
     }
 
     @Override
@@ -182,6 +254,34 @@ public class DownloadSetsFragment extends Fragment {
             getActivity().unregisterReceiver(mIntentReceiver);
             mReceiverRegistered = false;
         }
+
+       /* if(mService != null && !mIsConfigurationChange){
+            mService.setCallback(null);
+            getActivity().unbindService(this);
+        }*/
+       if(mService!=null){
+           mService.setCallback(null);
+       }
+       /* if(mIsServiceBound){
+            Log.d(LOG_TAG, "unbindService");
+            mService.setCallback(null);
+            getActivity().getApplicationContext().unbindService(this);
+            mIsServiceBound = false;
+        }*/
+    }
+
+    @Override
+    public void onDestroy(){
+        if(mIsServiceBound){
+            if(mService != null && !mService.isRunning()){
+                Log.d(LOG_TAG, "Właśnie zabijam usługę");
+                Intent intent = new Intent(getActivity().getApplicationContext(), DownloadSetsService.class);
+                getActivity().getApplication().stopService(intent);
+            }
+            getActivity().getApplicationContext().unbindService(this);
+
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -293,7 +393,7 @@ public class DownloadSetsFragment extends Fragment {
     }
 
     private void startDownloadSetService(SetItem item,boolean database, boolean images, boolean records) {
-        Intent intent = new Intent(getActivity().getApplicationContext(), DownloadSetsService.class);
+        /*Intent intent = new Intent(getActivity().getApplicationContext(), DownloadSetsService.class);
         intent.putExtra("id", item.getId());
         intent.putExtra("name", item.getName());
         if(database) {
@@ -306,7 +406,10 @@ public class DownloadSetsFragment extends Fragment {
             intent.putExtra("records",true);
         }
 
-        getActivity().startService(intent);
+        getActivity().startService(intent);*/
+        if(mService != null){
+            mService.startDownloading(item.getId(), item.getName(),database, images, records);
+        }
         item.setDownloadingProgress(0);
         item.setDownloading(true);
         mAdapter.notifyDataSetChanged();
@@ -381,6 +484,32 @@ public class DownloadSetsFragment extends Fragment {
         param.setUsername(LogPref.getLogin(getContext()));
         param.setPassword(LogPref.getPassword(getContext()));
         return param;
+    }
+
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        mService = ((DownloadSetsService.LocalBinder) service).getService();
+        mService.setCallback(this);
+        /*if(mService != null){
+            Log.d(LOG_TAG, String.valueOf(mService.getRunningTask()));
+        }*/
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        mService = null;
+    }
+
+    @Override
+    public void onOperationProgress(long setId,int progress) {
+        //Log.d(LOG_TAG, "On operation progress" + progress);
+        mAdapter.setDownloadProgress(setId, progress);
+    }
+
+    @Override
+    public void onOperationCompleted(long setId) {
+        Log.d(LOG_TAG, "onOperationCompleted" + setId);
+        mAdapter.setDownloaded(setId);
     }
 
 
@@ -524,6 +653,10 @@ public class DownloadSetsFragment extends Fragment {
             mDataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
         }
 
+        public List<SetItem> getItems()
+        {
+            return mItems;
+        }
         @Override
         public SetItem getItem(int position){
             return mItems.get(position);
@@ -563,22 +696,25 @@ public class DownloadSetsFragment extends Fragment {
             viewHolder.downloadsTextView.setText(String.valueOf(item.getDownloads()));
             //if(checkSetIsDownloaded(mItems.get(position).getId())){
             //TODO poustawiać wszystko tak jak powinno być
-            if(item.isDownloaded()){
-                if((item.hasImages() && !item.isImagesDownloaded()) || (item.hasRecords() && item.isRecordsDownloaded())) {
-                        showDownloaded(viewHolder, false);
+            if(item.getDownloadingProgress() >0){
+                item.setDownloading(true);
+            }
 
-                } else {
-                    showDownloaded(viewHolder, true);
-                }
-
-            } else
             if(item.isDownloading()){
                 showDownloading(viewHolder);
                 int downloadingProgress = mItems.get(position).getDownloadingProgress();
                 if( downloadingProgress!= 0){
                     viewHolder.downloadProgressBar.setProgress(downloadingProgress);
                 }
-            } else {
+            } else if(item.isDownloaded()){
+                if((item.hasImages() && !item.isImagesDownloaded()) || (item.hasRecords() && item.isRecordsDownloaded())) {
+                    showDownloaded(viewHolder, false);
+
+                } else {
+                    showDownloaded(viewHolder, true);
+                }
+
+            } else{
                 showDownloadButton(viewHolder);
             }
 
@@ -590,6 +726,7 @@ public class DownloadSetsFragment extends Fragment {
                     }
                 });
             }
+            //viewHolder.downloadProgressBar.setVisibility(View.VISIBLE);
             viewHolder.downloadsTextView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -615,6 +752,7 @@ public class DownloadSetsFragment extends Fragment {
                 if(item.getId() == globalSetId){
                     item.setDownloaded(true);
                     item.setDownloading(false);
+                    item.setDownloadingProgress(0);
                     item.setDownloadInfo(mDataManager.getSetDownloadInfo(globalSetId));
                 }
             }

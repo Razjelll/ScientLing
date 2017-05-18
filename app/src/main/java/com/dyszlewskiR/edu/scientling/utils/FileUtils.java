@@ -20,8 +20,7 @@ import java.io.InputStream;
 public class FileUtils {
 
     private static final String LOG_TAG = "FileUtils";
-    private static final String IMAGES_FOLDER = "images";
-    private static final String RECORD_FOLDER = "records";
+
 
     public static byte[] getBytes(InputStream inputStream) throws IOException {
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
@@ -91,9 +90,18 @@ public class FileUtils {
     }
 
 
-    public static boolean checkFileExist(String fileName, String catalog) {
-        File file = new File(catalog, fileName);
+    public static boolean checkFileExist(String fileName, String catalog, Context context) {
+        //File file = new File(catalog, fileName);
+        File file = new File(context.getFilesDir()+"/" + catalog, fileName);
         return file.exists();
+    }
+
+    public static boolean isCatalogEmpty(String catalogPath, Context context){
+        File file = new File(context.getFilesDir()+"/"+catalogPath);
+        if(file != null && file.exists()){
+            return file.listFiles().length >0;
+        }
+        return false;
     }
 
     public static boolean checkDirectoryExist(String path) {
@@ -145,7 +153,7 @@ public class FileUtils {
 
     public static boolean deleteDirectory(String dirName, Context context) {
         //TODO zamiast boolean można zwracać kody
-        File directory = new File(context.getFilesDir() + "/" + dirName);
+        /*File directory = new File(context.getFilesDir() + "/" + dirName);
         if (directory != null && directory.isDirectory()) {
             for (File child : directory.listFiles()) {
                 //TODO w tym przypdaku raczej nie trzeba usuwać tego rekurencyjnie
@@ -153,7 +161,22 @@ public class FileUtils {
             }
             return directory.delete();
         }
-        return false;
+        return false;*/
+        File directory = new File(context.getFilesDir() + "/" + dirName);
+        return deleteDirectory(directory);
+    }
+
+    public static boolean deleteDirectory(File file){
+        if(file != null && file.exists()){
+            for(File fileEntry : file.listFiles()){
+                if(fileEntry.isDirectory()){
+                    return deleteDirectory(fileEntry);
+                } else {
+                    fileEntry.delete();
+                }
+            }
+        }
+        return file.delete();
     }
 
     public static Uri getInternalStorageUri(String filename, String catalog, Context context) {
@@ -172,6 +195,10 @@ public class FileUtils {
     public static File getFile(String name, String catalog, Context context){
         File file = new File(context.getFilesDir() + "/" + catalog+ "/" + name);
         return file;
+    }
+
+    public static String getPath(String catalog, Context context){
+        return context.getFilesDir() + "/" + catalog;
     }
 
     //----------------------------------------------------------------------------------------------

@@ -172,9 +172,12 @@ public class SetsManagerFragment extends Fragment {
         menu.add(0, EDIT, 0, getString(EDIT));
         menu.add(0, CHOOSE, 0, getString(CHOOSE));
         menu.add(0, DELETE, 0, getString(DELETE));
-        menu.add(0, DELETE_IMAGES, 0, getString(DELETE_IMAGES));
-        menu.add(0, DELETE_RECORDS, 0, getString(DELETE_RECORDS));
-
+        if(FileSystem.hasImages(set.getCatalog(), getContext())){
+            menu.add(0, DELETE_IMAGES, 0, getString(DELETE_IMAGES));
+        }
+        if(FileSystem.hasRecords(set.getCatalog(), getContext())){
+            menu.add(0, DELETE_RECORDS, 0, getString(DELETE_RECORDS));
+        }
         if (LogPref.getLogin(getContext()) != null) { //jeżeli użytkownik jest zalogowany
             if (set.getGlobalId() == null) {
                 menu.add(0, UPLOAD_ALL, 0, getString(UPLOAD_ALL));
@@ -190,7 +193,6 @@ public class SetsManagerFragment extends Fragment {
                 }
             }
         }
-
     }
 
     @Override

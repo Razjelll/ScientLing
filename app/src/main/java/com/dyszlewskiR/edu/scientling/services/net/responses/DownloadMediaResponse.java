@@ -28,17 +28,8 @@ public class DownloadMediaResponse {
     private HttpURLConnection mConnection;
     private Context mContext;
     private String mMediaFolder;
-    private Callback mCallback;
 
     private ZipInputStream mZipInputStream;
-
-    public interface Callback{
-        void getProgress(long progress);
-    }
-
-    public void setCallback(Callback callback){
-        mCallback = callback;
-    }
 
     public DownloadMediaResponse(HttpURLConnection connection,String mediaFolder, Context context){
         mConnection =connection;
@@ -58,26 +49,35 @@ public class DownloadMediaResponse {
         return ERROR;
     }
 
-    public long getContentLenght(){
+    public long getContentLength(){
         if(mConnection!=null){
             return mConnection.getContentLength();
+           // return Long.parseLong(mConnection.getHeaderField("X-Content-Length"));
         }
         return 0;
     }
 
-    public void saveFile(String setCatalog) throws IOException {
+    public interface SaveCallback{
+        void onSave(int length);
+        void onSaveCompleted();
+    }
+
+    public void saveFile(String setCatalog, SaveCallback callback) throws IOException {
         if(mConnection == null){
             return;
         }
-        File mediaCatalog = FileSystem.getCatalog(mMediaFolder, mContext);
+        //File mediaCatalog = FileSystem.getCatalog(mMediaFolder, mContext);
+        File mediaCatalog = FileSystem.getCatalog(setCatalog, mContext);
         if(!mediaCatalog.exists()){
             mediaCatalog.mkdir();
         }
         //String catalogPath = mMediaFolder + "/" + setCatalog;
-        String catalogPath = setCatalog + "/" + mMediaFolder;
-        File catalog = FileSystem.getCatalog(catalogPath, mContext);
+        String catalogPath = FileSystem.getMediaPath(setCatalog, mMediaFolder, mContext);
+        //File catalog = FileSystem.getCatalog(catalogPath, mContext);
+        File catalog = new File(catalogPath);
         if(!catalog.exists()){
-            catalog.mkdir();
+            boolean succes = catalog.mkdir();
+            Log.d(getClass().getSimpleName(), "Create catalog " + succes);
         }
 
         InputStream inputStream = mConnection.getInputStream();
@@ -86,7 +86,7 @@ public class DownloadMediaResponse {
         ZipEntry zipEntry;
         while((zipEntry = zipInputStream.getNextEntry()) != null){
             Log.d(getClass().getSimpleName(), "start Entry");
-            File imageFile = FileSystem.getFile(zipEntry.getName(), catalogPath, mContext);
+            File imageFile = FileSystem.getFile(zipEntry.getName(),FileSystem.getMediaCatalog(setCatalog, mMediaFolder) , mContext);
             if(!imageFile.exists()){
                 imageFile.createNewFile();
             }
@@ -94,13 +94,16 @@ public class DownloadMediaResponse {
             int length;
             while((length = zipInputStream.read(buffer,0, buffer.length))>0){
                 outputStream.write(buffer,0, length);
-                if(mCallback != null){
-                    mCallback.getProgress(length);
+                if(callback != null){
+                    callback.onSave(length);
                 }
             }
             outputStream.close();
         }
         zipInputStream.close();
+        if(callback != null){
+            callback.onSaveCompleted();
+        }
     }
 
     private File mImageFile;

@@ -58,14 +58,9 @@ public class SetsManagerActivity extends AppCompatActivity {
             mTabLayout.setVisibility(View.INVISIBLE);
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SetsManagerFragment()).commit();
-        /*mViewPager = (NonSwipeableViewPager) findViewById(R.id.viewpager);
-        mViewPager.setOffscreenPageLimit(1);*/
     }
 
     private void setPagerAdapter(){
-        /*final PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), mTabLayout.getTabCount());
-        mViewPager.setAdapter(adapter);
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));*/
         //TODO metoda przeterminowana
         mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
@@ -98,37 +93,6 @@ public class SetsManagerActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private class PagerAdapter extends FragmentPagerAdapter {
-
-        private final int SETS_TAB = 0;
-        private final int SERVER_TAB = 1;
-        private int mNumOfTabs;
-
-        public PagerAdapter(FragmentManager fragmentManager, int numOfTabs){
-            super(fragmentManager);
-            mNumOfTabs = numOfTabs;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position){
-                case SETS_TAB:
-                    SetsManagerFragment fragment1 = new SetsManagerFragment();
-                    return fragment1;
-                case SERVER_TAB:
-                    SetsServerFragment fragment2 = new SetsServerFragment();
-                    return fragment2;
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return mNumOfTabs;
         }
     }
 }
