@@ -980,6 +980,9 @@ public class DataManager {
         updateSetValue(downloaded, globalId, column, selectionColumn);
     }
 
+
+
+
     /**
      * Metoda która aktualizuje globalny numer indentyfikacyjny na podstawie jego dotychczasowego numeru.
      * Metoda używana do skasowania numeru globalnego, które nastepuje po usunięciu zestawu z serwera
@@ -1017,8 +1020,10 @@ public class DataManager {
 
     public void updateImageUploaded(boolean uploaded, long setId){
         String column = SetsTable.SetsColumns.IMAGES_DOWNLOADED;
-        String selectionColumn = SetsTable.SetsColumns.ID;
-        updateSetValue(uploaded, setId, column, selectionColumn);
+        String selection = SetsTable.SetsColumns.ID + "=? AND " + SetsTable.SetsColumns.UPLOADED+"=?";
+        String[] selectionArguments = {String.valueOf(setId), "1"};
+        SetDao setDao = new SetDao(mDb);
+        setDao.update(column, uploaded,selection, selectionArguments);
     }
 
     public void updateRecordsUploaded(boolean uploaded, long setId){

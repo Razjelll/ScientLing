@@ -11,8 +11,10 @@ public class FileSizeCalculator {
     public static long calculate(String path) {
         File file = new File(path);
         long size = 0;
-        for (File fileEntry : file.listFiles()) {
-            size += fileEntry.length();
+        if(file.exists()){
+            for (File fileEntry : file.listFiles()) {
+                size += fileEntry.length();
+            }
         }
         return size;
     }

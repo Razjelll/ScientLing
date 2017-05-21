@@ -26,8 +26,4 @@ public class ServerSet {
         intent.putExtra("records",records);
         context.startService(intent);
     }
-
-    public static void changeDescription(VocabularySet set, String description){
-
-    }
 }

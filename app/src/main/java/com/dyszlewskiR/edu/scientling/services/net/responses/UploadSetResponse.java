@@ -45,7 +45,6 @@ public class UploadSetResponse {
 
     public long getId() throws IOException {
         if(mConnection != null){
-
             JsonReader reader = new JsonReader(new InputStreamReader(mConnection.getInputStream()));
             reader.beginObject();
             String name = reader.nextName();

@@ -106,6 +106,7 @@ public class SetsServerFragment extends Fragment {
     @Override
     public boolean onContextItemSelected(MenuItem item){
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        DataManager dataManager = LingApplication.getInstance().getDataManager();
         int position = info.position;
         final UsersSet set = mAdapter.getItem(position);
         switch (item.getItemId()){
@@ -114,9 +115,9 @@ public class SetsServerFragment extends Fragment {
                 long setId = mAdapter.getItemId(position);
                 new DeleteSetAsyncTask().execute(mAdapter.getItemId(position)); break;
             case DELETE_IMAGES:
-                new DeleteMediaRunnable(set, getContext(), DeleteMediaRunnable.IMAGES).start(); break;
+                new DeleteMediaRunnable(set, getContext(), DeleteMediaRunnable.IMAGES,dataManager ).start(); break;
             case DELETE_RECORDS:
-                new DeleteMediaRunnable(set, getContext(), DeleteMediaRunnable.RECORDS).start(); break;
+                new DeleteMediaRunnable(set, getContext(), DeleteMediaRunnable.RECORDS, dataManager).start(); break;
             case CHANGE_DESCRIPTION:
                 DescriptionDialog dialog = new DescriptionDialog(getContext(), set);
                 dialog.show();
@@ -289,11 +290,13 @@ class DeleteMediaRunnable extends Thread{
     private UsersSet mSet;
     private Context mContext;
     private int mMediaType;
+    private DataManager mDataManager;
 
-    public DeleteMediaRunnable(UsersSet set, Context context, int mediaType){
+    public DeleteMediaRunnable(UsersSet set, Context context, int mediaType, DataManager dataManager){
         mSet = set;
         mContext = context;
         mMediaType = mediaType;
+        mDataManager = dataManager;
     }
 
     @Override
@@ -308,6 +311,11 @@ class DeleteMediaRunnable extends Thread{
             DeleteMediaResponse response = new DeleteMediaResponse(connection);
             response.getResponse();
             response.closeConnection();
+            if(mMediaType == IMAGES){
+
+            } else {
+
+            }
             //connection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();

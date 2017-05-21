@@ -4,14 +4,17 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -22,12 +25,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
@@ -42,27 +47,32 @@ import com.dyszlewskiR.edu.scientling.preferences.Settings;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.services.data.DeletingSetService;
 import com.dyszlewskiR.edu.scientling.services.net.ServerSet;
-import com.dyszlewskiR.edu.scientling.services.net.services.DownloadSetsService;
 import com.dyszlewskiR.edu.scientling.services.net.services.UploadSetService;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import java.util.List;
 
-/**
- * A placeholder fragment containing a simple view.
- */
-public class SetsManagerFragment extends Fragment {
+public class SetsManagerFragment extends Fragment implements ServiceConnection, UploadSetService.Callback{
 
     private final int LAYOUT_RESOURCE = R.layout.fragment_sets_manager;
     private final int ADAPTER_ITEM_RESOURCE = R.layout.item_set_manager;
     private final int ADD_REQUEST = 7233;
     private final int EDIT_REQUEST = 7334;
 
+    private ViewStub mUploadProgressStub;
+    private ViewGroup mUploadProgressContainer;
     private ListView mListView;
     private SetsManagerAdapter mAdapter;
 
     private int mLastEditedPosition;
     private int mDeletedPosition;
+
+    private UploadSetService mService;
+    private boolean mIsServiceBound;
+
+    private ProgressBar mUploadProgressBar;
+    private boolean mIsUploading;
+
 
     private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
@@ -94,21 +104,59 @@ public class SetsManagerFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //jeżeli usługa nie była wcześniej uruchamiana uruchamiamy ją
+        if(!LingApplication.getInstance().isServiceRunning(UploadSetService.class)){
+            Intent intent = new Intent(getActivity().getApplicationContext(), UploadSetService.class);
+            getActivity().getApplicationContext().startService(intent);
+        }
+        //wiążemy usługe z aktywnością, aby można było wykorzystać metody zwrotne do aktualizowania postepu
+        Intent bindIntent = new Intent(getActivity().getApplicationContext(), UploadSetService.class);
+        getActivity().getApplication().bindService(bindIntent, this, Context.BIND_AUTO_CREATE);
+        mIsServiceBound = true;
+        //ustawiamy automatyczną zmianę konfiguracji(np. obót ekranu)
+        //dzięki temu nie musimy przeciążać metod aby zapisać konfigurację i później jej przywracać
+        setRetainInstance(true);
         setHasOptionsMenu(true);
     }
 
     @Override
     public void onResume(){
         super.onResume();
+        //zarajestrowanie odbiornika
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(UploadSetService.BROADCAST_ACTION);
         getActivity().registerReceiver(mIntentReceiver, intentFilter, null, mHandler);
+        //ustawiamy callback. Nastąpi to po zniknięciu aktywności z główego ekranu
+        //musimy to zrobić, ponieważ referencja dla metod zwrotnych zostanie usunięta w chwili wykonania onPause
+        if(mService != null){
+            mService.setCallback(this);
+        }
+
     }
 
     @Override
     public void onPause(){
         super.onPause();
+        if(mService != null){
+            mService.setCallback(null);
+        }
         getActivity().unregisterReceiver(mIntentReceiver);
+    }
+
+    @Override
+    public void onDestroy(){
+        if(mIsServiceBound){
+            //jeżeli w chwili zamykania aktywności usługa zakończyła swoją pracę usuwamy usługę
+            //jeżeli usługa nadal wykonuje swoje zadanie nie robimy nic, ponieważ usługa zakończy sie
+            //sama w chwili wykonania działania
+            if(mService != null && !mService.isRunning()){
+                Intent intent = new Intent(getActivity().getApplicationContext(), UploadSetService.class);
+                getActivity().getApplicationContext().stopService(intent);
+            }
+            //rozłączamy aktywność od usługi
+            getActivity().getApplicationContext().unbindService(this);
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -122,6 +170,7 @@ public class SetsManagerFragment extends Fragment {
 
     private void setupControls(View view) {
         mListView = (ListView) view.findViewById(R.id.list);
+        mUploadProgressStub = (ViewStub)view.findViewById(R.id.upload_progress_container);
     }
 
     private void setListeners() {
@@ -172,9 +221,11 @@ public class SetsManagerFragment extends Fragment {
         menu.add(0, EDIT, 0, getString(EDIT));
         menu.add(0, CHOOSE, 0, getString(CHOOSE));
         menu.add(0, DELETE, 0, getString(DELETE));
-        if(FileSystem.hasImages(set.getCatalog(), getContext())){
+        boolean hasImages = FileSystem.hasImages(set.getCatalog(), getContext());
+        if(hasImages){
             menu.add(0, DELETE_IMAGES, 0, getString(DELETE_IMAGES));
         }
+        boolean hasRecords = FileSystem.hasRecords(set.getCatalog(), getContext());
         if(FileSystem.hasRecords(set.getCatalog(), getContext())){
             menu.add(0, DELETE_RECORDS, 0, getString(DELETE_RECORDS));
         }
@@ -184,10 +235,10 @@ public class SetsManagerFragment extends Fragment {
                 menu.add(0, UPLOAD_DATABASE, 0, getString(UPLOAD_DATABASE));
             } else {
                 if (set.isUploaded() != null && set.isUploaded()) { //jeżeli zestaw został wstawiony przez użytkownika na serwer
-                    if (!set.isImagesDownloaded()) {
+                    if (hasImages && !set.isImagesDownloaded()) { //jeżeli zestaw ma obrazki i nie zostały wstawione na serwer
                         menu.add(0, UPLOAD_IMAGES, 0, getString(UPLOAD_IMAGES));
                     }
-                    if (!set.isRecordsDownloaded()) {
+                    if (hasRecords && !set.isRecordsDownloaded()) {
                         menu.add(0, UPLOAD_RECORDS, 0, getString(UPLOAD_RECORDS));
                     }
                 }
@@ -278,25 +329,41 @@ public class SetsManagerFragment extends Fragment {
         dialog.show();
     }
 
-    private void deleteRecords(int position) {
-        //TODO ustawić pozycję
-        //TODO wyświetlić dialog
+    private void showUploadingContainer(String setName){
+        mAdapter.setActionButtonEnable(false);
+        if(mUploadProgressContainer == null){
+            mUploadProgressContainer = (ViewGroup) mUploadProgressStub.inflate();
+            TextView setNameTextView = (TextView)mUploadProgressContainer.findViewById(R.id.name_text_view);
+            setNameTextView.setText(setName);
+            mUploadProgressBar = (ProgressBar)mUploadProgressContainer.findViewById(R.id.upload_progress_bar);
+        } else {
+            mUploadProgressContainer.setVisibility(View.VISIBLE);
+            mUploadProgressBar.setVisibility(View.VISIBLE);
+        }
     }
 
     private void showUploadDialog(int position, boolean database, boolean images, boolean records) {
         //jeżeli wysyłamy wszystko lub tylko bazę danych wyświetlamy dialog UploadSetDialog
+        UploadListener listener = new UploadListener() {
+            @Override
+            public void startUpload(VocabularySet set, String description, boolean database, boolean images, boolean records) {
+                showUploadingContainer(set.getName());
+                ServerSet.upload(set, description, database, images, records, getContext());
+                mIsUploading = true;
+            }
+        };
         VocabularySet set = mAdapter.getItem(position);
         if (database) {
-            UploadSetDialog dialog = new UploadSetDialog(getContext(), set, (images && records));
+            UploadSetDialog dialog = new UploadSetDialog(getContext(), set, (images && records), listener);
             dialog.show();
         } else {
             //TODO tutaj też zrobić zajefajny dialog i go pokazać
             if(images){
-                UploadMediaDialog dialog = new UploadMediaDialog(getContext(), mAdapter.getItem(position), UploadMediaDialog.IMAGES);
+                UploadMediaDialog dialog = new UploadMediaDialog(getContext(), mAdapter.getItem(position), UploadMediaDialog.IMAGES, listener);
                 dialog.show();
             }
             else {
-                UploadMediaDialog dialog = new UploadMediaDialog(getContext(), mAdapter.getItem(position), UploadMediaDialog.RECORDS);
+                UploadMediaDialog dialog = new UploadMediaDialog(getContext(), mAdapter.getItem(position), UploadMediaDialog.RECORDS, listener);
                 dialog.show();
             }
         }
@@ -404,18 +471,59 @@ public class SetsManagerFragment extends Fragment {
         getActivity().startService(intent);
     }
 
+    @Override
+    public void onServiceConnected(ComponentName name, IBinder service) {
+        mService = ((UploadSetService.LocalBinder)service).getService();
+        mService.setCallback(this);
+    }
+
+    @Override
+    public void onServiceDisconnected(ComponentName name) {
+        mService = null;
+    }
+
+    @Override
+    public void onOperationProgress(int progress) {
+        Log.d(getClass().getSimpleName(), "postęp " + progress);
+        if(!mIsUploading){
+            showUploadingContainer(""); //TODO przerzucić tutaj jakoś nazwe
+            mIsUploading = true;
+        }
+        if(mUploadProgressBar != null){
+            mUploadProgressBar.setProgress(progress);
+        }
+    }
+
+    @Override
+    public void onOperationCompleted() {
+        if(mUploadProgressBar != null){
+            mUploadProgressBar.setProgress(0);
+        }
+        if(mUploadProgressContainer!=null){
+            mUploadProgressContainer.setVisibility(View.GONE);
+        }
+        mAdapter.setActionButtonEnable(true);
+    }
+
     //region SetsManagerAdapter
     private class SetsManagerAdapter extends ArrayAdapter {
 
         private Context mContext;
         private int mResource;
         private List<VocabularySet> mItems;
+        private boolean mActionButtonEnable;
 
         public SetsManagerAdapter(Context context, int resource, List<VocabularySet> data) {
             super(context, resource, data);
             mContext = context;
             mResource = resource;
             mItems = data;
+            mActionButtonEnable = true;
+        }
+
+        public void setActionButtonEnable(boolean enable){
+            mActionButtonEnable = enable;
+            notifyDataSetChanged();
         }
 
         public void set(int position, VocabularySet set) {
@@ -490,12 +598,18 @@ public class SetsManagerFragment extends Fragment {
             } else {
                 viewHolder.uploadedImageView.setVisibility(View.INVISIBLE);
             }
-            viewHolder.actionButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    parent.showContextMenuForChild(v);
-                }
-            });
+            if(mActionButtonEnable){
+                viewHolder.actionButton.setVisibility(View.VISIBLE);
+                viewHolder.actionButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        parent.showContextMenuForChild(v);
+                    }
+                });
+            } else {
+                viewHolder.actionButton.setVisibility(View.INVISIBLE);
+            }
+
 
             return rowView;
         }
@@ -568,6 +682,10 @@ public class SetsManagerFragment extends Fragment {
 
 }
 
+interface UploadListener{
+        void startUpload(VocabularySet set, String description, boolean database, boolean images, boolean records);
+}
+
 class UploadMediaDialog extends Dialog {
     private final int CONTENT_RESOURCE = R.layout.dialog_upload_media;
 
@@ -575,13 +693,16 @@ class UploadMediaDialog extends Dialog {
     private TextView mSizeTextView;
     private Button mUploadButton;
 
+    private UploadListener mListener;
+
 
     public static int IMAGES = 1;
     public static int RECORDS = 2;
 
-    public UploadMediaDialog(@NonNull Context context, VocabularySet set, int mediaType)
+    public UploadMediaDialog(@NonNull Context context, VocabularySet set, int mediaType, UploadListener listener)
     {
         super(context);
+        mListener = listener;
         setContentView(CONTENT_RESOURCE);
         setupControls();
         setContent(context, set, mediaType);
@@ -611,12 +732,15 @@ class UploadMediaDialog extends Dialog {
         mUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mediaType == IMAGES){
-                    ServerSet.upload(set, null, false, true, false, getContext());
+                if(mListener != null){
+                    if(mediaType == IMAGES){
+                        mListener.startUpload(set, null, false, true, false);
+                    }
+                    if(mediaType == RECORDS){
+                        mListener.startUpload(set, null, false, false ,true);
+                    }
                 }
-                if(mediaType == RECORDS){
-                    ServerSet.upload(set, null, false, false, true, getContext());
-                }
+
                 dismiss();
             }
         });
@@ -680,15 +804,16 @@ class UploadSetDialog extends Dialog {
     private Button mUploadButton;
     private boolean mUploadAll;
     private VocabularySet mSet;
+    private UploadListener mListener;
 
     private boolean mEditDescription;
 
-    public UploadSetDialog(@NonNull Context context, VocabularySet set, boolean uploadAll) {
+    public UploadSetDialog(@NonNull Context context, VocabularySet set, boolean uploadAll, UploadListener listener) {
         super(context);
-
+        mListener = listener;
         mUploadAll = uploadAll;
         mSet = set;
-        setTitle(context.getString(R.string.upload));
+        setTitle(context.getString(R.string.upload)); //TODO zmienić nazwę
         setContentView(CONTENT_RESOURCE);
         setupControls();
         setListeners();
@@ -710,16 +835,18 @@ class UploadSetDialog extends Dialog {
         mUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mEditDescription){
-
-                } else {
-                    if (mUploadAll) {
-                        ServerSet.upload(mSet, mDescriptionEditText.getText().toString(), true, true, true, getContext());
+                if(mListener != null){
+                    if(mEditDescription){
+                        //TODO ogarnąć jak działa edit description
                     } else {
-                        ServerSet.upload(mSet, mDescriptionEditText.getText().toString(), true, false, false, getContext());
+                        if (mUploadAll) {
+                            mListener.startUpload(mSet, mDescriptionEditText.getText().toString(), true, true, true);
+                        } else {
+                            mListener.startUpload(mSet, mDescriptionEditText.getText().toString(), true, false, false);
+                        }
                     }
+                    dismiss();
                 }
-                dismiss();
             }
         });
     }

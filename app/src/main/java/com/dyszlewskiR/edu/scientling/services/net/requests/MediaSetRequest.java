@@ -3,7 +3,6 @@ package com.dyszlewskiR.edu.scientling.services.net.requests;
 import android.content.Context;
 
 import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
-import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.services.net.URLConnector;
 
 import org.json.JSONException;
@@ -22,7 +21,7 @@ import java.util.zip.ZipOutputStream;
 public class MediaSetRequest {
 
     private static final int READ_TIMEOUT = 3000;
-    protected static final int CHUNK_BUFFER_SIZE = 1024;
+    public static final int CHUNK_SIZE = 1024;
     protected static final String TWO_HYPNES = "--";
     protected static final String MULTIPART_BOUNDARY = "*****";
     protected static final String LINE_END = "\r\n";
@@ -61,7 +60,7 @@ public class MediaSetRequest {
         connection.setRequestMethod("POST");
         //connection.setRequestProperty("Connection", "Keep-Alive");
         connection.setRequestProperty("Authorization", Authentication.prepare(mUsername, mPassword));
-        connection.setChunkedStreamingMode(CHUNK_BUFFER_SIZE);
+        connection.setChunkedStreamingMode(CHUNK_SIZE);
         connection.setDoInput(true);
         connection.setDoOutput(true);
         //connection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + MULTIPART_BOUNDARY);
@@ -72,7 +71,7 @@ public class MediaSetRequest {
         HttpURLConnection connection = createConnection(request);
         OutputStream outputStream = connection.getOutputStream();
         connection.connect();
-        uploadFiles(outputStream, getSetId(), filesFolder);
+        //uploadFiles(outputStream, getSetId(), filesFolder);
         return connection;
     }
 
@@ -123,6 +122,9 @@ public class MediaSetRequest {
     protected void uploadFile(DataOutputStream outputStream, String folderName) throws IOException {
         ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
         final File folder = FileSystem.getCatalog(mSetCatalog, mContext);
+        if(!folder.exists()){
+            return;
+        }
         int entriesCount = 0;
         for (final File fileEntry : folder.listFiles()) {
             if (fileEntry.isDirectory() && fileEntry.getName().equals(folderName)) {
@@ -132,7 +134,7 @@ public class MediaSetRequest {
                     entriesCount++;
                     FileInputStream inputStream = new FileInputStream(imageEntry);
                     int data;
-                    byte[] buffer = new byte[CHUNK_BUFFER_SIZE];
+                    byte[] buffer = new byte[CHUNK_SIZE];
                     while (inputStream.read(buffer) != -1) {
                         //zipOutputStream.write(inputStream.read());
                         zipOutputStream.write(buffer);

@@ -33,6 +33,12 @@ public class JsonWords {
         return mCursor != null && mCursor.getCount() >0;
     }
 
+    public int getWordsCount(){
+        if(mCursor != null){
+            return mCursor.getCount();
+        }
+        return 0;
+    }
 
     private  final String ID = "id";
     private  final String NAME = "name";

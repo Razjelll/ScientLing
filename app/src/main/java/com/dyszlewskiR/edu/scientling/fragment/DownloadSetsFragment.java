@@ -55,23 +55,6 @@ import java.util.List;
 
 public class DownloadSetsFragment extends Fragment implements ServiceConnection, DownloadSetsService.Callback{
 
-    private final BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(intent.getAction().equals(DownloadSetsService.CUSTOM_INTENT)){
-                long setId = intent.getLongExtra("set", -1);
-                int progress = intent.getIntExtra("progress", -1);
-                Log.d(LOG_TAG, "Receiver progress: " + progress);
-                if(intent.getIntExtra("progress", -1) == 100){
-                    mAdapter.setDownloaded(setId);
-                    //mAdapter.notifyDataSetChanged();
-                } else {
-                    mAdapter.setDownloadProgress(setId, progress);
-                }
-            }
-        }
-    };
-
     private final Handler mHandler = new Handler();
     private boolean mReceiverRegistered;
 
@@ -104,7 +87,6 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
 
     private DownloadSetsService mService;
 
-    private boolean mIsConfigurationChange;
     private boolean mIsServiceBound;
 
     public DownloadSetsFragment() {
@@ -115,51 +97,18 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
         super.onCreate(savedInstanceState);
 
         if(!LingApplication.getInstance().isServiceRunning(DownloadSetsService.class)){
-            Log.d(LOG_TAG, "Service is Running");
+            Log.d(LOG_TAG, "Service is not Running");
             Intent intent = new Intent(getActivity().getApplicationContext(), DownloadSetsService.class);
             getActivity().getApplicationContext().startService(intent);
         }
-        Log.d(LOG_TAG, "Service is not run");
         Intent bindIntent = new Intent(getActivity().getApplicationContext(), DownloadSetsService.class);
         getActivity().getApplicationContext().bindService(bindIntent, this, Context.BIND_AUTO_CREATE);
-        //getActivity().startService(bindIntent);
         mIsServiceBound = true;
 
-
-        /*ConfigurationInstance instance = (ConfigurationInstance)getActivity().getLastCustomNonConfigurationInstance();
-        if(instance != null){
-            mIsConfigurationChange = false;
-            //mService = instance.getService();
-            mAdapter = instance.getAdapter();
-        }*/
         //pozwala przetrwać konfiguracji okna obrót ekranu
         //fragment jest przywracany do stanu w jakim był przed obrotem
         setRetainInstance(true);
         setHasOptionsMenu(true);
-    }
-
-    private class ConfigurationInstance{
-        private DownloadSetsService mServiceConfiguration;
-        private List<SetItem> mSetItemsConfigutration;
-        private DownloadSetAdapter mAdapterConfiguration;
-
-        public DownloadSetsService getService(){return mServiceConfiguration;}
-        public void setService(DownloadSetsService service){mServiceConfiguration = service;}
-
-        public List<SetItem> getItems(){return mSetItemsConfigutration;}
-        public void setItems(List<SetItem> setItems) {mSetItemsConfigutration = setItems;}
-
-        public DownloadSetAdapter getAdapter(){return mAdapterConfiguration;}
-        public void setAdapter(DownloadSetAdapter adapter){mAdapterConfiguration = adapter;}
-
-    }
-    public Object onRetainNonConfigurationInstance(){
-        ConfigurationInstance instance = new ConfigurationInstance();
-        instance.setService(mService);
-        //instance.setItems(mAdapter.getItems());
-        instance.setAdapter(mAdapter);
-        mIsConfigurationChange = true;
-        return instance;
     }
 
     @Override
@@ -228,17 +177,7 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
         super.onResume();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(DownloadSetsService.CUSTOM_INTENT);
-        getActivity().registerReceiver(mIntentReceiver, intentFilter, null, mHandler);
-        mReceiverRegistered = true;
-
-        if(mService==null){
-            /*Log.d(LOG_TAG, "bindService");
-            Intent bindIntent = new Intent(getActivity().getApplicationContext(), DownloadSetsService.class);
-            getActivity().getApplicationContext().bindService(bindIntent, this, Context.BIND_AUTO_CREATE);
-            //getActivity().startService(bindIntent);
-            mIsServiceBound = true;*/
-
-        } else {
+        if(mService != null) {
             mService.setCallback(this);
             mLoadingContainer.setVisibility(View.GONE);
             mListView.setVisibility(View.VISIBLE);
@@ -250,24 +189,9 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
     @Override
     public void onPause(){
         super.onPause();
-        if(mReceiverRegistered){
-            getActivity().unregisterReceiver(mIntentReceiver);
-            mReceiverRegistered = false;
-        }
-
-       /* if(mService != null && !mIsConfigurationChange){
-            mService.setCallback(null);
-            getActivity().unbindService(this);
-        }*/
        if(mService!=null){
            mService.setCallback(null);
        }
-       /* if(mIsServiceBound){
-            Log.d(LOG_TAG, "unbindService");
-            mService.setCallback(null);
-            getActivity().getApplicationContext().unbindService(this);
-            mIsServiceBound = false;
-        }*/
     }
 
     @Override

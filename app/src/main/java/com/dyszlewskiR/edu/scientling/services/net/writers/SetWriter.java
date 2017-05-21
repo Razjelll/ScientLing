@@ -1,12 +1,21 @@
-package com.dyszlewskiR.edu.scientling.services.json;
+package com.dyszlewskiR.edu.scientling.services.net.writers;
 
+import android.icu.util.Output;
 import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
+import com.dyszlewskiR.edu.scientling.services.json.JsonLessons;
+import com.dyszlewskiR.edu.scientling.services.json.JsonSet;
+import com.dyszlewskiR.edu.scientling.services.json.JsonWords;
+import com.dyszlewskiR.edu.scientling.services.net.services.DownloadSetsService;
+import com.dyszlewskiR.edu.scientling.services.net.utils.ChunkWriter;
 
 import org.json.JSONException;
 
-public class JsonSetParts {
+import java.io.IOException;
+import java.io.OutputStream;
+
+public class SetWriter {
 
     private final int START = 0;
     private final int SET = 1;
@@ -24,31 +33,58 @@ public class JsonSetParts {
     private final String WORDS_OBJECT = "words";
     private final String WORDS_COUNT_OBJECT = "words_count";
 
+
     private final String QUOTATION = "\"";
+
+    private int mPosition;
 
     private long mSetId;
     private String mDescription;
     private DataManager mDataManager;
-
-    private int mPosition;
+    private int mChunkSize;
+    private OutputStream mStream;
 
     private JsonLessons mLessonJsonCreator;
     private JsonWords mWordsJsonCreator;
 
     private boolean mFirstLesson;
     private boolean mFirstWord;
-
     private int mWordsCount;
 
-    public JsonSetParts(long setId, DataManager dataManager){
-        mSetId = setId;
+    private Callback mCallback;
+
+    public interface Callback{
+        void addWord();
+        void getWordsCount(int wordsCount);
+    }
+
+    public void setCallback(Callback callback){
+        mCallback = callback;
+    }
+
+    public SetWriter(OutputStream outputStream,int chunkSize, DataManager dataManager){
         mDataManager = dataManager;
         mPosition = START;
 
         mFirstLesson = true;
         mFirstWord = true;
+
+        mStream = outputStream;
+        mChunkSize = chunkSize;
     }
 
+    public void startWriting(long setId, String description) throws JSONException, IOException {
+        mSetId = setId;
+        mDescription = description;
+        ChunkWriter writer = new ChunkWriter(mChunkSize, mStream);
+        String json;
+        StringBuilder logBuilder = new StringBuilder();
+        while((json = getNext()) != null) {
+            writer.write(json);
+            logBuilder.append(json);
+        }
+        writer.writeBuffer();
+    }
 
     public String getNext() throws JSONException {
         switch (mPosition){
@@ -78,6 +114,9 @@ public class JsonSetParts {
                 Log.d(getClass().getSimpleName(), "WORDS");
                 String wordPart = getWordPart();
                 if(wordPart != null){
+                    if(mCallback != null){
+                        mCallback.addWord();
+                    }
                     return wordPart;
                 }
             case END_WORDS:
@@ -179,6 +218,14 @@ public class JsonSetParts {
                 releaseWordJsonCreator();
                 return null;
             }
+            if(mCallback != null){
+                mCallback.getWordsCount(mWordsJsonCreator.getWordsCount());
+            }
+        }
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
         String result = mWordsJsonCreator.getWordJson();
         if(result == null){
@@ -216,4 +263,9 @@ public class JsonSetParts {
         mPosition++;
         return "}";
     }
+
+    public void close() throws IOException {
+        mStream.close();
+    }
 }
+

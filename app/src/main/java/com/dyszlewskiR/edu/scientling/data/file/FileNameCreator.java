@@ -18,7 +18,7 @@ public class FileNameCreator {
      * Wartość -1 oznacza, że żadne ograniczenie nie będzie zastosowane.
      * Ograniczenie długości ma na celu zmniejszenie rozmiaru bazy danych.
      */
-    private static final int ROOT_FILE_NAME_LENGTH = 4;
+    private static final int ROOT_FILE_NAME_LENGTH = 6;
     private static final int ROOT_CATALOG_NAME_LENGTH = 20;
 
     /**
@@ -35,7 +35,7 @@ public class FileNameCreator {
     private static String getFileName(String rootName, String catalog, String extension, Context context) {
         boolean found;
         int number = 0;
-        int name_length = rootName.length() < ROOT_CATALOG_NAME_LENGTH ? rootName.length() : ROOT_CATALOG_NAME_LENGTH;
+        int name_length = rootName.length() < ROOT_FILE_NAME_LENGTH ? rootName.length() : ROOT_FILE_NAME_LENGTH;
         String shortRootName = rootName.substring(0, name_length);
         String fileName = shortRootName + extension;
         do {
