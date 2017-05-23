@@ -58,10 +58,6 @@ import java.util.Set;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable.WordsColumns;
 
-/**
- * Created by Razjelll on 10.11.2016.
- */
-
 public class DataManager {
 
     private final String TAG = "DataManager";
@@ -953,7 +949,7 @@ public class DataManager {
         return lessonDao.getId(globalId);
     }
 
-    public List<SetListItem> getSetListItems(){
+    /*public List<SetListItem> getSetListItems(){
         String[] columns = {SetsTable.SetsColumns.ID, SetsTable.SetsColumns.NAME,
                 SetsTable.SetsColumns.GLOBAL_ID, SetsTable.SetsColumns.UPLOADED};
         SetDao setDao = new SetDao(mDb);
@@ -968,17 +964,9 @@ public class DataManager {
         return setDao.getSetDownloadInfo(columns, selection, selectionArgs);
     }
 
-    public void updateSetImagesDownloaded(boolean downloaded, long globalId){
-        String column = SetsTable.SetsColumns.IMAGES_DOWNLOADED;
-        String selectionColumn = SetsTable.SetsColumns.GLOBAL_ID;
-        updateSetValue(downloaded, globalId, column, selectionColumn);
-    }
 
-    public void updateSetRecordsDownloaded(boolean downloaded, long globalId){
-        String column = SetsTable.SetsColumns.RECORDS_DOWNLOADED;
-        String selectionColumn = SetsTable.SetsColumns.GLOBAL_ID;
-        updateSetValue(downloaded, globalId, column, selectionColumn);
-    }
+*/
+
 
 
 
@@ -1005,10 +993,12 @@ public class DataManager {
         setDao.update(column, newGlobalId, selection, selectionArguments);
     }
 
-    public void updateSetUploaded(boolean uploaded, long setId){
-        String column = SetsTable.SetsColumns.UPLOADED;
-        String selectionColumn = SetsTable.SetsColumns.ID;
-        updateSetValue(uploaded, setId, column,selectionColumn);
+    public void updateUploadingUser(String uploadingUser, long setId){
+        String column = SetsTable.SetsColumns.UPLOADING_USER;
+        String selection = SetsTable.SetsColumns.ID+"=?";
+        String[] selectionArguments = {String.valueOf(setId)};
+        SetDao setDao = new SetDao(mDb);
+        setDao.update(column, uploadingUser, selection, selectionArguments);
     }
 
     private void updateSetValue(boolean downloaded, long id, String column, String selectionColumn){
@@ -1018,27 +1008,45 @@ public class DataManager {
         setDao.update(column,downloaded, selection, selectionArguments);
     }
 
-    public void updateImageUploaded(boolean uploaded, long setId){
-        String column = SetsTable.SetsColumns.IMAGES_DOWNLOADED;
-        String selection = SetsTable.SetsColumns.ID + "=? AND " + SetsTable.SetsColumns.UPLOADED+"=?";
-        String[] selectionArguments = {String.valueOf(setId), "1"};
-        SetDao setDao = new SetDao(mDb);
-        setDao.update(column, uploaded,selection, selectionArguments);
+    public void updateImageUploaded(boolean uploaded, long globalId){
+        String column = SetsTable.SetsColumns.IMAGES_UPLOADED;
+        updateSetValue(uploaded, globalId, column);
     }
 
     public void updateRecordsUploaded(boolean uploaded, long setId){
-        String column = SetsTable.SetsColumns.RECORDS_DOWNLOADED;
-        String selectionColumn = SetsTable.SetsColumns.ID;
-        updateSetValue(uploaded, setId, column, selectionColumn);
+       String column = SetsTable.SetsColumns.RECORDS_UPLOADED;
+        updateSetValue(uploaded, setId, column);
     }
 
-    public String getSetCatalog(long globalId){
+    private void updateSetValue(boolean value, long setId, String column){
+        String selection = SetsTable.SetsColumns.GLOBAL_ID+"=?";
+        String[] selectionArguments = {String.valueOf(setId)};
+        SetDao setDao = new SetDao(mDb);
+        setDao.update(column, value, selection, selectionArguments);
+    }
+
+    public String getSetCatalogByGlobalId(long globalId){
         String[] columns = {SetsTable.SetsColumns.CATALOG};
         String selection = SetsTable.SetsColumns.GLOBAL_ID + "=?";
         String[] selectionArguments = {String.valueOf(globalId)};
         SetDao setDao = new SetDao(mDb);
         VocabularySet set = setDao.get(columns, selection, selectionArguments);
+        if(set == null){
+            return null;
+        }
         return  set.getCatalog();
+    }
+
+    public String getUploadingUser(long setId){
+        String[] columns = {SetsTable.SetsColumns.UPLOADING_USER};
+        String selection = SetsTable.SetsColumns.ID + "=?";
+        String[] selectionArgument = {String.valueOf(setId)};
+        SetDao setDao = new SetDao(mDb);
+        VocabularySet set = setDao.get(columns, selection, selectionArgument);
+        if(set == null){
+            return null;
+        }
+        return set.getUploadingUser();
     }
 
 

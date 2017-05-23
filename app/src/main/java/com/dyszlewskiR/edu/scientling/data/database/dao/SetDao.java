@@ -33,8 +33,8 @@ public class SetDao extends BaseDao<VocabularySet> {
                     + ", " + SetsColumns.LANGUAGE_L1_FK
                     + ", " + SetsColumns.CATALOG +
                     ", " + SetsColumns.GLOBAL_ID
-                    +", " + SetsColumns.UPLOADED + ", " + SetsColumns.IMAGES_DOWNLOADED
-                    +", " + SetsColumns.RECORDS_DOWNLOADED+ ") VALUES (?,?,?,?,?,?,?,?)";
+                    +", " + SetsColumns.UPLOADING_USER + ", " + SetsColumns.IMAGES_UPLOADED
+                    +", " + SetsColumns.RECORDS_UPLOADED+ ") VALUES (?,?,?,?,?,?,?,?)";
     private final String WHERE_ID = SetsColumns.ID + "= ?";
 
     public SetDao(SQLiteDatabase db) {
@@ -55,21 +55,13 @@ public class SetDao extends BaseDao<VocabularySet> {
         } else {
             mInsertStatement.bindNull(SetsColumns.GLOBAL_ID_POSITION);
         }
-        if(entity.getUploaded()!=null){
-            mInsertStatement.bindLong(SetsColumns.UPLOADED_POSITION, entity.getUploaded());
+        if(entity.getUploadingUser()!=null){
+            mInsertStatement.bindString(SetsColumns.UPLOADING_USER_POSITION, entity.getUploadingUser());
         } else {
-            mInsertStatement.bindNull(SetsColumns.UPLOADED_POSITION);
+            mInsertStatement.bindNull(SetsColumns.UPLOADING_USER_POSITION);
         }
-        if(entity.getImagesDownloaded() != null){
-            mInsertStatement.bindLong(SetsColumns.IMAGES_DOWNLOADED_POSITION, entity.getImagesDownloaded());
-        } else {
-            mInsertStatement.bindNull(SetsColumns.IMAGES_DOWNLOADED_POSITION);
-        }
-        if(entity.getRecordsDownloaded()!=null){
-            mInsertStatement.bindLong(SetsColumns.RECORDS_DOWNLOADED_POSITION, entity.getRecordsDownloaded());
-        } else {
-            mInsertStatement.bindNull(SetsColumns.RECORDS_DOWNLOADED_POSITION);
-        }
+        mInsertStatement.bindLong(SetsColumns.IMAGES_UPLOADED_POSITION, entity.getImagesUploaded());
+        mInsertStatement.bindLong(SetsColumns.RECORDS_UPLOADED_POSITION, entity.getRecordsUploaded());
         return mInsertStatement.executeInsert();
     }
 
@@ -93,22 +85,13 @@ public class SetDao extends BaseDao<VocabularySet> {
         } else{
             values.putNull(SetsColumns.GLOBAL_ID);
         }
-        if(entity.isUploaded()!=null){
-            values.put(SetsColumns.UPLOADED, entity.isUploaded());
+        if(entity.getUploadingUser()!= null){
+            values.put(SetsColumns.UPLOADING_USER, entity.getUploadingUser());
         } else {
-            values.putNull(SetsColumns.UPLOADED);
+            values.putNull(SetsColumns.UPLOADING_USER);
         }
-        if(entity.getImagesDownloaded() != null){
-            values.put(SetsColumns.IMAGES_DOWNLOADED, entity.isImagesDownloaded());
-        } else {
-            values.putNull(SetsColumns.IMAGES_DOWNLOADED);
-        }
-        if(entity.getRecordsDownloaded()!=null){
-            values.put(SetsColumns.RECORDS_DOWNLOADED, entity.isRecordsDownloaded());
-        } else {
-            values.putNull(SetsColumns.RECORDS_DOWNLOADED);
-        }
-
+        values.put(SetsColumns.IMAGES_UPLOADED, entity.isImagesUploaded());
+        values.put(SetsColumns.RECORDS_UPLOADED, entity.isRecordsUploaded());
 
         String[] whereArguments = new String[]{String.valueOf(entity.getId())};
         mDb.update(TABLE_NAME, values, WHERE_ID, whereArguments);
@@ -123,6 +106,12 @@ public class SetDao extends BaseDao<VocabularySet> {
     public void update(String column, Long value, String selection, String[] selectionArgs){
         final ContentValues values = new ContentValues();
         values.put(column, value);
+        mDb.update(TABLE_NAME, values, selection, selectionArgs);
+    }
+
+    public void update(String column, String value, String selection, String[] selectionArgs){
+        final ContentValues values = new ContentValues();
+         values.put(column, value);
         mDb.update(TABLE_NAME, values, selection, selectionArgs);
     }
 

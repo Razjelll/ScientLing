@@ -370,7 +370,7 @@
 
     <string name="database">Baza danych</string>
     <string name="images">Obrazki</string>
-    <string name="records">Nagrania</string>
+    <string name="records">Nagrania0</string>
     <!--Wysyłanie zestawów-->
     <string name="upload_all">Wyślij</string>
     <string name="upload_database">Wyślij bazę</string>

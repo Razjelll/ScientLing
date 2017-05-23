@@ -9,7 +9,6 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -30,7 +29,6 @@ import com.dyszlewskiR.edu.scientling.services.net.requests.DownloadSetRequest;
 import com.dyszlewskiR.edu.scientling.services.net.responses.DownloadMediaResponse;
 import com.dyszlewskiR.edu.scientling.services.net.responses.DownloadSetResponse;
 import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
-import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.json.JSONException;
@@ -42,7 +40,6 @@ import java.util.Random;
 public class DownloadSetsService extends Service {
 
     public static final String CUSTOM_INTENT = "DownloadSetsIntent";
-
 
     private Callback mCallback;
     private final LocalBinder mLocalBinder = new LocalBinder();
@@ -156,7 +153,9 @@ public class DownloadSetsService extends Service {
 
         private void saveSetInfo(long setId, VocabularySet set, DataManager dataManager){
             //zapisujemy w bazie, że zestaw został pobrany
-            dataManager.updateSetUploaded(false, set.getId());
+            //dataManager.updateSetUploaded(false, set.getId());
+            //TODO zobaczyć czy to będzie grało
+            dataManager.updateUploadingUser(null, set.getId());
             dataManager.insertSetGlobalId(setId,set.getId());
         }
 
@@ -269,23 +268,25 @@ public class DownloadSetsService extends Service {
 
                 @Override
                 public void onSaveCompleted() {
-                    saveMediaInfo(setId, mediaType, mDataManager);
+                    //TODO zobaczyć czy zamiast tego bedzie trzeba zrobić coś innego
+
+                    //saveMediaInfo(setId, mediaType, mDataManager);
                 }
             });
         }
 
         private String getCatalog(long globalId){
-            return mDataManager.getSetCatalog(globalId);
+            return mDataManager.getSetCatalogByGlobalId(globalId);
         }
 
-        private void saveMediaInfo(long setId, MediaType mediaType, DataManager dataManager){
+        /*private void saveMediaInfo(long setId, MediaType mediaType, DataManager dataManager){
             switch (mediaType){
                 case IMAGES:
                     dataManager.updateSetImagesDownloaded(true, setId); break;
                 case RECORDS:
                     dataManager.updateRecordsUploaded(true, setId); break;
             }
-        }
+        }*/
 
         @Override
         public void onProgressUpdate(Integer... progress){

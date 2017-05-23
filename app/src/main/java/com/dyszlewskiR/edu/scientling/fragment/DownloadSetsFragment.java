@@ -1,6 +1,5 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +7,6 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -24,7 +22,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.PopupMenu;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -33,15 +30,14 @@ import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.SetDetailsActivity;
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.data.file.FileSizeFormatter;
+import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.Language;
-import com.dyszlewskiR.edu.scientling.data.models.models.SetDownloadInfo;
 import com.dyszlewskiR.edu.scientling.data.models.models.SetItem;
 import com.dyszlewskiR.edu.scientling.preferences.LogPref;
 import com.dyszlewskiR.edu.scientling.services.net.services.DownloadSetsService;
 import com.dyszlewskiR.edu.scientling.services.net.requests.SetsListRequest;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.services.net.responses.SetsListResponse;
-import com.dyszlewskiR.edu.scientling.utils.Constants;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 
 import org.json.JSONException;
@@ -55,9 +51,6 @@ import java.util.List;
 
 public class DownloadSetsFragment extends Fragment implements ServiceConnection, DownloadSetsService.Callback{
 
-    private final Handler mHandler = new Handler();
-    private boolean mReceiverRegistered;
-
     private final String LOG_TAG = "DownloadSetsFragment";
     private final int SIMPLE_ADAPTER_RESOURCE = R.layout.item_simple;
 
@@ -65,7 +58,6 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
     private final int EMPTY_LANGUAGE_ID = -1;
 
     private ListView mListView;
-    private TextView mTextView;
     private DownloadSetAdapter mAdapter;
     private LanguageSpinnerAdapter mLanguageAdapter;
 
@@ -74,6 +66,7 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
     private TextView mLoadingTextView;
 
     private EditText mSearchEditText;
+    private TextView mTextView;
     private ViewGroup mFilterContainer;
     private Spinner mL1Spinner;
     private Spinner mL2Spinner;
@@ -95,12 +88,12 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        //jeżeli usługa nie była wcześniej uruchomiona to uruchamiamy ją
         if(!LingApplication.getInstance().isServiceRunning(DownloadSetsService.class)){
-            Log.d(LOG_TAG, "Service is not Running");
             Intent intent = new Intent(getActivity().getApplicationContext(), DownloadSetsService.class);
             getActivity().getApplicationContext().startService(intent);
         }
+        //wiązemy usługę z fragmentem dzięki czemu będziemy mogli pokazywać postęp pobierania
         Intent bindIntent = new Intent(getActivity().getApplicationContext(), DownloadSetsService.class);
         getActivity().getApplicationContext().bindService(bindIntent, this, Context.BIND_AUTO_CREATE);
         mIsServiceBound = true;
@@ -118,13 +111,7 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
         setupControls(view);
         setListFooter();
         setAdapters();
-
-        if(mAdapter.isEmpty()){
-            SetsListAsyncTask task = new SetsListAsyncTask(false);
-            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, getRequestParam());
-        } else {
-            mListView.setAdapter(mAdapter);
-        }
+        fillList();
         return view;
     }
 
@@ -172,6 +159,15 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
         mL1Spinner.setAdapter(mLanguageAdapter);
     }
 
+
+    private void fillList(){
+        if(mAdapter.isEmpty()){
+            SetsListAsyncTask task = new SetsListAsyncTask(false);
+            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, getRequestParam());
+        } else {
+            mListView.setAdapter(mAdapter);
+        }
+    }
     @Override
     public void onResume(){
         super.onResume();
@@ -317,20 +313,6 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
     }
 
     private void startDownloadSetService(SetItem item,boolean database, boolean images, boolean records) {
-        /*Intent intent = new Intent(getActivity().getApplicationContext(), DownloadSetsService.class);
-        intent.putExtra("id", item.getId());
-        intent.putExtra("name", item.getName());
-        if(database) {
-            intent.putExtra("database", true);
-        }
-        if(images){
-            intent.putExtra("images",true);
-        }
-        if(records) {
-            intent.putExtra("records",true);
-        }
-
-        getActivity().startService(intent);*/
         if(mService != null){
             mService.startDownloading(item.getId(), item.getName(),database, images, records);
         }
@@ -343,8 +325,6 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_download_sets, menu);
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -414,9 +394,6 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
     public void onServiceConnected(ComponentName name, IBinder service) {
         mService = ((DownloadSetsService.LocalBinder) service).getService();
         mService.setCallback(this);
-        /*if(mService != null){
-            Log.d(LOG_TAG, String.valueOf(mService.getRunningTask()));
-        }*/
     }
 
     @Override
@@ -426,7 +403,6 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
 
     @Override
     public void onOperationProgress(long setId,int progress) {
-        //Log.d(LOG_TAG, "On operation progress" + progress);
         mAdapter.setDownloadProgress(setId, progress);
     }
 
@@ -435,7 +411,6 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
         Log.d(LOG_TAG, "onOperationCompleted" + setId);
         mAdapter.setDownloaded(setId);
     }
-
 
     private class RequestParam{
         private long mL1;
@@ -506,10 +481,16 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
                 List<SetItem> items = response.getSetItemsList();
                 DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
                 for(SetItem item : items){
-                    SetDownloadInfo info = dataManager.getSetDownloadInfo(item.getId());
-                    if(info !=null){
+                    //pobieramy nazwę katalogu pyrzpisaną do zestawu który ma podany globalId
+                    //jeżeli catalog == null oznacza to, że nie pobrano jeszcze danego zestawu
+                    String catalog = dataManager.getSetCatalogByGlobalId(item.getId());
+                    if(catalog !=null){
+                        //jeżeli catalog nie jest nullem zaznaczamy że zestaw został już pobranuy
+                        //a nastepnie sprawdzamy czy zestaw ma pobrane już jakieś obrazki i nagrania
+                        // sprawdzając to w systemi plików
                         item.setDownloaded(true);
-                        item.setDownloadInfo(info);
+                        item.setImagesDownloaded(FileSystem.hasImages(catalog, getContext()));
+                        item.setRecordsDownloaded(FileSystem.hasRecords(catalog, getContext()));
                     }
                 }
                 return items;
@@ -677,7 +658,11 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
                     item.setDownloaded(true);
                     item.setDownloading(false);
                     item.setDownloadingProgress(0);
-                    item.setDownloadInfo(mDataManager.getSetDownloadInfo(globalSetId));
+                    //TODO to można było by zrobić dużo fajniej, będzie trzeba do tego wrócic
+                    String catalog = mDataManager.getSetCatalogByGlobalId(globalSetId);
+                    item.setImagesDownloaded(FileSystem.hasImages(catalog, mContext));
+                    item.setRecordsDownloaded(FileSystem.hasRecords(catalog, mContext));
+                    //item.setDownloadInfo(mDataManager.getSetDownloadInfo(globalSetId));
                 }
             }
             notifyDataSetChanged();

@@ -31,22 +31,16 @@ import java.net.HttpURLConnection;
 public class UploadSetService extends Service {
     private final String LOG_TAG = "UploadSetService";
 
-    public static final String CUSTOM_INTENT = "UploadSetIntent";
-
     public static final String BROADCAST_ACTION = "UploadSetService";
 
-    private long mSetId;
-    private long mSetGlobalId;
-    private String mSetName;
-    private String mDescription;
-
     private Callback mCallback;
+    private int mRunningTasks;
     private final LocalBinder mLocalBinder = new LocalBinder();
-    private boolean mIsRunning;
 
     public interface Callback{
         void onOperationProgress(int progress);
-        void onOperationCompleted();
+        void onOperationCompleted(long setId,long globalId, OperationParts parts);
+
     }
 
     public void setCallback(Callback callback){
@@ -59,36 +53,43 @@ public class UploadSetService extends Service {
         }
     }
 
-    public boolean isRunning(){
-        return mIsRunning;
-    }
-
     @Override
     public IBinder onBind(Intent intent){
         return mLocalBinder;
     }
 
+    public boolean isRunning(){
+        return mRunningTasks > 0;
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
-        Log.d(getClass().getSimpleName(), "startService");
-        mSetId = intent.getLongExtra("id", -1);
-        mSetGlobalId = intent.getLongExtra("globalId", -1);
-        mSetName = intent.getStringExtra("name");
-        mDescription = intent.getStringExtra("desc");
+       /* Log.d(getClass().getSimpleName(), "startService");
+        long setId = intent.getLongExtra("id", -1);
+        long globalId = intent.getLongExtra("globalId", -1);
+        String setName = intent.getStringExtra("name");
+        String description = intent.getStringExtra("desc");
 
         boolean uploadDatabase = intent.getBooleanExtra("database", false);
         boolean uploadImages = intent.getBooleanExtra("images",false);
         boolean uploadRecords = intent.getBooleanExtra("records", false);
 
         UploadSetAsyncTask task = new UploadSetAsyncTask();
-        UploadParams params = new UploadParams(mSetId, mSetGlobalId,mDescription, uploadDatabase, uploadImages, uploadRecords);
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,params);
+        UploadParams params = new UploadParams(setId, globalId,description, uploadDatabase, uploadImages, uploadRecords);
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,params);*/
         return Service.START_NOT_STICKY;
+    }
+
+    public void upload(long setId, Long globalId, String description, boolean database, boolean images, boolean records){
+        UploadSetAsyncTask task = new UploadSetAsyncTask();
+        long setGlobalId = globalId != null?globalId : -1;
+        UploadParams params = new UploadParams(setId, setGlobalId,description, database, images, records);
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,params);
     }
 
     private class UploadParams{
         private long mSetId;
-        private long mSetGlobalId;
+        private Long mSetGlobalId;
         private String mDescription;
         private boolean mUploadDatabase;
         private boolean mUploadImages;
@@ -118,22 +119,32 @@ public class UploadSetService extends Service {
         public void setUploadRecords(boolean isUpload){mUploadRecords = isUpload;}
     }
 
-    private class UploadSetAsyncTask extends AsyncTask<UploadParams, Integer, Void>{
+    private class UploadSetAsyncTask extends AsyncTask<UploadParams, Integer, Long>{
+
+        private boolean mUploadDatabase;
+        private boolean mUploadImages;
+        private boolean mUploadRecords;
+        private long mSetId;
 
         @Override
-        protected Void doInBackground(UploadParams... params) {
-            long setId = params[0].getSetId();
+        protected Long doInBackground(UploadParams... params) {
+            mRunningTasks++;
+            mSetId = params[0].getSetId();
             long setGlobalId = params[0].getSetGlobalId();
             DataManager dataManager = ((LingApplication)getApplication()).getDataManager();
             Intent broadcastIntent = new Intent();
             broadcastIntent.setAction(BROADCAST_ACTION);
             broadcastIntent.putExtra("set", mSetId);
-            if(params[0].isUploadDatabase()){
-                setGlobalId = uploadDatabase(setId,params[0].getDescription(), dataManager);
+            mUploadDatabase = params[0].isUploadDatabase();
+            mUploadImages = params[0].isUploadImages();
+            mUploadRecords = params[0].ismUploadRecords();
+            if(mUploadDatabase){
+                setGlobalId = uploadDatabase(mSetId,params[0].getDescription(), dataManager);
                 if(setGlobalId>0){
                     Log.d(LOG_TAG, "Wysyłanie powiodło sie");
-                    dataManager.insertSetGlobalId(setGlobalId, setId);
-                    dataManager.updateSetUploaded(true, setId);
+                    dataManager.insertSetGlobalId(setGlobalId, mSetId);
+                    //dataManager.updateSetUploaded(true, setId);
+                   dataManager.updateUploadingUser(LogPref.getLogin(getBaseContext()),mSetId);
                     //TODO tutaj można wrzucić to w pętle i wykonywać aż się globalId zapisze
                     broadcastIntent.putExtra("globalId", setGlobalId);
                 } else {
@@ -142,13 +153,13 @@ public class UploadSetService extends Service {
                 }
 
             }
-            if(params[0].isUploadImages()){
-                VocabularySet set = dataManager.getSetById(setId);
+            if(mUploadImages){
+                VocabularySet set = dataManager.getSetById(mSetId);
                 String catalog = set.getCatalog();
                 try {
                     long imagesSize = FileSizeCalculator.calculate(FileSystem.getPath(catalog, getBaseContext()));
                     uploadImages(setGlobalId, catalog);
-                    dataManager.updateImageUploaded(true, mSetId);
+                    dataManager.updateImageUploaded(true, setGlobalId);
                     broadcastIntent.putExtra("images", true);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -156,12 +167,12 @@ public class UploadSetService extends Service {
                     e.printStackTrace();
                 }
             }
-            if(params[0].ismUploadRecords()){
-                VocabularySet set = dataManager.getSetById(setId);
+            if(mUploadRecords){
+                VocabularySet set = dataManager.getSetById(mSetId);
                 String catalog = set.getCatalog();
                 try {
                     uploadRecords(setGlobalId, catalog);
-                    dataManager.updateRecordsUploaded(true, mSetId);
+                    dataManager.updateRecordsUploaded(true, setGlobalId);
                     broadcastIntent.putExtra("records", true);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -170,7 +181,7 @@ public class UploadSetService extends Service {
                 }
             }
             sendBroadcast(broadcastIntent);
-            return null;
+            return setGlobalId;
         }
 
         private long uploadDatabase(long setId,String description, DataManager dataManager){
@@ -279,9 +290,21 @@ public class UploadSetService extends Service {
         }
 
         @Override
-        protected void onPostExecute(Void result){
+        protected void onPostExecute(Long globalId){
+            mRunningTasks--;
             if(mCallback != null){
-                mCallback.onOperationCompleted();
+                OperationParts parts = new OperationParts();
+                parts.setDatabase(mUploadDatabase);
+                parts.setImages(mUploadImages);
+                parts.setRecords(mUploadRecords);
+                mCallback.onOperationCompleted(mSetId,globalId, parts);
+            } else { //jeżeli callback == null
+                //w przypadku gdy aktywność która wywołała metode nie jest na pierwszym planie zamykamy
+                //usługę po wykonaniu pracy, ponieważ jeżeli tego nie zrobimy usługa nie zostanie
+                // zamknięta
+                if(!isRunning()){
+                    stopSelf();
+                }
             }
         }
     }

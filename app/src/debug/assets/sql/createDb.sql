@@ -28,11 +28,12 @@ CREATE TABLE Sets (
         name TEXT NOT NULL,
         language_l2_fk INTEGER,
         language_l1_fk INTEGER,
+        catalog TEXT NULL,
         global_id INTEGER,
-        uploaded INTEGER DEFAULT 0,
-        images_downloaded INTEGER DEFAULT 0,
-        records_downloaded INTEGER DEFAULT 0,
-        catalog TEXT NOT NULL,
+        uploading_user TEXT NULL,
+        images_uploaded INTEGER DEFAULT 0 CHECK (images_uploaded = 0 OR images_uploaded = 1),
+        records_uploaded INTEGER DEFAULT 0 CHECK (records_uploaded = 0 OR records_uploaded = 1),
+
         FOREIGN KEY (language_l2_fk) REFERENCES Languages(id),
         FOREIGN KEY (language_l1_fk) REFERENCES Languages(id)
 );

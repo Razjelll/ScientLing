@@ -12,10 +12,10 @@ public class SetDownloadInfoCreator {
             SetDownloadInfo info = new SetDownloadInfo();
             for(int i=0; i<cursor.getColumnCount(); i++){
                 switch (cursor.getColumnName(i)){
-                    case SetsTable.SetsColumns.IMAGES_DOWNLOADED:
+                    /*case SetsTable.SetsColumns.IMAGES_DOWNLOADED:
                         info.setImagesDownloaded(cursor.getInt(i));
                     case SetsTable.SetsColumns.RECORDS_DOWNLOADED:
-                        info.setRecordsDownloaded(cursor.getInt(i));
+                        info.setRecordsDownloaded(cursor.getInt(i));*/
                 }
             }
             return info;

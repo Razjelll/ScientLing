@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
@@ -41,6 +42,7 @@ import com.dyszlewskiR.edu.scientling.services.net.responses.DeleteSetResponse;
 import com.dyszlewskiR.edu.scientling.services.net.responses.DescriptionResponse;
 import com.dyszlewskiR.edu.scientling.services.net.responses.UpdateDescriptionResponse;
 import com.dyszlewskiR.edu.scientling.services.net.responses.UsersSetsResponse;
+import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
 
 import org.json.JSONException;
 
@@ -98,8 +100,12 @@ public class SetsServerFragment extends Fragment {
         UsersSet set = mAdapter.getItem(position);
         menu.setHeaderTitle(set.getName());
         menu.add(0, DELETE_ALL, 0, getString(DELETE_ALL));
-        menu.add(0, DELETE_IMAGES, 0, getString(DELETE_IMAGES));
-        menu.add(0, DELETE_RECORDS, 0, getString(DELETE_RECORDS));
+        if(set.hasImages()){
+            menu.add(0, DELETE_IMAGES, 0, getString(DELETE_IMAGES));
+        }
+        if(set.hasRecords()){
+            menu.add(0, DELETE_RECORDS, 0, getString(DELETE_RECORDS));
+        }
         menu.add(0, CHANGE_DESCRIPTION, 0, getString(CHANGE_DESCRIPTION));
     }
 
@@ -115,9 +121,28 @@ public class SetsServerFragment extends Fragment {
                 long setId = mAdapter.getItemId(position);
                 new DeleteSetAsyncTask().execute(mAdapter.getItemId(position)); break;
             case DELETE_IMAGES:
-                new DeleteMediaRunnable(set, getContext(), DeleteMediaRunnable.IMAGES,dataManager ).start(); break;
+                //new DeleteMediaRunnable(set, getContext(), DeleteMediaRunnable.IMAGES,dataManager ).start(); break;
+                DeleteMediaAsyncTask imagesTask = new DeleteMediaAsyncTask(getContext(), MediaType.IMAGES, dataManager);
+                imagesTask.setCallback(new DeleteMediaAsyncTask.Callback() {
+                    @Override
+                    public void onDelete(long setId, MediaType mediaType) {
+                        mAdapter.getItemById(setId).setHasImages(false);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+                imagesTask.execute(set.getId());
+                break;
             case DELETE_RECORDS:
-                new DeleteMediaRunnable(set, getContext(), DeleteMediaRunnable.RECORDS, dataManager).start(); break;
+                DeleteMediaAsyncTask recordsTask = new DeleteMediaAsyncTask(getContext(), MediaType.RECORDS, dataManager);
+                recordsTask.setCallback(new DeleteMediaAsyncTask.Callback() {
+                    @Override
+                    public void onDelete(long setId, MediaType mediaType) {
+                        mAdapter.getItemById(setId).setHasRecords(false);
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+                recordsTask.execute(set.getId());
+                break;
             case CHANGE_DESCRIPTION:
                 DescriptionDialog dialog = new DescriptionDialog(getContext(), set);
                 dialog.show();
@@ -260,7 +285,10 @@ public class SetsServerFragment extends Fragment {
                 DeleteSetResponse response = new DeleteSetResponse(connection);
                 if(response.getResponse()){
                     DataManager dataManager = ((LingApplication)getActivity().getApplication()).getDataManager();
+                    dataManager.updateImageUploaded(false, setId);
+                    dataManager.updateRecordsUploaded(false, setId);
                     dataManager.updateSetGlobalId(null, setId);
+
                     return setId;
                 }
             } catch (IOException e) {
@@ -282,46 +310,66 @@ public class SetsServerFragment extends Fragment {
     }
 }
 
-class DeleteMediaRunnable extends Thread{
+class DeleteMediaAsyncTask extends AsyncTask<Long, Void, Void>{
 
-    public static final int IMAGES = 1;
-    public static final int RECORDS = 2;
-
-    private UsersSet mSet;
     private Context mContext;
-    private int mMediaType;
+    private MediaType mMediaType;
     private DataManager mDataManager;
+    private Callback mCallback;
+    private long mSetId;
 
-    public DeleteMediaRunnable(UsersSet set, Context context, int mediaType, DataManager dataManager){
-        mSet = set;
+    public interface Callback{
+        void onDelete(long setId, MediaType mediaType);
+    }
+
+    public DeleteMediaAsyncTask(Context context, MediaType mediaType, DataManager dataManager){
         mContext = context;
         mMediaType = mediaType;
         mDataManager = dataManager;
     }
 
+    public void setCallback(Callback callback){
+        mCallback = callback;
+    }
+
     @Override
-    public void run() {
+    protected Void doInBackground(Long... params) {
         HttpURLConnection connection = null;
+        mSetId = params[0];
         try {
-            if(mMediaType==IMAGES){
-                connection = DeleteImagesRequest.start(mSet.getId(), LogPref.getLogin(mContext), LogPref.getPassword(mContext));
-            } else {
-                connection = DeleteRecordsRequest.start(mSet.getId(), LogPref.getLogin(mContext), LogPref.getPassword(mContext));
+            switch (mMediaType){
+                case IMAGES:
+                    connection = DeleteImagesRequest.start(mSetId, LogPref.getLogin(mContext), LogPref.getPassword(mContext)); break;
+                case RECORDS:
+                    connection = DeleteRecordsRequest.start(mSetId, LogPref.getLogin(mContext), LogPref.getPassword(mContext)); break;
             }
             DeleteMediaResponse response = new DeleteMediaResponse(connection);
             response.getResponse();
             response.closeConnection();
-            if(mMediaType == IMAGES){
 
-            } else {
-
+            if(response.getResultCode() == DeleteMediaResponse.DELETED){
+                switch (mMediaType){
+                    case IMAGES:
+                        mDataManager.updateImageUploaded(false, mSetId); break;
+                    case RECORDS:
+                        mDataManager.updateRecordsUploaded(false, mSetId); break;
+                }
             }
             //connection.disconnect();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void result){
+        if(mCallback != null){
+            mCallback.onDelete(mSetId, mMediaType);
+        }
     }
 }
+
 
 class DescriptionDialog extends Dialog {
     private final int CONTENT_RESOURCE = R.layout.dialog_upload_set;

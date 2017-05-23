@@ -47,20 +47,18 @@ public class SetCreator  {
                             set.setGlobalId(cursor.getLong(i));
                         }
                         break;
-                    case SetsColumns.UPLOADED:
+                    case SetsColumns.UPLOADING_USER:
+                        set.setUploadingUser(cursor.getString(i)); break;
+                    case SetsColumns.IMAGES_UPLOADED:
                         if(!cursor.isNull(i)){
-                            set.setUploaded(cursor.getInt(i));
+                            set.setImagesUploaded(cursor.getInt(i));
                         }
                         break;
-                    case SetsColumns.IMAGES_DOWNLOADED:
+                    case SetsColumns.RECORDS_UPLOADED:
                         if(!cursor.isNull(i)){
-                            set.setImagesDownloaded(cursor.getInt(i));
+                            set.setRecordsUploaded(cursor.getInt(i));
                         }
                         break;
-                    case SetsColumns.RECORDS_DOWNLOADED:
-                        if(!cursor.isNull(i)){
-                            set.setRecordsDownloaded(cursor.getInt(i));
-                        }
                 }
             }
             return set;

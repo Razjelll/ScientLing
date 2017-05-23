@@ -61,6 +61,8 @@ public class UsersSetsResponse {
     private static final String NAME = "name";
     private static final String L1 = "l1";
     private static final String L2 = "l2";
+    private static final String IMAGES = "images";
+    private static final String RECORDS = "records";
 
     private static UsersSet getSingleItem(JsonReader jsonReader) throws IOException {
         UsersSet set = null;
@@ -81,6 +83,10 @@ public class UsersSetsResponse {
                     set.setL1(jsonReader.nextLong()); break;
                 case L2:
                     set.setL2(jsonReader.nextLong()); break;
+                case IMAGES:
+                    set.setHasImages(jsonReader.nextBoolean()); break;
+                case RECORDS:
+                    set.setHasRecords(jsonReader.nextBoolean()); break;
             }
             token = jsonReader.peek();
         }while (token!=null && !token.equals(android.util.JsonToken.END_OBJECT));

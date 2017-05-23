@@ -5,6 +5,8 @@ public class UsersSet {
     private String mName;
     private long mL1;
     private long mL2;
+    private boolean mHasImages;
+    private boolean mHasRecords;
 
     public long getId(){return mId;}
     public void setId(long id){
@@ -19,4 +21,10 @@ public class UsersSet {
 
     public long getL2(){return mL2;}
     public void setL2(long l2){mL2 = l2;}
+
+    public boolean hasImages(){return mHasImages;}
+    public void setHasImages(boolean hasImages){mHasImages = hasImages;}
+
+    public boolean hasRecords(){return mHasRecords;}
+    public void setHasRecords(boolean hasRecords){mHasRecords = hasRecords;}
 }

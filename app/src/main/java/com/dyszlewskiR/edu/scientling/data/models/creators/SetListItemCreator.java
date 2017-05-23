@@ -11,7 +11,7 @@ public class SetListItemCreator {
         if(cursor != null){
             SetListItem item = new SetListItem();
             long globalId = -1;
-            int uploaded = -1;
+            String uploadingUser = null;
             for(int i=0; i<cursor.getColumnCount(); i++){
                 switch (cursor.getColumnName(i)){
                     case SetsTable.SetsColumns.ID:
@@ -20,11 +20,11 @@ public class SetListItemCreator {
                         item.setName(cursor.getString(i));
                     case SetsTable.SetsColumns.GLOBAL_ID:
                         globalId = cursor.getLong(i); break;
-                    case SetsTable.SetsColumns.UPLOADED:
-                        uploaded = cursor.getInt(i);
+                    case SetsTable.SetsColumns.UPLOADING_USER:
+                        uploadingUser = cursor.getString(i);
                 }
                 if(globalId>0){
-                    if(uploaded==0){
+                    if(uploadingUser==null){
                         item.setServerState(SetListItem.ServerState.DOWNLOADED);
                     } else {
                         item.setServerState(SetListItem.ServerState.UPLOADED);
