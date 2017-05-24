@@ -23,7 +23,7 @@ import com.dyszlewskiR.edu.scientling.activity.SentencesListActivity;
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.asyncTasks.SaveWordAsyncTask;
 import com.dyszlewskiR.edu.scientling.data.file.FileNameCreator;
-import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.Category;
 import com.dyszlewskiR.edu.scientling.data.models.models.Definition;
 import com.dyszlewskiR.edu.scientling.data.models.models.Hint;
@@ -41,6 +41,7 @@ import com.dyszlewskiR.edu.scientling.dialogs.ImageDialog;
 import com.dyszlewskiR.edu.scientling.dialogs.PartOfSpeechDialog;
 import com.dyszlewskiR.edu.scientling.dialogs.RecordDialog;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
+import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
@@ -457,13 +458,13 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
                 setSentenceButton(mWord.getSentences().size());
             if (mWord.getHints() != null)
                 setHintButton(mWord.getHints().size());
-            mImageUri = FileSystem.getImageUri(mWord.getImageName(), mSet.getCatalog(), getContext());
+            mImageUri = MediaFileSystem.getMediaUri(mWord.getImageName(), mSet.getCatalog(), MediaType.IMAGES, getContext());
             if(mImageUri != null){
                 mOldImageUri = Uri.parse(mImageUri.toString());
             }
 
             setImageButton(mImageUri);
-            mRecordUri = FileSystem.getRecordUri(mWord.getRecordName(), mSet.getCatalog(), getContext());
+            mRecordUri = MediaFileSystem.getMediaUri(mWord.getRecordName(), mSet.getCatalog(),MediaType.RECORDS, getContext());
             if(mRecordUri != null){
                 mOldRecordUri = Uri.parse(mRecordUri.toString());
             }

@@ -23,9 +23,10 @@ import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.SummaryLearningActivity;
-import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.models.Word;
+import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
 import com.dyszlewskiR.edu.scientling.services.speech.ISpeechCallback;
 import com.dyszlewskiR.edu.scientling.services.speech.SpeechPlayer;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
@@ -151,7 +152,7 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
         if (mWords.get(position).hasDefinition()) {
             return DEFINITION_FRAGMENT;
         }
-        if (FileSystem.checkImageExist(mWords.get(position).getImageName(), mSet.getCatalog(), getContext())) {
+        if (MediaFileSystem.checkMediaExist(mWords.get(position).getImageName(), mSet.getCatalog(), MediaType.IMAGES, getContext())) {
             return IMAGE_FRAGMENT;
         }
 
@@ -326,7 +327,7 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
         } else {
             replaceFragment(newFragmentNumber, position);
         }
-        mRecordUri = FileSystem.getRecordUri(mWords.get(position).getRecordName(), mSet.getCatalog(), getContext());
+        mRecordUri = MediaFileSystem.getMediaUri(mWords.get(position).getRecordName(), mSet.getCatalog(),MediaType.RECORDS, getContext());
         arrangeVisibilityButtons(position);
 
     }
@@ -358,7 +359,7 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
         } else {
             mDefinitionButton.setVisibility(View.VISIBLE);
         }
-        if (FileSystem.checkImageExist(mWords.get(position).getImageName(), mSet.getCatalog(), getContext())) {
+        if (MediaFileSystem.checkMediaExist(mWords.get(position).getImageName(), mSet.getCatalog(),MediaType.IMAGES, getContext())) {
             mImageButton.setVisibility(View.VISIBLE);
         } else {
             mImageButton.setVisibility(View.GONE);

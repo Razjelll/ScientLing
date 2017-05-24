@@ -30,7 +30,7 @@ import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.SetDetailsActivity;
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.data.file.FileSizeFormatter;
-import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.Language;
 import com.dyszlewskiR.edu.scientling.data.models.models.SetItem;
 import com.dyszlewskiR.edu.scientling.preferences.LogPref;
@@ -38,6 +38,7 @@ import com.dyszlewskiR.edu.scientling.services.net.services.DownloadSetsService;
 import com.dyszlewskiR.edu.scientling.services.net.requests.SetsListRequest;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.services.net.responses.SetsListResponse;
+import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 
 import org.json.JSONException;
@@ -489,8 +490,8 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
                         //a nastepnie sprawdzamy czy zestaw ma pobrane już jakieś obrazki i nagrania
                         // sprawdzając to w systemi plików
                         item.setDownloaded(true);
-                        item.setImagesDownloaded(FileSystem.hasImages(catalog, getContext()));
-                        item.setRecordsDownloaded(FileSystem.hasRecords(catalog, getContext()));
+                        item.setImagesDownloaded(MediaFileSystem.hasMedia(catalog, MediaType.IMAGES, getContext()));
+                        item.setRecordsDownloaded(MediaFileSystem.hasMedia(catalog,MediaType.RECORDS, getContext()));
                     }
                 }
                 return items;
@@ -660,8 +661,8 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
                     item.setDownloadingProgress(0);
                     //TODO to można było by zrobić dużo fajniej, będzie trzeba do tego wrócic
                     String catalog = mDataManager.getSetCatalogByGlobalId(globalSetId);
-                    item.setImagesDownloaded(FileSystem.hasImages(catalog, mContext));
-                    item.setRecordsDownloaded(FileSystem.hasRecords(catalog, mContext));
+                    item.setImagesDownloaded(MediaFileSystem.hasMedia(catalog,MediaType.IMAGES, mContext));
+                    item.setRecordsDownloaded(MediaFileSystem.hasMedia(catalog,MediaType.RECORDS, mContext));
                     //item.setDownloadInfo(mDataManager.getSetDownloadInfo(globalSetId));
                 }
             }

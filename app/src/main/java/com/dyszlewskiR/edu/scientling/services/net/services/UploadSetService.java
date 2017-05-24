@@ -9,7 +9,7 @@ import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.data.file.FileSizeCalculator;
-import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.preferences.LogPref;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
@@ -18,6 +18,7 @@ import com.dyszlewskiR.edu.scientling.services.net.requests.UploadImagesRequest;
 import com.dyszlewskiR.edu.scientling.services.net.requests.UploadRecordRequest;
 import com.dyszlewskiR.edu.scientling.services.net.requests.UploadSetRequest;
 import com.dyszlewskiR.edu.scientling.services.net.responses.UploadSetResponse;
+import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
 import com.dyszlewskiR.edu.scientling.services.net.writers.FileWriter;
 import com.dyszlewskiR.edu.scientling.services.net.writers.SetWriter;
 
@@ -31,63 +32,47 @@ import java.net.HttpURLConnection;
 public class UploadSetService extends Service {
     private final String LOG_TAG = "UploadSetService";
 
-    public static final String BROADCAST_ACTION = "UploadSetService";
-
     private Callback mCallback;
     private int mRunningTasks;
     private final LocalBinder mLocalBinder = new LocalBinder();
 
-    public interface Callback{
+    public interface Callback {
         void onOperationProgress(int progress);
-        void onOperationCompleted(long setId,long globalId, OperationParts parts);
-
+        void onOperationCompleted(long setId, long globalId, OperationParts parts);
     }
 
-    public void setCallback(Callback callback){
+    public void setCallback(Callback callback) {
         mCallback = callback;
     }
 
     public class LocalBinder extends Binder {
-        public UploadSetService getService(){
+        public UploadSetService getService() {
             return UploadSetService.this;
         }
     }
 
     @Override
-    public IBinder onBind(Intent intent){
+    public IBinder onBind(Intent intent) {
         return mLocalBinder;
     }
 
-    public boolean isRunning(){
+    public boolean isRunning() {
         return mRunningTasks > 0;
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId){
-       /* Log.d(getClass().getSimpleName(), "startService");
-        long setId = intent.getLongExtra("id", -1);
-        long globalId = intent.getLongExtra("globalId", -1);
-        String setName = intent.getStringExtra("name");
-        String description = intent.getStringExtra("desc");
-
-        boolean uploadDatabase = intent.getBooleanExtra("database", false);
-        boolean uploadImages = intent.getBooleanExtra("images",false);
-        boolean uploadRecords = intent.getBooleanExtra("records", false);
-
-        UploadSetAsyncTask task = new UploadSetAsyncTask();
-        UploadParams params = new UploadParams(setId, globalId,description, uploadDatabase, uploadImages, uploadRecords);
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,params);*/
+    public int onStartCommand(Intent intent, int flags, int startId) {
         return Service.START_NOT_STICKY;
     }
 
-    public void upload(long setId, Long globalId, String description, boolean database, boolean images, boolean records){
+    public void upload(long setId, Long globalId, String description, boolean database, boolean images, boolean records) {
         UploadSetAsyncTask task = new UploadSetAsyncTask();
-        long setGlobalId = globalId != null?globalId : -1;
-        UploadParams params = new UploadParams(setId, setGlobalId,description, database, images, records);
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,params);
+        long setGlobalId = globalId != null ? globalId : -1;
+        UploadParams params = new UploadParams(setId, setGlobalId, description, database, images, records);
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
     }
 
-    private class UploadParams{
+    private class UploadParams {
         private long mSetId;
         private Long mSetGlobalId;
         private String mDescription;
@@ -95,7 +80,7 @@ public class UploadSetService extends Service {
         private boolean mUploadImages;
         private boolean mUploadRecords;
 
-        public UploadParams(long setId, long globalId,String description, boolean database, boolean images, boolean records){
+        public UploadParams(long setId, long globalId, String description, boolean database, boolean images, boolean records) {
             mSetId = setId;
             mSetGlobalId = globalId;
             mUploadDatabase = database;
@@ -104,22 +89,36 @@ public class UploadSetService extends Service {
             mDescription = description;
         }
 
-        public long getSetId(){return mSetId;}
-        public long getSetGlobalId(){return mSetGlobalId;}
-        public String getDescription(){return mDescription;}
-        public boolean isUploadDatabase(){return mUploadDatabase;}
-        public boolean isUploadImages(){return mUploadImages;}
-        public boolean ismUploadRecords(){return mUploadRecords;}
+        public long getSetId() {
+            return mSetId;
+        }
 
-        public void setSetId(long setId){mSetId = setId;}
-        public void setSetGlobalId(long setId){mSetGlobalId = setId;}
-        public void setDescription(String description){mDescription = description;}
-        public void setUploadDtabase(boolean isUpload){mUploadDatabase = isUpload;}
-        public void setUploadImagees(boolean isUpload){mUploadImages = isUpload;}
-        public void setUploadRecords(boolean isUpload){mUploadRecords = isUpload;}
+        public long getSetGlobalId() {
+            return mSetGlobalId;
+        }
+
+        public String getDescription() {
+            return mDescription;
+        }
+
+        public boolean isUploadDatabase() {
+            return mUploadDatabase;
+        }
+
+        public boolean isUploadImages() {
+            return mUploadImages;
+        }
+
+        public boolean ismUploadRecords() {
+            return mUploadRecords;
+        }
+
+        public void setSetId(long setId) {
+            mSetId = setId;
+        }
     }
 
-    private class UploadSetAsyncTask extends AsyncTask<UploadParams, Integer, Long>{
+    private class UploadSetAsyncTask extends AsyncTask<UploadParams, Integer, Long> {
 
         private boolean mUploadDatabase;
         private boolean mUploadImages;
@@ -131,75 +130,68 @@ public class UploadSetService extends Service {
             mRunningTasks++;
             mSetId = params[0].getSetId();
             long setGlobalId = params[0].getSetGlobalId();
-            DataManager dataManager = ((LingApplication)getApplication()).getDataManager();
-            Intent broadcastIntent = new Intent();
-            broadcastIntent.setAction(BROADCAST_ACTION);
-            broadcastIntent.putExtra("set", mSetId);
+            DataManager dataManager = LingApplication.getInstance().getDataManager();
             mUploadDatabase = params[0].isUploadDatabase();
             mUploadImages = params[0].isUploadImages();
             mUploadRecords = params[0].ismUploadRecords();
-            if(mUploadDatabase){
-                setGlobalId = uploadDatabase(mSetId,params[0].getDescription(), dataManager);
-                if(setGlobalId>0){
+            if (mUploadDatabase) {
+                setGlobalId = uploadDatabase(mSetId, params[0].getDescription(), dataManager);
+                if (setGlobalId > 0) {
                     Log.d(LOG_TAG, "Wysyłanie powiodło sie");
                     dataManager.insertSetGlobalId(setGlobalId, mSetId);
-                    //dataManager.updateSetUploaded(true, setId);
-                   dataManager.updateUploadingUser(LogPref.getLogin(getBaseContext()),mSetId);
-                    //TODO tutaj można wrzucić to w pętle i wykonywać aż się globalId zapisze
-                    broadcastIntent.putExtra("globalId", setGlobalId);
+                    dataManager.updateUploadingUser(LogPref.getLogin(getBaseContext()), mSetId);
                 } else {
                     Log.d(LOG_TAG, "Global id mniejsze od zera. Wysyłanie się nie udało");
                     return null;
                 }
-
             }
-            if(mUploadImages){
-                VocabularySet set = dataManager.getSetById(mSetId);
-                String catalog = set.getCatalog();
+            String catalog = null;
+            if (mUploadImages) {
+                if (catalog == null) {
+                    VocabularySet set = dataManager.getSetById(mSetId);
+                    catalog = set.getCatalog();
+                }
                 try {
-                    long imagesSize = FileSizeCalculator.calculate(FileSystem.getPath(catalog, getBaseContext()));
                     uploadImages(setGlobalId, catalog);
                     dataManager.updateImageUploaded(true, setGlobalId);
-                    broadcastIntent.putExtra("images", true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-            if(mUploadRecords){
-                VocabularySet set = dataManager.getSetById(mSetId);
-                String catalog = set.getCatalog();
+            if (mUploadRecords) {
+                if (catalog == null) {
+                    VocabularySet set = dataManager.getSetById(mSetId);
+                    catalog = set.getCatalog();
+                }
                 try {
                     uploadRecords(setGlobalId, catalog);
                     dataManager.updateRecordsUploaded(true, setGlobalId);
-                    broadcastIntent.putExtra("records", true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
-            sendBroadcast(broadcastIntent);
             return setGlobalId;
         }
 
-        private long uploadDatabase(long setId,String description, DataManager dataManager){
-            Log.d(LOG_TAG, "uploadDatabase");
-            //UploadSetRequest request = new UploadSetRequest(setId,description, LogPref.getLogin(getBaseContext()), LogPref.getPassword(getBaseContext()),getBaseContext(),dataManager);
+        private long uploadDatabase(long setId, String description, DataManager dataManager) {
             HttpURLConnection connection = null;
             long setGlobalId = -1;
             try {
                 final int[] wordsCount = new int[1];
                 final int[] wordsUploaded = new int[1];
                 connection = UploadSetRequest.start(LogPref.getLogin(getBaseContext()), LogPref.getPassword(getBaseContext()));
-                SetWriter setWriter = new SetWriter(connection.getOutputStream(),UploadSetRequest.CHUNK_SIZE, dataManager);
+                SetWriter setWriter = new SetWriter(connection.getOutputStream(), UploadSetRequest.CHUNK_SIZE, dataManager);
                 setWriter.setCallback(new SetWriter.Callback() {
                     @Override
                     public void addWord() {
                         wordsUploaded[0]++;
-                        publishProgress(wordsUploaded[0]*100/wordsCount[0]);
+                        publishProgress(wordsUploaded[0] * 100 / wordsCount[0]);
                     }
+
                     @Override
                     public void getWordsCount(int count) {
                         wordsCount[0] = count;
@@ -217,7 +209,7 @@ public class UploadSetService extends Service {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } finally {
-                if(connection != null){
+                if (connection != null) {
                     connection.disconnect();
                 }
             }
@@ -227,19 +219,17 @@ public class UploadSetService extends Service {
         private long uploadImages(long globalId, String catalog) throws IOException, JSONException {
             Log.d(LOG_TAG, "uploadImages");
             UploadImagesRequest request = new UploadImagesRequest(globalId, LogPref.getLogin(getBaseContext()),
-                    LogPref.getPassword(getBaseContext()),catalog,  getBaseContext());
+                    LogPref.getPassword(getBaseContext()), catalog, getBaseContext());
             HttpURLConnection connection = null;
             try {
                 connection = request.start();
-                String imagesCatalogPath = FileSystem.getImagePath(catalog, getBaseContext());
+                String imagesCatalogPath = MediaFileSystem.getMediaPath(catalog, MediaType.IMAGES, getBaseContext());
                 uploadFiles(imagesCatalogPath, connection.getOutputStream());
-
-
                 InputStream stream = connection.getInputStream();
                 stream.close();
                 //TODO zrobić pobieranie odpowiedzi
-            }finally {
-                if(connection != null){
+            } finally {
+                if (connection != null) {
                     connection.disconnect();
                 }
             }
@@ -254,7 +244,7 @@ public class UploadSetService extends Service {
                 @Override
                 public void onProgressUpdate(long uploadedBytes) {
                     totalUploadedBytes[0] += uploadedBytes;
-                    publishProgress((int)(totalUploadedBytes[0]*100/imagesSize[0]));
+                    publishProgress((int) (totalUploadedBytes[0] * 100 / imagesSize[0]));
                 }
             });
             fileWriter.startZipWriting(folderPath);
@@ -266,15 +256,14 @@ public class UploadSetService extends Service {
             UploadRecordRequest request = new UploadRecordRequest(globalId, LogPref.getLogin(getBaseContext()),
                     LogPref.getPassword(getBaseContext()), catalog, getBaseContext());
             HttpURLConnection connection = null;
-            try{
+            try {
                 connection = request.start();
-                String recordsFolderPath = FileSystem.getRecordsPath(catalog, getBaseContext());
+                String recordsFolderPath = MediaFileSystem.getMediaPath(catalog, MediaType.RECORDS, getBaseContext());
                 uploadFiles(recordsFolderPath, connection.getOutputStream());
                 InputStream stream = connection.getInputStream();
                 stream.close();
-
-            }finally {
-                if(connection != null){
+            } finally {
+                if (connection != null) {
                     connection.disconnect();
                 }
             }
@@ -282,27 +271,27 @@ public class UploadSetService extends Service {
         }
 
         @Override
-        protected void onProgressUpdate(Integer... progress){
-            Log.d(LOG_TAG, "Postęp serwis "+ progress[0]);
-            if(mCallback != null){
+        protected void onProgressUpdate(Integer... progress) {
+            Log.d(LOG_TAG, "Postęp serwis " + progress[0]);
+            if (mCallback != null) {
                 mCallback.onOperationProgress(progress[0]);
             }
         }
 
         @Override
-        protected void onPostExecute(Long globalId){
+        protected void onPostExecute(Long globalId) {
             mRunningTasks--;
-            if(mCallback != null){
+            if (mCallback != null) {
                 OperationParts parts = new OperationParts();
                 parts.setDatabase(mUploadDatabase);
                 parts.setImages(mUploadImages);
                 parts.setRecords(mUploadRecords);
-                mCallback.onOperationCompleted(mSetId,globalId, parts);
+                mCallback.onOperationCompleted(mSetId, globalId, parts);
             } else { //jeżeli callback == null
                 //w przypadku gdy aktywność która wywołała metode nie jest na pierwszym planie zamykamy
                 //usługę po wykonaniu pracy, ponieważ jeżeli tego nie zrobimy usługa nie zostanie
                 // zamknięta
-                if(!isRunning()){
+                if (!isRunning()) {
                     stopSelf();
                 }
             }

@@ -6,8 +6,9 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
-import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.Word;
+import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
 
 /**
  * Created by Razjelll on 07.04.2017.
@@ -52,11 +53,11 @@ public class DeletingWordService extends Service {
         public void run() {
             int deletingResult = mDataManager.deleteWord(mWord);
             if(deletingResult >0){
-                if (FileSystem.checkImageExist(mWord.getImageName(), mSetCatalog, getBaseContext())) {
-                    FileSystem.deleteImage(mWord.getImageName(), mSetCatalog, getBaseContext());
+                if (MediaFileSystem.checkMediaExist(mWord.getImageName(), mSetCatalog, MediaType.IMAGES, getBaseContext())) {
+                    MediaFileSystem.deleteMedia(mWord.getImageName(), mSetCatalog,MediaType.IMAGES, getBaseContext());
                 }
-                if (FileSystem.checkRecordExist(mWord.getRecordName(), mSetCatalog, getBaseContext())) {
-                    FileSystem.deleteRecord(mWord.getRecordName(), mSetCatalog, getBaseContext());
+                if (MediaFileSystem.checkMediaExist(mWord.getRecordName(), mSetCatalog,MediaType.RECORDS, getBaseContext())) {
+                    MediaFileSystem.deleteMedia(mWord.getRecordName(), mSetCatalog,MediaType.RECORDS, getBaseContext());
                 }
             }
         }

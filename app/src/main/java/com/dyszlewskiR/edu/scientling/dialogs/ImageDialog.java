@@ -18,15 +18,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.dyszlewskiR.edu.scientling.R;
+import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.utils.BitmapUtils;
-import com.dyszlewskiR.edu.scientling.utils.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-
-/**
- * Created by Razjelll on 21.03.2017.
- */
 
 public class ImageDialog extends DialogFragment {
     private final int LAYOUT_RESOURCE = R.layout.dialog_image;
@@ -159,7 +155,7 @@ public class ImageDialog extends DialogFragment {
                 try {
                     //BitmapUtils.saveBitmap(resizedBitmap, getContext().getCacheDir().getAbsolutePath(), IMAGE_FILENAME);
                     BitmapUtils.saveBitmap(bitmap, getContext().getCacheDir().getAbsolutePath(), IMAGE_FILENAME);
-                    mImageUri = FileUtils.getUriFromCache(IMAGE_FILENAME, getContext());
+                    mImageUri = MediaFileSystem.getMediaUriFromCache(IMAGE_FILENAME, getContext());
                     updateImageUI();
                 } catch (IOException e) {
                     e.printStackTrace(); //TODO obsłużyć
@@ -180,7 +176,7 @@ public class ImageDialog extends DialogFragment {
         mImageUri = null;
         mImageView.setImageURI(null);
         mDeleteButton.setVisibility(View.INVISIBLE);
-        FileUtils.deleteFileFromCache(IMAGE_FILENAME, getContext());
+        MediaFileSystem.deleteMediaFromCache(IMAGE_FILENAME, getContext());
     }
 
     @Override
@@ -190,7 +186,6 @@ public class ImageDialog extends DialogFragment {
     }
 
     public static void clearCache(Context context) {
-        FileUtils.deleteFileFromCache(IMAGE_FILENAME, context);
+        MediaFileSystem.deleteMediaFromCache(IMAGE_FILENAME, context);
     }
-
 }

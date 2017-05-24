@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.print.PrintAttributes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -37,14 +38,17 @@ import com.dyszlewskiR.edu.scientling.activity.LessonSelectionActivity;
 import com.dyszlewskiR.edu.scientling.activity.SetEditActivity;
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.data.file.FileSizeCalculator;
-import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.FileSizeFormatter;
+import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.preferences.LogPref;
 import com.dyszlewskiR.edu.scientling.preferences.Settings;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.services.data.DeletingSetService;
+import com.dyszlewskiR.edu.scientling.services.net.services.DownloadSetsService;
 import com.dyszlewskiR.edu.scientling.services.net.services.OperationParts;
 import com.dyszlewskiR.edu.scientling.services.net.services.UploadSetService;
+import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import java.util.List;
@@ -187,12 +191,12 @@ public class SetsManagerFragment extends Fragment implements ServiceConnection, 
         menu.add(0, EDIT, 0, getString(EDIT));
         menu.add(0, CHOOSE, 0, getString(CHOOSE));
         menu.add(0, DELETE, 0, getString(DELETE));
-        boolean hasImages = FileSystem.hasImages(set.getCatalog(), getContext());
+        boolean hasImages = MediaFileSystem.hasMedia(set.getCatalog(),MediaType.IMAGES, getContext());
         if (hasImages) {
             menu.add(0, DELETE_IMAGES, 0, getString(DELETE_IMAGES));
         }
-        boolean hasRecords = FileSystem.hasRecords(set.getCatalog(), getContext());
-        if (FileSystem.hasRecords(set.getCatalog(), getContext())) {
+        boolean hasRecords = MediaFileSystem.hasMedia(set.getCatalog(),MediaType.RECORDS, getContext());
+        if (hasRecords) {
             menu.add(0, DELETE_RECORDS, 0, getString(DELETE_RECORDS));
         }
         String loggedUser = LogPref.getLogin(getContext());
@@ -327,10 +331,10 @@ public class SetsManagerFragment extends Fragment implements ServiceConnection, 
         } else {
             //TODO tutaj też zrobić zajefajny dialog i go pokazać
             if (images) {
-                UploadMediaDialog dialog = new UploadMediaDialog(getContext(), mAdapter.getItem(position), UploadMediaDialog.IMAGES, listener);
+                UploadMediaDialog dialog = new UploadMediaDialog(getContext(), mAdapter.getItem(position), MediaType.IMAGES, listener);
                 dialog.show();
             } else {
-                UploadMediaDialog dialog = new UploadMediaDialog(getContext(), mAdapter.getItem(position), UploadMediaDialog.RECORDS, listener);
+                UploadMediaDialog dialog = new UploadMediaDialog(getContext(), mAdapter.getItem(position), MediaType.RECORDS, listener);
                 dialog.show();
             }
         }
@@ -382,7 +386,7 @@ public class SetsManagerFragment extends Fragment implements ServiceConnection, 
         if (mDeletedPosition >= 0) {
             checkAndSetCurrentSet(set.getId());
             startDeletingSetService(set);
-            FileSystem.deleteCatalog(set.getCatalog(), getContext()); //TODO tutaj można to ubraż w usługe
+            MediaFileSystem.deleteCatalog(set.getCatalog(), getContext()); //TODO tutaj można to ubraż w usługe
             mAdapter.removeItem(mDeletedPosition);
             mAdapter.notifyDataSetChanged();
         }
@@ -403,7 +407,7 @@ public class SetsManagerFragment extends Fragment implements ServiceConnection, 
     private void deleteImages(VocabularySet set) {
         if (set != null) {
             String catalog = set.getCatalog();
-            FileSystem.deleteImageCatalog(catalog, getContext());
+            MediaFileSystem.deleteMediaCatalog(catalog,MediaType.IMAGES, getContext());
             //TODO aktualizacja
         }
     }
@@ -411,7 +415,7 @@ public class SetsManagerFragment extends Fragment implements ServiceConnection, 
     private void deleteRecords(VocabularySet set) {
         if (set != null) {
             String catalog = set.getCatalog();
-            FileSystem.deleteRecordsCatalog(catalog, getContext());
+            MediaFileSystem.deleteMediaCatalog(catalog,MediaType.RECORDS, getContext());
             DataManager dataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
             dataManager.updateRecordsUploaded(false, set.getGlobalId());
         }
@@ -673,7 +677,7 @@ class UploadMediaDialog extends Dialog {
     public static int IMAGES = 1;
     public static int RECORDS = 2;
 
-    public UploadMediaDialog(@NonNull Context context, VocabularySet set, int mediaType, UploadListener listener) {
+    public UploadMediaDialog(@NonNull Context context, VocabularySet set, MediaType mediaType, UploadListener listener) {
         super(context);
         mListener = listener;
         setContentView(CONTENT_RESOURCE);
@@ -689,26 +693,26 @@ class UploadMediaDialog extends Dialog {
         mUploadButton = (Button) findViewById(R.id.upload_button);
     }
 
-    private void setContent(Context context, VocabularySet set, int mediaType) {
+    private void setContent(Context context, VocabularySet set, MediaType mediaType) {
         setTitle(set.getName());
-        if (mediaType == IMAGES) {
-            mMediaTextView.setText(context.getString(R.string.upload_images));
-        }
-        if (mediaType == RECORDS) {
-            mMediaTextView.setText(context.getString(R.string.upload_records));
+        switch (mediaType){
+            case IMAGES:
+                mMediaTextView.setText(context.getString(R.string.upload_images)); break;
+            case RECORDS:
+                mMediaTextView.setText(context.getString(R.string.upload_records)); break;
         }
     }
 
-    private void setListeners(final int mediaType, final VocabularySet set) {
+    private void setListeners(final MediaType mediaType, final VocabularySet set) {
         mUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mListener != null) {
-                    if (mediaType == IMAGES) {
-                        mListener.startUpload(set, null, false, true, false);
-                    }
-                    if (mediaType == RECORDS) {
-                        mListener.startUpload(set, null, false, false, true);
+                    switch (mediaType){
+                        case IMAGES:
+                            mListener.startUpload(set, null, false, true, false); break;
+                        case RECORDS:
+                            mListener.startUpload(set, null, false, false, true); break;
                     }
                 }
                 dismiss();
@@ -716,8 +720,8 @@ class UploadMediaDialog extends Dialog {
         });
     }
 
-    private void getData(int mediaType, VocabularySet set) {
-        MediaSizeAsyncTask task = new MediaSizeAsyncTask(new MediaSizeAsyncTask.Callback() {
+    private void getData(MediaType mediaType, VocabularySet set) {
+        /*MediaSizeAsyncTask task = new MediaSizeAsyncTask(new MediaSizeAsyncTask.Callback() {
             @Override
             public void setSize(float size) {
                 String formattedSize = String.format("%.02f", size);
@@ -726,16 +730,62 @@ class UploadMediaDialog extends Dialog {
         });
         String path = null;
         if (mediaType == IMAGES) {
-            path = FileSystem.getImagePath(set.getCatalog(), getContext());
+            path = MediaFileSystem.getImagePath(set.getCatalog(), getContext());
         }
-        if (mediaType == RECORDS) {
-            path = FileSystem.getRecordsPath(set.getCatalog(), getContext());
+        if (mediaType == RECORDS) {*
+            path = MediaFileSystem.getRecordsPath(set.getCatalog(), getContext());
         }
-        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, path);
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, path);*/
+
+        MediaSizeAsyncTask task  = new MediaSizeAsyncTask(set.getCatalog(), getContext(), new MediaSizeAsyncTask.Callback() {
+            @Override
+            public void setSize(long size) {
+                String formattedSize = FileSizeFormatter.getSize(size);
+                mSizeTextView.setText(formattedSize);
+            }
+        });
+
+        task.execute(mediaType);
     }
 }
 
-class MediaSizeAsyncTask extends AsyncTask<String, Void, Float> {
+class MediaSizeAsyncTask extends AsyncTask<MediaType,Void, Long>{
+
+    private String mSetCatalog;
+    private Context mContext;
+    private Callback mCallback;
+
+    public interface Callback{
+        void setSize(long size);
+    }
+
+    public MediaSizeAsyncTask(String setCatalog, Context context, Callback callback){
+        mSetCatalog = setCatalog;
+        mContext = context;
+        mCallback = callback;
+    }
+
+    @Override
+    protected Long doInBackground(MediaType... mediaType) {
+        long size = 0;
+        switch (mediaType[0]){
+            case IMAGES:
+                size = MediaFileSystem.getMediasSize(mSetCatalog,MediaType.IMAGES, mContext); break;
+            case RECORDS:
+                size = MediaFileSystem.getMediasSize(mSetCatalog,MediaType.RECORDS, mContext); break;
+        }
+        return size;
+    }
+
+    @Override
+    protected void onPostExecute(Long result){
+        if(mCallback != null){
+            mCallback.setSize(result);
+        }
+    }
+}
+
+/*class MediaSizeAsyncTask extends AsyncTask<String, Void, Float> {
 
     private Callback mCallback;
 
@@ -753,9 +803,10 @@ class MediaSizeAsyncTask extends AsyncTask<String, Void, Float> {
      * @param params ścieżka do katalogu dla którego ma zostać obliczony rozmiar
      * @return rozmiar katalogu w bajtach
      */
-    @Override
+    /*@Override
     protected Float doInBackground(String... params) {
         return FileSizeCalculator.calculate(params[0], FileSizeCalculator.MB);
+
     }
 
     @Override
@@ -764,7 +815,7 @@ class MediaSizeAsyncTask extends AsyncTask<String, Void, Float> {
             mCallback.setSize(result);
         }
     }
-}
+}*/
 
 class UploadSetDialog extends Dialog {
 

@@ -3,7 +3,7 @@ package com.dyszlewskiR.edu.scientling.services.net.responses;
 import android.content.Context;
 import android.util.Log;
 
-import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.services.net.values.ResponseStatus;
 
 import java.io.File;
@@ -41,11 +41,11 @@ public class DownloadImagesResponse {
         return ERROR;
     }
 
-    public void saveImages(String setCatalog) throws IOException {
+    /*public void saveImages(String setCatalog) throws IOException {
         if(mConnection == null){
             return;
         }
-        File catalog = FileSystem.getCatalog(setCatalog, mContext);
+        File catalog = MediaFileSystem.getCatalog(setCatalog, mContext);
         if(!catalog.exists()){
             catalog.mkdir();
         }
@@ -55,11 +55,12 @@ public class DownloadImagesResponse {
         ZipEntry zipEntry;
         while((zipEntry = zipInputStream.getNextEntry()) != null){
             Log.d(getClass().getSimpleName(), "start Entry");
-            File imageFile = FileSystem.getFile(zipEntry.getName(), setCatalog, mContext);
+            //TODO to zakomentowano tymczasowo, nie wiem czy będzie to potrzebne
+            /*File imageFile = MediaFileSystem.getFile(zipEntry.getName(), setCatalog, mContext);
             if(!imageFile.exists()){
                 imageFile.createNewFile();
             }
-            FileOutputStream outputStream = new FileOutputStream(imageFile);
+            FileOutputStream outputStream = new FileOutputStream(imageFile);*/
             /*while(zipInputStream.available()>0){
                 outputStream.write(zipInputStream.read());
             }*/
@@ -70,14 +71,14 @@ public class DownloadImagesResponse {
             while((data = zipInputStream.read()) != -1){
                 outputStream.write(data);
             }*/
-            int length;
+            /*int length;
             while((length = zipInputStream.read(buffer,0, buffer.length))>0){
                 outputStream.write(buffer,0, length);
             }
             outputStream.close();
         }
         zipInputStream.close();
-    }
+    }*/
 
     public void closeConnection(){
         mConnection.disconnect();

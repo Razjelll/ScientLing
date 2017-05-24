@@ -3,14 +3,16 @@ package com.dyszlewskiR.edu.scientling.asyncTasks;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.provider.MediaStore;
 import android.util.Log;
 
-import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.data.models.params.SaveWordParams;
 import com.dyszlewskiR.edu.scientling.dialogs.SaveWordDialog;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
+import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
 
 import java.io.IOException;
 
@@ -106,7 +108,7 @@ public class SaveWordAsyncTask extends AsyncTask<SaveWordParams, Void, Word> {
 
     private void saveImage(String fileName, String setCatalog, Uri uri) {
         try {
-            FileSystem.saveImage(fileName, setCatalog, uri, mContext, true);
+            MediaFileSystem.saveMedia(fileName, setCatalog, uri,true,MediaType.IMAGES, mContext);
         } catch (IOException e) {
             e.printStackTrace(); // TODO pokazać na dialogu  błąd zapisywanie obrazka
         }
@@ -114,17 +116,17 @@ public class SaveWordAsyncTask extends AsyncTask<SaveWordParams, Void, Word> {
 
     private void saveRecord(String fileName, String setCatalog, Uri uri) {
         try {
-            FileSystem.saveRecord(fileName, setCatalog, uri, mContext);
+            MediaFileSystem.saveMedia(fileName, setCatalog, uri,false, MediaType.RECORDS, mContext);
         } catch (IOException e) {
             e.printStackTrace(); //TODO pokazać na dialogu błąd zapisywania nagrania
         }
     }
 
     private void deleteImage(Uri uri){
-        FileSystem.deleteFile(uri);
+        MediaFileSystem.deleteFile(uri);
     }
 
     private void deleteRecord(Uri uri){
-        FileSystem.deleteFile(uri);
+        MediaFileSystem.deleteFile(uri);
     }
 }

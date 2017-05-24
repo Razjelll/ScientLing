@@ -20,9 +20,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
+import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.Record;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
-import com.dyszlewskiR.edu.scientling.utils.FileUtils;
 import com.dyszlewskiR.edu.scientling.utils.UriUtils;
 
 import java.io.IOException;
@@ -57,7 +57,6 @@ public class RecordDialog extends DialogFragment {
     private boolean mIsRecord;
 
     private Uri mRecordUri;
-    private Record mRecord;
     private Callback mCallback;
 
     public void setCallback(Callback callback) {
@@ -82,7 +81,6 @@ public class RecordDialog extends DialogFragment {
         setValues();
         setListeners();
         getDialog().setTitle(getString(R.string.record));
-
         return view;
     }
 
@@ -155,11 +153,10 @@ public class RecordDialog extends DialogFragment {
                 deleteRecord();
             }
         });
-
     }
 
     private void onFinishRecord() {
-        mRecordUri = FileUtils.getUriFromCache(RECORD_FILENAME, getContext());
+        mRecordUri = MediaFileSystem.getMediaUriFromCache(RECORD_FILENAME, getContext());
         updateRecordUI();
     }
 
@@ -176,7 +173,6 @@ public class RecordDialog extends DialogFragment {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
                 } else {
                     mMediaPlayer.stop();
                     mMediaPlayer.reset();
@@ -184,7 +180,6 @@ public class RecordDialog extends DialogFragment {
                 }
             }
         });
-
     }
 
     private void setRecorderButtonListener() {
@@ -213,7 +208,6 @@ public class RecordDialog extends DialogFragment {
                     mRecording = false;
                     onFinishRecord();
                 }
-
             }
         });
     }
@@ -235,17 +229,13 @@ public class RecordDialog extends DialogFragment {
         mRecordUri = null;
         setVisibilityButtons(View.INVISIBLE);
         mTitleTextView.setText(getString(R.string.lack));
-        FileUtils.deleteFileFromCache(RECORD_FILENAME, getContext());
+        MediaFileSystem.deleteMediaFromCache(RECORD_FILENAME, getContext());
     }
 
     private void setOpenButtonListener() {
         mOpenButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*Intent intent = new Intent();
-                intent.setType("audio/");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(intent, OPEN_REQUEST);*/
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, OPEN_REQUEST);
             }
@@ -257,7 +247,7 @@ public class RecordDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 //najpierw usuwamy plik z caqhe jeśli istnieje(sprawdzaniem zajmuje się metoda)
-                FileUtils.deleteFileFromCache(RECORD_FILENAME, getContext());
+                MediaFileSystem.deleteMediaFromCache(RECORD_FILENAME, getContext());
                 dismiss();
             }
         });
@@ -297,6 +287,6 @@ public class RecordDialog extends DialogFragment {
     }
 
     public static void clearCache(Context context) {
-        FileUtils.deleteFileFromCache(RECORD_FILENAME, context);
+        MediaFileSystem.deleteMediaFromCache(RECORD_FILENAME, context);
     }
 }

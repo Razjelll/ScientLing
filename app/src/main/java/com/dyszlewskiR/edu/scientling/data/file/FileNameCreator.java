@@ -2,7 +2,7 @@ package com.dyszlewskiR.edu.scientling.data.file;
 
 import android.content.Context;
 
-import com.dyszlewskiR.edu.scientling.utils.FileUtils;
+import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
 
 /**
  * Klasa odpowiedzialna za tworzenie nowych klas dla plików ktore chcemy zapisać.
@@ -33,7 +33,7 @@ public class FileNameCreator {
      * @return
      */
     private static String getFileName(String rootName, String catalog, String extension, Context context) {
-        boolean found;
+        boolean found = true;
         int number = 0;
         int name_length = rootName.length() < ROOT_FILE_NAME_LENGTH ? rootName.length() : ROOT_FILE_NAME_LENGTH;
         String shortRootName = rootName.substring(0, name_length);
@@ -43,21 +43,28 @@ public class FileNameCreator {
                 fileName = shortRootName + number  + extension;
             }
             //find = FileUtils.checkFileExist(catalog, fileName);
-            found = FileSystem.checkFileExist(fileName, catalog, context);
+            switch (extension){
+                case IMAGE_EXTENSION:
+                    found = MediaFileSystem.checkMediaExist(fileName, catalog, MediaType.IMAGES,context); break;
+                case RECORD_EXTENSION:
+                    found = MediaFileSystem.checkMediaExist(fileName, catalog,MediaType.RECORDS, context); break;
+            }
             number++;
         } while (found);
         return fileName;
     }
 
+
+
     public static String getImageName(String rootName, String catalog, Context context){
-        return getFileName(rootName, catalog+"/"+FileSystem.IMAGES, IMAGE_EXTENSION, context);
+        return getFileName(rootName, catalog, IMAGE_EXTENSION, context);
     }
 
     public static String getRecordName(String rootName, String catalog, Context context){
-        return getFileName(rootName, catalog+"/"+FileSystem.RECORDS, RECORD_EXTENSION, context);
+        return getFileName(rootName, catalog, RECORD_EXTENSION, context);
     }
 
-    public static String getCatalogName(String rootName, String catalog, Context context) {
+    public static String getCatalogName(String rootName, Context context) {
         boolean find;
         int number = 0;
         String catalogName = rootName;
@@ -66,7 +73,7 @@ public class FileNameCreator {
                 catalogName = rootName + number;
             }
             //find = FileUtils.checkFileExist(catalog, catalogName, );
-            find = FileSystem.checkFileExist(catalog, catalogName, context);
+            find = MediaFileSystem.checkDirectoryExist(catalogName, context);
             number++;
         } while (find);
         return catalogName;

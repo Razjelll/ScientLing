@@ -2,7 +2,7 @@ package com.dyszlewskiR.edu.scientling.services.net.requests;
 
 import android.content.Context;
 
-import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.services.net.URLConnector;
 
 import org.json.JSONException;
@@ -121,7 +121,7 @@ public class MediaSetRequest {
 
     protected void uploadFile(DataOutputStream outputStream, String folderName) throws IOException {
         ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
-        final File folder = FileSystem.getCatalog(mSetCatalog, mContext);
+        final File folder = MediaFileSystem.getCatalog(mSetCatalog, mContext);
         if(!folder.exists()){
             return;
         }

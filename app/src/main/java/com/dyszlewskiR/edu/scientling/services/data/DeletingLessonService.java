@@ -6,9 +6,10 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
-import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
+import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
 
 import java.util.List;
 
@@ -96,13 +97,13 @@ public class DeletingLessonService extends Service {
 
         private void deleteImages(List<String> imagesList) {
             for (String imageName : imagesList) {
-                FileSystem.deleteImage(imageName, mCatalog, getBaseContext());
+                MediaFileSystem.deleteMedia(imageName, mCatalog, MediaType.IMAGES, getBaseContext());
             }
         }
 
         private void deleteRecords(List<String> recordsList) {
             for (String recordName : recordsList) {
-                FileSystem.deleteRecord(recordName, mCatalog, getBaseContext());
+                MediaFileSystem.deleteMedia(recordName, mCatalog,MediaType.RECORDS, getBaseContext());
             }
         }
     }

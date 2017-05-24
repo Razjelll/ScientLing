@@ -3,9 +3,10 @@ package com.dyszlewskiR.edu.scientling.services.speech;
 import android.content.Context;
 import android.net.Uri;
 
-import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.models.Word;
+import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
 
 import java.io.IOException;
 
@@ -33,7 +34,7 @@ public class SpeechPlayer {
     }
 
     public void setWord(Word word) {
-        mRecordUri = FileSystem.getRecordUri(word.getRecordName(), mSet.getCatalog(), mContext);
+        mRecordUri = MediaFileSystem.getMediaUri(word.getRecordName(), mSet.getCatalog(), MediaType.RECORDS, mContext);
         mWord = word;
     }
 

@@ -10,7 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
+import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -55,7 +56,7 @@ public class ImagePagerFragment extends Fragment {
     }
 
     private void setImage() {
-        Uri uri = FileSystem.getImageUri(mFileName, mCatalogName, getContext());
+        Uri uri = MediaFileSystem.getMediaUri(mFileName, mCatalogName, MediaType.IMAGES, getContext());
         mImageView.setImageURI(uri);
     }
 

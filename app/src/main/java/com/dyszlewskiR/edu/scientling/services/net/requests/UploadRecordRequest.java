@@ -1,9 +1,8 @@
 package com.dyszlewskiR.edu.scientling.services.net.requests;
 
 import android.content.Context;
-import android.text.style.UpdateLayout;
 
-import com.dyszlewskiR.edu.scientling.data.file.FileSystem;
+import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 import org.json.JSONException;
 import java.io.IOException;
@@ -19,6 +18,6 @@ public class UploadRecordRequest extends MediaSetRequest {
 
     public HttpURLConnection start() throws IOException, JSONException {
         String requestUri = UPLOAD_REQUEST.replace("?",String.valueOf(getSetId()));
-        return start(requestUri, FileSystem.RECORDS);
+        return start(requestUri, MediaFileSystem.RECORDS);
     }
 }
