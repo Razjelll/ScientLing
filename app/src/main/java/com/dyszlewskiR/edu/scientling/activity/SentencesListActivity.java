@@ -12,15 +12,11 @@ import com.dyszlewskiR.edu.scientling.fragment.SentencesListFragment;
 
 public class SentencesListActivity extends AppCompatActivity {
 
-    private ImageView mAddButton;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sentences_list);
         setupToolbar();
-        setupControls();
-        setListeners();
     }
 
     private void setupToolbar() {
@@ -30,40 +26,6 @@ public class SentencesListActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void setupControls() {
-
-        //mAddButton = (ImageView) findViewById(R.id.add_button);
-    }
-
-    private void setListeners() {
-       /* mAddButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startDetail();
-            }
-        });*/
-    }
-
-    private void startDetail() {
-        /*FragmentManager fragmentManager = getSupportFragmentManager();
-        SentenceDetailFragment fragment = (SentenceDetailFragment) fragmentManager.findFragmentById(R.id.sentenceDetailFragment);
-        if (fragment == null || !fragment.isVisible()) {
-            Intent intent = new Intent(getApplicationContext(), SentenceDetailActivity.class);
-            startActivityForResult(intent, 456);
-
-        } else {
-            //TODO
-        }*/
-
-    }
-
-    /* @Override
-     public boolean onCreateOptionsMenu(Menu menu)
-     {
-         MenuInflater inflater = getMenuInflater();
-         inflater.inflate(R.menu.sentences_list_menu,menu);
-         return super.onCreateOptionsMenu(menu);
-     }*/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -90,6 +52,4 @@ public class SentencesListActivity extends AppCompatActivity {
     public void onBackPressed() {
         getSentenceListFragment().onBackPressed();
     }
-
-
 }

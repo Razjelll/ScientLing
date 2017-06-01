@@ -1,16 +1,12 @@
 package com.dyszlewskiR.edu.scientling.data.database.tables;
 
-/**
- * Created by Razjelll on 11.11.2016.
- */
-
 public class WordsTable {
 
     public static final String TABLE_NAME = "Words";
     public static final String ALIAS = "W";
     public static final String ALIAS_DOT = ALIAS + ".";
 
-    public static final String[] getColumns() {
+    public static String[] getColumns() {
         String[] columns = new String[WordsColumns.COLUMNS_COUNT];
         columns[WordsColumns.ID_POSITION] = WordsColumns.ID;
         columns[WordsColumns.CONTENT_POSITION] = WordsColumns.CONTENT;

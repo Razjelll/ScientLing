@@ -3,8 +3,6 @@ package com.dyszlewskiR.edu.scientling.services.repetitions;
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Handler;
-import android.util.Log;
-import android.widget.Toast;
 
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.data.models.models.Repetition;
@@ -17,18 +15,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-/**
- * Created by Razjelll on 09.01.2017.
- */
-
 public class SaveExerciseService extends IntentService {
     private Handler handler = new Handler();
 
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     * @param name Used to name the worker thread, important only for debugging.
-     */
     public SaveExerciseService(String name) {
         super(name);
     }
@@ -38,39 +27,32 @@ public class SaveExerciseService extends IntentService {
 
     }
 
-
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(getClass().getSimpleName(), "Usługa rozpoczęta");
         final List<Word> wordsList = intent.getParcelableArrayListExtra("list");
-        final List<Word> incorrectWord = intent.getParcelableArrayListExtra("incrrect");
-        final DataManager dataManager = ((LingApplication) getApplication()).getDataManager();
+        final boolean[] answersCorrectness = intent.getBooleanArrayExtra("correctness");
+        final DataManager dataManager = LingApplication.getInstance().getDataManager();
         final List<Repetition> repetitionsList = new ArrayList<>();
         handler.post(new Runnable() {
             @Override
             public void run() {
-                for (Word word : wordsList) {
-                    word.setMasterLevel((byte) getMasterLevel(word, incorrectWord));
+                Word word;
+                for(int i =0; i< wordsList.size(); i++){
+                    word = wordsList.get(i);
+                    if(answersCorrectness == null || answersCorrectness[i]){
+                        byte masterLevel = word.getMasterLevel();
+                        byte nextMasterLevel = Interval.getNextMasterLevel(masterLevel);
+                        word.setMasterLevel(nextMasterLevel);
+                    }
                     word.setLearningDate(getLearningDate());
                     repetitionsList.add(getRepetition(word));
                 }
                 dataManager.saveRepetitionAndUpdateWords(repetitionsList, wordsList);
-                Toast.makeText(getBaseContext(), "Zakończono tentegować", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private int getMasterLevel(Word word, List<Word> incorrectWords) {
-        int masterLevel = word.getMasterLevel();
-        if (incorrectWords != null) {
-            for (Word incorrect : incorrectWords) {
-                if (word.getId() == incorrect.getId()) {
-                    return masterLevel;
-                }
-            }
-        }
-        return Interval.getNextMasterLevel(masterLevel);
-    }
+
 
     private int getLearningDate() {
         return DateCalculator.dateToInt(DateUtils.getTodayDate());

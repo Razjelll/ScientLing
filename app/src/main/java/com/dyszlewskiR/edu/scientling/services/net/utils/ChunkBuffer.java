@@ -1,10 +1,6 @@
 package com.dyszlewskiR.edu.scientling.services.net.utils;
 
-/**
- * Created by Razjelll on 28.04.2017.
- */
-
-public class ChunkBuffer{
+class ChunkBuffer{
     private char[] mBuffer;
     private int mChunkSize;
     private int mBufferPosition;

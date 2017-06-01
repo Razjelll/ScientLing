@@ -92,11 +92,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setIsLogged() {
-        if (LogPref.isLogged(getBaseContext())) {
-            mIsLogged = true;
-        } else {
-            mIsLogged = false;
-        }
+        mIsLogged = LogPref.isLogged(getBaseContext());
     }
 
     private void setupToolbar() {
@@ -530,11 +526,8 @@ public class MainActivity extends AppCompatActivity
 
     private class LogoutAlertDialog extends AlertDialog {
 
-        private Context mContext;
-
-        protected LogoutAlertDialog(@NonNull Context context) {
+        protected LogoutAlertDialog(@NonNull final Context context) {
             super(context);
-            mContext = context;
             setTitle(getString(R.string.log_outing));
             setMessage(getString(R.string.sure_logout));
             setButton(BUTTON_NEGATIVE, getString(R.string.cancel), new OnClickListener() {
@@ -546,15 +539,13 @@ public class MainActivity extends AppCompatActivity
             setButton(BUTTON_POSITIVE, getString(R.string.yes), new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    LogPref.setLogged(false, getBaseContext());
-                    LogPref.setLogin(null, getBaseContext());
-                    LogPref.setPassword(null, getBaseContext());
+                    LogPref.setLogged(false, context);
+                    LogPref.setLogin(null, context);
+                    LogPref.setPassword(null, context);
                     setLoggedNavigationItems(false);
                     dismiss();
                 }
             });
         }
-
-
     }
 }

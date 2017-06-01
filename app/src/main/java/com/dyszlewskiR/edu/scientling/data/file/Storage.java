@@ -2,9 +2,6 @@ package com.dyszlewskiR.edu.scientling.data.file;
 
 
 import android.content.Context;
-import android.net.Uri;
-
-import com.dyszlewskiR.edu.scientling.utils.UriUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,6 +59,9 @@ public abstract class Storage {
     }
 
     public boolean checkFileExist(String filename, String catalog, Context context){
+        if(filename == null || filename.isEmpty() || catalog== null || catalog.isEmpty()){
+            return false;
+        }
         return FileSystem.checkFileExist(getPath(filename, catalog, context));
     }
 

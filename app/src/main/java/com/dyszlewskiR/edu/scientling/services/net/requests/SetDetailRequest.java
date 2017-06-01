@@ -7,10 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
-import java.net.URLConnection;
 
 public class SetDetailRequest {
     private static final String REQUEST_URI = Constants.SERVER_ADDRESS + "/sets/?/details";

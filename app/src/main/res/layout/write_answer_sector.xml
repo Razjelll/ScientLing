@@ -4,27 +4,19 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/wordEditText"
-        android:layout_below="@id/speechButton"
+        style="@style/EditTextStyle"
+        android:id="@+id/answer_edit_text"
         android:hint="@string/put_translation"
         android:maxLines="1"
         android:imeOptions="actionDone"
-        android:padding="5dp"
-        android:background="@drawable/custom_edit_text"
-        android:layout_margin="5dp"
-        android:textSize="20dp"
+        android:inputType="textNoSuggestions"
         ><requestFocus/></EditText>
 
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/checkAnswer"
-        android:layout_below="@+id/wordEditText"
+        style="@style/ButtonStyle"
+        android:id="@+id/check_answer_button"
         android:text="@string/check_answer"
-        android:background="@drawable/button_selector"
         android:layout_margin="5dp"
-        android:textColor="@color/white"/>
+        />
 
 </LinearLayout>

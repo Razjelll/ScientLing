@@ -20,7 +20,6 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
@@ -28,7 +27,6 @@ import com.dyszlewskiR.edu.scientling.activity.WordsManagerActivity;
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
-import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.dialogs.LessonDialog;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.services.data.DeletingLessonService;
@@ -367,26 +365,4 @@ public class LessonSelectionFragment extends Fragment implements LessonDialog.Ca
         }
     }
     //endregion
-
-    //TODO to dokończyć kiedyć w przyszłości
-    private class LessonSelectionAdapter extends ArrayAdapter {
-
-        private List<Lesson> mItems;
-        private Context mContext;
-        private int mResource;
-
-        public LessonSelectionAdapter(Context context, int resource, List<Lesson> data) {
-            super(context, resource, data);
-            mContext = context;
-            mResource = resource;
-            mItems = data;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View rowView = convertView;
-
-            return rowView;
-        }
-    }
 }

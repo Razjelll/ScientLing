@@ -23,6 +23,7 @@
             android:layout_gravity="left"
             android:src="@drawable/ic_close"
             android:padding="20dp"
+
             />
     </android.support.v7.widget.Toolbar>
 
@@ -36,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="10dp"
             android:layout_gravity="center_vertical"
-            android:id="@+id/exerciseProgressBar"
+            android:id="@+id/exercise_progress_bar"
             android:indeterminateOnly="false"
             android:progressDrawable="@drawable/exercise_progress_bar"
             android:layout_weight="0.3"
@@ -48,7 +49,7 @@
     <ProgressBar
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/circleWaitingBar"
+        android:id="@+id/loading_progress_bar"
         android:indeterminateDrawable="@drawable/circle_waiting_bar"
         android:indeterminate="true"
         android:layout_alignParentBottom="true"
@@ -60,12 +61,12 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/circleWaitingBarText"
+        android:id="@+id/loading_text_view"
         android:text="Trwa wczytywanie danych"/>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/exerciseFragment"
+        android:id="@+id/exercise_fragment"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -73,12 +74,12 @@
         android:background="@drawable/shadow_border"
         android:layout_margin="3dp"
         android:padding="3dp"
-        ></FrameLayout>
+        />
 
 
 
 
-    <!--<fragment android:name="dyszlewskiRdu.scientling.fragment.WriteExerciseFragment"
+    <!--<fragment android:name="dyszlewskiRdu.scientling.fragment.WritingExerciseFragment"
         android:id="@+id/exerciseFragment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -192,9 +192,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 int responseCode = response.getResultCode();
                 response.closeConnection();
                 return responseCode;
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
+            } catch (NoSuchAlgorithmException | JSONException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();

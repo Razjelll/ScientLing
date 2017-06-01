@@ -77,7 +77,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/fragment_frame_layout"
                 android:layout_above="@+id/choose_buttons_container"
-                android:layout_margin="@dimen/margin"></FrameLayout>
+                android:layout_margin="@dimen/margin"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
                 android:orientation="horizontal"
                 android:layout_alignParentBottom="true">
                 <ImageButton
-                    style="@style/ButtonStyle"
+                    style="@style/ImageButtonStyle"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
                     android:id="@+id/sentences_button"
@@ -94,7 +94,7 @@
                     android:padding="@dimen/padding"
                     android:layout_margin="@dimen/margin"/>
                 <ImageButton
-                    style="@style/ButtonStyle"
+                    style="@style/ImageButtonStyle"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
                     android:id="@+id/image_button"
@@ -103,7 +103,7 @@
                     android:padding="@dimen/padding"
                     android:layout_margin="@dimen/margin"/>
                 <ImageButton
-                    style="@style/ButtonStyle"
+                    style="@style/ImageButtonStyle"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
                     android:id="@+id/definition_button"
@@ -112,7 +112,7 @@
                     android:padding="@dimen/padding"
                     android:layout_margin="@dimen/margin"/>
                 <ImageButton
-                    style="@style/ButtonStyle"
+                    style="@style/ImageButtonStyle"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
                     android:src="@drawable/ic_hint"

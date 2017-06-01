@@ -9,4 +9,8 @@
         <attr name="metaButtonBarButtonStyle" format="reference" />
     </declare-styleable>
 
+    <declare-styleable name="AnswerButton">
+        <attr name="correct" format="boolean"/>
+        <attr name="incorrect" format="boolean"/>
+    </declare-styleable>
 </resources>

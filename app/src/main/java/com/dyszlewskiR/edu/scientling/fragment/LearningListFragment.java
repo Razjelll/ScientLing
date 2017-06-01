@@ -75,9 +75,7 @@ public class LearningListFragment extends Fragment {
         LearningParams params = getLearningParams();
         try {
             mWords = task.execute(params).get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         if (mWords.size() == 0) {
@@ -98,7 +96,6 @@ public class LearningListFragment extends Fragment {
         long lessonId = intent.getLongExtra("lesson", 0);
         long categoryId = intent.getLongExtra("category", 0);
         int difficult = intent.getIntExtra("difficult", -1);
-        FlashcardParams.ChoiceType type = (FlashcardParams.ChoiceType) intent.getSerializableExtra("type");
         int order = intent.getIntExtra("order", 2);
         int limit = intent.getIntExtra("limit", 0);
 

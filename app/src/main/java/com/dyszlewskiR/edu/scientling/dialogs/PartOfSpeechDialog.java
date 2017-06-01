@@ -1,5 +1,6 @@
 package com.dyszlewskiR.edu.scientling.dialogs;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -20,10 +21,6 @@ import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 
 import java.util.List;
 
-/**
- * Created by Razjelll on 21.03.2017.
- */
-
 public class PartOfSpeechDialog extends DialogFragment {
     private ListView mListView;
     private List<PartOfSpeech> mPartsList;
@@ -35,6 +32,12 @@ public class PartOfSpeechDialog extends DialogFragment {
 
     public interface Callback {
         void onPartOfSpeechOk(PartOfSpeech partOfSpeech);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -78,7 +81,16 @@ public class PartOfSpeechDialog extends DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         mCallback = null;
-        getFragmentManager().beginTransaction().remove(this).commit();
+        super.onDismiss(dialogInterface);
+    }
+
+    @Override
+    public void onDestroyView(){
+        Dialog dialog = getDialog();
+        if(dialog != null && getRetainInstance()){
+            dialog.setDismissMessage(null);
+        }
+        super.onDestroyView();
     }
 
     private class PartOfSpeechAdapter extends ArrayAdapter<PartOfSpeech> {

@@ -118,10 +118,7 @@ public class MediaFileSystem {
 
     public static boolean deleteFile(Uri imageUri) {
         File file = new File(imageUri.getPath());
-        if (file.exists()) {
-            return file.delete();
-        }
-        return false;
+        return file.exists() && file.delete();
     }
 
     public static void deleteCatalog(String catalogName, Context context) {

@@ -62,7 +62,6 @@ public class HintDaoTest {
         assertEquals(2, id);
         try
         {
-            id = mDao.save(mHint1);
             fail("Złamano ograniczenie unikalnej wartości");
         } catch(SQLiteConstraintException ex )
         {

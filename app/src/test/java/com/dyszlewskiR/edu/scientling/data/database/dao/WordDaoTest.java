@@ -10,7 +10,6 @@ import com.dyszlewskiR.edu.scientling.data.models.models.Definition;
 import com.dyszlewskiR.edu.scientling.data.models.models.Language;
 import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
 import com.dyszlewskiR.edu.scientling.data.models.models.PartOfSpeech;
-import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.utils.ResourcesFileOpener;
 
@@ -127,8 +126,7 @@ public class WordDaoTest {
         Lesson lesson = new Lesson();
         lesson.setName("Zwierzęta");
         lesson.setNumber(1);
-        lesson.setSet(new VocabularySet());
-        lesson.setId(mLessonDao.save(lesson));;
+        lesson.setId(mLessonDao.save(lesson));
         //Wstawianie części mowy
         PartOfSpeech partOfSpeech = new PartOfSpeech();
         partOfSpeech.setName("Rzeczownik");
@@ -137,7 +135,7 @@ public class WordDaoTest {
         //Wstawianie kategorii
         Category category = new Category();
         category.setName("Zwierzęta");
-        category.setId(mCategoryDao.save(category));;
+        category.setId(mCategoryDao.save(category));
 
         //Dodawanie definicji
         Definition definition = new Definition();

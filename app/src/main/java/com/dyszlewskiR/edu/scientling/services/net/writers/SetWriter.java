@@ -1,13 +1,11 @@
 package com.dyszlewskiR.edu.scientling.services.net.writers;
 
-import android.icu.util.Output;
 import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.services.json.JsonLessons;
 import com.dyszlewskiR.edu.scientling.services.json.JsonSet;
 import com.dyszlewskiR.edu.scientling.services.json.JsonWords;
-import com.dyszlewskiR.edu.scientling.services.net.services.DownloadSetsService;
 import com.dyszlewskiR.edu.scientling.services.net.utils.ChunkWriter;
 
 import org.json.JSONException;

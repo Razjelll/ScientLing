@@ -1,5 +1,6 @@
 package com.dyszlewskiR.edu.scientling.dialogs;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -35,6 +36,12 @@ public class LanguageDialog extends DialogFragment {
 
     public void setCallback(Callback callback) {
         mCallback = callback;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -77,7 +84,16 @@ public class LanguageDialog extends DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         mCallback = null;
-        getFragmentManager().beginTransaction().remove(this).commit();
+        super.onDismiss(dialogInterface);
+    }
+
+    @Override
+    public void onDestroyView(){
+        Dialog dialog = getDialog();
+        if(dialog != null && getRetainInstance()){
+            dialog.setDismissMessage(null);
+        }
+        super.onDestroyView();
     }
 
     //region LanguageAdapter
@@ -124,6 +140,8 @@ public class LanguageDialog extends DialogFragment {
             nameTextView = (TextView) view.findViewById(R.id.language_name);
         }
     }
+
+
 
     //endregion
 }

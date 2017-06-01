@@ -72,7 +72,6 @@ public class FileNameCreator {
             if (number != 0) {
                 catalogName = rootName + number;
             }
-            //find = FileUtils.checkFileExist(catalog, catalogName, );
             find = MediaFileSystem.checkDirectoryExist(catalogName, context);
             number++;
         } while (find);

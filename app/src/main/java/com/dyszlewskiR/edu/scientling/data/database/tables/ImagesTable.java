@@ -1,9 +1,5 @@
 package com.dyszlewskiR.edu.scientling.data.database.tables;
 
-/**
- * Created by Razjelll on 18.01.2017.
- */
-
 public class ImagesTable {
     public static final String TABLE_NAME = "Images";
     public static final String ALIAS = "I";

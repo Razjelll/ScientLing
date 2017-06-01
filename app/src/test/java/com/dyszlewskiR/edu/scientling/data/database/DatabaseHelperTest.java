@@ -11,9 +11,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import static org.junit.Assert.assertTrue;
-/**
- * Created by Razjelll on 06.11.2016.
- */
+
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 17)
 public class DatabaseHelperTest {

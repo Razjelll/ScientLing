@@ -25,12 +25,6 @@ public class QueryReader {
     private static final String START_COMMENT = "/*";
     private static final String END_COMMENT = "*/";
 
-
-    public QueryReader() {
-        //mStream = inputStream;
-
-    }
-
     /**
      * Metoda służąca do odczytywania plików sql w postani strumienia wejściowego. Skorzystano ze strumienia wejściowego
      * ponieważ w Androidzie dostep do plików odbywa się albo przez system plików, gdzie trzeba znać położenie danego pliku.
@@ -49,14 +43,14 @@ public class QueryReader {
      * @return
      * @throws IOException
      */
-    public ArrayList<String> readFromStream(InputStream stream) throws IOException {  //TODO refaktoryzacja
+    public ArrayList<String> readFromStream(InputStream stream) {  //TODO refaktoryzacja
         ArrayList<String> statementsList = new ArrayList<>();
         if (stream == null) {
             return statementsList;
         }
         StringBuilder statementBuilder = new StringBuilder();
         Scanner scanner = new Scanner(stream);
-        String word = null;
+        String word;
         while (scanner.hasNext()) //TODO refaktoryzacja
         {
             word = scanner.next();
@@ -98,22 +92,14 @@ public class QueryReader {
         AssetsFileOpener opener = new AssetsFileOpener(context);
         InputStream inputStream = opener.getStream(assetPath);
         Scanner scanner = new Scanner(inputStream);
-        String query = getQueryFromScanner(scanner);
-        return query;
+        return getQueryFromScanner(scanner);
     }
 
     public static String getQuery(String javaResourcePath) throws IOException {
         ResourcesFileOpener opener = new ResourcesFileOpener();
         InputStream inputStream = opener.getStream(javaResourcePath);
         Scanner scanner = new Scanner(inputStream);
-        String query = getQueryFromScanner(scanner);
-        return query;
-    }
-
-    public static String getQuery(InputStream inputStream) {
-        Scanner scanner = new Scanner(inputStream);
-        String query = getQueryFromScanner(scanner);
-        return query;
+        return getQueryFromScanner(scanner);
     }
 
     public static List<String> getQueries(String queryPath, Context context) throws IOException {
@@ -121,7 +107,7 @@ public class QueryReader {
         InputStream inputStream = opener.getStream(queryPath);
         Scanner scanner = new Scanner(inputStream);
         List<String> queriesList = new ArrayList<>();
-        String query = null;
+        String query;
         while (scanner.hasNext()) {
             query = getQueryFromScanner(scanner);
             if (query != null) {
@@ -134,7 +120,7 @@ public class QueryReader {
     public static List<String> getQueries(InputStream inputStream) {
         Scanner scanner = new Scanner(inputStream);
         List<String> queriesList = new ArrayList<>();
-        String query = null;
+        String query;
         while (scanner.hasNext()) {
             query = getQueryFromScanner(scanner);
             if (query != null) {
@@ -163,17 +149,13 @@ public class QueryReader {
             if (!word.equals("")) {
                 queryBuilder.append(word).append(" ");
             }
-            /*if(word.contains(STATEMENTS_SEP)){
-                return queryBuilder.getUri();
-            }*/
         } while (scanner.hasNext() && !word.contains(STATEMENTS_SEP));
         return queryBuilder.toString();
     }
 
     private static String parseComment(String word) {
         int commentBeginIndex = word.indexOf(COMMENT);
-        word = word.substring(0, commentBeginIndex);
-        return word;
+        return  word.substring(0, commentBeginIndex);
     }
 
     private static String parseStartComment(String word) {
@@ -189,9 +171,6 @@ public class QueryReader {
 
     private static String parseEndComment(String word) {
         int commentEndIndex = word.indexOf(END_COMMENT);
-        word = word.substring(commentEndIndex + 2, word.length());
-        return word;
+        return word.substring(commentEndIndex + 2, word.length());
     }
-
-
 }

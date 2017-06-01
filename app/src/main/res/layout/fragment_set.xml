@@ -35,7 +35,7 @@
         style="@style/SpinnerStyle"
         android:id="@+id/l2_spinner"
         android:layout_below="@id/l2_label"
-        ></Spinner>
+        />
     <TextView
         android:id="@+id/l1_label"
         style="@style/TextViewStyle"

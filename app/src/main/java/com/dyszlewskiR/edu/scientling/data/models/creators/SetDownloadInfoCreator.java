@@ -2,7 +2,6 @@ package com.dyszlewskiR.edu.scientling.data.models.creators;
 
 import android.database.Cursor;
 
-import com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable;
 import com.dyszlewskiR.edu.scientling.data.models.models.SetDownloadInfo;
 
 

@@ -3,17 +3,12 @@ package com.dyszlewskiR.edu.scientling.widgets;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.dyszlewskiR.edu.scientling.R;
-
-/**
- * Created by Razjelll on 07.04.2017.
- */
 
 public class SpeechButton extends RelativeLayout {
     private final int LAYOUT_RESOURCE = R.layout.widget_speech_button;
@@ -25,6 +20,9 @@ public class SpeechButton extends RelativeLayout {
     private Context mContext;
     private boolean mLoading;
 
+    public static final int NORMAL = 0;
+    public static final int LOADING = 1;
+    public static final int PLAYING = 2;
 
     public SpeechButton(Context context) {
         super(context);
@@ -42,16 +40,11 @@ public class SpeechButton extends RelativeLayout {
     }
 
     private void init(Context context) {
-        //LayoutInflater inflater = LayoutInflater.from(context);
-        //LinearLayout view = (LinearLayout)inflater.inflate(LAYOUT_RESOURCE, null, true);
         mContext = context;
         initControls();
-
     }
 
     private void initControls() {
-        /*mSpeechButton = (ImageView) view.findViewById(R.id.speech_image_button);
-        mProgressBar = (ProgressBar)view.findViewById(R.id.loading_progress_bar);*/
         mSpeechButton = getSpeechButton(getContext());
         addView(mSpeechButton);
         mProgressBar = getProgressBar(getContext());
@@ -81,24 +74,20 @@ public class SpeechButton extends RelativeLayout {
         return mLoading;
     }
 
-    public void setLoading(boolean loading) {
-        if (loading) {
-            mProgressBar.setVisibility(VISIBLE);
-            mSpeechButton.setImageURI(null); //usuwamy obrazek
-        } else {
-            mProgressBar.setVisibility(View.GONE);
-            mSpeechButton.setImageResource(PAUSE_IMAGE_RESOURCE);
+    public void setState(int state) {
+        switch (state) {
+            case NORMAL:
+                mProgressBar.setVisibility(GONE);
+                mSpeechButton.setImageResource(SPEECH_IMAGE_RESOURCE);
+                break;
+            case LOADING:
+                mProgressBar.setVisibility(VISIBLE);
+                mSpeechButton.setImageURI(null); //usuwanie obrazka
+                break;
+            case PLAYING:
+                mProgressBar.setVisibility(GONE);
+                mSpeechButton.setImageResource(PAUSE_IMAGE_RESOURCE);
+                break;
         }
-        mLoading = loading;
     }
-
-    public void setPauseImage() {
-        mSpeechButton.setImageResource(PAUSE_IMAGE_RESOURCE);
-    }
-
-    public void setPlayImage() {
-        mSpeechButton.setImageResource(SPEECH_IMAGE_RESOURCE);
-    }
-
-
 }

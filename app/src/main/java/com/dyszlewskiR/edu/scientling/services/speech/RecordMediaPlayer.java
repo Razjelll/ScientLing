@@ -17,6 +17,12 @@ public class RecordMediaPlayer {
     private Context mContext;
     private boolean mIsInit;
 
+    public ISpeechCallback mCallback;
+
+    public void setCallback(ISpeechCallback callback){
+        mCallback = callback;
+    }
+
     public void init(Context context) {
         mContext = context;
         mMediaPlayer = new MediaPlayer();
@@ -24,6 +30,9 @@ public class RecordMediaPlayer {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 mMediaPlayer.reset();
+                if(mCallback != null){
+                    mCallback.onSpeechCompleted();
+                }
             }
         });
         mIsInit = true;
@@ -31,14 +40,19 @@ public class RecordMediaPlayer {
 
     public void play(Uri uri) throws IOException {
         if (!mMediaPlayer.isPlaying()) {
+            if(mCallback != null){
+                mCallback.onSpeechStart();
+            }
             mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mMediaPlayer.setDataSource(mContext, uri);
             mMediaPlayer.prepare();
             mMediaPlayer.start();
         } else {
             mMediaPlayer.stop();
-            ;
             mMediaPlayer.reset();
+            if(mCallback != null){
+                mCallback.onSpeechCompleted();
+            }
         }
     }
 

@@ -16,7 +16,7 @@
     <Spinner
         android:id="@+id/set_spinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></Spinner>
+        android:layout_height="wrap_content"/>
     <EditText
         android:id="@+id/search_edit_text"
         style="@style/EditTextStyle"
@@ -32,6 +32,6 @@
     <ListView
         android:id="@+id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></ListView>
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

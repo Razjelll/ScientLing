@@ -12,7 +12,6 @@ import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.print.PrintAttributes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -37,7 +36,6 @@ import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.LessonSelectionActivity;
 import com.dyszlewskiR.edu.scientling.activity.SetEditActivity;
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
-import com.dyszlewskiR.edu.scientling.data.file.FileSizeCalculator;
 import com.dyszlewskiR.edu.scientling.data.file.FileSizeFormatter;
 import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
@@ -45,7 +43,6 @@ import com.dyszlewskiR.edu.scientling.preferences.LogPref;
 import com.dyszlewskiR.edu.scientling.preferences.Settings;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.services.data.DeletingSetService;
-import com.dyszlewskiR.edu.scientling.services.net.services.DownloadSetsService;
 import com.dyszlewskiR.edu.scientling.services.net.services.OperationParts;
 import com.dyszlewskiR.edu.scientling.services.net.services.UploadSetService;
 import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
@@ -619,13 +616,13 @@ class DeleteDialog extends AlertDialog {
         void delete(VocabularySet set);
     }
 
-    protected DeleteDialog(Context context, final VocabularySet set, final int mode, final DeleteListener listener) {
+    DeleteDialog(Context context, final VocabularySet set, final int mode, final DeleteListener listener) {
         super(context);
         if (set == null) {
             return;
         }
         this.setTitle(set.getName());
-        String message = "";
+        String message;
         switch (mode) {
             case SET_MODE:
                 message = context.getString(R.string.sure_delete_set);

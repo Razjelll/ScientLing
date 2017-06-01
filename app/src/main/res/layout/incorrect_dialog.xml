@@ -20,28 +20,26 @@
         android:layout_marginBottom="10dp"/>
     <TextView
         style="@style/LabelStyle"
-        android:id="@+id/yourAnswerLabel"
         android:text= "@string/your_answer"
         android:textSize="@dimen/normal_text_size"
         />
     <TextView
         style="@style/TextViewStyle"
-        android:id="@+id/yourAnswerTextView"
+        android:id="@+id/answer_text_view"
         android:textColor="@color/incorrectColor"/>
     <TextView
         style="@style/LabelStyle"
-        android:id="@+id/correctAnswerLabel"
         android:text = "@string/correct_answer"
         android:textSize="@dimen/normal_text_size"
         android:layout_marginTop="15dp"/>
     <TextView
        style="@style/TextViewStyle"
-        android:id="@+id/correctAnswerTextView"
+        android:id="@+id/correct_answer_text_view"
         android:textColor="@color/correctColor"
         />
     <Button
         style="@style/ButtonStyle"
-        android:id="@+id/nextButton"
+        android:id="@+id/next_button"
         android:background="@drawable/button_style"
         android:text="@string/next_question"
         android:layout_marginTop="30dp"

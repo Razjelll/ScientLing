@@ -40,6 +40,11 @@ public class SpeechToText {
 
     }
 
+    public void setLanguage(String languageCode){
+        mLanguage = languageCode;
+        mSpeechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, mLanguage);
+    }
+
     public void startListening() {
         mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
     }

@@ -20,15 +20,11 @@ import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Razjelll on 23.12.2016.
- */
-
 public class FlashcardAdapter extends PagerAdapter {
 
     private final String TAG = "FlashcardAdapter";
 
-    SparseArray<View> mViews;
+    private SparseArray<View> mViews;
 
     private List<Word> mItems;
     private List<Boolean> mSides;
@@ -56,7 +52,7 @@ public class FlashcardAdapter extends PagerAdapter {
         mPosition = 0;
     }
 
-    public void changeSide(final int position) {
+    private void changeSide(final int position) {
         final AnimatorSet animatorIn = (AnimatorSet) AnimatorInflater.loadAnimator(mContext, R.animator.flashcard_flip_left_in);
         animatorIn.setTarget(mViews.get(position));
         AnimatorSet animatorOut = (AnimatorSet) AnimatorInflater.loadAnimator(mContext, R.animator.flashcard_flip_right_out);
@@ -139,14 +135,13 @@ public class FlashcardAdapter extends PagerAdapter {
     public void destroyItem(ViewGroup container, int position, Object object) {
         Log.d("TAG", "destroyItem " + position);
         View view = (View) object;
-        ((ViewPager) container).removeView(view);
+        container.removeView(view);
         mViews.remove(position);
-        view = null;
     }
 
     @Override
     public void notifyDataSetChanged() {
-        int key = 0;
+        int key;
         for (int i = 0; i < mViews.size(); i++) {
             key = mViews.keyAt(i);
             View view = mViews.get(key);

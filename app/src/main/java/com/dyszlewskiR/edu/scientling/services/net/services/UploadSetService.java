@@ -1,18 +1,21 @@
 package com.dyszlewskiR.edu.scientling.services.net.services;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.data.file.FileSizeCalculator;
 import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.preferences.LogPref;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
+import com.dyszlewskiR.edu.scientling.services.net.notifications.SetNotification;
 import com.dyszlewskiR.edu.scientling.services.net.requests.MediaSetRequest;
 import com.dyszlewskiR.edu.scientling.services.net.requests.UploadImagesRequest;
 import com.dyszlewskiR.edu.scientling.services.net.requests.UploadRecordRequest;
@@ -66,7 +69,7 @@ public class UploadSetService extends Service {
     }
 
     public void upload(long setId, Long globalId, String description, boolean database, boolean images, boolean records) {
-        UploadSetAsyncTask task = new UploadSetAsyncTask();
+        UploadSetAsyncTask task = new UploadSetAsyncTask(getBaseContext());
         long setGlobalId = globalId != null ? globalId : -1;
         UploadParams params = new UploadParams(setId, setGlobalId, description, database, images, records);
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, params);
@@ -124,55 +127,58 @@ public class UploadSetService extends Service {
         private boolean mUploadImages;
         private boolean mUploadRecords;
         private long mSetId;
+        private SetNotification mNotification;
+        private Context mContext;
+
+        public UploadSetAsyncTask(Context context){
+            mContext = context;
+        }
+
+        @Override
+        protected void onPreExecute(){
+            mNotification = new SetNotification();
+            mNotification.create(mContext);
+            startForeground(mNotification.getId(), mNotification.build());
+        }
 
         @Override
         protected Long doInBackground(UploadParams... params) {
             mRunningTasks++;
-            mSetId = params[0].getSetId();
             long setGlobalId = params[0].getSetGlobalId();
+            setupValues(params[0]);
             DataManager dataManager = LingApplication.getInstance().getDataManager();
-            mUploadDatabase = params[0].isUploadDatabase();
-            mUploadImages = params[0].isUploadImages();
-            mUploadRecords = params[0].ismUploadRecords();
+            VocabularySet set = dataManager.getSetById(mSetId);
+            mNotification.setTitle(set.getName());
             if (mUploadDatabase) {
-                setGlobalId = uploadDatabase(mSetId, params[0].getDescription(), dataManager);
-                if (setGlobalId > 0) {
-                    Log.d(LOG_TAG, "Wysyłanie powiodło sie");
-                    dataManager.insertSetGlobalId(setGlobalId, mSetId);
-                    dataManager.updateUploadingUser(LogPref.getLogin(getBaseContext()), mSetId);
-                } else {
-                    Log.d(LOG_TAG, "Global id mniejsze od zera. Wysyłanie się nie udało");
-                    return null;
-                }
+                setGlobalId = startUploadDatabase(mSetId, params[0].getDescription(), dataManager);
+                if(setGlobalId < 0) {return null;}
             }
-            String catalog = null;
+            String catalog = set.getCatalog();
             if (mUploadImages) {
-                if (catalog == null) {
-                    VocabularySet set = dataManager.getSetById(mSetId);
-                    catalog = set.getCatalog();
-                }
-                try {
-                    uploadImages(setGlobalId, catalog);
-                    dataManager.updateImageUploaded(true, setGlobalId);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                startUploadImages(setGlobalId, catalog, dataManager);
             }
             if (mUploadRecords) {
-                if (catalog == null) {
-                    VocabularySet set = dataManager.getSetById(mSetId);
-                    catalog = set.getCatalog();
-                }
-                try {
-                    uploadRecords(setGlobalId, catalog);
-                    dataManager.updateRecordsUploaded(true, setGlobalId);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                startUploadRecords(setGlobalId, catalog, dataManager);
+            }
+            return setGlobalId;
+        }
+
+        private void setupValues(UploadParams params){
+            mSetId = params.getSetId();
+            mUploadDatabase = params.isUploadDatabase();
+            mUploadImages = params.isUploadImages();
+            mUploadRecords = params.ismUploadRecords();
+        }
+
+        private long startUploadDatabase(long setId, String description, DataManager dataManager){
+            //ustawienie notyfikacji pokazującej jak akcja jest w tej chwili wykonywana
+            mNotification.setContent(getString(R.string.uploading_database));
+            long setGlobalId = uploadDatabase(mSetId, description, dataManager);
+            if (setGlobalId > 0) {
+                Log.d(LOG_TAG, "Wysyłanie powiodło sie");
+                dataManager.insertSetGlobalId(setGlobalId, mSetId);
+                dataManager.updateUploadingUser(LogPref.getLogin(getBaseContext()), mSetId);
+
             }
             return setGlobalId;
         }
@@ -202,7 +208,7 @@ public class UploadSetService extends Service {
 
                 UploadSetResponse response = new UploadSetResponse(connection);
                 setGlobalId = response.getId();
-            } catch (IOException e) {
+            } catch (IOException e) { //TODO zrobić obsługę wyjątków
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -214,6 +220,18 @@ public class UploadSetService extends Service {
                 }
             }
             return setGlobalId;
+        }
+
+        private void startUploadImages(long globalId, String catalog, DataManager dataManager){
+            mNotification.setContent(getString(R.string.uploading_images));
+            try {
+                uploadImages(globalId, catalog);
+                dataManager.updateImageUploaded(true, globalId);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         private long uploadImages(long globalId, String catalog) throws IOException, JSONException {
@@ -251,6 +269,18 @@ public class UploadSetService extends Service {
             fileWriter.close();
         }
 
+        private void startUploadRecords(long globalId, String catalog, DataManager dataManager){
+            mNotification.setContent(getString(R.string.uploading_records));
+            try {
+                uploadRecords(globalId, catalog);
+                dataManager.updateRecordsUploaded(true, globalId);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
         private long uploadRecords(long globalId, String catalog) throws IOException, JSONException {
             Log.d(LOG_TAG, "uploadRecords");
             UploadRecordRequest request = new UploadRecordRequest(globalId, LogPref.getLogin(getBaseContext()),
@@ -273,14 +303,22 @@ public class UploadSetService extends Service {
         @Override
         protected void onProgressUpdate(Integer... progress) {
             Log.d(LOG_TAG, "Postęp serwis " + progress[0]);
+            if(progress[0] != 100){
+                mNotification.setProgress(progress[0]);
+            } else {
+                mNotification.setContent(getString(R.string.finished));
+                mNotification.hideProgress();
+            }
             if (mCallback != null) {
                 mCallback.onOperationProgress(progress[0]);
             }
+            mNotification.send();
         }
 
         @Override
         protected void onPostExecute(Long globalId) {
             mRunningTasks--;
+            stopForeground(true); //to spowoduje zniknięcie powiadomienia
             if (mCallback != null) {
                 OperationParts parts = new OperationParts();
                 parts.setDatabase(mUploadDatabase);

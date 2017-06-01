@@ -44,9 +44,6 @@ import com.dyszlewskiR.edu.scientling.utils.resources.GalleryUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class WordAdvancedEditFragment extends Fragment {
 
     public static final int ADD_SENTENCES_REQUEST = 404;

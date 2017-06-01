@@ -23,11 +23,6 @@ public class FirstSideFlashcardFragment extends SideFlashcardFragment {
         // Required empty public constructor
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
     public void setWord(Word word) {
         mWord = word;
     }

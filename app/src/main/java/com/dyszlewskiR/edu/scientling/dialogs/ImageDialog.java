@@ -1,6 +1,7 @@
 package com.dyszlewskiR.edu.scientling.dialogs;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -48,6 +49,12 @@ public class ImageDialog extends DialogFragment {
         void onImageOk(Uri imageUri);
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
     public void setImageUri(Uri imageUri) {
         mImageUri = imageUri;
     }
@@ -60,6 +67,7 @@ public class ImageDialog extends DialogFragment {
         setListeners();
         setValues();
         getDialog().setTitle(getString(R.string.image));
+
         return view;
     }
 
@@ -137,8 +145,7 @@ public class ImageDialog extends DialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == OPEN_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
-                Uri uri = data.getData();
-                mImageUri = uri;
+                mImageUri = data.getData();
                 updateImageUI();
             }
         }
@@ -182,7 +189,17 @@ public class ImageDialog extends DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         Log.d("ImageDialog", "onDismiss");
-        getFragmentManager().beginTransaction().remove(this).commit();
+        mCallback = null;
+        super.onDismiss(dialogInterface);
+    }
+
+    @Override
+    public void onDestroyView(){
+        Dialog dialog = getDialog();
+        if(dialog != null && getRetainInstance()){
+            dialog.setDismissMessage(null);
+        }
+        super.onDestroyView();
     }
 
     public static void clearCache(Context context) {

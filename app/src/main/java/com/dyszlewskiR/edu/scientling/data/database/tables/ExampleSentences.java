@@ -1,15 +1,11 @@
 package com.dyszlewskiR.edu.scientling.data.database.tables;
 
-/**
- * Created by Razjelll on 12.11.2016.
- */
-
 public class ExampleSentences {
     public static final String TABLE_NAME = "ExampleSentences";
-    public static final String ALIAS = "ES";
+    private static final String ALIAS = "ES";
     public static final String ALIAS_DOT = ALIAS + ".";
 
-    public static final String[] getColumns() {
+    public static String[] getColumns() {
         String[] columns = new String[ExampleSentencesColumns.COLUMNS_COUNT];
         columns[ExampleSentencesColumns.WORD_FK_POSITION] = ExampleSentencesColumns.WORD_FK;
         columns[ExampleSentencesColumns.SENTENCE_FK_POSITION] = ExampleSentencesColumns.SENTENCE_FK;

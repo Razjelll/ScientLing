@@ -1,5 +1,6 @@
 package com.dyszlewskiR.edu.scientling.dialogs;
 
+import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,9 +27,6 @@ import com.dyszlewskiR.edu.scientling.widgets.NumberPicker;
 
 import java.util.List;
 
-/**
- * Created by Razjelll on 15.01.2017.
- */
 
 public class LearningOptionsDialog extends DialogFragment {
 
@@ -51,6 +49,12 @@ public class LearningOptionsDialog extends DialogFragment {
 
     public void setSetId(long setId) {
         mSetId = setId;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -123,9 +127,12 @@ public class LearningOptionsDialog extends DialogFragment {
     }
 
     @Override
-    public void onDismiss(DialogInterface dialogInterface) {
-        getFragmentManager().beginTransaction().remove(this).commit();
-        super.onDismiss(dialogInterface);
+    public void onDestroyView(){
+        Dialog dialog = getDialog();
+        if(dialog != null && getRetainInstance()){
+            dialog.setDismissMessage(null);
+        }
+        super.onDestroyView();
     }
 
 }

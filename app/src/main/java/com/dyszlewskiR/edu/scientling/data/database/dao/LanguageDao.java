@@ -159,7 +159,7 @@ public class LanguageDao extends BaseDao<Language> {
         Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection, selectionArgs,
                 groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
-            Language language = null;
+            Language language;
             do {
                 language = LanguageCreator.createFromCursor(cursor);
                 if (language != null) {

@@ -3,8 +3,6 @@ package com.dyszlewskiR.edu.scientling.services.net;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-
 /**
  * Created by Razjelll on 19.04.2017.
  */

@@ -39,10 +39,4 @@ public class LessonDaoTest {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         mDao = new LessonDao(db);
     }
-
-    @Test
-    public void testInsertLesson()
-    {
-
-    }
 }

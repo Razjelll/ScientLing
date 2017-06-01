@@ -1,14 +1,11 @@
 package com.dyszlewskiR.edu.scientling.services.json;
 
 import android.database.Cursor;
-import android.os.health.PackageHealthStats;
 
 import com.dyszlewskiR.edu.scientling.data.models.creators.LessonCreator;
 import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
-import com.fasterxml.jackson.databind.JsonNode;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,8 +44,7 @@ public class JsonLessons {
     public JSONObject getLessonNode() throws JSONException {
         if(cursorNext()){
             Lesson lesson = LessonCreator.createFromCursor(mCursor);
-            JSONObject node = getLessonNode(lesson);
-            return node;
+            return getLessonNode(lesson);
         }
         return null;
     }
@@ -70,18 +66,6 @@ public class JsonLessons {
             return node;
         }
         return null;
-    }
-
-    public String getLessonArrayJson() throws JSONException {
-        JSONArray jsonArray = new JSONArray();
-        JSONObject node = null;
-        while (cursorNext()){
-            node = getLessonNode();
-            if(node != null){
-                jsonArray.put(node);
-            }
-        }
-        return jsonArray.toString();
     }
 
     public void release(){

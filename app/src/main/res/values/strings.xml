@@ -114,7 +114,6 @@
     <string name="category_name">Nazwa kategorii</string>
 
 
-
     <!--PODPOWIEDZI-->
     <string name="hint_content">Zawartość podpowiedzi</string>
     <!--CZESC MOWY-->
@@ -194,7 +193,9 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-
+    <string name="play_record_error">Wystąpił problem podczas odtwarzania nagrania</string>
+    <string name="long_records">Nagranie jest za długie. Maksymalna długość nagrania: </string>
+    <string name="seconds"> sekund</string>
     <!--MENU-->
     <string name="manage_words">Zarządzaj bazą słówek</string>
     <string name="add_words">Dodaj słówka</string>
@@ -274,12 +275,13 @@
     </string-array>
 
     <!--CWICZENIA-->
-    <string name="choose_exercise">Wybieranie</string>
-    <string name="write_exercise">Wpisywanie</string>
+    <string name="choosing_exercise">Wybieranie</string>
+    <string name="writing_exercise">Wpisywanie</string>
     <string name="know_exercise">Wiem/Nie wiem</string>
+    <string name="choose_exercise">Wybierz ćwiczenie</string>
     <string-array name="exercises_types">
-        <item>@string/choose_exercise</item>
-        <item>@string/write_exercise</item>
+        <item>@string/choosing_exercise</item>
+        <item>@string/writing_exercise</item>
         <item>@string/know_exercise</item>
     </string-array>
     <string-array name="exercises_types_values">
@@ -376,6 +378,9 @@
     <string name="upload_database">Wyślij bazę</string>
     <string name="upload_images">Wyslij obrazki</string>
     <string name="upload_records">Wyślj nagrania</string>
+    <string name="uploading_database">Wysyłanie bazy danych</string>
+    <string name="uploading_images">Wysyłanie obrazków</string>
+    <string name="uploading_records">Wysyłanie nagrań</string>
     <!--LOGOWANIE I REJESTRACJA-->
     <string name="bad_login">Login lub hasło jest niepoprawne</string>
     <string name="title_activity_registration">RegistrationActivity</string>
@@ -392,4 +397,10 @@
     <string name="registration">Rejestracja</string>
     <string name="registration_success">Rejestracja przebiegła pomyślnie</string>
     <string name="title_activity_set_details">SetDetailsActivity</string>
+    <string name="wait_logging">Czekaj, trwa logowanie</string>
+    <string name="logging_error">Wystąpił błąd poczas logowania</string>
+    <string name="log_no_net">Nie udało się połączyć z powodu braku połączenia z internetem</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

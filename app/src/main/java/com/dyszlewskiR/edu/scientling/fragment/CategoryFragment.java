@@ -17,9 +17,6 @@ import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.data.models.models.Category;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class CategoryFragment extends Fragment {
 
     private EditText mNameEditText;

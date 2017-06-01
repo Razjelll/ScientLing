@@ -4,21 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
         <TextView
             android:text="Dog"
             style="@style/WordTextViewStyle"
-            android:id="@+id/wordTextView"
-            android:textSize="@dimen/medium_text_size"
+            android:id="@+id/word_text_view"
+            android:textSize="@dimen/large_text_size"
             android:textStyle="bold"
-            android:layout_alignParentTop="true"
-            />
-
-        <TextView
-            android:text="[dɔg] "
-            style="@style/WordTextViewStyle"
-            android:id="@+id/transcriptionTextView"
-            android:layout_marginTop="@dimen/margin"
+            android:layout_gravity="center_vertical"
             />
 
 </LinearLayout>

@@ -10,14 +10,17 @@ import android.os.Bundle;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.FlashcardActivity;
 
-/**
- * Created by Razjelll on 15.01.2017.
- */
 
 public class FlashcardListDialogFragment extends DialogFragment {
 
     private long mSetId;
     private int mLimit;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -38,5 +41,14 @@ public class FlashcardListDialogFragment extends DialogFragment {
             }
         });
         return builder.create();
+    }
+
+    @Override
+    public void onDestroyView(){
+        Dialog dialog = getDialog();
+        if(dialog != null && getRetainInstance()){
+            dialog.setDismissMessage(null);
+        }
+        super.onDestroyView();
     }
 }

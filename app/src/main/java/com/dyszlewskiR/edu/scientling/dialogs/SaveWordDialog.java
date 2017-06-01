@@ -12,10 +12,6 @@ import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
 
-/**
- * Created by Razjelll on 30.03.2017.
- */
-
 public class SaveWordDialog extends Dialog {
     private final int LAYOUT_RESOURCE = R.layout.save_word_dialog;
 

@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.dyszlewskiR.edu.scientling.fragment.WriteExerciseFragment">
+    tools:context="com.dyszlewskiR.edu.scientling.fragment.WritingExerciseFragment">
 
     <include
         layout="@layout/word_with_speechbutton_sector"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:id="@+id/wordSector"
+        android:id="@+id/word_sector"
         android:layout_toLeftOf="@+id/say_button"
         />
     <include

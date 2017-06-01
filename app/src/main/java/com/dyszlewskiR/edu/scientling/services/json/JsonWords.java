@@ -3,7 +3,6 @@ package com.dyszlewskiR.edu.scientling.services.json;
 import android.database.Cursor;
 
 import com.dyszlewskiR.edu.scientling.data.models.creators.WordCreator;
-import com.dyszlewskiR.edu.scientling.data.models.models.Category;
 import com.dyszlewskiR.edu.scientling.data.models.models.Definition;
 import com.dyszlewskiR.edu.scientling.data.models.models.Hint;
 import com.dyszlewskiR.edu.scientling.data.models.models.Sentence;

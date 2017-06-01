@@ -14,10 +14,6 @@ import java.util.List;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable.CategoriesColumns;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable.TABLE_NAME;
 
-/**
- * Created by Razjelll on 07.11.2016.
- */
-
 public class CategoryDao extends BaseDao<Category> {
 
     private final String INSERT_STATEMENT =
@@ -86,7 +82,7 @@ public class CategoryDao extends BaseDao<Category> {
         Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection, selectionArgs,
                 groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
-            Category category = null;
+            Category category;
             do {
                 category = CategoryCreator.createFromCursor(cursor);
                 if (category != null) {

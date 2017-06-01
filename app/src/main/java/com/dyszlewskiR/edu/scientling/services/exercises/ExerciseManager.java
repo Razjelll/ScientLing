@@ -1,9 +1,6 @@
 package com.dyszlewskiR.edu.scientling.services.exercises;
 
-import android.util.Log;
-
 import com.dyszlewskiR.edu.scientling.data.models.models.Language;
-import com.dyszlewskiR.edu.scientling.data.models.models.RepetitionItem;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.data.models.params.AnswersParams;
@@ -17,286 +14,308 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-/**
- * Created by Razjelll on 16.11.2016.
- */
-
-
 public class ExerciseManager {
-    private final String TAG = "ExerciseManager";
+    private final String LOG_TAG = "ExerciseManager";
 
-    private final int QUESTION_ANSWERS_RATIO = 3;
-
-    /**
-     * Liczba wszystkich pytań w danym zestawie ćwiczeń
-     */
     private int mNumQuestions;
-
-    /**
-     * Numer obecnego pytania. Początkowo numer idzie od pierwszego do ostattniego,
-     * później przechodzi po slówkach, na które użytkownik odpowiedział źle
-     */
     private int mCurrentQuestion;
-
-    /**
-     * Liczba poprawnych odpowiedzi. Ta zmeinna służy do wypełnienia paska postępu ćwiczenia w ExerciseActivity
-     * Cwiczenie kończy się, kiedy liczba poprawnych odpowiedzi będzie równa liczbie pytań
-     */
-    private int mNumCorrectAnswers;
-
-    /**
-     * Liczba niepoprawnych odpowiedzi użytkownika. Moze posłużyć do pokazania użytkownikowi statystyk
-     * ćwiczenia
-     */
-    private int mNumIncorrectAnswers;
-
-    /**
-     * Lista słówek w ćwiczeniu na które użytkownik bedzie odpowiadał. Słówka losowane z bazy danych.
-     */
     private List<Word> mQuestions;
-
-    /**
-     * Kolejka, w której znajdują się numery indeksu słówek do listy mQestions. Kolejka wyznacza kolejność
-     * pokazywania ćwiczeń. Jeśli użytkownik odpowie źle pozycja słówka w liście mQuestions zostajnie dodany do
-     * kolejki. Jeśli odpowie dobrze pozycja zostanie usunięta z kolejki
-     */
     private Queue<Integer> mQuestionsQueue;
-
-    /**
-     * List przechowująca numery identyfikacyjne do słówek w tabeli mQuestions, na które użytkownik aplikacji odpowiedział.
-     * Na podstawie tej listy będą wyznaczane powtóreki, aby zapisywać tylko te słówka, które
-     * rzeczywiście zostaly przećwiczone. W innych programach tego typu do powtórek zostają zapisane
-     * wszystkie słówka, które wchodziły w skład ćwiczenia.
-     */
-    private List<Integer> mToRepeat;
-
-    private List<Word> mIncorrectAnswers;
-    private List<Word> mAnswers;
-    private IExercise mExerciseType;
+    private int mNumAnswers;
+    private IExerciseType mExerciseType;
     private IExerciseDirection mExerciseDirection;
     private DataManager mDataManager;
     private VocabularySet mSet;
-
     private ExerciseParams mExerciseParams;
 
-    public ExerciseManager(ExerciseParams exerciseParams, DataManager dataManager) {
-        setupParams(exerciseParams);
-        prepareFields();
+    private int mNumCorrectAnswers;
+    private int mNumIncorrectAnswers;
+    private Boolean[] mAnswersCorrectness;
+
+
+    public ExerciseManager(ExerciseParams exerciseParams, DataManager dataManager){
+        mExerciseParams = exerciseParams;
+        mNumQuestions = exerciseParams.getNumberQuestion();
+        mNumAnswers = exerciseParams.getNumberAnswers();
+        long setId = exerciseParams.getSetId();
         mDataManager = dataManager;
-        mSet = dataManager.getSetById(exerciseParams.getSetId());
+        mSet = mDataManager.getSetById(setId);
         Language l1 = mDataManager.getLanguageById(mSet.getLanguageL1().getId());
         Language l2 = mDataManager.getLanguageById(mSet.getLanguageL2().getId());
         mSet.setLanguageL1(l1);
         mSet.setLanguageL2(l2);
 
-        QuestionsParams questionsParams = ExerciseParamsHelper.getQuestionParams(exerciseParams);
-        mQuestions = mDataManager.getQuestions(questionsParams);
-        mNumQuestions = mQuestions.size();
-        mQuestionsQueue = getFilledQuestionQueue(mNumQuestions);
-
-        //od razu pobieramy pierwszy element z kolejki, ponieważ pierwsze pytanie zostaje wyświetlane
-        //po załadowaniu się obiektu. Jesli wartość 0 zostałaby w kolejce, słówko pojawiłoby się
-        //na liście 2 razy
-        if (!mQuestionsQueue.isEmpty()) {
-            mCurrentQuestion = mQuestionsQueue.poll();
-        }
-    }
-
-    private void setupParams(ExerciseParams params) {
-        mExerciseParams = params;
-    }
-
-    private void prepareFields() {
         mNumCorrectAnswers = 0;
         mNumIncorrectAnswers = 0;
-        mToRepeat = new ArrayList<>();
-        mIncorrectAnswers = new ArrayList<>();
+        //mIncorrectAnswers = new ArrayList<>();
+
+        int repetitionData = exerciseParams.getRepetitionDate();
+        setQuestions(setId, repetitionData, mNumQuestions);
     }
 
-    private Queue<Integer> getFilledQuestionQueue(int numQuestion) {
-        Queue<Integer> questionQueue = new LinkedList<>();
-        for (int i = 0; i < numQuestion; i++) {
-            questionQueue.add(i);
-        }
-        return questionQueue;
+    private void setQuestions(long setId, int repetitionDate, int numQuestions){
+        QuestionsParams questionsParams = new QuestionsParams(setId,repetitionDate, numQuestions);
+        mQuestions = mDataManager.getQuestions(questionsParams);
+        mNumQuestions = mQuestions.size();
+        mQuestionsQueue = new LinkedList<>();
+        fillQuestionQueue(mQuestionsQueue, mNumQuestions);
+        //pobieramy pierwsze pytanie z kolejki
+        mCurrentQuestion = mQuestionsQueue.poll();
+        mAnswersCorrectness = new Boolean[mNumQuestions];
     }
 
-    public int getNumCorrectAnswers() {
-        return mNumCorrectAnswers;
-    }
+    /** Metoda zapisująca w kolejce pozycje pytań na liście pytań. */
+   private void fillQuestionQueue(Queue<Integer> queue, int numQuestions ){
+       if(queue != null){
+           for(int i = 0; i<numQuestions ; i++){
+               queue.add(i);
+           }
+       }
+   }
 
-    public int getNumQuestions() {
-        return mNumQuestions;
-    }
+   public VocabularySet getSet(){return mSet;}
 
-    public int getCurrentQuestionNum() {
-        return mCurrentQuestion;
-    }
+   /** Zwraca obence pytanie */
+   public String getQuestion(){
+       return mExerciseDirection.getQuestion(getCurrentQuestionWord());
+   }
 
-    public List<Word> getQuestions() {
+   public List<Word> getQuestions(){
         return mQuestions;
     }
 
-    public int getNumAnswers() {
-        return mExerciseParams.getNumberAnswers();
-    }
+   /**Metoda zwracająca obecne słówko*/
+   private Word getCurrentQuestionWord(){
+       return mQuestions.get(mCurrentQuestion);
+   }
 
-    public void setExerciseType(IExercise exerciseType) {
-        mExerciseType = exerciseType;
-    }
+   public int getmNumCorrectAnswers(){
+       return mNumCorrectAnswers;
+   }
 
-    public void setExerciseLanguage(IExerciseDirection exerciseLanguage) {
-        mExerciseDirection = exerciseLanguage;
-    }
+   public int getNumQuestions(){
+       return mNumQuestions;
+   }
 
-    public String getQuestion() {
-        return mExerciseDirection.getQuestion(getCurrentQuestionWord());
-    }
+   public int getNumAnswers(){
+       return mNumAnswers;
+   }
 
-    private Word getCurrentQuestionWord() {
-        return mQuestions.get(mCurrentQuestion);
-    }
+   public int getCurrentQuestionNumber(){
+       return mCurrentQuestion;
+   }
 
-    public String getTranscription() {
-        return mExerciseDirection.getTranscription(getCurrentQuestionWord());
-    }
+   public void setExerciseType(ExerciseType exerciseType){
+       mExerciseType = ExerciseTypeFactory.create(exerciseType);
+   }
 
-    public String getRecordName() {
-        //TODO przejżeć czy będzie to odpowiednie
-        return mQuestions.get(mCurrentQuestion).getRecordName();
-    }
+   public void setExerciseDirection(ExerciseDirection exerciseDirection){
+       mExerciseDirection = ExerciseDirectoryFactory.create(exerciseDirection);
+   }
 
-    public String getLanguageCode() {
-        return mExerciseDirection.getCode(mSet);
-    }
+   public String getRecordName(){
+       return getCurrentQuestionWord().getRecordName();
+   }
 
-    public int getRemainingQuestion() {
-        return mQuestionsQueue.size();
-    }
+   public boolean[] getAnswersCorrectness(){
+        boolean[] correctnessArray = new boolean[mAnswersCorrectness.length];
+       for(int i=0; i<mAnswersCorrectness.length; i++){
+           if(mAnswersCorrectness[i] != null){
+               correctnessArray[i] = mAnswersCorrectness[i];
+           } else {
+               correctnessArray[i] = false;
+           }
+       }
+       return correctnessArray;
+   }
 
-    public String[] getAnswers(int howMuch) {
-        Word currentWord = getCurrentQuestionWord();
-        AnswersParams answersParams = ExerciseParamsHelper.getAnswerParams(mExerciseParams, currentWord);
-        mAnswers = mDataManager.getAnswers(answersParams);
-        mAnswers.add(getCurrentQuestionWord()); //dodajemy prawidłową odpowiedź
-        Collections.shuffle(mAnswers);
-        //lista wartości odpowiedzi które będą wyświetlone w aktywności
-        String[] answers = mExerciseDirection.getAnswers(mAnswers);
-        return answers;
-    }
-
-    /**
-     * Metoda sprawdzająca poprawność odpowiedzi użytkownika. Sprawdzenie odbywa się poprzez wywołanie
-     * metody getAnswer() z klasy implementującej interfejs IExerciseLanguafe, która zwraca
-     * poprawną odpowiedź dla danego pytania z uwzględnieniem, czy odpowiedź jest w jezyku L1, czy L2.
-     * Otrzymana odpowiedź jest następnie wykorzystana w metodzie checkAnswer interfejsu IExercise
-     * Tam nastepuje sprawdzenie, czy odpowiedź jest uznawana za słuszną. Odpowiedź moze być różnie
-     * postrzegana jako poprawna. Podczas wpisywania będą uwzględniane literówki, a podczas
-     * ćwiczenia wiem nie wiem będą uwzględniane tylko wartości know, not know, almoust know.
-     *
-     * @param answer
+    /** Metoda zwracająca słówka które zostały uruchomione podczas tego ćwiczenia
+     * Jeżeli liczba pytań na które odpowiedział użytkownik jest większa lub równa
+     * liczbie pytań w ćwiczeniu pobieramy wszystkie słówka.
+     * Natomiast jeżeli ćwiczenie zostało przerwane i nie zostały udzielone odpowiedzi na wszystkie
+     * pytania, zwracamy tylko tyle pytań na ile odpowiedział użytkownik
      * @return
      */
-    public boolean checkAnswer(String answer) {
-        String correctAnswer = mExerciseDirection.getAnswer(mQuestions.get(mCurrentQuestion));
-        boolean correct = mExerciseType.checkAnswer(answer, correctAnswer);
+   public List<Word> getWordsToRepetition(){
+       int doneQuestions = mNumCorrectAnswers + mNumIncorrectAnswers;
+       if(doneQuestions >= mNumQuestions){
+           return mQuestions;
+       } else {
+           List<Word> wordsToRepetition = new ArrayList<>();
+           for(int i=0; i<doneQuestions; i++){
+               wordsToRepetition.add(mQuestions.get(i));
+           }
+           return wordsToRepetition;
+       }
+   }
 
-        serveAnswer(correct);
-
-        if (mToRepeat.size() < mNumQuestions) {
-            mToRepeat.add(mCurrentQuestion);
-        }
-        return correct;
-    }
-
-    private void serveAnswer(boolean correct) {
-        if (correct) {
-            mNumCorrectAnswers++;
-        } else {
-            mNumIncorrectAnswers++;
-            mIncorrectAnswers.add(mQuestions.get(mCurrentQuestion));
-            mQuestionsQueue.add(mCurrentQuestion);
-            //mCurrentQuestion++;
-        }
-    }
-
-    public String getCorrectAnswer() {
-        return mExerciseDirection.getAnswer(mQuestions.get(mCurrentQuestion));
-    }
-
-    /**
-     * Funkcja zwracająca następne słowko z listy mQuestions. Najpierw pobiera odpowiedni ineks
-     * z kolejki, a później element przecgowywany na liście mQuestions pod tym indeksem.
-     * Z kolejki zostaje usunięty numer indeksu.
+    /** Sprawdza czy odpowiedź udzielona przez użytkownika jest poprawna.
+     * Sprawdzenie poprawności odpowiedzi odbywa się w dwóch etapach.
+     * - pobranie poprawnej odpowiedzi przy pomocy metody getAnswer obiektu typu ExerciseDirection.
+     *      Metoda ta zwraca zawartość słówka lub jego tłumaczenie w zależności od tego w jakim kierunku
+     *      wykonywane jest ćwiczenie (tłumaczenie z ojczystego na język którego się uczy użytkowink
+     *      lub odwrotnie)
+     * - pobranie poprawności odpowiedzi przy pomocy metody checkAnswer klasy ExerciseType.
+     *      Metoda pobiera odpowiedź użytkownika oraz poprawną odpowiedź zwróconą w poprzednim etapie.
+     *      W zależności od typu wykonywanego ćwiczenia różne wartości mogą byc zaakceptowane
+     *      (np. w przypadku ćwiczenia wpisywania mogą być uwzględniane literówki i nie trzeba podawać
+     *      dokładnej odpowiedzi aby była uznawana za poprawną)
+     * @param answer odpowiedź udzielona przez użytkownika
+     * @return poprawność odpowiedzi
      */
-    public void nextQuestion() {
-        Log.d(TAG, "nextQuestion questionQueue.peek() : " + mQuestionsQueue.peek());
-        if (!mQuestionsQueue.isEmpty()) {
+   public boolean checkAnswer(String answer){
+       String correctAnswer = mExerciseDirection.getAnswer(getCurrentQuestionWord());
+       boolean correct = mExerciseType.checkAnswer(answer, correctAnswer);
+       setAnswerResult(correct);
+       return correct;
+   }
+
+    /** Metoda ustawia wartości związane z błędną lub poprawną odpowiedzią.
+     * Jeżeli odpowiedź była zła:
+     * - zwiększamy liczbę błędnych odpowiedzi
+     * - dodajemy do listy błędnych odpowiedzi numer pytania
+     * - numer pytania dodajemy na koniec kolejki, aby pytanie pojawiło się jeszcze raz na końcu
+     * Następnie zapisujemy informacje w tabeli poprawności odpowiedzi
+     * @param correct określa czy odpowiedź na pytanie była poprawna
+     */
+   private void setAnswerResult(boolean correct){
+       if(!correct){
+           mNumIncorrectAnswers++;
+           //mIncorrectAnswers.add(mCurrentQuestion);
+           mQuestionsQueue.add(mCurrentQuestion);
+       } else {
+           mNumCorrectAnswers++;
+       }
+       setCorrectness(mCurrentQuestion, correct);
+   }
+
+    /** Zapisuje poprawnośc odpowiedzi użytkownika. Jeżeli użytkownik odpowiada na to pytanie pierwszy
+     * raz wartość tabeli mAnswerCorrectness jest null
+     * - jeżeli użytkownik odpowie poprawnie zapisywana jest wartość true
+     * - jeżeli użytkownik odpowie niepoprawnie zapisywana jest wartosć false
+     * @param currentQuestion numer pytania dla którego ustawiamy poprawność
+     * @param correct określa czy odpowiedź była poprawna
+     */
+   private void setCorrectness(int currentQuestion, boolean correct){
+       if(mAnswersCorrectness[currentQuestion] == null){
+           mAnswersCorrectness[currentQuestion] = correct;
+       }
+   }
+
+    /** Metoda zwracająca dodatkowe odpowiedzi dla ćwiczenia wyboru.
+     * - na początku nalezy stworzyć obiekt parametrów dla których będą pobrane odpowiedzi
+     * - pobieramy listę pasujących do parametrów słówek. Wśród pobraneych słowek nie ma poprawnej odpowiedzi
+     * - do pobranej listy dodajemy aktualne słówko, które zawiera poprawną odpowiedz
+     * - mieszamy elementy na liście, aby występowały w losowej kolejności
+     * - z listy tworzymy tablice która zawiera odpowiedzi. Tworzeniem tej tabeli zajmuje się metoda
+     *      getAnswers z klasy ExerciseDierection. Metoda ta zwraca albo listę tłumaczeń albo listę
+     *      treści słówek, w zależności w jakim kierunku odbywa się ćwiczenie
+     * @return list odpowiedzi
+     */
+   public String[] getAnswers(){
+       Word currentWord = getCurrentQuestionWord();
+       AnswersParams answersParams = ExerciseParamsHelper.getAnswerParams(mExerciseParams, currentWord);
+       List<Word> answersList = mDataManager.getAnswers(answersParams);
+       answersList.add(getCurrentQuestionWord()); //dodajemy prawidłową odpowiedź
+       Collections.shuffle(answersList); //mieszamy wartości na liście
+       return mExerciseDirection.getAnswers(answersList);
+   }
+
+    /** Metoda zwracająca poprawną odpowiedź dla aktualnego pytania.
+     * @return poprawna odpowiedź dla aktualnego pytania
+     */
+   public String getCorrectAnswer(){
+       return mExerciseDirection.getAnswer(getCurrentQuestionWord());
+   }
+
+    /** Metoda zmieniająca pytanie na następne.
+     * Jeżeli kolejka pytań nie jest pusta, pobieramy pierwszy element
+     * @return określa czy znaleziono kolejne pytanie.
+     */
+    public boolean nextQuestion(){
+        if(hasNextQuestion()){
             mCurrentQuestion = mQuestionsQueue.poll();
+            return true;
         }
+        return false;
     }
 
-    /**
-     * Metoda ustawiająca wszystkie zmienne na wartości początkowe. Metoda zostaje wykonana, keidy po
-     * odpowiedzieniu poprawnie na wszystkie pytania użtykownik zarzyczy sobie kolejne przećwiczenie
-     * materiału.
+    /** Metoda sprawdza czy ćwiczenia ma jeszcze jakieś pytanie.
+     * @return dostępność kolejnego pytania
      */
-    public void restart() {
+    public boolean hasNextQuestion(){
+        return !mQuestionsQueue.isEmpty();
+    }
+
+    /** Metoda resetująca ćwicznie sprowadzając je do stanu początkowego */
+    public void restart(){
         mNumCorrectAnswers = 0;
         mNumIncorrectAnswers = 0;
-
-        for (int i = 0; i < mNumQuestions; i++) {
+        mQuestionsQueue.clear();
+        for(int i=0; i<mNumQuestions; i++){
             mQuestionsQueue.add(i);
         }
         mCurrentQuestion = mQuestionsQueue.poll();
     }
 
-    public List<RepetitionItem> prepareRepetitionsItems() {
-        StringBuilder translationsBuilder = new StringBuilder();
-        List<RepetitionItem> repetitions = new ArrayList<>();
-        for (int i : mToRepeat) //dla każdego identyfikatora znajdującego się w mToRepeat
-        {
-            translationsBuilder.setLength(0);
-            for (int translation = 0; translation < mQuestions.get(i).getTranslations().size(); translation++) {
-                translationsBuilder.append(mQuestions.get(i).getTranslations().get(translation).getContent());
-                if (translation != mQuestions.get(i).getTranslations().size() - 1) {
-                    translationsBuilder.append(", ");
-                }
-            }
-            repetitions.add(new RepetitionItem(mQuestions.get(i).getId(), mQuestions.get(i).getContent(),
-                    translationsBuilder.toString()));
-        }
-        return repetitions;
-    }
+   public static class ExerciseParamsHelper{
+       /** Metoda ustawiająca parametry potrzebne do pobrania odpowiedzi, które będą wykorzystywane
+        * w ćwiczeniu wyboru.
+        * - zestaw z jakiego pochodza odpowiedzi
+        * - informacja czy odpowiedzi należy pobierać z konkretnej lekcji
+        * - informacja czy odpowiedzi należy pobieraż z konkretnej kategorii
+        * - słówko dla jakiego nie powinniśmy pobierać odpowiedzi, ponieważ to słówko jest aktualnym pytaniem
+        * - tłumaczenia które nie powiiny zostać pobrane, ponieważ są tłumaczeniami pytania
+        * - liczba odpowiedzi która powinna zostać pobrana(pobieramy o jedną odpowiedź mniej niż jest
+        *       potrze4bna, ponieważ do pobranych odpowiedzi zostanie jeszcze dodana prawidłowa odpowiedź
+        * @param exerciseParams parametry które okreslają aktualne ćwiczenie
+        * @param word słówko dla którego pobieramy błędne odpowiedzi
+        * @return parametry służące do pobrania odpowiedzi
+        */
+       public static AnswersParams getAnswerParams(ExerciseParams exerciseParams, Word word){
+           AnswersParams params = new AnswersParams();
+           params.setSetId(exerciseParams.getSetId());
+           if(exerciseParams.isAnswerFromLesson()){
+               params.setLessonId(word.getLessonId());
+           }
+           if(exerciseParams.isAnswerFromCategory()){
+               if(word.getCategory() != null){
+                   params.setCategoryId(word.getCategory().getId());
+               }
+           }
+           params.setUsedContent(word.getContent());
+           String[] usedTranslations = TranslationListConverter.toStringArray(word.getTranslations());
+           params.setUsedTranslations(usedTranslations);
+           params.setLimit(exerciseParams.getNumberAnswers() - 1);
+           return params;
+       }
+   }
 
-    private static class ExerciseParamsHelper {
-        public static QuestionsParams getQuestionParams(ExerciseParams exerciseParams) {
-            QuestionsParams questionsParams = new QuestionsParams();
-            questionsParams.setSetId(exerciseParams.getSetId());
-            if (exerciseParams.isRepetitionDate()) {
-                questionsParams.setDate(exerciseParams.getRepetitionDate());
-            }
-            questionsParams.setLimit(exerciseParams.getNumberQuestion());
+   private static class ExerciseTypeFactory{
+       public static IExerciseType create(ExerciseType exerciseType){
+           switch (exerciseType){
+               case CHOOSING:
+                   return new ChooseExercise();
+               case KNOW:
+                   return new KnowExercise();
+               case WRITING:
+                   return new WriteExercise();
+               default:
+                   return null;
+           }
+       }
+   }
 
-            return questionsParams;
-        }
-
-        public static AnswersParams getAnswerParams(ExerciseParams exerciseParams, Word word) {
-            AnswersParams answersParams = new AnswersParams();
-            answersParams.setSetId(exerciseParams.getSetId());
-            if (exerciseParams.isAnswerFromLesson()) {
-                answersParams.setLessonId(word.getLessonId());
-            }
-            if (exerciseParams.isAnswerFromCategory()) {
-                if (word.getCategory() != null) {
-                    answersParams.setCategoryId(word.getCategory().getId());
-                }
-            }
-            answersParams.setUsedContent(word.getContent());
-            String[] usedTranslations = TranslationListConverter.toStringArray(word.getTranslations());
-            answersParams.setUsedTranslations(usedTranslations);
-            answersParams.setLimit(exerciseParams.getNumberAnswers() - 1);
-            return answersParams;
-        }
-    }
+   private static class ExerciseDirectoryFactory{
+       public static IExerciseDirection create(ExerciseDirection exerciseDirection){
+           switch (exerciseDirection){
+               case L1_TO_L2:
+                   return new L1toL2();
+               case L2_TO_L1:
+                   return new L2toL1();
+               default:
+                   return null;
+           }
+       }
+   }
 }

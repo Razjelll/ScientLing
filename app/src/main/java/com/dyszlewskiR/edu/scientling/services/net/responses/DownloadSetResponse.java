@@ -15,14 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 
-/**
- * Created by Razjelll on 21.04.2017.
- */
-
 public class DownloadSetResponse {
-
-
-
     public static final int OK = 1;
     public static final int AUTHORIZATION_FAILED = -1;
     public static final int ERROR = -2;
@@ -66,7 +59,7 @@ public class DownloadSetResponse {
         return 0;
     }
 
-    public JsonNode getSetJson() throws IOException, ParseException, JSONException {
+    public JsonNode getSetJson() throws IOException {
         return getNode(SET);
     }
 
@@ -128,8 +121,7 @@ public class DownloadSetResponse {
         if(!setParserPosition(LESSONS)){
             return null;
         }
-        JsonNode node = mMapper.readValue(mParser, JsonNode.class);
-        return node;
+        return mMapper.readValue(mParser, JsonNode.class);
     }
 
     private synchronized boolean setParserPosition(String arrayName) throws IOException {
@@ -149,8 +141,7 @@ public class DownloadSetResponse {
         if(!setParserPosition(WORDS)){
             return null;
         }
-        JsonNode node = mMapper.readValue(mParser, JsonNode.class);
-        return node;
+        return mMapper.readValue(mParser, JsonNode.class);
     }
 
     public boolean hasNextLesson() throws IOException {

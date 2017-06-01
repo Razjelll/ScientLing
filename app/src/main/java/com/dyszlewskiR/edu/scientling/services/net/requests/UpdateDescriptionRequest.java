@@ -2,7 +2,6 @@ package com.dyszlewskiR.edu.scientling.services.net.requests;
 
 import com.dyszlewskiR.edu.scientling.services.net.URLConnector;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
-import com.fasterxml.jackson.core.util.VersionUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;

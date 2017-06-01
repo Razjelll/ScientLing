@@ -29,7 +29,7 @@
             style="@style/LabelStyle"
             android:text="@string/mode"/>
         <Spinner android:id="@+id/words_spinner"
-            style="@style/SpinnerStyle"></Spinner>
+            style="@style/SpinnerStyle"/>
     </LinearLayout>
     <LinearLayout android:id="@+id/search_container"
         android:layout_width="match_parent"
@@ -51,7 +51,7 @@
     <ListView android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"></ListView>
+        android:visibility="gone"/>
     <LinearLayout android:id="@+id/loading_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

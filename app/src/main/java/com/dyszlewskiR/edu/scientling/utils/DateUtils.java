@@ -3,10 +3,6 @@ package com.dyszlewskiR.edu.scientling.utils;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Created by Razjelll on 02.01.2017.
- */
-
 public class DateUtils {
 
     public static int getYear(Date date) {

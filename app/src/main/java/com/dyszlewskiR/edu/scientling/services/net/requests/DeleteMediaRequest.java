@@ -6,9 +6,9 @@ import com.dyszlewskiR.edu.scientling.services.net.requests.Authentication;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
-public class DeleteMediaRequest {
+class DeleteMediaRequest {
 
-    public static HttpURLConnection prepareConnection(String url, String username, String password) throws IOException {
+    private static HttpURLConnection prepareConnection(String url, String username, String password) throws IOException {
         HttpURLConnection connection = URLConnector.getHttpConnection(url);
         //connection.setDoInput(true);
         connection.setRequestMethod("DELETE");
@@ -18,7 +18,7 @@ public class DeleteMediaRequest {
         return connection;
     }
 
-    public static HttpURLConnection start(long setId, String username, String password, String request) throws IOException {
+    static HttpURLConnection start(long setId, String username, String password, String request) throws IOException {
         String requestUri = request.replace("?", String.valueOf(setId));
         HttpURLConnection connection = prepareConnection(requestUri, username, password);
         connection.connect();

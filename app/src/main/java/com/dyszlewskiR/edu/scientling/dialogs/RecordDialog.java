@@ -1,6 +1,7 @@
 package com.dyszlewskiR.edu.scientling.dialogs;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,10 +19,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dyszlewskiR.edu.scientling.R;
+import com.dyszlewskiR.edu.scientling.data.file.AudioDuration;
 import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
-import com.dyszlewskiR.edu.scientling.data.models.models.Record;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 import com.dyszlewskiR.edu.scientling.utils.UriUtils;
 
@@ -70,6 +72,12 @@ public class RecordDialog extends DialogFragment {
     public void setRecordUri(Uri recordUri) {
         mIsRecord = true;
         mRecordUri = recordUri;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -271,7 +279,18 @@ public class RecordDialog extends DialogFragment {
         mCallback = null;
         mMediaPlayer.release();
         mMediaRecorder.release();
-        getFragmentManager().beginTransaction().remove(this).commit();
+        //getFragmentManager().beginTransaction().remove(this).commit();
+        super.onDismiss(dialogInterface);
+    }
+
+    @Override
+    public void onDestroyView(){
+        Log.d(getClass().getSimpleName(), "onDestroyView");
+        Dialog dialog = getDialog();
+        if(dialog != null && getRetainInstance()){
+            dialog.setDismissMessage(null);
+        }
+        super.onDestroyView();
     }
 
     @Override
@@ -279,8 +298,14 @@ public class RecordDialog extends DialogFragment {
         if (requestCode == OPEN_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 Uri uri = data.getData();
-                mRecordUri = uri;
-                updateRecordUI();
+                if(AudioDuration.checkDuration(uri, getContext())){
+                    mRecordUri = uri;
+                    updateRecordUI();
+                } else {
+                    Toast.makeText(getContext(), getString(R.string.long_records) +
+                            AudioDuration.getMaxDurationSeconds() + getString(R.string.seconds), Toast.LENGTH_LONG)
+                    .show();
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

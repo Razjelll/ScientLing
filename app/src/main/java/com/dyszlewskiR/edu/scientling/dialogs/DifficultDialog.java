@@ -1,5 +1,6 @@
 package com.dyszlewskiR.edu.scientling.dialogs;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -14,10 +15,6 @@ import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
-
-/**
- * Created by Razjelll on 22.03.2017.
- */
 
 public class DifficultDialog extends DialogFragment {
     //korzystamy z tego samego układu który był użyty w PartOfSpeechDialog ponieważ posiada identyczne elementy
@@ -35,6 +32,12 @@ public class DifficultDialog extends DialogFragment {
 
     public interface Callback {
         void onDifficultOk(int difficult);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -85,7 +88,16 @@ public class DifficultDialog extends DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         mCallback = null;
-        getFragmentManager().beginTransaction().remove(this).commit();
+        super.onDismiss(dialogInterface);
+    }
+
+    @Override
+    public void onDestroyView(){
+        Dialog dialog = getDialog();
+        if(dialog != null && getRetainInstance()){
+            dialog.setDismissMessage(null);
+        }
+        super.onDestroyView();
     }
 
     private class PartOfSpeechAdapter extends BaseAdapter {

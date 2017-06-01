@@ -27,9 +27,6 @@ import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 import java.util.List;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class ManageWordsFragment extends Fragment {
 
     private final int ALL_WORDS = 0;

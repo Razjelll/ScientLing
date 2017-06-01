@@ -7,9 +7,6 @@ import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.json.JSONException;
-import org.json.simple.JSONObject;
-
-import java.util.Set;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable.SetsColumns;
 

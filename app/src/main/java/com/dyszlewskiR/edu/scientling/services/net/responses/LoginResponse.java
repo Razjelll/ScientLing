@@ -14,7 +14,8 @@ public class LoginResponse {
     private final String LOGIN = "login";
 
     public static final int LOGIN_SUCCESS = 1;
-    public static final int LOGIN_FAILED = 2;
+    public static final int INCORRECT_DATA = -1;
+    public static final int ERROR = -2;
 
     private HttpURLConnection mConnection;
 
@@ -28,9 +29,9 @@ public class LoginResponse {
             case ResponseStatus.OK:
                 return LOGIN_SUCCESS;
             case ResponseStatus.UNAUTHORIZED:
-                return LOGIN_FAILED;
+                return INCORRECT_DATA;
         }
-        return LOGIN_FAILED;
+        return ERROR;
     }
 
     public String getLogin() throws IOException {
@@ -40,8 +41,7 @@ public class LoginResponse {
         try {
             jsonReader.beginObject();
             if (jsonReader.nextName().equals(LOGIN)) {
-                String login = jsonReader.nextString();
-                return login;
+                return jsonReader.nextString();
             }
         } catch (IOException e) {
 
@@ -52,9 +52,11 @@ public class LoginResponse {
 
     public Params getParams() throws IOException {
         Params params = new Params();
+        int resultCode = getResultCode();
         params.setResponseCode(getResultCode());
-        params.setLogin(getLogin());
-        closeConnection();
+        if(resultCode > 0){
+            params.setLogin(getLogin());
+        }
         return params;
     }
 
@@ -65,6 +67,7 @@ public class LoginResponse {
     public class Params {
         private int mResponseCode;
         private String mLogin;
+        private String mPassword;
 
         public int getResponseCode(){return mResponseCode;}
         public void setResponseCode(int code){mResponseCode = code;}

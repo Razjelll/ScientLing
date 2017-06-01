@@ -1,13 +1,10 @@
 package com.dyszlewskiR.edu.scientling.services.net.services;
 
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Binder;
-import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -23,6 +20,7 @@ import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.preferences.LogPref;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
+import com.dyszlewskiR.edu.scientling.services.net.notifications.SetNotification;
 import com.dyszlewskiR.edu.scientling.services.net.requests.DownloadMediaRequest;
 import com.dyszlewskiR.edu.scientling.services.net.requests.DownloadSetRequest;
 import com.dyszlewskiR.edu.scientling.services.net.responses.DownloadMediaResponse;
@@ -86,11 +84,10 @@ public class DownloadSetsService extends Service {
 
     private class DownloadAsyncTask extends AsyncTask<DownloadingParams, Integer, Void> {
 
-        private int mNotificationId;
+        private SetNotification mNotification;
         private Context mContext;
         private DataManager mDataManager;
-        private Notification.Builder mNotificationBuilder;
-        private NotificationManager mNotificationManager;
+
 
         private long mSetId;
         private String mName;
@@ -105,6 +102,9 @@ public class DownloadSetsService extends Service {
             //większamy liczbę działających zadań
             mRunningTasks++;
             Log.d(getClass().getSimpleName(), "Rozpoczeto zadanie. Liczba zadań: " + mRunningTasks);
+            mNotification = new SetNotification();
+            mNotification.create(getBaseContext());
+            startForeground(mNotification.getId(), mNotification.build());
         }
 
         @Override
@@ -130,15 +130,15 @@ public class DownloadSetsService extends Service {
             DownloadSetRequest request = new DownloadSetRequest(setId, LogPref.getLogin(mContext), LogPref.getPassword(mContext));
             HttpURLConnection connection = null;
             try {
-                createNotification(name, mContext.getString(R.string.database));
+                //createNotification(name, mContext.getString(R.string.database));
+                mNotification.setTitle(name);
+                mNotification.setContent(mContext.getString(R.string.database));
                 connection = request.start();
                 DownloadSetResponse response = new DownloadSetResponse(request.start());
                 VocabularySet set = saveData(response, mDataManager);
                 saveSetInfo(setId, set, mDataManager);
-            } catch (IOException e) {
+            } catch (IOException | ParseException e) {
                 e.printStackTrace(); //TODO wyjątki do obsłużenia
-            } catch (ParseException e) {
-                e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
             } finally {
@@ -204,33 +204,7 @@ public class DownloadSetsService extends Service {
             return random.nextInt(9999);
         }
 
-        private void createNotification(String setName, String whatDownloading) {
-            mNotificationId = randomNotificationNumber();
-            if (mNotificationManager == null) {
-                mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-            }
-            if (mNotificationBuilder == null) {
-                mNotificationBuilder = new Notification.Builder(mContext.getApplicationContext());
-            }
-            mNotificationBuilder.setOngoing(true)
-                    .setContentTitle(setName)
-                    .setContentText(mContext.getString(R.string.downloading) + " : " + whatDownloading)
-                    .setSmallIcon(R.drawable.ic_hint)
-                    .setProgress(100, 0, false);
-            mNotificationManager.notify(mNotificationId, buildNotification());
-        }
 
-        private void setNotificationProgress(int progress) {
-            mNotificationBuilder.setProgress(100, progress, false);
-        }
-
-        private Notification buildNotification() {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                return mNotificationBuilder.getNotification();
-            } else {
-                return mNotificationBuilder.build();
-            }
-        }
 
         private void downloadImages(long setId, String name) {
             downloadMedia(setId, name, MediaType.IMAGES);
@@ -261,9 +235,14 @@ public class DownloadSetsService extends Service {
         private void createMediaNotification(String setName, MediaType mediaType) {
             switch (mediaType) {
                 case IMAGES:
-                    createNotification(setName, mContext.getString(R.string.images));
+                    //createNotification(setName, mContext.getString(R.string.images));
+                    mNotification.setTitle(setName);
+                    mNotification.setContent(mContext.getString(R.string.images)); break;
+
                 case RECORDS:
-                    createNotification(setName, mContext.getString(R.string.records));
+                    //createNotification(setName, mContext.getString(R.string.records));
+                    mNotification.setTitle(setName);
+                    mNotification.setContent(mContext.getString(R.string.records)); break;
             }
         }
 
@@ -293,16 +272,18 @@ public class DownloadSetsService extends Service {
         @Override
         public void onProgressUpdate(Integer... progress) {
             if (progress[0] != 100) {
-                setNotificationProgress(progress[0]);
+                mNotification.setProgress(progress[0]);
             } else {
                 //TODO przerobić notyfikację żeby była cacy
-                mNotificationBuilder.setProgress(0, 0, false)
-                        .setContentText(mName + "\n" + mContext.getString(R.string.finished));
+                mNotification.setProgress(0);
+                mNotification.setContent(mName + "\n" + mContext.getString(R.string.finished));
             }
             if (mCallback != null) {
                 mCallback.onOperationProgress(mSetId, progress[0]);
             }
-            mNotificationManager.notify(mNotificationId, buildNotification());
+            Log.d(getClass().getSimpleName(), "postęp " + progress[0]);
+            mNotification.send();
+            stopForeground(true);
         }
 
         @Override

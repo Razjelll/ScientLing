@@ -9,25 +9,26 @@
     <com.dyszlewskiR.edu.scientling.widgets.SpeechButton
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:id="@+id/speechButton"
+        android:id="@+id/speech_button"
         android:layout_margin="7dp"
         android:layout_gravity="center_vertical"
         />
 
     <include
-    layout="@layout/word_sector"
-    android:id="@+id/chooseWord"
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent"
-        android:layout_weight="1"
-        android:layout_marginLeft = "10dp"
-        />
+        android:id="@+id/chooseWord"
+        layout="@layout/word_sector"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_weight="1" />
 
-    <Button android:id="@+id/say_button"
+    <com.dyszlewskiR.edu.scientling.widgets.SayButton android:id="@+id/say_button"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="@drawable/round_button"
         android:layout_gravity="center_vertical"
+        android:layout_margin="@dimen/margin"
         />
 
 

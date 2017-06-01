@@ -1,5 +1,6 @@
 package com.dyszlewskiR.edu.scientling.dialogs;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -11,10 +12,6 @@ import android.widget.EditText;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.data.models.models.Hint;
-
-/**
- * Created by Razjelll on 23.03.2017.
- */
 
 public class HintDialog extends DialogFragment {
     private final int LAYOUT_RESOURCE = R.layout.dialog_hint;
@@ -39,6 +36,12 @@ public class HintDialog extends DialogFragment {
         void onAddHintOk(Hint hint);
 
         void onEditHintOk(Hint hint);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -100,6 +103,15 @@ public class HintDialog extends DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         mCallback = null;
-        getFragmentManager().beginTransaction().remove(this).commit();
+        super.onDismiss(dialogInterface);
+    }
+
+    @Override
+    public void onDestroyView(){
+        Dialog dialog = getDialog();
+        if(dialog != null && getRetainInstance()){
+            dialog.setDismissMessage(null);
+        }
+        super.onDestroyView();
     }
 }

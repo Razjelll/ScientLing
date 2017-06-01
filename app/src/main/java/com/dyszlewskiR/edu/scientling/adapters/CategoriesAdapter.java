@@ -24,10 +24,6 @@ import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Razjelll on 05.12.2016.
- */
-
 public class CategoriesAdapter extends BaseAdapter implements Filterable {
 
     private final int MENU_EDIT = R.string.edit;
@@ -139,16 +135,6 @@ public class CategoriesAdapter extends BaseAdapter implements Filterable {
         });
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == EDIT_REQUEST) {
-            if (resultCode == Activity.RESULT_OK) {
-                Category category = data.getParcelableExtra("result");
-                mFilteredItems.set(mLastEdited, category);
-                notifyDataSetChanged();
-            }
-        }
-    }
-
     @Override
     public Filter getFilter() {
         if (mFilter == null) {
@@ -158,8 +144,8 @@ public class CategoriesAdapter extends BaseAdapter implements Filterable {
     }
 
     static class ViewHolder {
-        public TextView categoryTextView;
-        public ImageView actionButton;
+        public final TextView categoryTextView;
+        public final ImageView actionButton;
 
         public ViewHolder(View view) {
             categoryTextView = (TextView) view.findViewById(R.id.category_text_view);
@@ -175,7 +161,7 @@ public class CategoriesAdapter extends BaseAdapter implements Filterable {
             FilterResults results = new FilterResults();
             final List<Category> list = mItems;
             int count = list.size();
-            final List<Category> nlist = new ArrayList<Category>(count);
+            final List<Category> nlist = new ArrayList<>(count);
             String itemString;
             for (int i = 0; i < count; i++) {
                 itemString = list.get(i).getName();

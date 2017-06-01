@@ -48,9 +48,6 @@ import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.ArrayList;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class WordEditFragment extends Fragment implements DefinitionDialog.Callback, PartOfSpeechDialog.Callback,
         DifficultDialog.Callback, CategoryDialog.Callback, RecordDialog.Callback, ImageDialog.Callback, SaveWordAsyncTask.Callback {
 
@@ -172,8 +169,9 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
         super.onCreate(savedInstanceState);
         mWord = new Word();
 
-        mDataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
+        mDataManager = LingApplication.getInstance().getDataManager();
         loadData();
+        setRetainInstance(true);
     }
 
     private void loadData() {
@@ -190,7 +188,7 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
         }
         mSet = intent.getParcelableExtra("set");
         if (mSet == null) {
-            long setId = ((LingApplication) getActivity().getApplication()).getCurrentSetId();
+            long setId = LingApplication.getInstance().getCurrentSetId();
             mSet = mDataManager.getSetById(setId);
         }
     }
@@ -215,18 +213,6 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
         return view;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        mIsStateChange = true;
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        mIsStateChange = false;
-    }
-
     private void setupControls(View view) {
         mRootView = view;
         mWordEditText = (EditText) view.findViewById(R.id.word_edit_text);
@@ -239,6 +225,9 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
     public void onViewCreated(View view, Bundle savedInstanceState) {
         setData();
         setListeners();
+        if(mAdvancedContainer != null){
+            loadAdvancedContainer();
+        }
     }
 
     /**
@@ -419,11 +408,7 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
 
     private void setVisibilityAdvancedContainer() {
         if(mAdvancedContainer == null){
-            ViewStub viewStub = (ViewStub)mRootView.findViewById(R.id.more_container);
-            mAdvancedContainer = viewStub.inflate();
-            setupControlsAdvancedContainer(mAdvancedContainer);
-            setDataAdvancedContainer();
-            setAdvancedListener();
+            loadAdvancedContainer();
         } else {
             if (mAdvancedContainer.getVisibility() == View.VISIBLE) {
                 mAdvancedContainer.setVisibility(View.GONE);
@@ -431,6 +416,14 @@ public class WordEditFragment extends Fragment implements DefinitionDialog.Callb
                 mAdvancedContainer.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    private void loadAdvancedContainer(){
+        ViewStub viewStub = (ViewStub)mRootView.findViewById(R.id.more_container);
+        mAdvancedContainer = viewStub.inflate();
+        setupControlsAdvancedContainer(mAdvancedContainer);
+        setDataAdvancedContainer();
+        setAdvancedListener();
     }
 
     private void setupControlsAdvancedContainer(View view){

@@ -6,7 +6,7 @@ import com.dyszlewskiR.edu.scientling.utils.Constants;
  * Created by Razjelll on 17.11.2016.
  */
 
-public class WriteExercise implements IExercise {
+public class WriteExercise implements IExerciseType {
     @Override
     public boolean checkAnswer(String answer, String correctAnswer) {
         String[] correctAnswerArray = correctAnswer.split(Constants.TRANSLATION_SEPARATOR);

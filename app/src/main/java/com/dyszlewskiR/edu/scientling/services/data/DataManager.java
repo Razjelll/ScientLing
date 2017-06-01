@@ -3,7 +3,9 @@ package com.dyszlewskiR.edu.scientling.services.data;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 
+import com.dyszlewskiR.edu.scientling.BuildConfig;
 import com.dyszlewskiR.edu.scientling.data.database.DatabaseHelper;
 import com.dyszlewskiR.edu.scientling.data.database.dao.CategoryDao;
 import com.dyszlewskiR.edu.scientling.data.database.dao.DefinitionDao;
@@ -31,8 +33,6 @@ import com.dyszlewskiR.edu.scientling.data.models.models.PartOfSpeech;
 import com.dyszlewskiR.edu.scientling.data.models.models.Repetition;
 import com.dyszlewskiR.edu.scientling.data.models.models.RepetitionGroup;
 import com.dyszlewskiR.edu.scientling.data.models.models.Sentence;
-import com.dyszlewskiR.edu.scientling.data.models.models.SetDownloadInfo;
-import com.dyszlewskiR.edu.scientling.data.models.models.SetListItem;
 import com.dyszlewskiR.edu.scientling.data.models.models.Translation;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.models.Word;
@@ -53,7 +53,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable.WordsColumns;
@@ -189,7 +188,7 @@ public class DataManager {
         } else {
             definitionDao = mDefinitionDao;
         }
-        long definitionId = 0;
+        long definitionId;
         if (definition != null) {
             definitionId = definitionDao.getIdByContentAndTranslation(definition.getContent(), definition.getTranslation());
             if (definitionId <= 0) {
@@ -202,8 +201,7 @@ public class DataManager {
 
     public long saveCategory(Category category) {
         if (category != null) {
-            long categoryId = mCategoryDao.save(category);
-            return categoryId;
+            return mCategoryDao.save(category);
         }
         return -1;
     }
@@ -221,7 +219,7 @@ public class DataManager {
         if(translationsList==null){
             return;
         }
-        Translation existingTranslation = null;
+        Translation existingTranslation;
         TranslationDao translationDao = mTransactionStarted ? mTranslationDao : new TranslationDao(mDb) ;
 
         for (Translation translation : translationsList) {
@@ -240,7 +238,7 @@ public class DataManager {
     }
 
     private void saveSentences(ArrayList<Sentence> sentencesList, long wordId) {
-        Sentence existingSentence = null;
+        Sentence existingSentence;
         SentenceDao sentenceDao = mTransactionStarted ? mSentenceDao : new SentenceDao(mDb);
         for (Sentence sentece : sentencesList) {
             existingSentence = sentenceDao.getByContent(sentece.getContent());
@@ -258,7 +256,7 @@ public class DataManager {
     }
 
     private void saveHints(List<Hint> hintsList, long wordId) {
-        Hint existingHint = null;
+        Hint existingHint;
         HintDao hintDao = mTransactionStarted ? mHintDao : new HintDao(mDb);
         for (Hint hint : hintsList) {
             existingHint = hintDao.getByContent(hint.getContent());
@@ -353,7 +351,10 @@ public class DataManager {
             words.addAll(newWords);
 
         }
-        assert params.getLimit() <= 0 || words.size() == params.getLimit();
+        if(BuildConfig.DEBUG){
+            assert params.getLimit() <= 0 || words.size() == params.getLimit();
+        }
+
         for (Word word : words) {
             getAndSetTranslations(word);
         }
@@ -429,7 +430,7 @@ public class DataManager {
                 .toString();
         String progressColumn = new StringBuilder(wordCount)
                 .append(" AND ").append(WordsColumns.LEARNING_DATE).append(" IS NOT NULL)")
-                .append("*1.0/").append(wordCount).append(")")
+                .append("*100.0/").append(wordCount).append(")")
                 .toString();
         queryColumns.add(progressColumn);
 
@@ -487,7 +488,8 @@ public class DataManager {
     }
 
     public List<Word> getWords(WordsParams params, boolean onlyOneLesson) {
-        assert params.getSetId() > 0;
+        if(BuildConfig.DEBUG)
+            assert params.getSetId() > 0;
         StringBuilder whereBuilder = new StringBuilder();
 
         ArrayList<String> whereArgumentsList = new ArrayList<>();
@@ -641,9 +643,8 @@ public class DataManager {
         //wykorzystano metodę pobierającą listę słowek aby móc wprowadzić selekcję
         //ograniczamy liste wyników do 1(ponieważ moze być tylko jedna lekcja domyślna)
         //bierzemy tylko pierwszy element z listy pobranych lekcji
-        Lesson lesson = lessonDao.getAll(false, LessonsTable.getColumns(), where, whereArguments,
+        return lessonDao.getAll(false, LessonsTable.getColumns(), where, whereArguments,
                 null, null, null, String.valueOf(1)).get(0);
-        return lesson;
     }
 
     public int getRepetitionsCount(long setId, int date) {
@@ -651,8 +652,7 @@ public class DataManager {
                 .append(WordSelectionBuilder.Parts.AND).append(WordSelectionBuilder.Parts.REPETITION_PART)
                 .toString();
         String[] whereArguments = {String.valueOf(setId), String.valueOf(date)};
-        int count = new WordDao(mDb).getCount(where, whereArguments);
-        return count;
+        return new WordDao(mDb).getCount(where, whereArguments);
     }
 
     public void release() {
@@ -808,11 +808,11 @@ public class DataManager {
                                        SentenceDao sentenceDao, HintDao hintDao, DefinitionDao definitionDao) {
         String selection = WordsColumns.LESSON_FK + "=?";
         String[] selectionArgs = {String.valueOf(lesson.getId())};
-        int deletedWords = wordDao.delete(selection, selectionArgs);
-        int deletedTranslations = translationDao.deleteUnlinked();
-        int deletedSentences = sentenceDao.deleteUnlinked();
-        int deletedHints = hintDao.deleteUnlinked();
-        int deletedDefinitions = definitionDao.deleteUnlinked();
+        wordDao.delete(selection, selectionArgs);
+        translationDao.deleteUnlinked();
+        sentenceDao.deleteUnlinked();
+        hintDao.deleteUnlinked();
+        definitionDao.deleteUnlinked();
     }
 
     /**
@@ -900,8 +900,7 @@ public class DataManager {
                 + " FROM " + WordsTable.TABLE_NAME
                 + " WHERE " + WordsColumns.LESSON_FK + "=?";
         String[] arguments = {String.valueOf(lessonId)};
-        List<String> imageNames = wordDao.getNamesList(query, arguments);
-        return imageNames;
+        return wordDao.getNamesList(query, arguments);
     }
 
     public List<String> getRecordsNamesFromLesson(long lessonId) {
@@ -910,8 +909,7 @@ public class DataManager {
                 + " FROM " + WordsTable.TABLE_NAME
                 + " WHERE " + WordsColumns.LESSON_FK + "=?";
         String[] arguments = {String.valueOf(lessonId)};
-        List<String> recordsNames = wordDao.getNamesList(query, arguments);
-        return recordsNames;
+        return wordDao.getNamesList(query, arguments);
     }
 
     public Language getLanguageById(long id) {
@@ -1035,6 +1033,22 @@ public class DataManager {
             return null;
         }
         return  set.getCatalog();
+    }
+
+    private long getSetId(long globalId){
+        String[] columns = {SetsTable.SetsColumns.ID};
+        String selection = SetsTable.SetsColumns.GLOBAL_ID + "=?";
+        String[] selectionArguments = {String.valueOf(globalId)};
+        SetDao setDao = new SetDao(mDb);
+        VocabularySet set = setDao.get(columns, selection, selectionArguments);
+        if(set == null){
+            return -1;
+        }
+        return  set.getId();
+    }
+
+    public boolean isSetDownloaded(long globalId){
+        return getSetId(globalId) > 0;
     }
 
     public String getUploadingUser(long setId){

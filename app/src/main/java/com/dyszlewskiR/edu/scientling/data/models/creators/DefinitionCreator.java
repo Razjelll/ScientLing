@@ -9,10 +9,6 @@ import static com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTab
 import static com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable.DefinitionsColumns.ID;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable.DefinitionsColumns.TRANSLATION;
 
-/**
- * Created by Razjelll on 12.11.2016.
- */
-
 public class DefinitionCreator  {
 
     public static Definition createFromCursor(Cursor cursor) {

@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class FileSystem {
+class FileSystem {
 
     public static File saveFile(byte[] data, String path) throws IOException {
         File file = new File(path);
@@ -19,19 +19,12 @@ public class FileSystem {
     }
 
     public static File getFile(String path){
-        File file = new File(path);
-        /*if(!file.exists()){
-            return null;
-        }*/
-        return file;
+        return  new File(path);
     }
 
-    public static boolean deleteFile(String path){
+    public static boolean deleteFile(String path) {
         File file = new File(path);
-        if(file.exists()){
-            return file.delete();
-        }
-        return false;
+        return file.exists() && file.delete();
     }
 
     public static void deleteDirectory(String path){

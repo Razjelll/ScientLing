@@ -2,11 +2,6 @@ package com.dyszlewskiR.edu.scientling.activity;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
@@ -17,7 +12,6 @@ import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.fragment.SetsManagerFragment;
 import com.dyszlewskiR.edu.scientling.fragment.SetsServerFragment;
 import com.dyszlewskiR.edu.scientling.preferences.LogPref;
-import com.dyszlewskiR.edu.scientling.widgets.NonSwipeableViewPager;
 
 public class SetsManagerActivity extends AppCompatActivity {
 

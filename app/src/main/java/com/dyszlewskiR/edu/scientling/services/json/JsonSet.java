@@ -1,7 +1,5 @@
 package com.dyszlewskiR.edu.scientling.services.json;
 
-import android.database.Cursor;
-
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 

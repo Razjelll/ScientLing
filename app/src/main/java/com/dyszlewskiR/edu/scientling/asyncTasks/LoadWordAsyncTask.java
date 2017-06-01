@@ -12,10 +12,6 @@ import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * Created by Razjelll on 11.01.2017.
- */
-
 public class LoadWordAsyncTask extends AsyncTask<WordsListParams, Void, WordListAdapter> {
 
     private DataManager mDataManager;
@@ -34,9 +30,8 @@ public class LoadWordAsyncTask extends AsyncTask<WordsListParams, Void, WordList
         } catch (IOException e) {
             e.printStackTrace();
         }
-        WordListAdapter adapter = new WordListAdapter(mFragment.getActivity(), R.layout.item_word_list,
+        return new WordListAdapter(mFragment.getActivity(), R.layout.item_word_list,
                 words, mDataManager);
-        return adapter;
     }
 
     @Override

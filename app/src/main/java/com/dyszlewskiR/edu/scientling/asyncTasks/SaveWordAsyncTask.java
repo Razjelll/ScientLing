@@ -3,7 +3,6 @@ package com.dyszlewskiR.edu.scientling.asyncTasks;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
@@ -16,9 +15,6 @@ import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
 
 import java.io.IOException;
 
-/**
- * Created by Razjelll on 20.01.2017.
- */
 //TODO zastanowić się czy zwracać tylko id czy całe słówko. A może nic nie zwracać
 public class SaveWordAsyncTask extends AsyncTask<SaveWordParams, Void, Word> {
 
@@ -96,10 +92,7 @@ public class SaveWordAsyncTask extends AsyncTask<SaveWordParams, Void, Word> {
     }
 
     private long saveWord(Word word) {
-        long wordId = mDataManager.saveWord(word);
-        //zmiana informacji na dialogu
-
-        return wordId;
+        return mDataManager.saveWord(word);
     }
 
     private void updateWord(Word word) {

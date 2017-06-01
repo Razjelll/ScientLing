@@ -1,12 +1,8 @@
 package com.dyszlewskiR.edu.scientling.data.database.tables;
 
-/**
- * Created by Razjelll on 11.11.2016.
- */
-
 public class DefinitionsTable {
     public static final String TABLE_NAME = "Definitions";
-    public static final String ALIAS = "D";
+    private static final String ALIAS = "D";
     public static final String ALIAS_DOT = ALIAS + ".";
 
     public static String[] getColumns() {

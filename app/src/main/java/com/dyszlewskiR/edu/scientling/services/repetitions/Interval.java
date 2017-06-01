@@ -2,10 +2,6 @@ package com.dyszlewskiR.edu.scientling.services.repetitions;
 
 import android.util.Pair;
 
-/**
- * Created by Razjelll on 09.01.2017.
- */
-
 public class Interval {
     public enum State {
         START,
@@ -30,17 +26,17 @@ public class Interval {
         return 0;
     }
 
-    public static int getNextMasterLevel(int masterLevel) {
+    public static byte getNextMasterLevel(byte masterLevel) {
         for (int i = mIntervals.length - 1; i >= 0; i--) {
             if (mIntervals[i].first <= masterLevel) {
                 if (i != mIntervals.length - 1) {
-                    return mIntervals[i + 1].first;
+                    return mIntervals[i + 1].first.byteValue();
                 } else {
-                    return mIntervals[mIntervals.length - 1].first;
+                    return mIntervals[mIntervals.length - 1].first.byteValue();
                 }
             }
         }
-        return mIntervals[0].first;// zwracane jeśli masterLevel = 0
+        return mIntervals[0].first.byteValue();// zwracane jeśli masterLevel = 0
     }
 
     public static State getLearningState(int masterLevel) {

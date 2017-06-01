@@ -1,45 +1,49 @@
 package com.dyszlewskiR.edu.scientling.dialogs;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.ArrayAdapter;
+import android.app.AlertDialog;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.activity.ExerciseActivity;
+import com.dyszlewskiR.edu.scientling.services.exercises.ExerciseType;
 
-import java.util.Arrays;
-import java.util.List;
+public class ExercisesListDialogFragment extends DialogFragment{
+    private int mCurrentExercise;
+    private Callback mCallback;
 
-/**
- * Created by Razjelll on 06.01.2017.
- */
+    public interface Callback{
+        void onClick(int position);
+    }
 
-public class ExercisesListDialogFragment extends DialogFragment implements DialogInterface.OnClickListener {
-
-    // private ExercisesTypesAdapter mAdapter;
-    private ArrayAdapter<String> mAdapter;
-    private List<String> mExerciseNames;
-    private int mSelectedItem;
+    public void init(int currentExercise, Callback callback){
+        mCurrentExercise = currentExercise;
+        mCallback = callback;
+    }
 
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mExerciseNames = Arrays.asList(getResources().getStringArray(R.array.exercises_types));
-        Bundle arguments = getArguments();
-        mSelectedItem = arguments.getInt("selected");
-        /*mAdapter = new ExercisesTypesAdapter(getActivity().getBaseContext(), R.layout.item_exercises_types_dialog,
-                mExerciseNames, mSelectedItem);*/
-        mAdapter = new ArrayAdapter<String>(getActivity().getBaseContext(), R.layout.item_exercises_types_dialog, mExerciseNames);
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState){
+        final ExerciseType[] exerciseTypes = ExerciseType.values();
+        String[] exercisesNames = new String[exerciseTypes.length];
+        for(int i=0; i<exerciseTypes.length; i++){
+            exercisesNames[i] = getActivity().getString(exerciseTypes[i].getNameResource());
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        //builder.setAdapter(mAdapter, this);
-        builder.setSingleChoiceItems(R.array.exercises_types, mSelectedItem, new DialogInterface.OnClickListener() {
+        builder.setTitle(getString(R.string.choosing_exercise));
+        builder.setSingleChoiceItems(exercisesNames, mCurrentExercise, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ExerciseActivity activity = (ExerciseActivity) getActivity();
-                activity.setExerciseFragment(which + 1);
+                if(mCallback != null){
+                    mCallback.onClick(exerciseTypes[which].getPosition());
+                }
                 dismiss();
             }
         });
@@ -47,7 +51,17 @@ public class ExercisesListDialogFragment extends DialogFragment implements Dialo
     }
 
     @Override
-    public void onClick(DialogInterface dialog, int which) {
-        Log.d(getClass().getSimpleName(), "Wybrano " + which);
+    public void onDismiss(DialogInterface dialogInterface){
+        mCallback = null;
+        super.onDismiss(dialogInterface);
+    }
+
+    @Override
+    public void onDestroyView(){
+        Dialog dialog = getDialog();
+        if(dialog != null && getRetainInstance()){
+            dialog.setDismissMessage(null);
+        }
+        super.onDestroyView();
     }
 }

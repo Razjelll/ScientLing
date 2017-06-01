@@ -177,7 +177,7 @@ public class LessonsAdapter extends BaseAdapter {
             int wordCount = dataManager.getWordsCountInLesson(lesson.getId());
             String message = context.getString(R.string.sure_delete_category) + "\n"
                     + lesson.getNumber() + " " + lesson.getName();
-            String positiveButtonText = null;
+            String positiveButtonText;
             if (wordCount != 0) {
                 positiveButtonText = mContext.getString(R.string.delete_with_words);
                 message += "\n" + mContext.getString(R.string.word_lesson_connection) + " " + wordCount;

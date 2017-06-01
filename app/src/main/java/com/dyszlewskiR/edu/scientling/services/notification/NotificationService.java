@@ -21,13 +21,7 @@ import com.dyszlewskiR.edu.scientling.utils.DateUtils;
 
 import java.util.List;
 
-/**
- * Created by Razjelll on 25.03.2017.
- */
-
 public class NotificationService extends Service {
-
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -42,12 +36,10 @@ public class NotificationService extends Service {
     }
 
     private void checkRepetition() {
-        // new Thread(new Runnable(){
-        //public void run(){
         DataManager dataManager = ((LingApplication) getApplication()).getDataManager();
         List<VocabularySet> sets = dataManager.getSets();
         StringBuilder stringBuilder = null;
-        int repetitionCount = 0;
+        int repetitionCount;
         Log.d(getClass().getName(), "sets : " + sets.size());
         for (VocabularySet set : sets) {
             repetitionCount = getRepetitionToday(set.getId(), dataManager);
@@ -63,9 +55,6 @@ public class NotificationService extends Service {
             Log.d(getClass().getName(), stringBuilder.toString());
             createNotification(stringBuilder.toString());
         }
-
-        //}
-        //}//).start();
     }
 
     private int getRepetitionToday(long setId, DataManager dataManager) {
@@ -103,5 +92,4 @@ public class NotificationService extends Service {
         notificationManager.notify(456, notification);
         Log.d(getClass().getName(), "notificationManager.notify");
     }
-
 }

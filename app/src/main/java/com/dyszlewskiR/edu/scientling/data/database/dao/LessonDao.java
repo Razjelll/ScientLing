@@ -4,10 +4,10 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.dyszlewskiR.edu.scientling.BuildConfig;
 import com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable;
 import com.dyszlewskiR.edu.scientling.data.models.creators.LessonCreator;
 import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
-import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,11 +94,9 @@ public class LessonDao extends BaseDao<Lesson> {
     public List<Lesson> getAll(boolean distinct, String[] columns, String selection, String[] selectionArgs,
                                String groupBy, String having, String orderBy, String limit) {
         List<Lesson> lessonsList = new ArrayList<>();
-        /*Cursor cursor = mDb.query(distinct, LessonsTable.TABLE_NAME, columns, selection, selectionArgs,
-                groupBy, having, orderBy, limit);*/
         Cursor cursor = getAllCursor(distinct, columns, selection, selectionArgs, groupBy, having, orderBy,limit);
         if (cursor.moveToFirst()) {
-            Lesson lesson = null;
+            Lesson lesson;
             do {
                 lesson = LessonCreator.createFromCursor(cursor);
                 if (lesson != null) {
@@ -107,7 +105,8 @@ public class LessonDao extends BaseDao<Lesson> {
             } while (cursor.moveToNext());
         }
         closeCursor(cursor);
-        assert cursor.isClosed();
+        if(BuildConfig.DEBUG)
+            assert cursor.isClosed();
 
         return lessonsList;
     }

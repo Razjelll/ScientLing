@@ -1,6 +1,8 @@
 package com.dyszlewskiR.edu.scientling.services.exercises;
 
-import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
+import android.os.Build;
+
+import com.dyszlewskiR.edu.scientling.BuildConfig;
 import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
@@ -24,13 +26,9 @@ public class L2toL1 implements IExerciseDirection {
     }
 
     @Override
-    public String getTranscription(Word word) {
-        return word.getTranscription();
-    }
-
-    @Override
     public String[] getAnswers(List<Word> words) {
-        assert words != null && words.size() != 0;
+        if(BuildConfig.DEBUG)
+            assert words != null && words.size() != 0;
         int length = words.size();
         String[] answers = new String[length];
         for (int i = 0; i < length; i++) {
@@ -38,10 +36,5 @@ public class L2toL1 implements IExerciseDirection {
             answers[i] = TranslationListConverter.toString(words.get(i).getTranslations());
         }
         return answers;
-    }
-
-    @Override
-    public String getCode(VocabularySet set) {
-        return set.getLanguageL2().getCode();
     }
 }

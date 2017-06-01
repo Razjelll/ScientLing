@@ -39,10 +39,6 @@ public class CategorySelectionFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = getActivity().getIntent();
-        /*VocabularySet set = intent.getParcelableExtra("set");
-        mLanguageL1Id = set.getLanguageL1().getId();*/
-
         DataManager dataManager = ((LingApplication) getActivity().getApplication()).getDataManager();
         mItems = dataManager.getCategories();
     }

@@ -3,14 +3,9 @@ package com.dyszlewskiR.edu.scientling.data.models.creators;
 import android.database.Cursor;
 
 import com.dyszlewskiR.edu.scientling.data.models.models.Category;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable.CategoriesColumns.ID;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable.CategoriesColumns.NAME;
-
-/**
- * Created by Razjelll on 12.11.2016.
- */
 
 public class CategoryCreator  {
 
@@ -31,10 +26,4 @@ public class CategoryCreator  {
     }
 
     private static final String CATEGORY_ID = "category";
-
-    public static Category createFromJson(JsonNode node){
-        Category category = new Category();
-        category.setId(node.path(CATEGORY_ID).asLong());
-        return category;
-    }
 }

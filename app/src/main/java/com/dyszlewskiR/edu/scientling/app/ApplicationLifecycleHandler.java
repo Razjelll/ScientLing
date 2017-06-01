@@ -10,11 +10,7 @@ import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.services.notification.ReminderAlarmManager;
 
-/**
- * Created by Razjelll on 29.03.2017.
- */
-
-public class ApplicationLifecycleHandler implements Application.ActivityLifecycleCallbacks, ComponentCallbacks2 {
+class ApplicationLifecycleHandler implements Application.ActivityLifecycleCallbacks, ComponentCallbacks2 {
 
     private static final String TAG = ApplicationLifecycleHandler.class.getSimpleName();
     private static boolean mIsInBackground = true; //ustawiamy na true, aby onActivityResumed zostało wykonane przy pierwszym uruchomieniu

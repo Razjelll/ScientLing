@@ -67,91 +67,9 @@ public class MediaSetRequest {
         return connection;
     }
 
-    protected HttpURLConnection start(String request, String filesFolder) throws IOException, JSONException {
+    protected HttpURLConnection start(String request, String filesFolder) throws IOException {
         HttpURLConnection connection = createConnection(request);
-        OutputStream outputStream = connection.getOutputStream();
         connection.connect();
-        //uploadFiles(outputStream, getSetId(), filesFolder);
         return connection;
-    }
-
-    private void uploadFiles(OutputStream outputStream, long setId, String filesFolder) throws JSONException, IOException {
-        DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-        //setMeta(dataOutputStream, META_NAME, prepareMetaJson(setId));
-        setFile(dataOutputStream, FILE_NAME, FILENAME, filesFolder);
-        dataOutputStream.close();
-    }
-
-    protected void setMeta(DataOutputStream dataOutputStream, String name, String content) throws IOException {
-        if(dataOutputStream!= null){
-            dataOutputStream.writeBytes(TWO_HYPNES+MULTIPART_BOUNDARY);
-            dataOutputStream.writeBytes(LINE_END);
-
-            dataOutputStream.writeBytes("Content-Disposition: form-data; name="+name);
-            dataOutputStream.writeBytes(LINE_END);
-            dataOutputStream.writeBytes("Content-Type: application/json");
-            dataOutputStream.writeBytes(LINE_END);
-            dataOutputStream.writeBytes(LINE_END);
-            dataOutputStream.writeBytes(content);
-            dataOutputStream.writeBytes(LINE_END);
-
-            //dataOutputStream.writeBytes(TWO_HYPNES+MULTIPART_BOUNDARY+TWO_HYPNES);
-            dataOutputStream.writeBytes(TWO_HYPNES+MULTIPART_BOUNDARY);
-            dataOutputStream.writeBytes(LINE_END);
-            dataOutputStream.flush();
-        }
-    }
-
-    protected  void setFile(DataOutputStream dataOutputStream, String name, String fileName, String mediaType) throws IOException {
-        /*dataOutputStream.writeBytes(TWO_HYPNES+MULTIPART_BOUNDARY);
-        dataOutputStream.writeBytes(LINE_END);
-
-        dataOutputStream.writeBytes("Content-Disposition: form-data; name="+name+"; filename="+fileName);
-        dataOutputStream.writeBytes(LINE_END);
-        dataOutputStream.writeBytes("Content-Type: application/octet-stream");
-        dataOutputStream.writeBytes(LINE_END);
-        dataOutputStream.writeBytes(LINE_END);*/
-        uploadFile(dataOutputStream,mediaType);
-        /*dataOutputStream.writeBytes(LINE_END);
-
-        dataOutputStream.writeBytes(TWO_HYPNES+MULTIPART_BOUNDARY+TWO_HYPNES);
-        dataOutputStream.writeBytes(LINE_END);
-        dataOutputStream.flush();*/
-    }
-
-    protected void uploadFile(DataOutputStream outputStream, String folderName) throws IOException {
-        ZipOutputStream zipOutputStream = new ZipOutputStream(outputStream);
-        final File folder = MediaFileSystem.getCatalog(mSetCatalog, mContext);
-        if(!folder.exists()){
-            return;
-        }
-        int entriesCount = 0;
-        for (final File fileEntry : folder.listFiles()) {
-            if (fileEntry.isDirectory() && fileEntry.getName().equals(folderName)) {
-                for (final File imageEntry : fileEntry.listFiles()) {
-                    ZipEntry entry = new ZipEntry(imageEntry.getName());
-                    zipOutputStream.putNextEntry(entry);
-                    entriesCount++;
-                    FileInputStream inputStream = new FileInputStream(imageEntry);
-                    int data;
-                    byte[] buffer = new byte[CHUNK_SIZE];
-                    while (inputStream.read(buffer) != -1) {
-                        //zipOutputStream.write(inputStream.read());
-                        zipOutputStream.write(buffer);
-                        zipOutputStream.flush();
-                    }
-
-                    zipOutputStream.closeEntry();
-                    inputStream.close();
-                }
-            }
-        }
-    }
-
-    private final String SET_ID = "id";
-    protected String prepareMetaJson(long setId) throws JSONException {
-        JSONObject object = new JSONObject();
-        object.put(SET_ID, setId);
-        return object.toString();
     }
 }

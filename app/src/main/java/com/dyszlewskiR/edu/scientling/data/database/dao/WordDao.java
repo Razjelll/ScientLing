@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.dyszlewskiR.edu.scientling.BuildConfig;
 import com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable;
@@ -284,7 +285,8 @@ public class WordDao extends BaseDao<Word> {
         Cursor cursor = getAllCursor(distinct, selection,selectionArgs, groupBy, having, orderBy, limit);
         List<Word> wordsList = getWordsListFromCursor(cursor);
         closeCursor(cursor);
-        assert cursor.isClosed();
+        if(BuildConfig.DEBUG)
+            assert cursor.isClosed();
 
         return wordsList;
     }

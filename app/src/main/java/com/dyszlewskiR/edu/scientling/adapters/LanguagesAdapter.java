@@ -67,7 +67,6 @@ public class LanguagesAdapter extends ArrayAdapter {
      */
     @Override
     public View getDropDownView(int position, View convertView, ViewGroup parent) {
-        RecyclerView.ViewHolder viewHolder;
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(mResource, null);

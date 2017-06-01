@@ -13,10 +13,6 @@ import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 
 import java.util.List;
 
-/**
- * Created by Razjelll on 08.01.2017.
- */
-
 public class CurrentSetAdapter extends ArrayAdapter<VocabularySet> {
     private List<VocabularySet> mItems;
     private Context mContext;

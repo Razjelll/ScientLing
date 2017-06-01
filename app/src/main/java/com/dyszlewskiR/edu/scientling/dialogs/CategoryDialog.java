@@ -1,5 +1,6 @@
 package com.dyszlewskiR.edu.scientling.dialogs;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -27,10 +28,6 @@ import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Razjelll on 22.03.2017.
- */
-
 public class CategoryDialog extends DialogFragment {
     private final int LAYOUT_RESOURCE = R.layout.dialog_category;
     private final int ADAPTER_ITEM_RESOURCE = R.layout.item_part_of_speech;
@@ -38,7 +35,6 @@ public class CategoryDialog extends DialogFragment {
     private EditText mSearchEditText;
     private ListView mListView;
     private Callback mCallback;
-    private Category mCurrentCategory;
 
     private List<Category> mItems;
     private CategoryAdapter mAdapter;
@@ -47,12 +43,14 @@ public class CategoryDialog extends DialogFragment {
         mCallback = callback;
     }
 
-    public void setCurrentCategory(Category category) {
-        mCurrentCategory = category;
-    }
-
     public interface Callback {
         void onCategoryOk(Category category);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -104,14 +102,23 @@ public class CategoryDialog extends DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         mCallback = null;
-        getFragmentManager().beginTransaction().remove(this).commit();
+        super.onDismiss(dialogInterface);
+    }
+
+    @Override
+    public void onDestroyView(){
+        Dialog dialog = getDialog();
+        if(dialog != null && getRetainInstance()){
+            dialog.setDismissMessage(null);
+        }
+        super.onDestroyView();
     }
 
     private class CategoryAdapter extends BaseAdapter implements Filterable {
 
-        private Context mContext;
-        private int mResource;
-        private LayoutInflater mInflater;
+        private final Context mContext;
+        private final int mResource;
+        private final LayoutInflater mInflater;
 
         private ValueFilter mFilter;
         private List<Category> mFilteredItems;
@@ -149,7 +156,7 @@ public class CategoryDialog extends DialogFragment {
             }
             TextView view = (TextView) convertView;
             if (mFilteredItems.get(position) != null) { //TODO zastanowić się czy taki przypadek może wystąpić
-                String text = ResourceUtils.getString(mFilteredItems.get(position).getName(), getContext());
+                String text = ResourceUtils.getString(mFilteredItems.get(position).getName(), mContext);
                 view.setText(text);
             }
             return view;
@@ -166,15 +173,15 @@ public class CategoryDialog extends DialogFragment {
         private class ValueFilter extends Filter {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-                String fileterString = constraint.toString().toLowerCase();
+                String filterString = constraint.toString().toLowerCase();
                 FilterResults results = new FilterResults();
                 final List<Category> list = mItems;
                 int count = list.size();
-                final List<Category> nList = new ArrayList<Category>(count);
+                final List<Category> nList = new ArrayList<>(count);
                 String itemString;
                 for (int i = 0; i < count; i++) {
-                    itemString = ResourceUtils.getString(list.get(i).getName(), getContext());
-                    if (itemString.toLowerCase().contains(fileterString)) {
+                    itemString = ResourceUtils.getString(list.get(i).getName(), mContext);
+                    if (itemString.toLowerCase().contains(filterString)) {
                         nList.add(mItems.get(i));
                     }
                 }

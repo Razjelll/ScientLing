@@ -5,13 +5,9 @@ import android.content.Context;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * Created by Razjelll on 07.11.2016.
- */
-
 public class AssetsFileOpener extends AndroidFileOpener {
 
-    private Context mContext;
+    private final Context mContext;
 
     public AssetsFileOpener(Context context) {
         mContext = context;

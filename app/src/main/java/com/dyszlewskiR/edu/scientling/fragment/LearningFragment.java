@@ -1,9 +1,7 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
-
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.activity.SummaryLearningActivity;
@@ -37,17 +36,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class LearningFragment extends Fragment implements ISpeechCallback {
 
-    private final String TAG = "LearningFragment";
+    private final String LOG_TAG = "LearningFragment";
 
-    private final int SENTENCES_FRAGMENT = 0;
-    private final int IMAGE_FRAGMENT = 1;
-    private final int DEFINITION_FRAGMENT = 2;
-    private final int HINTS_FRAGMENT = 3;
+    private static final int SENTENCES = 0;
+    private static final int IMAGE = 1;
+    private static final int DEFINITION = 2;
+    private static final int HINTS = 3;
 
     private List<Word> mWords;
     private LinearLayout mLayout;
@@ -58,13 +54,10 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
     private TextView mCategoryTextView;
     private SpeechButton mSpeechButton;
     private FrameLayout mFragmentsFrame;
-    private ImageButton mSentencesButton;
-    private ImageButton mImageButton;
-    private ImageButton mDefinitionButton;
-    private ImageButton mHintsButton;
     private Button mPreviousButton;
     private Button mNextButton;
 
+    private ImageButton[] mElementsButtons;
     private Fragment mFragment;
     private FragmentManager mFragmentManager;
     private int mCurrentFragment;
@@ -75,7 +68,6 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
 
     private int mCurrentPosition;
     private boolean mLearningMode;
-
 
     public LearningFragment() {
     }
@@ -90,21 +82,40 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
         mSet = intent.getParcelableExtra("set");
 
         mFragmentManager = getFragmentManager();
-        mCurrentFragment = -1; //TODO wstawiona wartośćdomyślna
         mCurrentPosition = 0;
 
-        mSpeechPlayer = new SpeechPlayer(getContext());
-        mSpeechPlayer.setCallback(this);
-        mSpeechPlayer.setSet(mSet);
-        mSpeechPlayer.setWord(mWords.get(mCurrentPosition));
+        initSpeechPlayer();
+        if(savedInstanceState != null){
+            mCurrentFragment = savedInstanceState.getInt("fragment");
+        } else {
+            mCurrentFragment = -1;
+        }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState){
+        outState.putInt("fragment", mCurrentFragment);
+        super.onSaveInstanceState(outState);
+    }
+
+    private void initSpeechPlayer() {
+        mSpeechPlayer = new SpeechPlayer(getContext());
+        mSpeechPlayer.setMediaCatalog(mSet.getCatalog());
+        mSpeechPlayer.setLanguageCode(mSet.getLanguageL2().getCode());
+        mSpeechPlayer.setCallback(this);
+        Word word = mWords.get(mCurrentPosition);
+        mSpeechPlayer.setWord(word.getContent(), word.getRecordName());
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_learning, container, false);
+        setupControls(view);
+        return view;
+    }
 
+    private void setupControls(View view) {
         mLayout = (LinearLayout) view.findViewById(R.id.layouts_container);
         mFragmentContainer = (RelativeLayout) view.findViewById(R.id.fragment_container);
         mContentTextView = (TextView) view.findViewById(R.id.word_content_text_view);
@@ -113,14 +124,16 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
         mCategoryTextView = (TextView) view.findViewById(R.id.word_category_text_view);
         mSpeechButton = (SpeechButton) view.findViewById(R.id.speech_button);
         mFragmentsFrame = (FrameLayout) view.findViewById(R.id.fragment_frame_layout);
-        mSentencesButton = (ImageButton) view.findViewById(R.id.sentences_button);
-        mImageButton = (ImageButton) view.findViewById(R.id.image_button);
-        mDefinitionButton = (ImageButton) view.findViewById(R.id.definition_button);
-        mHintsButton = (ImageButton) view.findViewById(R.id.hints_button);
+
+        mElementsButtons = new ImageButton[4];
+        mElementsButtons[SENTENCES] = (ImageButton) view.findViewById(R.id.sentences_button);
+        mElementsButtons[DEFINITION] = (ImageButton) view.findViewById(R.id.definition_button);
+        mElementsButtons[IMAGE] = (ImageButton) view.findViewById(R.id.image_button);
+        mElementsButtons[HINTS] = (ImageButton) view.findViewById(R.id.hints_button);
+
         mPreviousButton = (Button) view.findViewById(R.id.previous_button);
         mNextButton = (Button) view.findViewById(R.id.next_button);
 
-        return view;
     }
 
     @Override
@@ -142,64 +155,29 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
      * Metoda sprawdza, czy potrzebne wartości do stworzenia fragmentu są potrzebne,
      * i zwraca numer pierwszego fragmentu, który będzie miał potrzebnyą wartość.
      *
-     * @param position pozycja elementu na liście słówek
      * @return numer fragmentu który zostanie umieszczony w miejscu Framelayout
      */
-    private int getNumberExistingFragment(int position) {
-        if (mWords.get(position).hasSentences()) {
-            return SENTENCES_FRAGMENT;
-        }
-        if (mWords.get(position).hasDefinition()) {
-            return DEFINITION_FRAGMENT;
-        }
-        if (MediaFileSystem.checkMediaExist(mWords.get(position).getImageName(), mSet.getCatalog(), MediaType.IMAGES, getContext())) {
-            return IMAGE_FRAGMENT;
-        }
-
-        //TODO pobieranie i ustawianie obrazka
-        if (mWords.get(position).hasHints()) {
-            return HINTS_FRAGMENT;
+    private int getNumberExistingFragment() {
+        for (int i = 0; i < mElementsButtons.length; i++) {
+            if (mElementsButtons[i].getVisibility() == View.VISIBLE) {
+                return i;
+            }
         }
         return -1;
     }
 
     private void setListeners() {
-        mSentencesButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCurrentFragment != SENTENCES_FRAGMENT) {
-                    replaceFragment(SENTENCES_FRAGMENT, mCurrentPosition);
-                    mCurrentFragment = SENTENCES_FRAGMENT;
+        for (int i = 0; i < mElementsButtons.length; i++) {
+            final int element = i;
+            mElementsButtons[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mCurrentFragment != element) {
+                        replaceFragment(element, mCurrentPosition);
+                    }
                 }
-            }
-        });
-        mImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCurrentFragment != IMAGE_FRAGMENT) {
-                    replaceFragment(IMAGE_FRAGMENT, mCurrentPosition);
-                    mCurrentFragment = IMAGE_FRAGMENT;
-                }
-            }
-        });
-        mDefinitionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCurrentFragment != DEFINITION_FRAGMENT) {
-                    replaceFragment(DEFINITION_FRAGMENT, mCurrentPosition);
-                    mCurrentFragment = DEFINITION_FRAGMENT;
-                }
-            }
-        });
-        mHintsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mCurrentFragment != HINTS_FRAGMENT) {
-                    replaceFragment(HINTS_FRAGMENT, mCurrentPosition);
-                    mCurrentFragment = HINTS_FRAGMENT;
-                }
-            }
-        });
+            });
+        }
 
         mSpeechButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,7 +185,6 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
                 speech();
             }
         });
-
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -224,114 +201,87 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
     }
 
     private void speech() {
-        mSpeechButton.setLoading(true);
+        if (!mSpeechPlayer.isInitialized()) {
+            mSpeechButton.setState(SpeechButton.LOADING);
+        }
         try {
-            mSpeechPlayer.speech();
+            mSpeechPlayer.speak();
         } catch (IOException e) {
-            e.printStackTrace();
+            Toast.makeText(getContext(), getString(R.string.play_record_error), Toast.LENGTH_SHORT);
         }
     }
 
     private void nextWord() {
         if (mCurrentPosition != mWords.size() - 1) {
-            final Animation animationIn = AnimationUtils.makeInAnimation(getActivity(), false);
-            Animation animationOut = AnimationUtils.makeOutAnimation(getActivity(), false);
-            animationOut.setAnimationListener(new Animation.AnimationListener() {
-                @Override
-                public void onAnimationStart(Animation animation) {
-
-                }
-
-                @Override
-                public void onAnimationEnd(Animation animation) {
-                    mCurrentPosition++;
-                    mSpeechPlayer.setWord(mWords.get(mCurrentPosition));
-                    fillComponents(mCurrentPosition);
-                    mLayout.startAnimation(animationIn);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animation animation) {
-
-                }
-            });
-            mLayout.startAnimation(animationOut);
+            mCurrentPosition++;
+            startAnimation(false);
         } else {
-            //TODO może dodać jakiś komunikat;
-            resetColorButtons();
+            //resetColorButtons();
             startSummaryActivity();
         }
     }
 
-    private void startSummaryActivity() {
-        Intent intent = new Intent(getActivity(), SummaryLearningActivity.class);
-
-        ArrayList<Word> arrayList = new ArrayList<>(mWords);
-        intent.putParcelableArrayListExtra("items", arrayList);
-        getActivity().setResult(Activity.RESULT_OK);
-        getActivity().startActivity(intent);
-        getActivity().finish();
-        //ActivityCompat.finishAffinity(getActivity());
-    }
-
-    /**
-     * Metoda resetujące kolor przycisków. Należy wykonać tę metodę przed przejściem do innej aktywności,
-     * ponieważ w przypadku zmiany koloru przycisku na zielony ustawienie to moze być zapamiętane
-     * i wszystkie przycisku korzystające z danego kształtu będą miały ten kolor.
-     */
-    private void resetColorButtons() {
-        GradientDrawable buttonShape = (GradientDrawable) mSentencesButton.getBackground().getCurrent();
-        buttonShape.setColor(getResources().getColor(R.color.colorMain));
-
-    }
-
-    private void previousWord() {
-        final Animation animationIn = AnimationUtils.makeInAnimation(getActivity(), true);
-        Animation animationOut = AnimationUtils.makeOutAnimation(getActivity(), true);
+    private void startAnimation(boolean previousAnimation) {
+        final Animation animationIn = AnimationUtils.makeInAnimation(getActivity(), previousAnimation);
+        Animation animationOut = AnimationUtils.makeOutAnimation(getActivity(), previousAnimation);
         animationOut.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                mCurrentPosition--;
-                mSpeechPlayer.setWord(mWords.get(mCurrentPosition));
-                fillComponents(mCurrentPosition);
+                //po zakończeniu pierwszej animacji(znikanie zawartości ekranu) ustawiamy kolejne słówko
+                //oraz uruchamiamy drugą animację (animację pojawienia się zawartości)
+                setWord();
                 mLayout.startAnimation(animationIn);
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) {
-
             }
         });
         mLayout.startAnimation(animationOut);
     }
 
-    private void fillComponents(int position) {
-        setTexts(position);
-
-        int newFragmentNumber = getNumberExistingFragment(position);
-
-        if (newFragmentNumber == -1) {
-            mFragmentContainer.setVisibility(View.INVISIBLE);
-        } else {
-            if (mFragmentContainer.getVisibility() == View.INVISIBLE) {
-                mFragmentContainer.setVisibility(View.VISIBLE);
-            }
-        }
-        if (newFragmentNumber == mCurrentFragment || newFragmentNumber == -1) {
-            fillFrameLayout(position);
-        } else {
-            replaceFragment(newFragmentNumber, position);
-        }
-        mRecordUri = MediaFileSystem.getMediaUri(mWords.get(position).getRecordName(), mSet.getCatalog(),MediaType.RECORDS, getContext());
-        arrangeVisibilityButtons(position);
-
+    private void setWord() {
+        Word word = mWords.get(mCurrentPosition);
+        mSpeechPlayer.setWord(word.getContent(), word.getRecordName());
+        fillComponents(mCurrentPosition);
     }
 
+    private void startSummaryActivity() {
+        Intent intent = new Intent(getActivity(), SummaryLearningActivity.class);
+        ArrayList<Word> arrayList = new ArrayList<>(mWords);
+        intent.putParcelableArrayListExtra("items", arrayList);
+        getActivity().setResult(Activity.RESULT_OK);
+        getActivity().startActivity(intent);
+        getActivity().finish();
+    }
+
+    private void previousWord() {
+        mCurrentPosition--;
+        startAnimation(true);
+    }
+
+    private void fillComponents(int position) {
+        setTexts(position);
+        setVisibilityButtons(position);
+        int newFragmentNumber;
+        if(mCurrentFragment < 0){
+            newFragmentNumber = getNumberExistingFragment();
+        } else {
+            newFragmentNumber = mCurrentFragment;
+        }
+        replaceFragment(newFragmentNumber, position);
+
+        mRecordUri = MediaFileSystem.getMediaUri(mWords.get(position).getRecordName(), mSet.getCatalog(), MediaType.RECORDS, getContext());
+    }
+
+    /**
+     * Metoda ustawiająca wartości tekstowe w pola dotyczące słówka w aktywności
+     * @param position numer aktualnego słowka
+     */
     private void setTexts(int position) {
         mContentTextView.setText(mWords.get(position).getContent());
         String translations = TranslationListConverter.toString(mWords.get(position).getTranslations());
@@ -345,105 +295,41 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
         }
     }
 
-    //TODO tymczasowa nazwa
-    private void arrangeVisibilityButtons(int position) {
-        //jeżeli nie ma przykładowych zdań chowamy przycisk
-        if (!mWords.get(position).hasSentences()) {
-            mSentencesButton.setVisibility(View.GONE);
-        } else {
-            mSentencesButton.setVisibility(View.VISIBLE);
-        }
-
-        if (!mWords.get(position).hasDefinition()) {
-            mDefinitionButton.setVisibility(View.GONE);
-        } else {
-            mDefinitionButton.setVisibility(View.VISIBLE);
-        }
-        if (MediaFileSystem.checkMediaExist(mWords.get(position).getImageName(), mSet.getCatalog(),MediaType.IMAGES, getContext())) {
-            mImageButton.setVisibility(View.VISIBLE);
-        } else {
-            mImageButton.setVisibility(View.GONE);
-        }
-        //TODO ukrywanie i pokazywanie guzika obrazka
-
-        if (!mWords.get(position).hasHints()) {
-            mHintsButton.setVisibility(View.GONE);
-        } else {
-            mHintsButton.setVisibility(View.VISIBLE);
-        }
-
-        //ustawianie przycisków nawigacji
-        //TODO można zrobić, że jeśli jest ustawione dobrze nie ustawiamy ponownieF
-        if (mCurrentPosition == 0) {
-            mPreviousButton.setVisibility(View.INVISIBLE);
-        } else {
-            mPreviousButton.setVisibility(View.VISIBLE);
-        }
-
-        if (mCurrentPosition == mWords.size() - 1) {
-            mNextButton.setText(getResources().getString(R.string.finish));
-        } else {
-            mNextButton.setText(getResources().getString(R.string.next_item));
-        }
-    }
-
     /**
-     * Metoda ustawiająca dane w zależności od tego, który fragment jest akutalnie załadowany.
+     * Metoda sprawdza czy słówko zawiera elementy danego typu. Jeżeli ich nie ma ukrywa przycisk
+     * odpowiedzialny za ich pokazywanie.
+     * Dostępne przyciski:
+     * - zdania
+     * - definicja
+     * - obrazek
+     * - podpowiedzi
+     * - nestępne pytanie
+     * - poprzednie pytanie
+     *
+     * @param position pozycja aktualnego słówka
      */
-    private void fillFrameLayout(int position) {
-        switch (mCurrentFragment) {
-            case SENTENCES_FRAGMENT:
-                fillSentenceFragment(position);
-                break;
-            case DEFINITION_FRAGMENT:
-                fillDefinitionFragment(position);
-                break;
-            case HINTS_FRAGMENT:
-                fillHintsFragment(position);
-                break;
-            case IMAGE_FRAGMENT:
-                fillImageFragment(position);
-                break;
-        }
-    }
+    private void setVisibilityButtons(int position) {
+        Word word = mWords.get(position);
+        mElementsButtons[SENTENCES].setVisibility(word.hasSentences() ? View.VISIBLE : View.GONE);
+        mElementsButtons[DEFINITION].setVisibility(word.hasDefinition() ? View.VISIBLE : View.GONE);
+        boolean hasImages = MediaFileSystem.checkMediaExist(mWords.get(position).getImageName(), mSet.getCatalog(), MediaType.IMAGES, getContext());
+        mElementsButtons[IMAGE].setVisibility(hasImages ? View.VISIBLE : View.GONE);
+        mElementsButtons[HINTS].setVisibility(word.hasHints() ? View.VISIBLE : View.GONE);
 
-    private void fillSentenceFragment(int position) {
-        if (mFragment != null) {
-            ((SentencesPagerFragment) mFragment).setList(mWords.get(position).getSentences());
-        }
+        mPreviousButton.setVisibility(mCurrentPosition != 0 ? View.VISIBLE : View.INVISIBLE);
+        int lastPosition = mWords.size() - 1;
+        mNextButton.setText(mCurrentFragment != lastPosition ? getString(R.string.next_item) : getString(R.string.finish));
     }
-
-    private void fillDefinitionFragment(int position) {
-        if (mFragment != null) {
-            ((DefinitionPagerFragment) mFragment).setDefinition(mWords.get(position).getDefinition());
-        }
-    }
-
-    private void fillHintsFragment(int position) {
-        if (mFragment != null) {
-            ((HintsPagerFragment) mFragment).setList(mWords.get(position).getHints());
-        }
-    }
-
-    private void fillImageFragment(int position) {
-        //TODO ypełnienie obrazka
-    }
-
 
     private void replaceFragment(int fragmentNumber, int position) {
-        if (mCurrentFragment != fragmentNumber) {
-            Fragment fragment = getFragment(fragmentNumber, position);
-            if (fragment != null) {
-                FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragment_frame_layout, fragment);
-                //TODO zobaczyć, czy da się sprawdzić wynik transakcji
-                fragmentTransaction.commit();
-                mCurrentFragment = fragmentNumber;
-                mFragment = fragment;
-                changeButtonsColor(fragmentNumber);
-            }/* else {
-                mCurrentFragment = -1;
-            }*/
+        Fragment fragment = getFragment(fragmentNumber, position);
+        if (fragment != null) {
+            FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_frame_layout, fragment);
+            fragmentTransaction.commit();
+            mCurrentFragment = fragmentNumber;
+            mFragment = fragment;
+            changeButtonsColor(fragmentNumber);
         }
     }
 
@@ -451,58 +337,38 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
         Fragment fragment = null;
         Bundle bundle = new Bundle();
         switch (fragmentNumber) {
-            case SENTENCES_FRAGMENT:
+            case SENTENCES:
                 fragment = new SentencesPagerFragment();
                 bundle.putParcelableArrayList("items", mWords.get(position).getSentences());
-                fragment.setArguments(bundle);
-                return fragment;
-            case DEFINITION_FRAGMENT:
+                break;
+            case DEFINITION:
                 fragment = new DefinitionPagerFragment();
                 bundle.putParcelable("item", mWords.get(position).getDefinition());
-                fragment.setArguments(bundle);
-                return fragment;
-            case HINTS_FRAGMENT:
+                break;
+            case HINTS:
                 fragment = new HintsPagerFragment();
                 bundle.putParcelableArrayList("items", mWords.get(position).getHints());
-                fragment.setArguments(bundle);
-                return fragment;
-            case IMAGE_FRAGMENT:
+                break;
+            case IMAGE:
                 fragment = new ImagePagerFragment();
-                //bundle.putParcelable("item", mWords.get(position).getImage().getBitmap());
-                bundle.putString("file", mWords.get(position).getImageName());
-                bundle.putString("catalog", mSet.getCatalog());
-                fragment.setArguments(bundle);
-                return fragment;
-            //TODO zrobienie fragmentu obrazka
+                Uri uri = MediaFileSystem.getMediaUri(mWords.get(position).getImageName(), mSet.getCatalog(), MediaType.IMAGES, getContext());
+                bundle.putParcelable("image", uri);
+                break;
         }
-        return null;
+        if (fragment != null) {
+            fragment.setArguments(bundle);
+        }
+        return fragment;
     }
 
     private void changeButtonsColor(int selectedButton) {
-        changeButtonColor(mSentencesButton, selectedButton == SENTENCES_FRAGMENT);
-        changeButtonColor(mDefinitionButton, selectedButton == DEFINITION_FRAGMENT);
-        changeButtonColor(mImageButton, selectedButton == IMAGE_FRAGMENT);
-        changeButtonColor(mHintsButton, selectedButton == HINTS_FRAGMENT);
-    }
-
-    private void changeButtonColor(ImageButton button, boolean selected) {
-        GradientDrawable buttonShape = (GradientDrawable) button.getBackground().getCurrent();
-        if (selected) {
-            buttonShape.setColor(getResources().getColor(R.color.correctColor));
-        } else {
-            buttonShape.setColor(getResources().getColor(R.color.colorMain));
+        for (int i = 0; i < mElementsButtons.length; i++) {
+            mElementsButtons[i].setSelected(i==selectedButton);
         }
     }
 
     @Override
     public void onDestroy() {
-        /*if(mMediaPlayer.isInit()){
-            mMediaPlayer.release();
-        }
-        //TODO tutaj też można zrobić coś w ten sposób
-        if(mTextToSpeech != null){
-            mTextToSpeech.release();
-        }*/
         mSpeechPlayer.release();
         super.onDestroy();
     }
@@ -512,8 +378,7 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mSpeechButton.setLoading(false);
-                mSpeechButton.setPauseImage();
+                mSpeechButton.setState(SpeechButton.PLAYING);
             }
         });
 
@@ -524,9 +389,8 @@ public class LearningFragment extends Fragment implements ISpeechCallback {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mSpeechButton.setPlayImage();
+                mSpeechButton.setState(SpeechButton.NORMAL);
             }
         });
-
     }
 }

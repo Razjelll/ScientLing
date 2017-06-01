@@ -3,24 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.dyszlewskiR.edu.scientling.fragment.ChooseExerciseFragment">
+    tools:context="com.dyszlewskiR.edu.scientling.fragment.ChoosingExerciseFragment">
     <include
         layout="@layout/word_with_speechbutton_sector"
         android:id="@+id/chooseWord"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-
         />
 
-
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        style="@style/ButtonStyle"
         android:layout_alignParentBottom="true"
-        android:id="@+id/nextButton"
-        android:text = "Następne"
+        android:id="@+id/next_button"
+        android:text = "@string/next_question"
         android:visibility="invisible"
-        android:background="@drawable/button_style"
+        android:layout_margin="@dimen/margin"
         android:layout_marginTop="-2dp"
        />
 
@@ -28,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/chooseButtons"
-        android:layout_above = "@+id/nextButton"
+        android:layout_above = "@+id/next_button"
         android:layout_below="@+id/chooseWord"
         />
 

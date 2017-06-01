@@ -73,7 +73,7 @@ public class RegisterResponse {
 
     public void closeConnection(){
         if(mConnection!=null ){
-            mConnection.disconnect();;
+            mConnection.disconnect();
         }
     }
 }

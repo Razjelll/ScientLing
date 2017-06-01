@@ -5,7 +5,6 @@ import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class DescriptionRequest {
     private final static String REQUEST_URI = Constants.SERVER_ADDRESS + "/sets/?/description";

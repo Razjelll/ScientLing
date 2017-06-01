@@ -136,7 +136,7 @@ public class LessonFragment extends Fragment {
                 if (Integer.parseInt(s.toString()) < 1) {
                     s.replace(0, s.length(), "1");
                 }
-            } catch (NumberFormatException ex) {
+            } catch (NumberFormatException ignored) {
             }
         }
     }

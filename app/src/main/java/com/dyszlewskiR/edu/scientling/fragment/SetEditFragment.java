@@ -15,16 +15,12 @@ import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.data.file.FileNameCreator;
 import com.dyszlewskiR.edu.scientling.data.models.models.Language;
 import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
-import com.dyszlewskiR.edu.scientling.data.models.models.SetListItem;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.dialogs.LanguageDialog;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class SetEditFragment extends Fragment implements LanguageDialog.Callback {
 
     private final int LAYOUT_RESOURCE = R.layout.fragment_set_edit;
@@ -32,8 +28,7 @@ public class SetEditFragment extends Fragment implements LanguageDialog.Callback
 
     private final int L1 = 0;
     private final int L2 = 1;
-
-
+    
     private EditText mNameEditText;
     private Button mL2Button;
     private Button mL1Button;
@@ -52,7 +47,6 @@ public class SetEditFragment extends Fragment implements LanguageDialog.Callback
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(LAYOUT_RESOURCE, container, false);
-
         setupControls(view);
         setListeners();
         loadData();
@@ -134,7 +128,6 @@ public class SetEditFragment extends Fragment implements LanguageDialog.Callback
             dataManager.updateSet(set);
             return set.getId();
         } else { //!mEdit
-            //TODO utworzenie katalogu lub zrobienie żeby katalog tworzył się sam w przypadku zapisywanie  obrazka
             long setId = dataManager.saveSet(set);
             set.setId(setId);
             saveDefaultLesson(set, dataManager);
@@ -161,8 +154,6 @@ public class SetEditFragment extends Fragment implements LanguageDialog.Callback
     private VocabularySet getSet() {
         VocabularySet set = mSet;
         set.setName(mNameEditText.getText().toString());
-        //języków nie trzeba pobierać, ponieważ są ustawiana podczas wybierania
-        //set.setCatalog(FileNameCreator.getCatalogName(set.getName(), getContext().getFilesDir().getAbsolutePath(),getActivity())); //todo
         String catalog = FileNameCreator.getCatalogName(set.getName(), getContext());
         set.setCatalog(catalog);
         return set;

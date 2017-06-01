@@ -13,6 +13,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".app.LingApplication"
@@ -41,10 +42,12 @@
         <service android:name=".services.net.services.DownloadSetsService" />
             <!--android:process=":downloading_set"/>-->
         <service android:name=".services.net.services.UploadSetService"/>
+        <service android:name=".services.speech.TextToSpeechService" />
 
         <activity android:name=".activity.LoginActivity" />
         <activity
             android:name=".activity.ExerciseActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
@@ -83,10 +86,6 @@
         <activity
             android:name=".activity.CategorySelectionActivity"
             android:label="@string/title_activity_category_selection"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
-        <activity
-            android:name=".activity.WordManagerActivity"
-            android:label="@string/title_activity_word_manager"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
             android:name=".activity.LearningListActivity"
@@ -170,7 +169,7 @@
         <activity
             android:name=".activity.SetDetailsActivity"
             android:label="@string/title_activity_set_details"
-            android:theme="@style/NoActionBar"></activity>
+            android:theme="@style/NoActionBar"/>
     </application>
 
 </manifest>

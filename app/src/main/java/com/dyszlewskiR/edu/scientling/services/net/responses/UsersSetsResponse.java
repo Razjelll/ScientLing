@@ -2,10 +2,8 @@ package com.dyszlewskiR.edu.scientling.services.net.responses;
 
 import android.util.JsonReader;
 
-import com.dyszlewskiR.edu.scientling.data.models.models.SetItem;
 import com.dyszlewskiR.edu.scientling.data.models.models.UsersSet;
 import com.dyszlewskiR.edu.scientling.services.net.values.ResponseStatus;
-import com.fasterxml.jackson.core.JsonToken;
 
 import java.io.IOException;
 import java.io.InputStreamReader;

@@ -51,7 +51,7 @@ public class SetsListResponse {
                 itemsList.add(item);
             }
         }
-        jsonReader.endArray();;
+        jsonReader.endArray();
         return itemsList;
     }
 

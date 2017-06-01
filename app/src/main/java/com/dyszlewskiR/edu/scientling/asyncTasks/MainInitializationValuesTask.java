@@ -11,10 +11,6 @@ import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 
 import java.util.List;
 
-/**
- * Created by Razjelll on 08.01.2017.
- */
-
 public class MainInitializationValuesTask extends AsyncTask<DataManager, Void, Void> {
 
     private MainActivity mActivity;

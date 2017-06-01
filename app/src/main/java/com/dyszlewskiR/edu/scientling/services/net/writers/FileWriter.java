@@ -39,9 +39,8 @@ public class FileWriter {
             zipOutputStream.putNextEntry(entry);
             entriesCount++;
             FileInputStream inputStream = new FileInputStream(imageEntry);
-            int data;
             byte[] buffer = new byte[mChunkSize];
-            long length = 0;
+            long length;
             while ((length = inputStream.read(buffer)) != -1) {
                 try {
                     Thread.sleep(100);

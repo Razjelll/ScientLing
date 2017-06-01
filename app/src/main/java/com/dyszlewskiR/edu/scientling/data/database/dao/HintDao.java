@@ -88,7 +88,7 @@ public class HintDao extends BaseDao<Hint> {
         Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection, selectionArgs,
                 groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
-            Hint hint = null;
+            Hint hint;
             do {
                 hint = HintCreator.createFromCursor(cursor);
                 if (hint != null) {
@@ -120,10 +120,9 @@ public class HintDao extends BaseDao<Hint> {
         String[] whereArguments = {String.valueOf(wordId)};
         Cursor cursor = mDb.rawQuery(SELECT_LINK_STATEMENT, whereArguments);
         if (cursor.moveToFirst()) {
-            Hint hint = null;
-            HintCreator creator = new HintCreator();
+            Hint hint;
             do {
-                hint = creator.createFromCursor(cursor);
+                hint = HintCreator.createFromCursor(cursor);
                 if (hint != null) {
                     hintsList.add(hint);
                 }
@@ -142,8 +141,7 @@ public class HintDao extends BaseDao<Hint> {
         Cursor cursor = mDb.query(HintsTable.TABLE_NAME, HintsTable.getColumns(), where, whereArguments,
                 null, null, null, "1");
         if (cursor.moveToFirst()) {
-            HintCreator hintCreator = new HintCreator();
-            hint = hintCreator.createFromCursor(cursor);
+            hint = HintCreator.createFromCursor(cursor);
         }
         closeCursor(cursor);
         return hint;

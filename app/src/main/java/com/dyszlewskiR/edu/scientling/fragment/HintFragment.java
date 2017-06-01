@@ -85,7 +85,7 @@ public class HintFragment extends Fragment {
     }
 
     private Hint getHint() {
-        Hint hint = null;
+        Hint hint;
         if (mHint == null) {
             hint = new Hint();
         } else {

@@ -9,10 +9,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-/**
- * Created by Razjelll on 17.01.2017.
- */
-
 public class BitmapUtils {
 
     private static final Bitmap.CompressFormat COMPRESS_FORMAT = Bitmap.CompressFormat.PNG;
@@ -25,18 +21,9 @@ public class BitmapUtils {
         return bos.toByteArray();
     }
 
-    public static String getStringImage(Bitmap bitmap) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(COMPRESS_FORMAT, COMPRESS_QUALITY, baos);
-        byte[] imageBytes = baos.toByteArray();
-        String result = Base64.encodeToString(imageBytes, BASE64_MODE);
-        return result;
-    }
-
     public static Bitmap getBitmap(String input) {
         byte[] decodedByte = Base64.decode(input, BASE64_MODE);
-        Bitmap bitmap = getBitmap(decodedByte);
-        return bitmap;
+        return getBitmap(decodedByte);
     }
 
     public static Bitmap getBitmap(byte[] input) {
@@ -47,8 +34,7 @@ public class BitmapUtils {
         float ratio = Math.min(maxImageSize / bitmap.getWidth(), maxImageSize / bitmap.getHeight());
         int width = Math.round(ratio * bitmap.getWidth());
         int height = Math.round(ratio * bitmap.getHeight());
-        Bitmap newBitmap = Bitmap.createScaledBitmap(bitmap, width, height, filter);
-        return newBitmap;
+        return Bitmap.createScaledBitmap(bitmap, width, height, filter);
     }
 
     public static Bitmap resize(Bitmap bitmap, int width, int height, boolean filter) {
@@ -58,8 +44,7 @@ public class BitmapUtils {
     //TODO nie wiem czy ta moetoda powinna być w tym miejscu
     public static void saveBitmap(Bitmap bitmap, String directory, String filename) throws IOException {
         File file = new File(directory, filename);
-        FileOutputStream fileOutputStream = null;
-        fileOutputStream = new FileOutputStream(file);
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
         fileOutputStream.close();
     }

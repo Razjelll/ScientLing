@@ -15,10 +15,6 @@ import java.util.List;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable.DefinitionsColumns;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable.TABLE_NAME;
 
-/**
- * Created by Razjelll on 09.11.2016.
- */
-
 public class DefinitionDao extends BaseDao<Definition> {
 
 
@@ -53,8 +49,6 @@ public class DefinitionDao extends BaseDao<Definition> {
         final ContentValues values = new ContentValues();
         values.put(DefinitionsColumns.CONTENT, entity.getContent());
         values.put(DefinitionsColumns.TRANSLATION, entity.getTranslation());
-
-        String[] whereArguments = new String[]{String.valueOf(entity.getId())};
         mDb.update(DefinitionsTable.TABLE_NAME, values, getWhereStatement(), getWhereArguments(entity));
     }
 
@@ -77,7 +71,6 @@ public class DefinitionDao extends BaseDao<Definition> {
 
     @Override
     public Definition get(long id) {
-        String[] whereArguments = new String[]{String.valueOf(id)};
         Cursor cursor = mDb.query(DefinitionsTable.TABLE_NAME, mTableColumns, getWhereStatement(), getWhereArguments(id),
                 null, null, null, null);
         Definition definition = null;
@@ -100,7 +93,7 @@ public class DefinitionDao extends BaseDao<Definition> {
         Cursor cursor = mDb.query(distinct, DefinitionsTable.TABLE_NAME, columns, selection, selectionArgs,
                 groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
-            Definition definition = null;
+            Definition definition;
             do {
                 definition = DefinitionCreator.createFromCursor(cursor);
                 if (definition != null) {

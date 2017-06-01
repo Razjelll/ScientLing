@@ -25,7 +25,7 @@ import java.util.List;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final String DB_NAME = "scientling.sqlite";
-    public static final int VERSION = 1;
+    private static final int VERSION = 1;
 
     private static final String CREATE_FILE_NAME = "createDb";
     private static final String UPDATE_FILE_NAME = "updateDb_";
@@ -103,7 +103,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //ArrayList<String> statements = getSQLStatements(SQL_FOLDER+CREATE_FILE_NAME + SQL_FILE_EXTENSION);
         List<String> statements = QueryReader.getQueries(SQL_FOLDER + CREATE_FILE_NAME + SQL_FILE_EXTENSION, mContext);
         db.beginTransaction();
-        String query = null;
+        String query;
         for (int i = 0; i < statements.size(); ++i) {
             query = statements.get(i);
             db.execSQL(query);

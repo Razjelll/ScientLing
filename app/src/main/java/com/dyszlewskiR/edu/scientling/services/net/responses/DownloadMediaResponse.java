@@ -1,7 +1,6 @@
 package com.dyszlewskiR.edu.scientling.services.net.responses;
 
 import android.content.Context;
-import android.provider.MediaStore;
 import android.util.Log;
 
 import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
@@ -68,7 +67,7 @@ public class DownloadMediaResponse {
         ZipInputStream zipInputStream = new ZipInputStream(inputStream);
         byte[]buffer = new byte[BUFFER_SIZE];
         ZipEntry zipEntry;
-        File file = null;
+        File file;
         while((zipEntry = zipInputStream.getNextEntry()) != null){
             Log.d(getClass().getSimpleName(), "start Entry");
             file = MediaFileSystem.getMedia(zipEntry.getName(), setCatalog,mMediaType, mContext);

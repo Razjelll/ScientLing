@@ -19,7 +19,7 @@
         android:layout_marginBottom="30dp"/>
     <Button
         style="@style/ButtonStyle"
-        android:id="@+id/correctDialogNextButton"
+        android:id="@+id/next_button"
         android:text="@string/next_question"
         />
 

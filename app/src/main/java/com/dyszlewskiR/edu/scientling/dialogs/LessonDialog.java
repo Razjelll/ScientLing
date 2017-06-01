@@ -1,5 +1,6 @@
 package com.dyszlewskiR.edu.scientling.dialogs;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -11,10 +12,6 @@ import android.widget.EditText;
 
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
-
-/**
- * Created by Razjelll on 31.03.2017.
- */
 
 public class LessonDialog extends DialogFragment {
     private final int LAYOUT_RESOURCE = R.layout.dialog_lesson;
@@ -44,6 +41,12 @@ public class LessonDialog extends DialogFragment {
 
     public void setTitle(String title) {
         mTitle = title;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -117,8 +120,15 @@ public class LessonDialog extends DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialogInterface) {
         mCallback = null;
-        getFragmentManager().beginTransaction().remove(this).commit();
+        super.onDismiss(dialogInterface);
     }
 
-
+    @Override
+    public void onDestroyView(){
+        Dialog dialog = getDialog();
+        if(dialog != null && getRetainInstance()){
+            dialog.setDismissMessage(null);
+        }
+        super.onDestroyView();
+    }
 }

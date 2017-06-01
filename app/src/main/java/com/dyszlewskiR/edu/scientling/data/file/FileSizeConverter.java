@@ -1,6 +1,6 @@
 package com.dyszlewskiR.edu.scientling.data.file;
 
-public class FileSizeConverter {
+class FileSizeConverter {
     public static float bytesToKb(long bytes){
         float size = (float)bytes;
         return bytesToKb(size);

@@ -66,36 +66,31 @@ public class Preferences {
     public static int getNumberWordsInLearning(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String valueString = prefs.getString(WORDS_IN_LEARNING_PREF, null);
-        int value = Integer.valueOf(valueString);
-        return value;
+        return Integer.valueOf(valueString);
     }
 
     public static int getNumberWordsInRepetitions(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String valueString = prefs.getString(WORDS_IN_REPETITION_PREF, null);
-        int value = Integer.valueOf(valueString);
-        return value;
+        return Integer.valueOf(valueString);
     }
 
     public static int getNumberAnswers(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String valueString = prefs.getString(NUMBER_ANSWER_PREF, null);
-        int value = Integer.valueOf(valueString);
-        return value;
+        return Integer.valueOf(valueString);
     }
 
     public static int getNumberFlashcards(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String valueString = prefs.getString(NUMBER_FLASHCARD_PREF, null);
-        int value = Integer.valueOf(valueString);
-        return value;
+        return Integer.valueOf(valueString);
     }
 
     public static int getDefaultExercise(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String valueString = prefs.getString(DEFAULT_EXERCISE_PREF, null);
-        int value = Integer.valueOf(valueString);
-        return value;
+        return Integer.valueOf(valueString);
     }
 
     public static AnswerConnection getAnswerConnection(Context context) {
@@ -103,29 +98,18 @@ public class Preferences {
         String valueString = prefs.getString(ANSWER_CONNECTION_PREF, null);
         int position = Integer.valueOf(valueString);
         return AnswerConnection.values()[position];
-        /*if(valueString.equals(AnswerConnection.LACK.getStringValue()))
-        {
-            return AnswerConnection.LACK;
-        }
-        if(valueString.equals(AnswerConnection.LESSON.getStringValue()))
-        {
-            return AnswerConnection.LESSON;
-        }
-        return AnswerConnection.CATEGORY; //w przeciwnym razie*/
     }
 
-    public static ExerciseDirection getExerciseDirection(Context context) {
+    public static int getExerciseDirection(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String valueString = prefs.getString(DEFAULT_DIRECTION_PREF, null);
-        int position = Integer.valueOf(valueString);
-        return ExerciseDirection.values()[position];
+        return Integer.valueOf(valueString);
     }
 
     public static int getOrderLearning(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String valueString = prefs.getString(ORDER_LEARNING_PREF, null);
-        int value = Integer.valueOf(valueString);
-        return value;
+        return Integer.valueOf(valueString);
     }
 
     public static boolean getReminderEnabled(Context context) {
@@ -150,8 +134,7 @@ public class Preferences {
 
     public static boolean isShowSpeechButton(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean value = prefs.getBoolean(SHOW_SPEECH_BUTTON_PREF, false);
-        return value;
+        return prefs.getBoolean(SHOW_SPEECH_BUTTON_PREF, false);
     }
 
 

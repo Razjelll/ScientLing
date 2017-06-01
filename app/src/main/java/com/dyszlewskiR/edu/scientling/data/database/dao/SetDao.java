@@ -3,7 +3,6 @@ package com.dyszlewskiR.edu.scientling.data.database.dao;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.provider.SyncStateContract;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable;
 import com.dyszlewskiR.edu.scientling.data.models.creators.SetCreator;
@@ -15,7 +14,6 @@ import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable.SetsColumns;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable.TABLE_NAME;

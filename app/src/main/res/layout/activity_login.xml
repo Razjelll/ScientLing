@@ -11,6 +11,10 @@
     tools:context="com.dyszlewskiR.edu.scientling.activity.LoginActivity"
     android:orientation="vertical"
     android:gravity="center">
+    <TextView android:id="@+id/info_text_view"
+        style="@style/TextViewStyle"
+        android:layout_gravity="center"
+        />
     <TextView android:id="@+id/error_text_view"
         style="@style/TextViewStyle"
         android:textColor="@color/incorrectColor"

@@ -26,15 +26,15 @@ public class FileSizeCalculator {
     }
 
     private static float calculate(long longInBytes, int unit){
-        float size = longInBytes;
         switch (unit){
             case GB:
-                return FileSizeConverter.bytesToGB(size);
+                return FileSizeConverter.bytesToGB(longInBytes);
             case MB:
-                return FileSizeConverter.bytesToMB(size);
+                return FileSizeConverter.bytesToMB(longInBytes);
             case KB:
-                return FileSizeConverter.bytesToKb(size);
+                return FileSizeConverter.bytesToKb(longInBytes);
+            default:
+                return longInBytes;
         }
-        return  size;
     }
 }

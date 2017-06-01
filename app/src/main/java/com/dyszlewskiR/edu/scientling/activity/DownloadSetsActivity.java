@@ -6,7 +6,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.fragment.DownloadSetsFragment;
 
 public class DownloadSetsActivity extends AppCompatActivity {
 

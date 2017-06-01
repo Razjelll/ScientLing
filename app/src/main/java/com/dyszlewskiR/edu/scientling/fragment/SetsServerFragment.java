@@ -1,13 +1,10 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -27,7 +24,6 @@ import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.data.models.models.Language;
 import com.dyszlewskiR.edu.scientling.data.models.models.UsersSet;
-import com.dyszlewskiR.edu.scientling.dialogs.UploadSetDialog;
 import com.dyszlewskiR.edu.scientling.preferences.LogPref;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
 import com.dyszlewskiR.edu.scientling.services.net.requests.DeleteImagesRequest;
@@ -35,7 +31,6 @@ import com.dyszlewskiR.edu.scientling.services.net.requests.DeleteRecordsRequest
 import com.dyszlewskiR.edu.scientling.services.net.requests.DeleteSetRequest;
 import com.dyszlewskiR.edu.scientling.services.net.requests.DescriptionRequest;
 import com.dyszlewskiR.edu.scientling.services.net.requests.UpdateDescriptionRequest;
-import com.dyszlewskiR.edu.scientling.services.net.requests.UploadSetRequest;
 import com.dyszlewskiR.edu.scientling.services.net.requests.UsersSetsRequest;
 import com.dyszlewskiR.edu.scientling.services.net.responses.DeleteMediaResponse;
 import com.dyszlewskiR.edu.scientling.services.net.responses.DeleteSetResponse;
@@ -59,12 +54,6 @@ public class SetsServerFragment extends Fragment {
     private ViewGroup mWaitingContainer;
     private TextView mErrorTextView;
     private UsersSetsAdapter mAdapter;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -435,9 +424,7 @@ class DescriptionDialog extends Dialog {
                     response.getResponse();
                     response.closeConnection();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
             } finally {
                 if(connection != null){
@@ -456,7 +443,7 @@ class DescriptionDialog extends Dialog {
                  connection = DescriptionRequest.start(setId[0], LogPref.getLogin(getContext()),
                         LogPref.getPassword(getContext()));
                 DescriptionResponse response = new DescriptionResponse(connection);
-                String description = null;
+                String description;
                 if(response.getResultCode() == DescriptionResponse.OK){
                     description  = response.getDescription();
                     response.closeConnection();

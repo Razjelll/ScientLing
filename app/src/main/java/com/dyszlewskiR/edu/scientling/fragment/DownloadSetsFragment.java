@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -54,6 +55,7 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
 
     private final String LOG_TAG = "DownloadSetsFragment";
     private final int SIMPLE_ADAPTER_RESOURCE = R.layout.item_simple;
+    private final int DETAILS_REQUEST = 2038;
 
     private final int ITEMS_ON_LIST = 10;
     private final int EMPTY_LANGUAGE_ID = -1;
@@ -82,6 +84,10 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
     private DownloadSetsService mService;
 
     private boolean mIsServiceBound;
+
+    private boolean mIsFilterSpinnerChanged;
+
+    private SetsListAsyncTask mTask;
 
     public DownloadSetsFragment() {
     }
@@ -138,7 +144,7 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
         mListView.addFooterView(mListFooter);
     }
 
-    public void setAdapters() {
+    private void setAdapters() {
         int ADAPTER_ITEM_RESOURCE = R.layout.item_downloaded_set;
         if(mAdapter == null){
             mAdapter = new DownloadSetAdapter(getContext(), ADAPTER_ITEM_RESOURCE, new ArrayList<SetItem>());
@@ -160,11 +166,10 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
         mL1Spinner.setAdapter(mLanguageAdapter);
     }
 
-
     private void fillList(){
         if(mAdapter.isEmpty()){
-            SetsListAsyncTask task = new SetsListAsyncTask(false);
-            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, getRequestParam());
+            mTask = new SetsListAsyncTask(false);
+            mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, getRequestParam());
         } else {
             mListView.setAdapter(mAdapter);
         }
@@ -202,6 +207,9 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
             getActivity().getApplicationContext().unbindService(this);
 
         }
+        if(!mTask.isCancelled()){
+            mTask.cancel(true);
+        }
         super.onDestroy();
     }
 
@@ -232,14 +240,24 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
         mSortingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mPage = 0;
-                SetsListAsyncTask task = new SetsListAsyncTask(false);
-                task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,getRequestParam());
-            }
+                if(mIsFilterSpinnerChanged){
+                    mPage = 0;
+                    SetsListAsyncTask task = new SetsListAsyncTask(false);
+                    task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,getRequestParam());
+                    mIsFilterSpinnerChanged = false;
+                }
 
+            }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
+            }
+        });
+        mSortingSpinner.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mIsFilterSpinnerChanged = true;
+                return false;
             }
         });
 
@@ -249,13 +267,16 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
                 startDetailsActivity(position);
             }
         });
+
     }
 
     private void startDetailsActivity(int position){
-        long setId = mAdapter.getItemId(position);
+        SetItem item = mAdapter.getItem(position);
         Intent intent = new Intent(getContext(), SetDetailsActivity.class);
-        intent.putExtra("id", setId);
-        startActivity(intent);
+        intent.putExtra("id", item.getId());
+        intent.putExtra("images",  item.hasImages());
+        intent.putExtra("records", item.hasRecords());
+        startActivityForResult(intent, DETAILS_REQUEST);
     }
 
     private final int INFO = R.string.info;
@@ -380,7 +401,7 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
         RequestParam param = new RequestParam();
         param.setL1(mLanguageAdapter.getItem(mL1Spinner.getSelectedItemPosition()).getId());
         param.setL2(mLanguageAdapter.getItem(mL2Spinner.getSelectedItemPosition()).getId());
-        if(mSearchEditText.getVisibility() == View.VISIBLE && !mSearchEditText.getText().equals("")){
+        if(mSearchEditText.getVisibility() == View.VISIBLE && !mSearchEditText.getText().toString().equals("")){
             param.setSearchText(mSearchEditText.getText().toString());
         }
         param.setSorting(mSortingSpinner.getSelectedItemPosition());
@@ -411,6 +432,18 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
     public void onOperationCompleted(long setId) {
         Log.d(LOG_TAG, "onOperationCompleted" + setId);
         mAdapter.setDownloaded(setId);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        Log.d(getClass().getSimpleName(), "onActivityResult Start");
+        if(requestCode == DETAILS_REQUEST){
+            if(resultCode == SetDetailsActivity.RESULT_OK){
+                Log.d(getClass().getSimpleName(), "onActivityResult");
+                long globalId = data.getLongExtra("id", -1);
+                mAdapter.setDownloaded(globalId);
+            }
+        }
     }
 
     private class RequestParam{
@@ -497,8 +530,6 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
                 return items;
             } catch (SocketTimeoutException e) {
                 return null;
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
@@ -571,6 +602,15 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
         @Override
         public long getItemId(int position){
             return mItems.get(position).getId();
+        }
+
+        public SetItem getItemById(long id){
+            for(SetItem item : mItems){
+                if(item.getId() == id){
+                    return item;
+                }
+            }
+            return null;
         }
 
         @Override
@@ -647,9 +687,10 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
                 for(SetItem item : mItems){
                     if(item.getId() == setId){
                         item.setDownloadingProgress(progress);
+                        notifyDataSetChanged();
+                        return;
                     }
                 }
-                notifyDataSetChanged();
             }
         }
 
@@ -664,9 +705,10 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
                     item.setImagesDownloaded(MediaFileSystem.hasMedia(catalog,MediaType.IMAGES, mContext));
                     item.setRecordsDownloaded(MediaFileSystem.hasMedia(catalog,MediaType.RECORDS, mContext));
                     //item.setDownloadInfo(mDataManager.getSetDownloadInfo(globalSetId));
+                    notifyDataSetChanged();
+                    return;
                 }
             }
-            notifyDataSetChanged();
         }
 
         private void showDownloading(ViewHolder viewHolder){
@@ -675,6 +717,7 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
                 viewHolder.downloadingTextView.setVisibility(View.VISIBLE);
                 viewHolder.downloadProgressBar.setVisibility(View.VISIBLE);
                 viewHolder.downloadProgressBar.setMax(100);
+                viewHolder.downloadProgressBar.setProgress(0);
             }
         }
 

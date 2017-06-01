@@ -3,18 +3,10 @@ package com.dyszlewskiR.edu.scientling.data.models.creators;
 import android.database.Cursor;
 
 import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
-import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns.GLOBAL_ID;
-import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns.ID;
-import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns.NAME;
-import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns.NUMBER;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns.SET_FK;
-
-/**
- * Created by Razjelll on 19.12.2016.
- */
 
 public class LessonCreator {
 
@@ -43,7 +35,6 @@ public class LessonCreator {
                     }
                 default: //tutaj trafi postęp
                     lesson.setProgress(cursor.getInt(columnIndex));
-
             }
         }
         return lesson;

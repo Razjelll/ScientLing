@@ -13,7 +13,6 @@
         style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:gravity="center_horizontal"
-        android:text="000"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="10dp"
         app:layout_constraintLeft_toLeftOf="@+id/textView9"
@@ -37,7 +36,6 @@
         style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:gravity="center_horizontal"
-        android:text="000"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="10dp"
         app:layout_constraintLeft_toLeftOf="@+id/textView10"
@@ -61,7 +59,6 @@
         style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:gravity="center_horizontal"
-        android:text="000"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="5dp"
@@ -87,7 +84,6 @@
         style="@style/TextViewStyle"
         android:layout_width="wrap_content"
         android:gravity="center_horizontal"
-        android:text="000"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="@+id/textView12"
         app:layout_constraintRight_toRightOf="@+id/textView12"
@@ -155,6 +151,5 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_marginRight="0dp"
         app:layout_constraintRight_toRightOf="parent"
-        android:text="opis"
         app:layout_constraintHorizontal_bias="0.0" />
 </android.support.constraint.ConstraintLayout>

@@ -10,16 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
-import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ImagePagerFragment extends Fragment {
 
-    private String mFileName;
-    private String mCatalogName;
+    private Uri mUri;
     private ImageView mImageView;
 
 
@@ -27,19 +24,11 @@ public class ImagePagerFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public void setImage(String filename, String catalogName) {
-        mFileName = filename;
-        mCatalogName = catalogName;
-        setImage();
-    }
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
-        mFileName = bundle.getString("file");
-        mCatalogName = bundle.getString("catalog");
+        mUri = bundle.getParcelable("image");
     }
 
     @Override
@@ -56,8 +45,7 @@ public class ImagePagerFragment extends Fragment {
     }
 
     private void setImage() {
-        Uri uri = MediaFileSystem.getMediaUri(mFileName, mCatalogName, MediaType.IMAGES, getContext());
-        mImageView.setImageURI(uri);
+        mImageView.setImageURI(mUri);
     }
 
 }

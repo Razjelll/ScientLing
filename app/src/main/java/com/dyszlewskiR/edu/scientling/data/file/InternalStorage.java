@@ -2,9 +2,6 @@ package com.dyszlewskiR.edu.scientling.data.file;
 
 import android.content.Context;
 
-import java.io.File;
-import java.io.IOException;
-
 public class InternalStorage extends Storage{
 
     @Override

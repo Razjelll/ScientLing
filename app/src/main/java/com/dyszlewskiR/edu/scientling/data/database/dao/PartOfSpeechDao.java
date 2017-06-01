@@ -79,7 +79,7 @@ public class PartOfSpeechDao extends BaseDao<PartOfSpeech> {
         Cursor cursor = mDb.query(distinct, PartsOfSpeechTable.TABLE_NAME, columns, selection, selectionArgs,
                 groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
-            PartOfSpeech partOfSpeech = null;
+            PartOfSpeech partOfSpeech;
             do {
                 partOfSpeech = PartOfSpeechCreator.createFromCursor(cursor);
                 if (partOfSpeech != null) {

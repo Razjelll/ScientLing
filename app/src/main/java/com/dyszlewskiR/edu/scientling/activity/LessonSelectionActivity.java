@@ -13,8 +13,6 @@ import com.dyszlewskiR.edu.scientling.fragment.LessonSelectionFragment;
 
 public class LessonSelectionActivity extends AppCompatActivity {
 
-    public static final int LESSON_REQUEST = 402;
-
     private LessonSelectionFragment mFragment;
 
     @Override

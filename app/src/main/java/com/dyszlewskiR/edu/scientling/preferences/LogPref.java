@@ -15,8 +15,7 @@ public class LogPref {
 
     public static String getLogin(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String login = prefs.getString(LOGIN, null);
-        return login;
+        return prefs.getString(LOGIN, null);
     }
 
     public static void setLogin(String login, Context context) {
@@ -27,8 +26,7 @@ public class LogPref {
 
     public static String getPassword(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String password = prefs.getString(PASSWORD, null);
-        return password;
+        return  prefs.getString(PASSWORD, null);
     }
 
     public static void setPassword(String password, Context context) {
@@ -39,8 +37,7 @@ public class LogPref {
 
     public static boolean isLogged(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean isLogged = prefs.getBoolean(IS_LOGGED, false);
-        return isLogged;
+        return prefs.getBoolean(IS_LOGGED, false);
     }
 
     public static void setLogged(boolean logged, Context context) {

@@ -19,18 +19,14 @@ import java.util.ArrayList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-/**
- * Created by Razjelll on 07.11.2016.
- */
-
 @RunWith(RobolectricTestRunner.class)
 @Config(constants = BuildConfig.class, sdk = 17)
 public class CategoryDaoTest {
 
-    private Context mContext = RuntimeEnvironment.application;
-    private DatabaseHelper mDbHelper = new DatabaseHelper(mContext);
+    private final Context mContext = RuntimeEnvironment.application;
+    private final DatabaseHelper mDbHelper = new DatabaseHelper(mContext);
 
-    private CategoryDao mDao;
+    private final CategoryDao mDao;
     private Category mCategory1;
     private Category mCategory2;
     private Category mCategory3;

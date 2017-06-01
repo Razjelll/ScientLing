@@ -13,10 +13,6 @@ import com.dyszlewskiR.edu.scientling.utils.ResourceUtils;
 
 import java.util.List;
 
-/**
- * Created by Razjelll on 10.04.2017.
- */
-
 public class CategorySpinnerAdapter extends ArrayAdapter {
 
     private final int ANY_CATEGORY_ID = -1;

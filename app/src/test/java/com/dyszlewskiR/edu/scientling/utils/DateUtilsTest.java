@@ -5,10 +5,6 @@ import junit.framework.TestCase;
 import java.util.Calendar;
 import java.util.Date;
 
-/**
- * Created by Razjelll on 02.01.2017.
- */
-
 public class DateUtilsTest extends TestCase {
 
     private Date mDate;

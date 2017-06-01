@@ -35,10 +35,14 @@ public class TextToSpeech extends UtteranceProgressListener implements android.s
     private String mMessage;
 
     private ISpeechCallback mCallback;
+    private boolean mInitialized;
 
     private float mPitch;
     private float mRate;
 
+    public boolean isInitialized(){
+        return mInitialized;
+    }
 
     /**
      * Konstruktor klasy TextToSpeech. Konstruktor inicjalizuje obiekt klasy TextToSpeech systemu Android.
@@ -82,7 +86,6 @@ public class TextToSpeech extends UtteranceProgressListener implements android.s
                     speak(mMessage);
                 }
                 mMessage = null;
-
             }
         }
     }
@@ -103,7 +106,6 @@ public class TextToSpeech extends UtteranceProgressListener implements android.s
                     mMessage = message;
                 }
             }
-
         }
     }
 
@@ -118,15 +120,15 @@ public class TextToSpeech extends UtteranceProgressListener implements android.s
                     } else {
                         Log.d(LOG_TAG, message);
                         HashMap<String, String> params = new HashMap<>();
-                        //params.put(android.speech.tts.TextToSpeech.Engine.KEY_PARAM_STREAM, "STREAM_NOTIFICATION");
+                        //params.put(android.speak.tts.TextToSpeech.Engine.KEY_PARAM_STREAM, "STREAM_NOTIFICATION");
                         params.put(android.speech.tts.TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, "MessageId");
                         mTextToSpeech.speak(message, android.speech.tts.TextToSpeech.QUEUE_FLUSH, params);
                     }
                 }
             }).start();
         }
-        //mTextToSpeech.speak(message, android.speech.tts.TextToSpeech.QUEUE_ADD, params);
-        //mTextToSpeech.playSilence(100, android.speech.tts.TextToSpeech.QUEUE_ADD, params);
+        //mTextToSpeech.speak(message, android.speak.tts.TextToSpeech.QUEUE_ADD, params);
+        //mTextToSpeech.playSilence(100, android.speak.tts.TextToSpeech.QUEUE_ADD, params);
     }
 
     public void setLanguage(String code) {
@@ -150,6 +152,7 @@ public class TextToSpeech extends UtteranceProgressListener implements android.s
         if (mCallback != null) {
             mCallback.onSpeechStart();
         }
+        mInitialized = true;
     }
 
     @Override

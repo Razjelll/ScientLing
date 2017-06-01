@@ -1,12 +1,8 @@
 package com.dyszlewskiR.edu.scientling.data.database.tables;
 
-/**
- * Created by Razjelll on 11.11.2016.
- */
-
 public class CategoriesTable {
     public static final String TABLE_NAME = "Categories";
-    public static final String ALIAS = "C";
+    private static final String ALIAS = "C";
     public static final String ALIAS_DOT = ALIAS + ".";
 
     public static String[] getColumn() {
@@ -25,6 +21,6 @@ public class CategoriesTable {
         public static final int ID_POSITION = 0;
         public static final int NAME_POSITION = 1;
 
-        public static int COLUMNS_COUNT = 2;
+        public static final int COLUMNS_COUNT = 2;
     }
 }

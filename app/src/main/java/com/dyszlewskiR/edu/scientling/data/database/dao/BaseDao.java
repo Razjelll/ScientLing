@@ -6,13 +6,9 @@ import android.database.sqlite.SQLiteStatement;
 
 import java.util.List;
 
-/**
- * Created by Razjelll on 08.11.2016.
- */
-
 public abstract class BaseDao<T> {
 
-    protected SQLiteDatabase mDb;
+    protected final SQLiteDatabase mDb;
     protected SQLiteStatement mInsertStatement;
     protected String[] mTableColumns;
 
@@ -45,7 +41,6 @@ public abstract class BaseDao<T> {
         if (!cursor.isClosed()) {
             cursor.close();
         }
-        assert cursor.isClosed();
     }
 
 

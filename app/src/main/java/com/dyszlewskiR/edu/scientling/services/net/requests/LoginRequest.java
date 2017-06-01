@@ -1,8 +1,5 @@
 package com.dyszlewskiR.edu.scientling.services.net.requests;
 
-import android.util.Base64;
-
-import com.dyszlewskiR.edu.scientling.preferences.LogPref;
 import com.dyszlewskiR.edu.scientling.services.net.URLConnector;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 
@@ -13,12 +10,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.net.Authenticator;
 import java.net.HttpURLConnection;
-import java.net.PasswordAuthentication;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
 
 public class LoginRequest {
 

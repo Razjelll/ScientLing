@@ -84,7 +84,6 @@ public class LanguageDaoTest {
     {
         try
         {
-            long id = mDao.save(mLncorrectLangauge);
             fail();
         }
         catch(IllegalArgumentException ex)

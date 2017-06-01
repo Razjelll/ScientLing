@@ -11,7 +11,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.dyszlewskiR.edu.scientling.R;
-import com.dyszlewskiR.edu.scientling.activity.ExerciseActivity;
 import com.dyszlewskiR.edu.scientling.adapters.SummaryRepetitionAdapter;
 import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.dialogs.ExercisesListDialogFragment;
@@ -20,65 +19,73 @@ import com.dyszlewskiR.edu.scientling.services.repetitions.SaveExerciseService;
 
 import java.util.ArrayList;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class SummaryExerciseFragment extends Fragment {
-
-    private static ExerciseManager mExerciseManager;
-
+    private ExerciseManager mExerciseManager;
     private TextView mNumberWordsTextView;
     private ListView mWordList;
     private Button mRepeatButton;
     private Button mFinishButton;
 
-    private int mLastFragment = -1;
+    private int mCurrentExercise;
 
-    public SummaryExerciseFragment() {
-        // Required empty public constructor
+    private Callback mCallback;
+
+    public interface Callback{
+        void setExercise(int position);
     }
 
-    public static SummaryExerciseFragment newInstance(ExerciseManager exerciseManager) {
-        SummaryExerciseFragment fragment = new SummaryExerciseFragment();
+    public void setCallback(Callback callback){
+        mCallback = callback;
+    }
+
+    public void setCurrentExercise(int exercise){
+        mCurrentExercise = exercise;
+    }
+
+    public void setExerciseManager(ExerciseManager exerciseManager){
         mExerciseManager = exerciseManager;
-        return fragment;
-    }
-
-    public void setLastFragment(int lastFragment) {
-        mLastFragment = lastFragment;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_summary_exercise, null);
-        mNumberWordsTextView = (TextView) view.findViewById(R.id.number_words_text_view);
-        mWordList = (ListView) view.findViewById(R.id.list);
-        mRepeatButton = (Button) view.findViewById(R.id.repeat_button);
-        mFinishButton = (Button) view.findViewById(R.id.finish_button);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+        View view = inflater.inflate(R.layout.fragment_summary_exercise, container, false);
+        setupControls(view);
         return view;
     }
 
+    private void setupControls(View view){
+        mNumberWordsTextView = (TextView) view.findViewById(R.id.number_words_text_view);
+        mWordList = (ListView)view.findViewById(R.id.list);
+        mRepeatButton = (Button)view.findViewById(R.id.repeat_button);
+        mFinishButton = (Button)view.findViewById(R.id.finish_button);
+    }
+
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        int numQuestions = mExerciseManager.getNumQuestions();
-        mNumberWordsTextView.setText(String.valueOf(numQuestions));
+    public void onViewCreated(View view, Bundle savedInstanceState)
+    {
+        int mNumQuestions = mExerciseManager.getNumQuestions();
+        mNumberWordsTextView.setText(String.valueOf(mNumQuestions));
 
         SummaryRepetitionAdapter adapter = new SummaryRepetitionAdapter(getActivity(), R.layout.item_summary_exercise, mExerciseManager.getQuestions());
         mWordList.setAdapter(adapter);
         setListeners();
     }
 
-    private void setListeners() {
+    private void setListeners(){
         mRepeatButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle arguments = new Bundle();
-                arguments.putInt("selected", mLastFragment);
                 ExercisesListDialogFragment dialog = new ExercisesListDialogFragment();
-                dialog.setArguments(arguments);
-                dialog.show(getActivity().getFragmentManager(), "TAG");
-                ((ExerciseActivity) getActivity()).restart();
+                dialog.init(mCurrentExercise, new ExercisesListDialogFragment.Callback() {
+                    @Override
+                    public void onClick(int position) {
+                        if(mCallback != null){
+                            mCallback.setExercise(position);
+                        }
+                    }
+                });
+                dialog.show(getActivity().getFragmentManager(), "ExercisesList");
             }
         });
 
@@ -86,10 +93,12 @@ public class SummaryExerciseFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity().getBaseContext(), SaveExerciseService.class);
-                intent.putParcelableArrayListExtra("list", (ArrayList<Word>) mExerciseManager.getQuestions());
+                intent.putParcelableArrayListExtra("list", (ArrayList<Word>)mExerciseManager.getWordsToRepetition());
+                intent.putExtra("correctness", mExerciseManager.getAnswersCorrectness());
                 getActivity().startService(intent);
                 getActivity().finish();
             }
         });
     }
+
 }
