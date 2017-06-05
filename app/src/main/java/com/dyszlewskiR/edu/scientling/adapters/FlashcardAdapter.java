@@ -105,7 +105,7 @@ public class FlashcardAdapter extends PagerAdapter {
         final View view = mInflater.inflate(mResource, null);
         setTexts(view, position);
 
-        ((ViewPager) container).addView(view);
+        container.addView(view);
         mViews.put(position, view);
         return view;
     }

@@ -10,6 +10,8 @@
             android:title="@string/flashcards" />
         <item android:id="@+id/nav_more_flashcards"
             android:title="@string/more_flashcards" />
+        <item android:id="@+id/nav_progress"
+            android:title="@string/progress"/>
         <item android:id="@+id/nav_manage_words"
             android:title="@string/manage_words" />
         <item android:id="@+id/nav_settings"

@@ -6,10 +6,6 @@ import com.dyszlewskiR.edu.scientling.utils.Constants;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 
-/**
- * Created by Razjelll on 21.04.2017.
- */
-
 public class DownloadSetRequest {
     private static final String DOWNLOAD_SET_REQUEST = Constants.SERVER_ADDRESS + "/sets";
 

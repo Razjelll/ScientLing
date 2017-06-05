@@ -3,7 +3,6 @@ package com.dyszlewskiR.edu.scientling.services.data;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Build;
 
 import com.dyszlewskiR.edu.scientling.BuildConfig;
 import com.dyszlewskiR.edu.scientling.data.database.DatabaseHelper;
@@ -21,6 +20,7 @@ import com.dyszlewskiR.edu.scientling.data.database.dao.WordDao;
 import com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.HintsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable;
+import com.dyszlewskiR.edu.scientling.data.database.tables.RepetitionsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable;
 import com.dyszlewskiR.edu.scientling.data.database.utils.QueryReader;
@@ -33,6 +33,7 @@ import com.dyszlewskiR.edu.scientling.data.models.models.PartOfSpeech;
 import com.dyszlewskiR.edu.scientling.data.models.models.Repetition;
 import com.dyszlewskiR.edu.scientling.data.models.models.RepetitionGroup;
 import com.dyszlewskiR.edu.scientling.data.models.models.Sentence;
+import com.dyszlewskiR.edu.scientling.data.models.models.SetProgress;
 import com.dyszlewskiR.edu.scientling.data.models.models.Translation;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 import com.dyszlewskiR.edu.scientling.data.models.models.Word;
@@ -56,6 +57,8 @@ import java.util.List;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable.LessonsColumns;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable.WordsColumns;
+import static com.dyszlewskiR.edu.scientling.services.builders.WordSelectionBuilder.*;
+import static com.dyszlewskiR.edu.scientling.services.builders.WordSelectionBuilder.Parts.*;
 
 public class DataManager {
 
@@ -317,7 +320,7 @@ public class DataManager {
         for (Word word : words) {
             completeWord(word);
         }
-        return (List<Word>) words;
+        return words;
     }
 
     public List<Word> getAnswers(AnswersParams params) {
@@ -546,7 +549,7 @@ public class DataManager {
         String where = null;
         String[] whereArguments = null;
         if (params.getSetId() > 0) {
-            builder.append(WordSelectionBuilder.Parts.SET_PART);
+            builder.append(SET_PART);
             whereArguments = new String[]{String.valueOf(params.getSetId())};
         }
         switch (params.getTab()) {
@@ -554,15 +557,15 @@ public class DataManager {
                 break;
             case OWN:
                 if (!builder.toString().equals("")) {
-                    builder.append(WordSelectionBuilder.Parts.AND);
+                    builder.append(AND);
                 }
-                builder.append(WordSelectionBuilder.Parts.OWN_PART);
+                builder.append(OWN_PART);
                 break;
             case HARD:
                 if (!builder.toString().equals("")) {
-                    builder.append(WordSelectionBuilder.Parts.AND);
+                    builder.append(AND);
                 }
-                builder.append(WordSelectionBuilder.Parts.SELECTED_PART);
+                builder.append(SELECTED_PART);
                 break;
         }
         if (!builder.toString().equals("")) {
@@ -648,8 +651,8 @@ public class DataManager {
     }
 
     public int getRepetitionsCount(long setId, int date) {
-        String where = new WordSelectionBuilder().append(WordSelectionBuilder.Parts.SET_PART)
-                .append(WordSelectionBuilder.Parts.AND).append(WordSelectionBuilder.Parts.REPETITION_PART)
+        String where = new WordSelectionBuilder().append(SET_PART)
+                .append(AND).append(REPETITION_PART)
                 .toString();
         String[] whereArguments = {String.valueOf(setId), String.valueOf(date)};
         return new WordDao(mDb).getCount(where, whereArguments);
@@ -681,6 +684,12 @@ public class DataManager {
         }
         mDb.setTransactionSuccessful();
         mDb.endTransaction();
+    }
+
+    public void updateRepetition(Repetition repetition){
+        RepetitionDao repetitionDao = new RepetitionDao(mDb);
+        repetitionDao.update(repetition);
+        //TODO można tutaj zrobić co podział na usuwanie zapisywanie i aktualizację
     }
 
     public List<RepetitionGroup> getRepetitionsList(long setId) throws IOException {
@@ -1063,5 +1072,135 @@ public class DataManager {
         return set.getUploadingUser();
     }
 
+    public List<Repetition> getOldRepetition(int todayDate){
+        RepetitionDao repetitionDao = new RepetitionDao(mDb);
+        String[] columns = RepetitionsTable.getColumn();
+        String selection = RepetitionsTable.RepetitionsColumns.DATE + "<?";
+        String[] selectionArguments = {String.valueOf(todayDate)};
+        return repetitionDao.getAll(false, columns, selection,selectionArguments,null,null,null,null);
+    }
 
+    public int getMasterLevel(long setId){
+        String column = WordsColumns.MASTER_LEVEL;
+        String selection = WordsColumns.ID + "=?";
+        String[] selectionArguments = {String.valueOf(setId)};
+        WordDao wordDao = new WordDao(mDb);
+        return wordDao.getIntValue(column, selection, selectionArguments);
+    }
+
+    //TODO refaktoryzacja
+    public List<SetProgress> getSetsProgress(){
+        SetDao setDao = new SetDao(mDb);
+        String[] columns = {SetsTable.SetsColumns.ID, SetsTable.SetsColumns.NAME};
+        List<VocabularySet> setsList = setDao.getAll(false, columns, null,null, null,null,null,null);
+        List<SetProgress> progressesList = new ArrayList<>();
+        WordDao wordDao = new WordDao(mDb);
+        WordSelectionBuilder builder = new WordSelectionBuilder();
+        for(VocabularySet set: setsList){
+            SetProgress progress = new SetProgress();
+            progress.setId(set.getId());
+            progress.setName(set.getName());
+            String wordsCountSelection = builder.append(SET_PART).toString();
+            String[] selectionArguments = {String.valueOf(set.getId())};
+            int wordsCount = wordDao.getCount(wordsCountSelection, selectionArguments);
+            builder.clear();
+            String learnedCountSelection = builder.append(SET_PART).append(AND).append(LEARNING_DATE_PART_NULL).toString();
+            int learnedCount = wordDao.getCount(learnedCountSelection, selectionArguments);
+            builder.clear();
+            String masteredCountSelection = builder.append(SET_PART).append(AND).append(MASTER_LEVEL_PART).toString();
+            int masteredCount = mWordDao.getCount(masteredCountSelection, selectionArguments);
+            builder.clear();
+            progress.setWordsCount(wordsCount);
+            progress.setLearnedCount(learnedCount);
+            progress.setMasteredCount(masteredCount);
+            progressesList.add(progress);
+        }
+        return progressesList;
+    }
+
+    //TODO tutaj można dorzucić jeszcze numer lekcji, wtedy będzie trzeba zmienić adapter
+    public List<SetProgress> getLessonsProgress(long setId){
+        LessonDao lessonDao = new LessonDao(mDb);
+        String lessonSelection = LessonsColumns.SET_FK + "=?";
+        String[] lessonSelectionArguments = {String.valueOf(setId)};
+        String[] columns = {LessonsColumns.ID, LessonsColumns.NAME};
+        List<Lesson> lessonsList = lessonDao.getAll(false, columns, lessonSelection, lessonSelectionArguments, null, null, null,null);
+        List<SetProgress> progressesList = new ArrayList<>();
+        WordDao wordDao = new WordDao(mDb);
+        WordSelectionBuilder builder = new WordSelectionBuilder();
+        for(Lesson lesson: lessonsList){
+            SetProgress progress = new SetProgress();
+            progress.setId(lesson.getId());
+            progress.setName(lesson.getName());
+            String selection = builder.append(LESSON_PART).toString();
+            String[] selectionArguments = {String.valueOf(lesson.getId())};
+            int wordCount  = wordDao.getCount(selection, selectionArguments);
+            builder.clear();
+            selection = builder.append(LESSON_PART).append(AND).append(LEARNING_DATE_PART_NULL).toString();
+            int learnedCount = wordDao.getCount(selection, selectionArguments);
+            builder.clear();
+            selection = builder.append(LESSON_PART).append(AND).append(MASTER_LEVEL_PART).toString();
+            int masteredCount = wordDao.getCount(selection, selectionArguments);
+            builder.clear();
+            progress.setWordsCount(wordCount);
+            progress.setLearnedCount(learnedCount);
+            progress.setMasteredCount(masteredCount);
+            progressesList.add(progress);
+        }
+        return progressesList;
+    }
+
+    public List<SetProgress> getDifficultyProgress(long setId){
+        WordDao wordDao = new WordDao(mDb);
+        List<SetProgress> progressList = new ArrayList<>();
+        WordSelectionBuilder builder = new WordSelectionBuilder();
+        for(int difficulty=0; difficulty<Constants.MAX_DIFFICULT_LEVEL+1; difficulty++){ //TODO zobaczyć jakie wartości przyjmują poziomy trudności
+            SetProgress progress = new SetProgress();
+            progress.setId(difficulty);
+            progress.setName(String.valueOf(difficulty));
+            String selection = builder.append(DIFFICULT_PART).append(AND).append(SET_PART).toString();
+            String[] selectionArguments = {String.valueOf(difficulty), String.valueOf(setId)};
+            int wordCount = wordDao.getCount(selection, selectionArguments);
+            builder.clear();
+            selection = builder.append(DIFFICULT_PART).append(AND).append(SET_PART).append(AND).append(LEARNING_DATE_PART_NULL).toString();
+            int learnedCount = wordDao.getCount(selection, selectionArguments);
+            builder.clear();
+            selection = builder.append(DIFFICULT_PART).append(AND).append(SET_PART).append(AND).append(MASTER_LEVEL_PART).toString();
+            int masteredCount = wordDao.getCount(selection, selectionArguments);
+            builder.clear();
+            progress.setWordsCount(wordCount);
+            progress.setLearnedCount(learnedCount);
+            progress.setMasteredCount(masteredCount);
+            progressList.add(progress);
+        }
+        return progressList;
+    }
+
+    public List<SetProgress> getCategoriesProgress(long setId){
+        CategoryDao categoryDao = new CategoryDao(mDb);
+        List<Category> categoriesList = categoryDao.getAll();
+        List<SetProgress> progressList = new ArrayList<>();
+        WordDao wordDao = new WordDao(mDb);
+        WordSelectionBuilder builder = new WordSelectionBuilder();
+        for(Category category: categoriesList){
+            SetProgress progress = new SetProgress();
+            progress.setId(category.getId());
+            progress.setName(category.getName());
+            String selection = builder.append(CATEGORY_PART).append(AND).append(SET_PART).toString();
+            String[] selectionArguments  = {String.valueOf(category.getId()), String.valueOf(setId)};
+            int wordsCount = wordDao.getCount(selection,selectionArguments);
+            builder.clear();
+            selection = builder.append(CATEGORY_PART).append(AND).append(SET_PART).append(AND).append(LEARNING_DATE_PART_NULL).toString();
+            int learnedCount = wordDao.getCount(selection, selectionArguments);
+            builder.clear();
+            selection = builder.append(CATEGORY_PART).append(AND).append(SET_PART).append(AND).append(MASTER_LEVEL_PART).toString();
+            int masteredCount = wordDao.getCount(selection, selectionArguments);
+            builder.clear();
+            progress.setWordsCount(wordsCount);
+            progress.setLearnedCount(learnedCount);
+            progress.setMasteredCount(masteredCount);
+            progressList.add(progress);
+        }
+        return progressList;
+    }
 }

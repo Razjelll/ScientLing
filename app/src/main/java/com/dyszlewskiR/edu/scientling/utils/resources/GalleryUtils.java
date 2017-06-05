@@ -7,15 +7,12 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 
-/**
- * Created by Razjelll on 19.01.2017.
- */
-
 public class GalleryUtils {
 
     public static Bitmap getBitmap(Uri imageUri, Context context) {
         String[] filePathColumn = {MediaStore.Images.Media.DATA};
         Cursor cursor = context.getContentResolver().query(imageUri, filePathColumn, null, null, null);
+        assert cursor != null;
         if (cursor.moveToFirst()) {
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String imagePath = cursor.getString(columnIndex);

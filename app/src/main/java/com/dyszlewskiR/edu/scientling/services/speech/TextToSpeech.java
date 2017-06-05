@@ -132,7 +132,6 @@ public class TextToSpeech extends UtteranceProgressListener implements android.s
     }
 
     public void setLanguage(String code) {
-        Locale[] locales = Locale.getAvailableLocales();
         Locale locale = new Locale(code);
         if (mTextToSpeech.isLanguageAvailable(locale) == android.speech.tts.TextToSpeech.LANG_AVAILABLE) {
             Log.d(LOG_TAG, "Language Available");

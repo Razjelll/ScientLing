@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -80,7 +81,7 @@ public class DataManagerTest {
         Sentence sentence = new Sentence();
         sentence.setContent("This is sample sentence");
         sentence.setTranslation("To jest przykładowe zdanie");
-        word.setSentences(new ArrayList<>(Arrays.asList(sentence)));
+        word.setSentences(new ArrayList<>(Collections.singletonList(sentence)));
         PartOfSpeech partOfSpeech = new PartOfSpeech(2);
         word.setPartsOfSpeech(partOfSpeech);
         word.setCategory(new Category(1));

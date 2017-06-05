@@ -24,7 +24,6 @@
                 android:id="@+id/word_content_text_view"
                 android:textStyle="bold"
                 android:layout_toLeftOf="@+id/speech_button"
-                android:text="słówko"
                 />
             <TextView
                 style="@style/TextViewStyle"
@@ -32,7 +31,7 @@
                 android:id="@+id/word_translation_text_view"
                 android:layout_below="@id/word_content_text_view"
                 android:layout_toLeftOf="@+id/speech_button"
-                android:text="tłumaczenie"/>
+                />
             <TextView
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
@@ -40,7 +39,7 @@
                 android:textSize="@dimen/small_text_size"
                 android:layout_below="@id/word_translation_text_view"
                 android:layout_marginTop="0dp"
-                android:text="Częśc mowy"/>
+                />
             <TextView
                 style="@style/LabelStyle"
                 android:layout_width="wrap_content"
@@ -50,7 +49,7 @@
                 android:layout_toRightOf="@id/word_part_of_speech_text_view"
                 android:layout_marginTop="0dp"
                 android:layout_marginLeft="30dp"
-                android:text="Kategoria"/>
+                />
 
             <com.dyszlewskiR.edu.scientling.widgets.SpeechButton
                 android:id="@+id/speech_button"

@@ -13,8 +13,8 @@ public class MD5 {
         byte[] messageDigest = digest.digest();
 
         StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < messageDigest.length; i++) {
-            String hex = Integer.toHexString(0xff & messageDigest[i]);
+        for (byte aMessageDigest : messageDigest) {
+            String hex = Integer.toHexString(0xff & aMessageDigest);
             if (hex.length() == 1) {
                 stringBuilder.append("0");
             }

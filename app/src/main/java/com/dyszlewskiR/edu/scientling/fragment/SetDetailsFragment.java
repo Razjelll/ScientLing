@@ -407,9 +407,7 @@ public class SetDetailsFragment extends Fragment  implements ServiceConnection, 
                 if(response.getResultCode()==SetDetailResponse.OK){
                     return response.getSet();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ParseException e) {
+            } catch (IOException | ParseException e) {
                 e.printStackTrace();
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -459,9 +457,7 @@ public class SetDetailsFragment extends Fragment  implements ServiceConnection, 
                     return true;
                 }
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
             } finally {
                 if(connection != null){

@@ -84,7 +84,7 @@ public class SentenceDetailFragment extends Fragment {
     }
 
     private Sentence getSentence() {
-        Sentence sentence = null;
+        Sentence sentence;
         if (mSentence == null) {
             sentence = new Sentence();
         } else {

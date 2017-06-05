@@ -6,9 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable;
 import com.dyszlewskiR.edu.scientling.data.models.creators.SetCreator;
-import com.dyszlewskiR.edu.scientling.data.models.creators.SetDownloadInfoCreator;
 import com.dyszlewskiR.edu.scientling.data.models.creators.SetListItemCreator;
-import com.dyszlewskiR.edu.scientling.data.models.models.SetDownloadInfo;
 import com.dyszlewskiR.edu.scientling.data.models.models.SetListItem;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 
@@ -154,7 +152,7 @@ public class SetDao extends BaseDao<VocabularySet> {
         Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection, selectionArgs,
                 groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
-            VocabularySet set = null;
+            VocabularySet set;
             do {
                 set = SetCreator.createFromCursor(cursor);
                 if (set != null) {
@@ -172,7 +170,7 @@ public class SetDao extends BaseDao<VocabularySet> {
         Cursor cursor = mDb.query(TABLE_NAME, columns, selection, selectionArgs,
                 groupBy, having, orderBy, limit);
         if(cursor.moveToFirst()){
-            SetListItem item = null;
+            SetListItem item;
             do{
                 item = SetListItemCreator.createFromCursor(cursor);
                 if(item != null){
@@ -184,14 +182,6 @@ public class SetDao extends BaseDao<VocabularySet> {
         return setsList;
     }
 
-    public SetDownloadInfo getSetDownloadInfo(String[] columns, String selection, String[] selectionArgs){
-        Cursor cursor = mDb.query(TABLE_NAME, columns, selection,selectionArgs,null,null,null,null);
-        SetDownloadInfo info = null;
-        if(cursor.moveToFirst()){
-            info= SetDownloadInfoCreator.createFromCursor(cursor);
-        }
-        closeCursor(cursor);
-        return info;
-    }
+
 
 }

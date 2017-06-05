@@ -15,7 +15,6 @@
             android:id="@+id/definition_content_text_view"
             android:padding="@dimen/padding"
             android:layout_above="@+id/separator"
-            android:text="To jest definicja"
             android:gravity="center_vertical"/>
         <View
             android:layout_width="match_parent"
@@ -33,7 +32,6 @@
             android:layout_below="@id/separator"
             android:padding="@dimen/padding"
             android:gravity="center_vertical"
-            android:text="To jest tłumaczenie definicji"
             />
     </RelativeLayout>
     <Button

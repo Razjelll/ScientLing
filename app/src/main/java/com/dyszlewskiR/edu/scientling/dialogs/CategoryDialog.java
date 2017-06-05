@@ -181,6 +181,7 @@ public class CategoryDialog extends DialogFragment {
                 String itemString;
                 for (int i = 0; i < count; i++) {
                     itemString = ResourceUtils.getString(list.get(i).getName(), mContext);
+                    assert itemString != null;
                     if (itemString.toLowerCase().contains(filterString)) {
                         nList.add(mItems.get(i));
                     }

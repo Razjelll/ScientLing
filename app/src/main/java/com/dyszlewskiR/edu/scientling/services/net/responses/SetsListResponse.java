@@ -72,7 +72,7 @@ public class SetsListResponse {
         SetItem item = null;
         jsonReader.beginObject();
         String name;
-        JsonToken token = null;
+        JsonToken token;
         do {
             if (item == null) {
                 item = new SetItem();

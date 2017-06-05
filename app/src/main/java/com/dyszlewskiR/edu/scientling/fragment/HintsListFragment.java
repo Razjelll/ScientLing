@@ -25,9 +25,6 @@ import com.dyszlewskiR.edu.scientling.dialogs.HintDialog;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class HintsListFragment extends Fragment implements HintDialog.Callback {
 
     private final int MENU_EDIT_RESOURCE = R.string.edit;

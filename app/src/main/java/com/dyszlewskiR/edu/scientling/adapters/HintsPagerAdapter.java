@@ -38,14 +38,14 @@ public class HintsPagerAdapter extends PagerAdapter {
         TextView contentTextView = (TextView) view.findViewById(R.id.hint_content_text_view);
         contentTextView.setText(mItems.get(position).getContent());
 
-        ((ViewPager) container).addView(view);
+        container.addView(view);
         return view;
 
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        ((ViewPager) container).removeView((View) object);
+        container.removeView((View) object);
     }
 
 

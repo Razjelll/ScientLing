@@ -1,9 +1,11 @@
 package com.dyszlewskiR.edu.scientling.activity;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -40,6 +42,8 @@ import com.dyszlewskiR.edu.scientling.preferences.LogPref;
 import com.dyszlewskiR.edu.scientling.preferences.Preferences;
 import com.dyszlewskiR.edu.scientling.preferences.Settings;
 import com.dyszlewskiR.edu.scientling.services.data.DataManager;
+import com.dyszlewskiR.edu.scientling.services.repetitions.RepetitionService;
+import com.dyszlewskiR.edu.scientling.services.repetitions.SaveExerciseService;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 import com.dyszlewskiR.edu.scientling.utils.DateCalculator;
 import com.dyszlewskiR.edu.scientling.utils.DateUtils;
@@ -70,6 +74,29 @@ public class MainActivity extends AppCompatActivity
     private int mRepetitionCount;
 
     private boolean mIsLogged;
+    private boolean mRepetitionReceiverRegistered;
+    private boolean mSaveReceiverRegisterd;
+
+    private final BroadcastReceiver mRepetitionReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //odbiornik po otrzymaniu komunikatu pobiera liczbę potówek
+            //po zakończeniu zadania zostaje wyrejestrowany, ponieważ używany jest tylko raz
+            //po uruchomieniu aktywności, zaraz po zakończeniu przesuwaniu zaległych powtórek
+            if(intent.getAction().equals(RepetitionService.BORADCAST_ACTION)){
+                Log.d(getClass().getSimpleName(), "BroadCastReceiver");
+                startRepetitionAsyncTask();
+                unregisterReceiver(this);
+            }
+        }
+    };
+
+    private final BroadcastReceiver mSaveReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            startRepetitionAsyncTask();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,16 +106,69 @@ public class MainActivity extends AppCompatActivity
         setupToolbar();
         setupControls();
         setListeners();
+
+        registerRepetitionReceiver();
+        Intent intent = new Intent(getApplicationContext(), RepetitionService.class);
+        startService(intent);
     }
 
     @Override
     protected void onResume() {
         Log.d(getClass().getSimpleName(), "onResume");
         setInitialValues();
-        setRepetitionNumber();
+        //setRepetitionNumber();
         setIsLogged();
         setLoggedNavigationItems(mIsLogged);
+
+
+        //jeżeli usługa zapisująca materiał którego się uczyliśmy zakończyła swoje działanie
+        //uruhamiamy działanie które pobierze libczę powtórek
+        // w przeciwnym razie rejestrujemy odbiornik który będzie nasługiwał zakńczenia działania usługi
+        //Jest to przydatne w sytuacji kiedy zapisywanie słówek do powtórki trwa dłużej niż uruchomienie
+        //głównej aktywności
+        if(!LingApplication.getInstance().isServiceRunning(SaveExerciseService.class)){
+            Log.d(getClass().getSimpleName(), "Uruchomiono nowe zadanie");
+            startRepetitionAsyncTask();
+        } else {
+            Log.d(getClass().getSimpleName(), "Zarejestrowano odbiornik");
+            registerSaveReceiver();
+        }
+
         super.onResume();
+    }
+
+    private void registerRepetitionReceiver(){
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(RepetitionService.BORADCAST_ACTION);
+        registerReceiver(mRepetitionReceiver, intentFilter);
+        mRepetitionReceiverRegistered = true;
+    }
+
+    private void registerSaveReceiver(){
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(SaveExerciseService.BORADCAST_ACTION);
+        registerReceiver(mSaveReceiver, intentFilter);
+        mSaveReceiverRegisterd = true;
+    }
+
+    private void startRepetitionAsyncTask(){
+        RepetitionAsyncTask task = new RepetitionAsyncTask();
+        long setId = Settings.getCurrentSetId(getBaseContext());
+        task.execute(setId);
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        /*if(mRepetitionReceiverRegistered){
+            unregisterReceiver(mRepetitionReceiver);
+            mRepetitionReceiverRegistered = false;
+        }*/
+        if(mSaveReceiverRegisterd){
+            unregisterReceiver(mSaveReceiver);
+            mSaveReceiverRegisterd = false;
+        }
+
     }
 
     private void setIsLogged() {
@@ -179,7 +259,7 @@ public class MainActivity extends AppCompatActivity
 
     public void onPostGetDataTask(VocabularySet set, List<Lesson> lessons) {
         if (set != null) {
-            getSupportActionBar().setTitle(set.getName());
+            if(getSupportActionBar() != null) getSupportActionBar().setTitle(set.getName());
             //sprawdzamy czy progressbar jest widoczny. Jeżeli jest niewidoczy oznacza to że wcześniej
             //nie było ustawionego zestawu i kontrolki są ukryte
             //należy w takim więc pokazać te kontrolki i ukryć dodatkowe
@@ -187,7 +267,7 @@ public class MainActivity extends AppCompatActivity
                 setupVisibilityControls(false);
             }
         } else {
-            getSupportActionBar().setTitle(getString(R.string.lack));
+            if(getSupportActionBar() != null) getSupportActionBar().setTitle(getString(R.string.lack));
             setupVisibilityControls(true);
         }
 
@@ -396,6 +476,7 @@ public class MainActivity extends AppCompatActivity
     private final int NAV_ADD_WORDS = R.id.nav_add_word;
     private final int NAV_FLASHCARD = R.id.nav_flashcard;
     private final int NAV_MORE_FLASHCARD = R.id.nav_more_flashcards;
+    private final int NAV_PROGRESS = R.id.nav_progress;
     private final int NAV_MANAGE_WORDS = R.id.nav_manage_words;
     private final int NAV_SETTINGS = R.id.nav_settings;
     private final int NAV_CHANGE_SET = R.id.nav_change_set;
@@ -425,6 +506,9 @@ public class MainActivity extends AppCompatActivity
                 dialogFragment.setArguments(bundle);
                 dialogFragment.show(getFragmentManager(), "TAG");
                 break;
+            case NAV_PROGRESS:
+                startProgressActivity();
+                break;
             case NAV_MANAGE_WORDS:
                 startManagerWordsActivity();
                 break;
@@ -448,6 +532,11 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void startProgressActivity(){
+        Intent intent = new Intent(getApplicationContext(), ProgressActivity.class);
+        startActivity(intent);
     }
 
     private void startLoginActivity() {
@@ -507,16 +596,6 @@ public class MainActivity extends AppCompatActivity
                 changeSet(newSetId);
             }
         }
-
-        if (requestCode == LOGIN_REQUEST) {
-            if (resultCode == Activity.RESULT_OK) {
-                //tutaj jest to raczej niepotrzebne
-                /*String login = data.getStringExtra("login");
-                NavigationView navigationView = (NavigationView)findViewById(R.id.nav_view);
-                TextView textView = (TextView)navigationView.findViewById(R.id.drawer_text_view);
-                textView.setText(login);*/
-            }
-        }
     }
 
     private void changeSet(long newSetId) {
@@ -546,6 +625,27 @@ public class MainActivity extends AppCompatActivity
                     dismiss();
                 }
             });
+        }
+    }
+
+    private class RepetitionAsyncTask extends AsyncTask<Long, Void, Integer>{
+
+
+        @Override
+        protected Integer doInBackground(Long... params) {
+            long setId = params[0];
+            int date = DateCalculator.dateToInt(DateUtils.getTodayDate());
+            return mDataManager.getRepetitionsCount(setId, date);
+        }
+
+        @Override
+        protected void onPostExecute(Integer result){
+            String repetitionButtonText = getString(R.string.repetitions);
+            if (result != 0) {
+                repetitionButtonText += "(" + result + ")";
+            }
+            mRepetitionButton.setText(repetitionButtonText);
+            mRepetitionCount = result;
         }
     }
 }

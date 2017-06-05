@@ -62,7 +62,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/loading_text_view"
-        android:text="Trwa wczytywanie danych"/>
+        android:text="@string/data_loading"/>
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

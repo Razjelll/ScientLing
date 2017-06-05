@@ -8,7 +8,6 @@
         style="@style/TextViewStyle"
         android:id="@+id/lesson_text_view"
         android:textStyle="bold"
-        android:text="Lekcja 1"
         />
 
     <TextView
@@ -26,7 +25,6 @@
         android:layout_width="wrap_content"
         android:id="@+id/lesson_number_text_view"
         android:textSize="@dimen/small_text_size"
-        android:text="4"
         android:layout_toRightOf="@id/lesson_number_label"
         android:layout_below="@id/lesson_text_view"
         android:gravity="center"

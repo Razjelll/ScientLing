@@ -7,10 +7,6 @@ import com.dyszlewskiR.edu.scientling.data.models.models.Hint;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.HintsTable.HintsColumns.CONTENT;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.HintsTable.HintsColumns.ID;
 
-/**
- * Created by Razjelll on 22.12.2016.
- */
-
 public class HintCreator  {
 
     public static Hint createFromCursor(Cursor cursor) {

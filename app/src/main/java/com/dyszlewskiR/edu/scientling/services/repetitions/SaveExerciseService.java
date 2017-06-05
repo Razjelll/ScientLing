@@ -16,15 +16,16 @@ import java.util.Date;
 import java.util.List;
 
 public class SaveExerciseService extends IntentService {
+    public static final String BORADCAST_ACTION = "SaveServiceAction";
+
     private Handler handler = new Handler();
+
+    public SaveExerciseService(){
+        super("SaveExerciseService");
+    }
 
     public SaveExerciseService(String name) {
         super(name);
-    }
-
-    public SaveExerciseService() {
-        super("SaveExerciseService");
-
     }
 
     @Override
@@ -48,8 +49,15 @@ public class SaveExerciseService extends IntentService {
                     repetitionsList.add(getRepetition(word));
                 }
                 dataManager.saveRepetitionAndUpdateWords(repetitionsList, wordsList);
+                sendBroadcast();
             }
         });
+    }
+
+    private void sendBroadcast(){
+        Intent intent = new Intent();
+        intent.setAction(BORADCAST_ACTION);
+        sendBroadcast(intent);
     }
 
 

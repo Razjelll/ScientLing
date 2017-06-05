@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView android:id="@+id/name_text_view"
@@ -21,7 +20,7 @@
         app:layout_constraintTop_toBottomOf="@+id/name_text_view"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        android:text="Angielski"/>
+        />
     <TextView
         style="@style/LabelStyle"
         android:layout_width="wrap_content"
@@ -35,7 +34,6 @@
         android:layout_width="wrap_content"
         app:layout_constraintLeft_toRightOf="@+id/textView3"
         android:layout_marginLeft="14dp"
-        android:text="Polski"
         app:layout_constraintBaseline_toBaselineOf="@+id/textView3" />
     <ImageView android:id="@+id/action_button"
         android:layout_width="@dimen/square_button_size"

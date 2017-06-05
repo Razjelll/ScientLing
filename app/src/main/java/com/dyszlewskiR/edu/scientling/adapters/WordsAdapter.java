@@ -112,7 +112,7 @@ public class WordsAdapter extends BaseAdapter implements Filterable {
             final List<Word> nList = new ArrayList<>(count);
             String itemContent;
             String itemTranslation;
-            boolean contain = false;
+            boolean contain;
             for (int i = 0; i < count; i++) {
                 contain = false;
                 itemContent = list.get(i).getContent();

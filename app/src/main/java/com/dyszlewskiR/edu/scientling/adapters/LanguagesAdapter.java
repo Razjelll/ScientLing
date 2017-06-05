@@ -1,7 +1,7 @@
 package com.dyszlewskiR.edu.scientling.adapters;
 
 import android.content.Context;
-import android.support.v7.widget.RecyclerView;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +12,6 @@ import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.data.models.models.Language;
 
 import java.util.List;
-
-/**
- * Created by Razjelll on 03.12.2016.
- */
 
 public class LanguagesAdapter extends ArrayAdapter {
 
@@ -42,8 +38,9 @@ public class LanguagesAdapter extends ArrayAdapter {
         return 0;
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(mResource, null);
@@ -66,7 +63,7 @@ public class LanguagesAdapter extends ArrayAdapter {
      * @return
      */
     @Override
-    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+    public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(mResource, null);

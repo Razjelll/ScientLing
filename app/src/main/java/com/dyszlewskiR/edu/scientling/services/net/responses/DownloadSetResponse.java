@@ -125,7 +125,7 @@ public class DownloadSetResponse {
     }
 
     private synchronized boolean setParserPosition(String arrayName) throws IOException {
-        if(mCurrentNode != arrayName){
+        if(mCurrentNode.equals(arrayName)){
             if(!findArray(arrayName)){
                 return false;
             }
@@ -150,7 +150,7 @@ public class DownloadSetResponse {
 
     private boolean hasNext(String arrayName) throws IOException {
 
-        if(mCurrentNode == arrayName){
+        if(mCurrentNode.equals(arrayName)){
             if(mParser.nextToken() == JsonToken.START_OBJECT){
                 mCheckedNext = true;
                 return true;

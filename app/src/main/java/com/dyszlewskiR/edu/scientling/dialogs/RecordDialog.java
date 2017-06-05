@@ -226,7 +226,7 @@ public class RecordDialog extends DialogFragment {
     private void updateRecordUI() {
         setVisibilityButtons(View.VISIBLE);
         String filename = UriUtils.getFileName(mRecordUri, getContext());
-        if (filename.equals(RECORD_FILENAME)) {
+        if (filename != null ? filename.equals(RECORD_FILENAME) : false) {
             mTitleTextView.setText(getString(R.string.own_record));
         } else {
             mTitleTextView.setText(UriUtils.getFileName(mRecordUri, getContext()));

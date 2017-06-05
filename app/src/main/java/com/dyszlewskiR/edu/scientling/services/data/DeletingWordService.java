@@ -10,10 +10,6 @@ import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
 
-/**
- * Created by Razjelll on 07.04.2017.
- */
-
 public class DeletingWordService extends Service {
     private final String LOG_TAG = "DeletingWordService";
     private DataManager mDataManager;

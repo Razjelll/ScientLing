@@ -361,6 +361,7 @@ public class WordsManagerFragment extends Fragment {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
         int position = info.position;
         Word word = mWordAdapter.getItem(position);
+        assert word != null;
         menu.setHeaderTitle(word.getContent());
         menu.add(0,SEE,0, getString(SEE));
         menu.add(0,EDIT, 0, getString(EDIT));
@@ -415,6 +416,7 @@ public class WordsManagerFragment extends Fragment {
 
     private void changeHard(int itemPosition, boolean isHard) {
         Word word = mWordAdapter.getItem(itemPosition);
+        assert word != null;
         word.setSelected(isHard);
         mDataManager.updateWord(word);
         //TODO zobaczyć czy jeszcze jakieś wyświetlane trudnych jest jeszcze włączone
@@ -643,7 +645,7 @@ public class WordsManagerFragment extends Fragment {
                 final List<Word> resultList = new ArrayList<>();
                 String itemContent;
                 String itemTranslation;
-                boolean contain = false;
+                boolean contain;
                 for (int word = 0; word < count; word++) {
                     contain = false;
                     itemContent = list.get(word).getContent();

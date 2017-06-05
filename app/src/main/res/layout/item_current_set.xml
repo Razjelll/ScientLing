@@ -6,7 +6,6 @@
         android:id="@+id/set_name_text_view"
         style="@style/TextViewStyle"
         android:textSize="@dimen/large_text_size"
-        android:text="Angielski 1"
         android:layout_toLeftOf="@+id/set_languages_text_view"
         />
 
@@ -14,7 +13,6 @@
         android:id="@+id/set_languages_text_view"
         style="@style/LabelStyle"
         android:layout_width="wrap_content"
-        android:text="polski-angielski"
         android:layout_gravity="center"
         android:layout_alignBaseline="@+id/set_name_text_view"
         android:layout_alignBottom="@+id/set_name_text_view"

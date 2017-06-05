@@ -170,6 +170,7 @@
     <string name="not_empty_field">To pole nie może być puste</string>
     <string name="not_zero_field">Wartość musi być większa od zera</string>
     <string name="category_exist">Ta kategoria już istnieje</string>
+    <string name="data_loading">Trwa wczytywanie danych</string>
 
     <string name="success_save_set">Pomyślnie zapisano zestaw</string>
     <string name="success_update_set">Pomyślnie zaktualizowano zestaw</string>
@@ -208,6 +209,7 @@
     <string name="title_activity_summary_learning">SummaryLearningActivity</string>
     <string name="title_activity_flashcard">FlashcardActivity</string>
     <string name="download_sets">Pobierz zestawy</string>
+    <string name="progress">Postęp</string>
 
     <!--MENU CWICZENIA-->
     <string name="change_exercise">Zmień ćwiczenie</string>
@@ -299,6 +301,8 @@
         <item>@string/last_learned</item>
         <item>@string/random</item>
     </string-array>
+
+    <string name="good">Dobrze</string>
 
     <!--KALENDARZ-->
     <string name="monday_abbr">PON</string>
@@ -401,6 +405,17 @@
     <string name="logging_error">Wystąpił błąd poczas logowania</string>
     <string name="log_no_net">Nie udało się połączyć z powodu braku połączenia z internetem</string>
 
+
+    <!--POSTEP -->
+    <string name="learned_words">Uczone</string>
+    <string name="mastered_words">Opanowane</string>
+
+    <string name="lessons_progress">Lekcje</string>
+    <string name="difficulty_progress">Trudnośc</string>
+    <string name="category_progress">Kategoria</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_progress">ProgressActivity</string>
+    <string name="title_activity_progress_details">ProgressDetailsActivity</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.dyszlewskiR.edu.scientling.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,8 +34,9 @@ public class CategorySpinnerAdapter extends ArrayAdapter {
         return mItems.get(position);
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         return getRowView(position, convertView);
     }
 
@@ -56,7 +58,7 @@ public class CategorySpinnerAdapter extends ArrayAdapter {
     }
 
     @Override
-    public View getDropDownView(int position, View convertView, ViewGroup parent) {
+    public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
         return getRowView(position, convertView);
     }
 }

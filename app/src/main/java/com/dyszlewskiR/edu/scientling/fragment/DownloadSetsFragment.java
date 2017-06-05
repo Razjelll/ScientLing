@@ -8,6 +8,7 @@ import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -46,7 +47,6 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
@@ -273,7 +273,7 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
     private void startDetailsActivity(int position){
         SetItem item = mAdapter.getItem(position);
         Intent intent = new Intent(getContext(), SetDetailsActivity.class);
-        intent.putExtra("id", item.getId());
+        intent.putExtra("id", item != null ? item.getId() : 0);
         intent.putExtra("images",  item.hasImages());
         intent.putExtra("records", item.hasRecords());
         startActivityForResult(intent, DETAILS_REQUEST);
@@ -399,6 +399,9 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
 
     private RequestParam getRequestParam(){
         RequestParam param = new RequestParam();
+        assert mL1Spinner != null;
+        assert mL2Spinner != null;
+        assert mLanguageAdapter != null;
         param.setL1(mLanguageAdapter.getItem(mL1Spinner.getSelectedItemPosition()).getId());
         param.setL2(mLanguageAdapter.getItem(mL2Spinner.getSelectedItemPosition()).getId());
         if(mSearchEditText.getVisibility() == View.VISIBLE && !mSearchEditText.getText().toString().equals("")){
@@ -530,11 +533,9 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
                 return items;
             } catch (SocketTimeoutException e) {
                 return null;
-            } catch (IOException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }finally {
+            } finally {
                 if(connection != null){
                     connection.disconnect();
                 }
@@ -613,8 +614,9 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
             return null;
         }
 
+        @NonNull
         @Override
-        public View getView(final int position, View convertView, final ViewGroup parent) {
+        public View getView(final int position, View convertView, @NonNull final ViewGroup parent) {
             View rowView = convertView;
             final ViewHolder viewHolder;
             if (rowView == null) {
@@ -759,8 +761,9 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
             return mLanguages.get(position);
         }
 
+        @NonNull
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
             View rowView = convertView;
             if (rowView == null) {
                 LayoutInflater inflater = LayoutInflater.from(mContext);
@@ -774,7 +777,7 @@ public class DownloadSetsFragment extends Fragment implements ServiceConnection,
         }
 
         @Override
-        public View getDropDownView(int position, View convertView, ViewGroup parent) {
+        public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
             View rowView = convertView;
             if (rowView == null) {
                 LayoutInflater inflater = LayoutInflater.from(mContext);

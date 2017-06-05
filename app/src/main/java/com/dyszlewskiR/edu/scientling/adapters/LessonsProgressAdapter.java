@@ -14,10 +14,6 @@ import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 import java.util.List;
 
-/**
- * Created by Razjelll on 19.12.2016.
- */
-
 public class LessonsProgressAdapter extends ArrayAdapter {
 
     private List<Lesson> mItems;
@@ -34,7 +30,6 @@ public class LessonsProgressAdapter extends ArrayAdapter {
 
         mInflater = LayoutInflater.from(mContext);
     }
-
 
     @Override
     public int getCount() {

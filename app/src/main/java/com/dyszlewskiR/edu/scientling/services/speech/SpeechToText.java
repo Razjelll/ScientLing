@@ -94,7 +94,7 @@ public class SpeechToText {
                     Log.d(TAG, "onResult " + i + " : " + matches.get(i));
                 }
             }
-            mCallback.receiveRecognitionResult(matches.toArray(new String[0]));
+            mCallback.receiveRecognitionResult(matches != null ? matches.toArray(new String[0]) : new String[0]);
         }
 
         @Override

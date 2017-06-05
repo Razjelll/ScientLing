@@ -8,5 +8,5 @@
         android:layout_height="match_parent"
         android:id="@+id/hint_content_text_view"
         android:gravity="center_vertical"
-        android:text="To jest podpowiedź"/>
+        />
 </LinearLayout>

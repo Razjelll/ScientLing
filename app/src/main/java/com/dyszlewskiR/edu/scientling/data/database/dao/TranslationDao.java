@@ -15,10 +15,6 @@ import java.util.List;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.TranslationsTable.TranslationsColumns;
 import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTranslationsTable.WordsTranslationsColumns;
 
-/**
- * Created by Razjelll on 07.11.2016.
- */
-
 public class TranslationDao extends BaseDao<Translation> {
 
 
@@ -95,7 +91,7 @@ public class TranslationDao extends BaseDao<Translation> {
         Cursor cursor = mDb.query(distinct, TranslationsTable.TABLE_NAME, columns, selection, selectionArgs,
                 groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
-            Translation translation = null;
+            Translation translation;
             do {
                 translation = TranslationCreator.createFromCursor(cursor);
                 if (translation != null) {
@@ -165,7 +161,7 @@ public class TranslationDao extends BaseDao<Translation> {
         String[] whereArguments = new String[]{String.valueOf(wordId)};
         Cursor cursor = mDb.rawQuery(SELECT_LINK_STATEMENT, whereArguments);
         if (cursor.moveToFirst()) {
-            Translation translation = null;
+            Translation translation;
             do {
                 translation = TranslationCreator.createFromCursor(cursor);
                 if (translation != null) {
@@ -184,9 +180,6 @@ public class TranslationDao extends BaseDao<Translation> {
                 .append(TranslationsColumns.ID).append(" NOT IN")
                 .append(" (SELECT ").append(WordsTranslationsColumns.TRANSLATION_FK)
                 .append(" FROM ").append(WordsTranslationsTable.TABLE_NAME).append(")").toString();
-        String statement2 = new StringBuilder()
-                .append("SELECT* FROM ").append(TranslationsTable.TABLE_NAME)
-                .append(" WHERE ").append(TranslationsColumns.CONTENT).append("=?").toString();
 
         return mDb.delete(TranslationsTable.TABLE_NAME, statement, null);
 

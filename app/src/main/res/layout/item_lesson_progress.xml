@@ -9,7 +9,6 @@
         style="@style/TextViewStyle"
         android:id="@+id/lesson_number_text_view"
         android:layout_weight="0.42"
-        android:text="111"
         android:textColor="@color/colorPrimaryDark"/>
     <RelativeLayout
         android:layout_width="match_parent"
@@ -19,12 +18,10 @@
             style="@style/ProgressBarStyle"
             android:layout_height="40dp"
             android:id="@+id/lesson_progress_bar"
-            android:progress="100"
             />
         <TextView
             style="@style/TextViewStyle"
             android:id="@+id/lesson_name_text_view"
-            android:text="Postęp"
             android:gravity="center_vertical"
             android:maxLines="1"/>
     </RelativeLayout>
@@ -32,6 +29,6 @@
         style="@style/TextViewStyle"
         android:id="@+id/lesson_progress_text_view"
         android:layout_weight="0.4"
-        android:text="100%"/>
+        />
 
 </LinearLayout>

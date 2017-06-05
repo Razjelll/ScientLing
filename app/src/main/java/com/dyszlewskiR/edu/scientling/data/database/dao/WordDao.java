@@ -22,10 +22,6 @@ import java.util.List;
 
 import static com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable.WordsColumns;
 
-/**
- * Created by Razjelll on 09.11.2016.
- */
-
 public class WordDao extends BaseDao<Word> {
 
     private final String QUERIES_FOLDER = "sql/queries/";
@@ -220,7 +216,6 @@ public class WordDao extends BaseDao<Word> {
         String[] whereArguments = new String[]{String.valueOf(id)};
         StringBuilder queryBuilder = null;
 
-        InputStream inputStream = null;
         try {
             String query = QueryReader.getQuery(QUERIES_FOLDER + SELECT_QUERY_NAME);
             queryBuilder = new StringBuilder(query);
@@ -228,6 +223,7 @@ public class WordDao extends BaseDao<Word> {
             e.printStackTrace();
         }
 
+        assert queryBuilder != null;
         queryBuilder.append(" WHERE W." + WordsColumns.ID + " = ?");
         Cursor cursor = mDb.rawQuery(queryBuilder.toString(), whereArguments);
         if (cursor.moveToFirst()) {
@@ -259,7 +255,7 @@ public class WordDao extends BaseDao<Word> {
     private List<Word> getWordsListFromCursor(Cursor cursor) {
         List<Word> wordsList = new ArrayList<>();
         if (cursor.moveToFirst()) {
-            Word word = null;
+            Word word;
             do {
                 word = WordCreator.createFromCursor(cursor);
                 if (word != null) {
@@ -367,5 +363,14 @@ public class WordDao extends BaseDao<Word> {
             } while (cursor.moveToNext());
         }
         return resultList;
+    }
+
+    public int getIntValue(String column, String selection, String[] selectionArgs){
+        String[] columns = {column};
+        Cursor cursor = mDb.query(false, WordsTable.TABLE_NAME, columns, selection, selectionArgs, null,null,null,null);
+        if(cursor.moveToFirst()){
+            return cursor.getInt(0);
+        }
+        return -1;
     }
 }

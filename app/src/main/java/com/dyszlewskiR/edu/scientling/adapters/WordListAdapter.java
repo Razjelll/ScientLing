@@ -198,7 +198,7 @@ public class WordListAdapter extends ArrayAdapter implements Filterable {
             final List<Word> resultList = new ArrayList<>();
             String itemContent;
             String itemTranslation;
-            boolean contain = false;
+            boolean contain;
             for (int i = 0; i < count; i++) {
                 contain = false;
                 itemContent = list.get(i).getContent();

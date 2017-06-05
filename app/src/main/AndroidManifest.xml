@@ -40,8 +40,9 @@
         <service android:name=".services.data.DeletingSetService" />
         <service android:name=".services.data.DeletingWordService" />
         <service android:name=".services.net.services.DownloadSetsService" />
-            <!--android:process=":downloading_set"/>-->
-        <service android:name=".services.net.services.UploadSetService"/>
+        <!-- android:process=":downloading_set"/> -->
+        <service android:name=".services.net.services.UploadSetService" />
+        <service android:name=".services.repetitions.RepetitionService" />
         <service android:name=".services.speech.TextToSpeechService" />
 
         <activity android:name=".activity.LoginActivity" />
@@ -169,7 +170,15 @@
         <activity
             android:name=".activity.SetDetailsActivity"
             android:label="@string/title_activity_set_details"
-            android:theme="@style/NoActionBar"/>
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".activity.ProgressActivity"
+            android:label="@string/title_activity_progress"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".activity.ProgressDetailsActivity"
+            android:label="@string/title_activity_progress_details"
+            android:theme="@style/NoActionBar"></activity>
     </application>
 
 </manifest>

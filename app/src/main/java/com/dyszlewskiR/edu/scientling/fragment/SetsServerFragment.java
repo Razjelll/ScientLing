@@ -87,6 +87,7 @@ public class SetsServerFragment extends Fragment {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)menuInfo;
         int position = info.position;
         UsersSet set = mAdapter.getItem(position);
+        assert set != null;
         menu.setHeaderTitle(set.getName());
         menu.add(0, DELETE_ALL, 0, getString(DELETE_ALL));
         if(set.hasImages()){
@@ -104,13 +105,11 @@ public class SetsServerFragment extends Fragment {
         DataManager dataManager = LingApplication.getInstance().getDataManager();
         int position = info.position;
         final UsersSet set = mAdapter.getItem(position);
+        assert set != null;
         switch (item.getItemId()){
             case DELETE_ALL:
-                //new DeleteSetRunnable(set,getContext()).start();
-                long setId = mAdapter.getItemId(position);
                 new DeleteSetAsyncTask().execute(mAdapter.getItemId(position)); break;
             case DELETE_IMAGES:
-                //new DeleteMediaRunnable(set, getContext(), DeleteMediaRunnable.IMAGES,dataManager ).start(); break;
                 DeleteMediaAsyncTask imagesTask = new DeleteMediaAsyncTask(getContext(), MediaType.IMAGES, dataManager);
                 imagesTask.setCallback(new DeleteMediaAsyncTask.Callback() {
                     @Override

@@ -9,10 +9,6 @@ import com.dyszlewskiR.edu.scientling.app.LingApplication;
 import com.dyszlewskiR.edu.scientling.data.file.MediaFileSystem;
 import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
 
-/**
- * Created by Razjelll on 06.04.2017.
- */
-
 public class DeletingSetService extends Service {
 
     private final String LOG_TAG = "DeletingSet";

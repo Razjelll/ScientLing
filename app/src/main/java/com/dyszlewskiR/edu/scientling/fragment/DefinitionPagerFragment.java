@@ -1,6 +1,5 @@
 package com.dyszlewskiR.edu.scientling.fragment;
 
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,9 +11,6 @@ import android.widget.TextView;
 import com.dyszlewskiR.edu.scientling.R;
 import com.dyszlewskiR.edu.scientling.data.models.models.Definition;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class DefinitionPagerFragment extends Fragment {
 
     private Definition mDefinition;

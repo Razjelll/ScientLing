@@ -66,7 +66,7 @@ public class UsersSetsResponse {
         UsersSet set = null;
         jsonReader.beginObject();
         String name;
-        android.util.JsonToken token = null;
+        android.util.JsonToken token;
         do{
             if(set==null){
                 set = new UsersSet();

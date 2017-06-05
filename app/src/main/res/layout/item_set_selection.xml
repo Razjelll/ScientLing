@@ -11,14 +11,12 @@
         <TextView
             style="@style/TextViewStyle"
             android:id="@+id/set_list_name"
-            android:text="to jest pustka"
             android:textStyle="bold" />
         <TextView
             style="@style/LabelStyle"
             android:id="@+id/set_list_language"
-            android:text="Angielski"/>
+            />
     </LinearLayout>
-
 
     <ImageView
         android:id="@+id/action_button"
@@ -28,9 +26,6 @@
         android:padding="15dp"
         android:gravity="center"
         android:layout_gravity="center"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
         android:background="@drawable/shadow_border"
         />
 

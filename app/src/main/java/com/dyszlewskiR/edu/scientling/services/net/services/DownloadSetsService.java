@@ -137,10 +137,8 @@ public class DownloadSetsService extends Service {
                 DownloadSetResponse response = new DownloadSetResponse(request.start());
                 VocabularySet set = saveData(response, mDataManager);
                 saveSetInfo(setId, set, mDataManager);
-            } catch (IOException | ParseException e) {
+            } catch (IOException | ParseException | JSONException e) {
                 e.printStackTrace(); //TODO wyjątki do obsłużenia
-            } catch (JSONException e) {
-                e.printStackTrace();
             } finally {
                 if (connection != null) {
                     connection.disconnect();

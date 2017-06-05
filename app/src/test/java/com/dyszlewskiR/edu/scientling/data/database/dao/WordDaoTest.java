@@ -108,7 +108,7 @@ public class WordDaoTest {
     {
         mDao.save(mWord1);
         mDao.save(mWord2);
-        List<Word> wordsList = (ArrayList<Word>) mDao.getAll();
+        List<Word> wordsList = mDao.getAll();
         assertEquals(2, wordsList.size());
     }
 

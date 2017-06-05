@@ -21,7 +21,7 @@
             android:layout_toRightOf="@+id/calendar_prev_button"
             android:gravity="center"
             android:textColor="#222222"
-            android:text="data"
+
             />
         <ImageButton
             android:layout_width="56dp"

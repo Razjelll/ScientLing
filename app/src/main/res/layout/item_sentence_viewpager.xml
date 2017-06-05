@@ -10,7 +10,7 @@
         android:padding="@dimen/padding"
         android:layout_above="@+id/separator"
         android:gravity="center_vertical"
-        android:text="To jest przykładowe zdanie"/>
+        />
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -27,7 +27,6 @@
         android:layout_below="@id/separator"
         android:padding="@dimen/padding"
         android:gravity="center_vertical"
-        android:text="To jest tłumaczenie przykładowego zdania"
         />
 
 </RelativeLayout>

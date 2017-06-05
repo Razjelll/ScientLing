@@ -183,6 +183,7 @@ public class SetsManagerFragment extends Fragment implements ServiceConnection, 
         //jako numery id elementów menu podajemy numery identyfikacyjne zasobów Androida
         //dzięki temu korzystamy z jednej stałem do przydzielenia numeru id który będzie później
         //wykorzystywany do utworzenia słuchacza, jak i też do ustawienia odpowiedniego napisu
+        assert set != null;
         menu.setHeaderTitle(set.getName());
         menu.add(0, LESSONS, 0, getString(LESSONS));
         menu.add(0, EDIT, 0, getString(EDIT));

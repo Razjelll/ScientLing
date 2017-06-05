@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -12,7 +11,6 @@
         style="@style/TextViewStyle"
         app:layout_constraintHorizontal_bias="0.0"
         android:layout_width="wrap_content"
-        android:text="Nazwa"
         android:gravity="center_vertical"
         android:layout_marginLeft="5dp"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -25,7 +23,6 @@
         style="@style/LabelStyle"
         android:layout_width="wrap_content"
         android:textSize="@dimen/very_small_text_size"
-        android:text="Angielski"
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         android:layout_height="0dp"
@@ -46,7 +43,6 @@
         style="@style/LabelStyle"
         android:layout_width="wrap_content"
         android:textSize="@dimen/very_small_text_size"
-        android:text="Polski"
         app:layout_constraintLeft_toRightOf="@+id/textView"
         android:layout_marginLeft="8dp"
         android:layout_height="0dp"
@@ -65,7 +61,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         android:layout_height="0dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/number_words_text_view"
-        android:layout_marginLeft="0dp" />
+        />
 
     <TextView
         android:id="@id/number_words_text_view"
@@ -74,7 +70,6 @@
         android:layout_margin="@dimen/small_margin"
         android:padding="@dimen/small_padding"
         android:textSize="@dimen/very_small_text_size"
-        android:text="000"
         app:layout_constraintRight_toLeftOf="@+id/frameLayout"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
@@ -105,7 +100,6 @@
         android:layout_margin="@dimen/small_margin"
         android:padding="@dimen/small_padding"
         android:textSize="@dimen/very_small_text_size"
-        android:text="000"
         app:layout_constraintTop_toBottomOf="@+id/number_words_text_view"
         app:layout_constraintRight_toLeftOf="@+id/frameLayout"
         android:layout_marginRight="-1dp"
@@ -134,7 +128,6 @@
         android:layout_margin="@dimen/small_margin"
         android:padding="@dimen/small_padding"
         android:textSize="@dimen/very_small_text_size"
-        android:text="000"
 
         app:layout_constraintRight_toLeftOf="@+id/frameLayout"
         android:layout_height="0dp"

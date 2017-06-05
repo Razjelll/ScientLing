@@ -59,7 +59,7 @@ public class SentenceDaoTest {
         assertEquals(2,id);
         try
         {
-            id = mDao.save(mSentence1);
+            mDao.save(mSentence1);
         } catch (Exception ex)
         {
             assertTrue(true);

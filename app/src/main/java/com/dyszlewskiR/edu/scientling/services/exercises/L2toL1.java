@@ -1,16 +1,11 @@
 package com.dyszlewskiR.edu.scientling.services.exercises;
 
-import android.os.Build;
-
 import com.dyszlewskiR.edu.scientling.BuildConfig;
 import com.dyszlewskiR.edu.scientling.data.models.models.Word;
 import com.dyszlewskiR.edu.scientling.utils.TranslationListConverter;
 
 import java.util.List;
 
-/**
- * Created by Razjelll on 17.11.2016.
- */
 
 public class L2toL1 implements IExerciseDirection {
 

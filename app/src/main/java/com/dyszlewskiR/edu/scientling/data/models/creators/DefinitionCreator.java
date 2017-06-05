@@ -12,7 +12,7 @@ import static com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTab
 public class DefinitionCreator  {
 
     public static Definition createFromCursor(Cursor cursor) {
-        Definition definition = null;
+        Definition definition = new Definition();
         int columnsCount = cursor.getColumnCount();
         for (int columnIndex = 0; columnIndex < columnsCount; columnIndex++) {
             switch (cursor.getColumnName(columnIndex)) {

@@ -22,6 +22,7 @@ public class UriUtils {
             String filename = null;
             String[] projection = {MediaStore.Images.Media.TITLE};
             Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+            assert cursor != null;
             if (cursor.moveToFirst()) {
                 int columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.TITLE);
                 filename = cursor.getString(columnIndex);
@@ -43,7 +44,7 @@ public class UriUtils {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         int bufferSize = 1024;
         byte[] buffer = new byte[bufferSize];
-        int len = 0;
+        int len;
         while ((len = inputStream.read(buffer)) != -1) {
             byteArrayOutputStream.write(buffer, 0, len);
         }

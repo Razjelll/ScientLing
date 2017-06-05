@@ -92,7 +92,7 @@ public class DefinitionDaoTest {
     {
         mDao.save(mDefinition1);
         mDao.save(mDefinition2);
-        List<Definition> definitionsList = (ArrayList<Definition>) mDao.getAll();
+        List<Definition> definitionsList = mDao.getAll();
         assertEquals(2, definitionsList.size());
     }
 

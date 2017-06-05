@@ -8,7 +8,7 @@
     <TextView
         style="@style/TextViewStyle"
         android:id="@+id/correctDialogText"
-        android:text="Dobrze"
+        android:text="@string/good"
         android:textAlignment="center"
         android:textSize="@dimen/xxlarge_text_size"
         android:textColor="@color/correctColor"/>

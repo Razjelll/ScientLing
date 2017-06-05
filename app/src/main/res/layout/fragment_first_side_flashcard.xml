@@ -4,14 +4,13 @@
     android:layout_height="match_parent"
     tools:context="com.dyszlewskiR.edu.scientling.fragment.FirstSideFlashcardFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
         style="@style/TextViewStyle"
         android:id="@+id/word_content_text_view"
         android:textSize="@dimen/xlarge_text_size"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:text="slowo"
+
          />
 
 </FrameLayout>

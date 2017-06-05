@@ -7,15 +7,14 @@
         style="@style/TextViewStyle"
         android:layout_toLeftOf="@+id/selected_button"
         android:layout_centerVertical="true"
-        android:text="dog"/>
+         />
     <TextView
         android:id="@id/word_translation_text_view"
         style="@style/LabelStyle"
         android:textStyle="italic"
         android:layout_below="@+id/word_content_text_view"
         android:layout_toLeftOf="@+id/selected_button"
-        android:text="pies; piesek"
-         android:layout_marginTop="0dp"/>
+        android:layout_marginTop="0dp"/>
 
     <ImageView
         android:id="@+id/selected_button"

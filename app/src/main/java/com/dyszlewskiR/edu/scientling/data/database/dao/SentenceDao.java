@@ -100,7 +100,7 @@ public class SentenceDao extends BaseDao<Sentence> {
         Cursor cursor = mDb.query(distinct, TABLE_NAME, columns, selection, selectionArgs,
                 groupBy, having, orderBy, limit);
         if (cursor.moveToFirst()) {
-            Sentence sentence = null;
+            Sentence sentence;
             do {
                 sentence = SentenceCreator.createFromCursor(cursor);
                 if (sentence != null) {

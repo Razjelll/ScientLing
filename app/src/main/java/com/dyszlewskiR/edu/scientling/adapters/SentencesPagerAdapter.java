@@ -52,13 +52,13 @@ public class SentencesPagerAdapter extends PagerAdapter {
         contentTextView.setText(mItems.get(position).getContent());
         translationTextView.setText(mItems.get(position).getTranslation());
 
-        ((ViewPager) container).addView(view);
+        container.addView(view);
         return view;
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
-        ((ViewPager) container).removeView((View) object);
+        container.removeView((View) object);
     }
 
 }

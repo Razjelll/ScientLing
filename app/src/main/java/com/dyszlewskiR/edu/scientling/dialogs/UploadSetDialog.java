@@ -51,9 +51,7 @@ public class UploadSetDialog extends Dialog {
         mUploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mEditDescription){
-
-                } else {
+                if(!mEditDescription) {
                     if (mUploadAll) {
                         ServerSet.upload(mSet, mDescriptionEditText.getText().toString(), true, true, true, getContext());
                     } else {

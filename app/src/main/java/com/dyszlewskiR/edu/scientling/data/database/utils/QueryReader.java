@@ -134,7 +134,7 @@ public class QueryReader {
         StringBuilder queryBuilder = new StringBuilder();
         String word = null;
         if (!scanner.hasNext()) {
-            return word;
+            return null;
         }
         do { //wykonujemy do końca pliku lub do napotkania znaku końca zapytania
             word = scanner.next();
