@@ -6,8 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.HintsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsHintsTable;
-import com.dyszlewskiR.edu.scientling.data.models.creators.HintCreator;
-import com.dyszlewskiR.edu.scientling.data.models.models.Hint;
+import com.dyszlewskiR.edu.scientling.data.database.creators.HintCreator;
+import com.dyszlewskiR.edu.scientling.models.entity.Hint;
 
 import java.util.ArrayList;
 import java.util.List;

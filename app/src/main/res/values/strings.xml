@@ -3,6 +3,7 @@
     <string name="login_hint">Login</string>
     <string name="password_hint">Hasło</string>
     <string name="log_in">Zaloguj</string>
+    <string name="edit_account">Edytuj konto</string>
     <string name="log_out">Wyloguj</string>
     <string name="log_outing">Wylogowywanie</string>
     <string name="sure_logout">Czy na pewno wylogować</string>
@@ -23,6 +24,7 @@
     <string name="master_words">Przećwiczonych słowek: </string>
     <string name="not_remember">Nie pamiętam hasła</string>
     <string name="register">Utwórz konto</string>
+    <string name="send">Wyślij</string>
 
     <!--OGOLNE-->
     <string name="any">Dowolny</string>
@@ -418,4 +420,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_progress">ProgressActivity</string>
     <string name="title_activity_progress_details">ProgressDetailsActivity</string>
+    <string name="title_activity_reset_password">ResetPasswordActivity</string>
+    <string name="title_activity_edit_account">EditAccountActivity</string>
 </resources>

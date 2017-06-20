@@ -5,12 +5,12 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.BuildConfig;
 import com.dyszlewskiR.edu.scientling.data.database.DatabaseHelper;
-import com.dyszlewskiR.edu.scientling.data.models.models.Category;
-import com.dyszlewskiR.edu.scientling.data.models.models.Definition;
-import com.dyszlewskiR.edu.scientling.data.models.models.Language;
-import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
-import com.dyszlewskiR.edu.scientling.data.models.models.PartOfSpeech;
-import com.dyszlewskiR.edu.scientling.data.models.models.Word;
+import com.dyszlewskiR.edu.scientling.models.entity.Category;
+import com.dyszlewskiR.edu.scientling.models.entity.Definition;
+import com.dyszlewskiR.edu.scientling.models.entity.Language;
+import com.dyszlewskiR.edu.scientling.models.entity.Lesson;
+import com.dyszlewskiR.edu.scientling.models.entity.PartOfSpeech;
+import com.dyszlewskiR.edu.scientling.models.entity.Word;
 import com.dyszlewskiR.edu.scientling.utils.ResourcesFileOpener;
 
 import org.junit.Test;
@@ -19,7 +19,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;

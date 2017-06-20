@@ -6,8 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.BuildConfig;
 import com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable;
-import com.dyszlewskiR.edu.scientling.data.models.creators.LessonCreator;
-import com.dyszlewskiR.edu.scientling.data.models.models.Lesson;
+import com.dyszlewskiR.edu.scientling.data.database.creators.LessonCreator;
+import com.dyszlewskiR.edu.scientling.models.entity.Lesson;
 
 import java.util.ArrayList;
 import java.util.List;

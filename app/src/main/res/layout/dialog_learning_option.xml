@@ -63,7 +63,8 @@
             app:layout_rowWeight="1"
             android:gravity="center_vertical"
             />
-        <com.dyszlewskiR.edu.scientling.widgets.NumberPicker android:id="@+id/words_number_picker"
+        <com.dyszlewskiR.edu.scientling.presentation.widgets.NumberPicker
+            android:id="@+id/words_number_picker"
             android:layout_width="wrap_content"
             android:layout_height="@dimen/spinner_height"
             app:layout_gravity="center_vertical"

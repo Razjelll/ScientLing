@@ -2,7 +2,7 @@ package com.dyszlewskiR.edu.scientling.data.file;
 
 import android.content.Context;
 
-import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
+import com.dyszlewskiR.edu.scientling.service.net.values.MediaType;
 
 /**
  * Klasa odpowiedzialna za tworzenie nowych klas dla plików ktore chcemy zapisać.

@@ -5,8 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.CategoriesTable;
-import com.dyszlewskiR.edu.scientling.data.models.creators.CategoryCreator;
-import com.dyszlewskiR.edu.scientling.data.models.models.Category;
+import com.dyszlewskiR.edu.scientling.data.database.creators.CategoryCreator;
+import com.dyszlewskiR.edu.scientling.models.entity.Category;
 
 import java.util.ArrayList;
 import java.util.List;

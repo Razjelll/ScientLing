@@ -5,8 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.LanguagesTable;
-import com.dyszlewskiR.edu.scientling.data.models.creators.LanguageCreator;
-import com.dyszlewskiR.edu.scientling.data.models.models.Language;
+import com.dyszlewskiR.edu.scientling.data.database.creators.LanguageCreator;
+import com.dyszlewskiR.edu.scientling.models.entity.Language;
 import com.dyszlewskiR.edu.scientling.utils.BitmapUtils;
 
 import java.util.ArrayList;

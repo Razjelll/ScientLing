@@ -5,8 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.BuildConfig;
 import com.dyszlewskiR.edu.scientling.data.database.DatabaseHelper;
-import com.dyszlewskiR.edu.scientling.data.models.models.Category;
-import com.dyszlewskiR.edu.scientling.data.models.models.Language;
+import com.dyszlewskiR.edu.scientling.models.entity.Category;
+import com.dyszlewskiR.edu.scientling.models.entity.Language;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

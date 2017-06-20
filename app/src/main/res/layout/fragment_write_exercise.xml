@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.dyszlewskiR.edu.scientling.fragment.WritingExerciseFragment">
+    tools:context="com.dyszlewskiR.edu.scientling.presentation.fragment.WritingExerciseFragment">
 
     <include
         layout="@layout/word_with_speechbutton_sector"

@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.BuildConfig;
 import com.dyszlewskiR.edu.scientling.data.database.DatabaseHelper;
-import com.dyszlewskiR.edu.scientling.data.models.models.Definition;
+import com.dyszlewskiR.edu.scientling.models.entity.Definition;
 import com.dyszlewskiR.edu.scientling.utils.ResourcesFileOpener;
 
 import org.junit.Test;
@@ -14,7 +14,6 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;

@@ -10,19 +10,19 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/learning_category" >
-        <com.dyszlewskiR.edu.scientling.widgets.NumberPreference
+        <com.dyszlewskiR.edu.scientling.presentation.widgets.NumberPreference
             android:title="@string/words_in_learning"
             android:key="prefWordsInLearning"
             android:defaultValue="5"
             android:inputType="number"
             />
-        <com.dyszlewskiR.edu.scientling.widgets.NumberPreference
+        <com.dyszlewskiR.edu.scientling.presentation.widgets.NumberPreference
             android:title="@string/number_flashcard"
             android:key="prefNumberFlashcard"
             android:defaultValue="7"
             android:inputType = "number"
             />
-        <com.dyszlewskiR.edu.scientling.widgets.NumberPreference
+        <com.dyszlewskiR.edu.scientling.presentation.widgets.NumberPreference
             android:title="@string/number_flashcard"
             android:key="prefNumber"
             />
@@ -34,13 +34,13 @@
             />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/repetitions">
-        <com.dyszlewskiR.edu.scientling.widgets.NumberPreference
+        <com.dyszlewskiR.edu.scientling.presentation.widgets.NumberPreference
             android:title="@string/words_in_repetitions"
             android:key="prefWordsInRepetitions"
             android:defaultValue="5"
             android:inputType="number"
             />
-        <com.dyszlewskiR.edu.scientling.widgets.NumberPreference
+        <com.dyszlewskiR.edu.scientling.presentation.widgets.NumberPreference
             android:title="@string/number_answers"
             android:key="prefNumberAnswers"
             android:defaultValue="6"
@@ -79,7 +79,7 @@
             android:key="prefReminder"
             android:title="@string/reminders"
             />
-        <com.dyszlewskiR.edu.scientling.widgets.TimePickerPreference
+        <com.dyszlewskiR.edu.scientling.presentation.widgets.TimePickerPreference
             android:title="@string/reminder_time"
             android:key="prefReminderTime"
             android:inputType="datetime"

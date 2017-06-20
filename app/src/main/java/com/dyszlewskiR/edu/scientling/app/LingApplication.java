@@ -5,9 +5,9 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
-import com.dyszlewskiR.edu.scientling.preferences.PreferenceInitializer;
-import com.dyszlewskiR.edu.scientling.preferences.Settings;
-import com.dyszlewskiR.edu.scientling.services.data.DataManager;
+import com.dyszlewskiR.edu.scientling.service.preferences.PreferenceInitializer;
+import com.dyszlewskiR.edu.scientling.service.preferences.Settings;
+import com.dyszlewskiR.edu.scientling.data.database.DataManager;
 import com.dyszlewskiR.edu.scientling.utils.Constants;
 
 public class LingApplication extends Application {
@@ -52,6 +52,7 @@ public class LingApplication extends Application {
         registerActivityLifecycleCallbacks(handler);
         registerComponentCallbacks(handler);
     }
+
 
     @Override
     public void onLowMemory() {

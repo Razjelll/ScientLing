@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.dyszlewskiR.edu.scientling.activity.DownloadSetsActivity">
+    tools:context="com.dyszlewskiR.edu.scientling.presentation.activity.DownloadSetsActivity">
 
     <item
         android:id="@+id/filter_button"

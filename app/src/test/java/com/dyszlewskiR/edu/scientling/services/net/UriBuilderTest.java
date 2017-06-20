@@ -1,5 +1,7 @@
 package com.dyszlewskiR.edu.scientling.services.net;
 
+import com.dyszlewskiR.edu.scientling.service.net.UriBuilder;
+
 import org.junit.Assert;
 import org.junit.Test;
 

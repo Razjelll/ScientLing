@@ -23,77 +23,78 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
         <receiver
-            android:name=".services.notification.NotificationStartupReceiver"
+            android:name=".service.notification.NotificationStartupReceiver"
             android:process=":reminder_process">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".services.notification.NotificationReceiver"
+            android:name=".service.notification.NotificationReceiver"
             android:process=":reminder_process" />
 
         <service
-            android:name=".services.notification.NotificationService"
+            android:name=".service.notification.NotificationService"
             android:process=":reminder_process" />
-        <service android:name=".services.data.DeletingLessonService" />
-        <service android:name=".services.data.DeletingSetService" />
-        <service android:name=".services.data.DeletingWordService" />
-        <service android:name=".services.net.services.DownloadSetsService" />
+        <service android:name=".service.management.DeletingLessonService" />
+        <service android:name=".service.management.DeletingSetService" />
+        <service android:name=".service.management.DeletingWordService" />
+        <service android:name=".service.net.download.DownloadSetsService" />
         <!-- android:process=":downloading_set"/> -->
-        <service android:name=".services.net.services.UploadSetService" />
-        <service android:name=".services.repetitions.RepetitionService" />
-        <service android:name=".services.speech.TextToSpeechService" />
+        <service android:name=".service.net.upload.UploadSetService" />
+        <service android:name=".service.repetitions.RepetitionService" />
+        <service android:name=".service.speech.speechToText.TextToSpeechService" />
+        <service android:name=".service.net.deleting.DeletingSetService" />
 
-        <activity android:name=".activity.LoginActivity" />
+        <activity android:name=".presentation.activity.LoginActivity" />
         <activity
-            android:name=".activity.ExerciseActivity"
+            android:name=".presentation.activity.ExerciseActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".activity.RepetitionListActivity"
+            android:name=".presentation.activity.RepetitionListActivity"
             android:label="@string/title_activity_repetition_list"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".activity.SentencesListActivity"
+            android:name=".presentation.activity.SentencesListActivity"
             android:label="@string/title_activity_sentences_list"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".activity.WordEditActivity"
+            android:name=".presentation.activity.WordEditActivity"
             android:label="@string/title_activity_word_edit"
             android:permission="android"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".activity.SentenceDetailActivity"
+            android:name=".presentation.activity.SentenceDetailActivity"
             android:label="@string/title_activity_sentence_detail"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".activity.SetActivity"
+            android:name=".presentation.activity.SetActivity"
             android:label="@string/title_activity_set"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".activity.LessonActivity"
+            android:name=".presentation.activity.LessonActivity"
             android:label="@string/title_activity_lesson_edit"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".activity.SetSelectionActivity"
+            android:name=".presentation.activity.SetSelectionActivity"
             android:label="@string/title_activity_set_selection"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".activity.LessonSelectionActivity"
+            android:name=".presentation.activity.LessonSelectionActivity"
             android:label="@string/title_activity_lesson_selection"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".activity.CategorySelectionActivity"
+            android:name=".presentation.activity.CategorySelectionActivity"
             android:label="@string/title_activity_category_selection"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".activity.LearningListActivity"
+            android:name=".presentation.activity.LearningListActivity"
             android:label="@string/title_activity_learning_list"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".presentation.activity.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/NoActionBar">
             <intent-filter>
@@ -103,81 +104,89 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.LearningActivity"
+            android:name=".presentation.activity.LearningActivity"
             android:label="@string/title_activity_learning"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".activity.SummaryLearningActivity"
+            android:name=".presentation.activity.SummaryLearningActivity"
             android:label="@string/title_activity_summary_learning"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".activity.FlashcardActivity"
+            android:name=".presentation.activity.FlashcardActivity"
             android:label="@string/title_activity_flashcard"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".activity.PreferenceActivity"
+            android:name=".presentation.activity.PreferenceActivity"
             android:label="@string/title_activity_preference" />
         <activity
-            android:name=".activity.RepetitionsActivity"
+            android:name=".presentation.activity.RepetitionsActivity"
             android:label="@string/title_activity_repetitions"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".activity.CurrentSetSelectionActivity"
+            android:name=".presentation.activity.CurrentSetSelectionActivity"
             android:label="@string/title_activity_current_set_selection"
             android:theme="@style/NoActionBar" />
 
         <service
-            android:name=".services.repetitions.SaveExerciseService"
+            android:name=".service.repetitions.SaveExerciseService"
             android:enabled="true" />
 
         <activity
-            android:name=".activity.ManageWordsActivity"
+            android:name=".presentation.activity.ManageWordsActivity"
             android:label="@string/title_activity_manage_words"
             android:theme="@style/NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".activity.CategoryActivity"
+            android:name=".presentation.activity.CategoryActivity"
             android:label="@string/title_activity_category"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".activity.HintsListActivity"
+            android:name=".presentation.activity.HintsListActivity"
             android:label="@string/title_activity_hint_list"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".activity.HintActivity"
+            android:name=".presentation.activity.HintActivity"
             android:label="@string/title_activity_hint"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".activity.SetsManagerActivity"
+            android:name=".presentation.activity.SetsManagerActivity"
             android:label="@string/title_activity_sets_manager"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".activity.SetEditActivity"
+            android:name=".presentation.activity.SetEditActivity"
             android:label="@string/title_activity_set_edit"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".activity.WordsManagerActivity"
+            android:name=".presentation.activity.WordsManagerActivity"
             android:label="@string/title_activity_words_manager"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".activity.DownloadSetsActivity"
+            android:name=".presentation.activity.DownloadSetsActivity"
             android:label="@string/title_activity_download_sets"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".activity.RegistrationActivity"
+            android:name=".presentation.activity.RegistrationActivity"
             android:label="@string/title_activity_registration"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".activity.SetDetailsActivity"
+            android:name=".presentation.activity.SetDetailsActivity"
             android:label="@string/title_activity_set_details"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".activity.ProgressActivity"
+            android:name=".presentation.activity.ProgressActivity"
             android:label="@string/title_activity_progress"
             android:theme="@style/NoActionBar" />
         <activity
-            android:name=".activity.ProgressDetailsActivity"
+            android:name=".presentation.activity.ProgressDetailsActivity"
             android:label="@string/title_activity_progress_details"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".presentation.activity.ResetPasswordActivity"
+            android:label="@string/title_activity_reset_password"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".presentation.activity.EditAccountActivity"
+            android:label="@string/title_activity_edit_account"
             android:theme="@style/NoActionBar"></activity>
     </application>
 

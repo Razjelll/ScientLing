@@ -4,7 +4,7 @@
     android:id="@+id/activity_exercise"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dyszlewskiR.edu.scientling.activity.ExerciseActivity"
+    tools:context="com.dyszlewskiR.edu.scientling.presentation.activity.ExerciseActivity"
     android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar

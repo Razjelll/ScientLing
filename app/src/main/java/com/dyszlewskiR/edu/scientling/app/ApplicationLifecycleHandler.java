@@ -8,7 +8,7 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.dyszlewskiR.edu.scientling.services.notification.ReminderAlarmManager;
+import com.dyszlewskiR.edu.scientling.service.notification.ReminderAlarmManager;
 
 class ApplicationLifecycleHandler implements Application.ActivityLifecycleCallbacks, ComponentCallbacks2 {
 

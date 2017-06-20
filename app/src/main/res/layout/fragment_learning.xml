@@ -51,7 +51,7 @@
                 android:layout_marginLeft="30dp"
                 />
 
-            <com.dyszlewskiR.edu.scientling.widgets.SpeechButton
+            <com.dyszlewskiR.edu.scientling.presentation.widgets.SpeechButton
                 android:id="@+id/speech_button"
                 android:layout_width="56dp"
                 android:layout_height="56dp"

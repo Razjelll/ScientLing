@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.dyszlewskiR.edu.scientling.activity.WordEditActivity"
+    tools:context="com.dyszlewskiR.edu.scientling.presentation.activity.WordEditActivity"
     android:background="@color/colorFirstBackground">
 
     <android.support.design.widget.AppBarLayout

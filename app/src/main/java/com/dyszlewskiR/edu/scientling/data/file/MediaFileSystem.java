@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
-import com.dyszlewskiR.edu.scientling.services.net.values.MediaType;
+import com.dyszlewskiR.edu.scientling.service.net.values.MediaType;
 import com.dyszlewskiR.edu.scientling.utils.BitmapUtils;
 import com.dyszlewskiR.edu.scientling.utils.UriUtils;
 

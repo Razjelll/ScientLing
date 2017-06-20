@@ -11,12 +11,11 @@ import com.dyszlewskiR.edu.scientling.data.database.tables.LessonsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.PartsOfSpeechTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable;
 import com.dyszlewskiR.edu.scientling.data.database.utils.QueryReader;
-import com.dyszlewskiR.edu.scientling.data.models.creators.WordCreator;
-import com.dyszlewskiR.edu.scientling.data.models.models.Word;
+import com.dyszlewskiR.edu.scientling.data.database.creators.WordCreator;
+import com.dyszlewskiR.edu.scientling.models.entity.Word;
 import com.dyszlewskiR.edu.scientling.utils.QueryBuilder;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -5,10 +5,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.SetsTable;
-import com.dyszlewskiR.edu.scientling.data.models.creators.SetCreator;
-import com.dyszlewskiR.edu.scientling.data.models.creators.SetListItemCreator;
-import com.dyszlewskiR.edu.scientling.data.models.models.SetListItem;
-import com.dyszlewskiR.edu.scientling.data.models.models.VocabularySet;
+import com.dyszlewskiR.edu.scientling.data.database.creators.SetCreator;
+import com.dyszlewskiR.edu.scientling.data.database.creators.SetListItemCreator;
+import com.dyszlewskiR.edu.scientling.models.others.SetListItem;
+import com.dyszlewskiR.edu.scientling.models.entity.VocabularySet;
 
 import java.util.ArrayList;
 import java.util.List;

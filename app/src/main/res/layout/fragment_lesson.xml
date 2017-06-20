@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.dyszlewskiR.edu.scientling.fragment.LessonFragment"
+    tools:context="com.dyszlewskiR.edu.scientling.presentation.fragment.LessonFragment"
     tools:showIn="@layout/activity_lesson"
     android:background="@drawable/shadow_border">
 

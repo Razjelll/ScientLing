@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.dyszlewskiR.edu.scientling.fragment.KnowExerciseFragment">
+    tools:context="com.dyszlewskiR.edu.scientling.presentation.fragment.KnowExerciseFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <include
@@ -22,7 +22,7 @@
         android:layout_below="@+id/word_sector"
         android:visibility="invisible"/>
 
-    <com.dyszlewskiR.edu.scientling.widgets.SpeechButton
+    <com.dyszlewskiR.edu.scientling.presentation.widgets.SpeechButton
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:id="@+id/speech_button"

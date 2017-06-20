@@ -26,12 +26,12 @@
                             style="@style/SmallEditTextStyle"
                             android:hint="@string/translation_separator"
                             android:windowSoftInputMode="stateVisible" />
-                        <ImageButton android:id="@+id/more_image_button"
+                        <ImageView android:id="@+id/more_image_button"
                             android:layout_width="56dp"
                             android:layout_height="56dp"
                             android:layout_below="@+id/basic_edit_group"
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_add"/>
+                            android:src="@drawable/ic_more"/>
                         <ViewStub android:id="@+id/more_container"
                             android:layout="@layout/stub_edit_word"
                             android:layout_width="match_parent"

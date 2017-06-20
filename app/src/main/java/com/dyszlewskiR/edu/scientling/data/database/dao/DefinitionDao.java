@@ -6,8 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.dyszlewskiR.edu.scientling.data.database.tables.DefinitionsTable;
 import com.dyszlewskiR.edu.scientling.data.database.tables.WordsTable;
-import com.dyszlewskiR.edu.scientling.data.models.creators.DefinitionCreator;
-import com.dyszlewskiR.edu.scientling.data.models.models.Definition;
+import com.dyszlewskiR.edu.scientling.data.database.creators.DefinitionCreator;
+import com.dyszlewskiR.edu.scientling.models.entity.Definition;
 
 import java.util.ArrayList;
 import java.util.List;
